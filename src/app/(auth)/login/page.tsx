@@ -29,7 +29,13 @@ export default function LoginPage() {
       setError("Ungültige Anmeldedaten");
       setLoading(false);
     } else {
-      router.push("/");
+      // Check role from session to redirect drivers
+      const session = await fetch("/api/auth/session").then((r) => r.json());
+      if (session?.user?.role === "DRIVER") {
+        router.push("/driver/dashboard");
+      } else {
+        router.push("/");
+      }
       router.refresh();
     }
   }
