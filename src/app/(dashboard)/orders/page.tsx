@@ -1,24 +1,7 @@
-import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { IconEye } from "@tabler/icons-react";
-
-const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  OPEN: { label: "Offen", variant: "default" },
-  ASSIGNED: { label: "Zugewiesen", variant: "secondary" },
-  COMPLETED: { label: "Abgeschlossen", variant: "outline" },
-  CANCELLED: { label: "Storniert", variant: "destructive" },
-};
+import { IconFileText } from "@tabler/icons-react";
+import { OrdersTable } from "./orders-table";
 
 export default async function OrdersPage() {
   const session = await auth();
@@ -30,86 +13,86 @@ export default async function OrdersPage() {
     include: { driver: true, company: true },
   });
 
+  const serialized = orders.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    customerName: order.customerName,
+    eventType: order.eventType,
+    eventDate: order.eventDate.toISOString(),
+    driverName: order.driver?.name ?? null,
+    price: order.price,
+    paymentMethod: order.paymentMethod,
+    companyName: order.company.name,
+    status: order.status,
+  }));
+
+  const openCount = orders.filter((o) => o.status === "OPEN").length;
+  const assignedCount = orders.filter((o) => o.status === "ASSIGNED").length;
+  const completedCount = orders.filter((o) => o.status === "COMPLETED").length;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold">Aufträge</h1>
-        <p className="text-muted-foreground">Alle Aufträge verwalten</p>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+            <IconFileText className="size-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+              Auftr&auml;ge
+            </h1>
+            <p className="text-sm text-zinc-500">
+              {orders.length} Auftr&auml;ge insgesamt
+            </p>
+          </div>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Alle Aufträge ({orders.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {orders.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">
-              Noch keine Aufträge vorhanden
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>#</TableHead>
-                  <TableHead>Kunde</TableHead>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Datum</TableHead>
-                  <TableHead>Fahrer</TableHead>
-                  <TableHead>Preis</TableHead>
-                  <TableHead>Zahlart</TableHead>
-                  <TableHead>Firma</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[80px]">Aktion</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.map((order) => {
-                  const status = statusMap[order.status] ?? statusMap.OPEN;
-                  return (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-mono text-sm">
-                        {order.orderNumber}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {order.customerName}
-                      </TableCell>
-                      <TableCell>{order.eventType}</TableCell>
-                      <TableCell>
-                        {new Date(order.eventDate).toLocaleDateString("de-DE")}
-                      </TableCell>
-                      <TableCell>
-                        {order.driver?.name ?? (
-                          <span className="text-muted-foreground">–</span>
-                        )}
-                      </TableCell>
-                      <TableCell>{order.price.toFixed(2)} €</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-xs">
-                        {order.company.name.includes("GbR") ? "GbR" : "EU"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={status.variant}>{status.label}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Link
-                          href={`/orders/${order.id}`}
-                          className="inline-flex items-center justify-center size-8 rounded-lg hover:bg-muted transition-colors"
-                        >
-                          <IconEye className="h-4 w-4" />
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      {/* Quick stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+            Offen
+          </p>
+          <p className="text-2xl font-bold text-amber-400 tabular-nums">
+            {openCount}
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+            Zugewiesen
+          </p>
+          <p className="text-2xl font-bold text-blue-400 tabular-nums">
+            {assignedCount}
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+            Abgeschlossen
+          </p>
+          <p className="text-2xl font-bold text-emerald-400 tabular-nums">
+            {completedCount}
+          </p>
+        </div>
+      </div>
+
+      {/* Table card */}
+      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.06]">
+          <h2 className="text-sm font-semibold text-zinc-300">
+            Alle Auftr&auml;ge
+          </h2>
+        </div>
+        {orders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+            <IconFileText className="size-10 mb-3 text-zinc-600" />
+            <p className="text-sm">Noch keine Auftr&auml;ge vorhanden</p>
+          </div>
+        ) : (
+          <OrdersTable orders={serialized} />
+        )}
+      </div>
     </div>
   );
 }
