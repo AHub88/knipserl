@@ -24,7 +24,7 @@ export function DriverNav({ userName }: { userName: string }) {
     <>
       <header className="sticky top-0 z-50 border-b bg-background px-4 py-3">
         <div className="mx-auto flex max-w-2xl items-center justify-between">
-          <span className="text-lg font-bold">Knipserl</span>
+          <img src="/logo.png" alt="Knipserl" className="h-7 w-auto" />
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">{userName}</span>
             <button

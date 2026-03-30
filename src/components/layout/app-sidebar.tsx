@@ -113,19 +113,16 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-white/[0.06] bg-zinc-950">
       {/* Brand */}
-      <SidebarHeader className="border-b border-white/[0.06] px-5 py-5">
+      <SidebarHeader className="border-b border-white/[0.06] px-5 py-4">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex items-center justify-center size-9 rounded-xl bg-[#F6A11C]/15 transition-colors group-hover:bg-[#F6A11C]/25">
-            <IconCamera className="size-5 text-[#F6A11C]" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-base font-bold tracking-tight text-zinc-100">
-              Knipserl
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
-              Fotobox Admin
-            </span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="Knipserl"
+            className="h-9 w-auto transition-opacity group-hover:opacity-80"
+          />
+          <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
+            Admin
+          </span>
         </Link>
       </SidebarHeader>
 

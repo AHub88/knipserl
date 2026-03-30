@@ -47,14 +47,13 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-[#F6A11C]/15 ring-1 ring-[#F6A11C]/20">
-            <IconCamera className="size-8 text-[#F6A11C]" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
-            Knipserl
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Fotobox Admin Dashboard
+          <img
+            src="/logo.png"
+            alt="Knipserl"
+            className="h-14 w-auto mb-3"
+          />
+          <p className="text-sm text-zinc-500">
+            Admin Dashboard
           </p>
         </div>
 
