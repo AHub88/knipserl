@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -80,7 +79,7 @@ export default async function InquiriesPage() {
                       <TableCell>
                         <Link
                           href={`/inquiries/${inquiry.id}`}
-                          className={buttonVariants({ variant: "ghost", size: "icon" })}
+                          className="inline-flex items-center justify-center size-8 rounded-lg hover:bg-muted transition-colors"
                         >
                           <IconEye className="h-4 w-4" />
                         </Link>
