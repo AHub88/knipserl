@@ -1,10 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { OrderActions } from "./order-actions";
+import { OrderDetail } from "./order-detail";
 
 export default async function OrderDetailPage({
   params,
@@ -18,6 +15,7 @@ export default async function OrderDetailPage({
     where: { id },
     include: {
       driver: true,
+      secondDriver: true,
       company: true,
       inquiry: true,
     },
@@ -25,145 +23,77 @@ export default async function OrderDetailPage({
 
   if (!order) notFound();
 
-  // Hide cash orders from accounting admin
   if (session?.user?.role === "ADMIN_ACCOUNTING" && order.paymentMethod === "CASH") {
     notFound();
   }
 
   const drivers = await prisma.user.findMany({
-    where: { role: "DRIVER", active: true },
+    where: { role: { in: ["DRIVER", "ADMIN"] }, active: true },
     orderBy: { name: "asc" },
   });
 
-  const statusColors: Record<string, string> = {
-    OPEN: "bg-yellow-100 text-yellow-800",
-    ASSIGNED: "bg-blue-100 text-blue-800",
-    COMPLETED: "bg-green-100 text-green-800",
-    CANCELLED: "bg-red-100 text-red-800",
-  };
+  const companies = await prisma.company.findMany({
+    orderBy: { name: "asc" },
+  });
 
-  const statusLabels: Record<string, string> = {
-    OPEN: "Offen",
-    ASSIGNED: "Zugewiesen",
-    COMPLETED: "Abgeschlossen",
-    CANCELLED: "Storniert",
+  const locations = await prisma.location.findMany({
+    orderBy: { usageCount: "desc" },
+  });
+
+  const isAdmin =
+    session?.user?.role === "ADMIN" ||
+    session?.user?.role === "ADMIN_ACCOUNTING";
+
+  const serialized = {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    customerName: order.customerName,
+    customerEmail: order.customerEmail,
+    customerPhone: order.customerPhone,
+    eventType: order.eventType,
+    eventDate: order.eventDate.toISOString(),
+    locationName: order.locationName,
+    locationAddress: order.locationAddress,
+    price: order.price,
+    travelCost: order.travelCost,
+    boxPrice: order.boxPrice,
+    extrasCost: order.extrasCost,
+    setupCost: order.setupCost,
+    materialCost: order.materialCost,
+    discount: order.discount,
+    discountType: order.discountType,
+    paymentMethod: order.paymentMethod,
+    status: order.status,
+    driverId: order.driverId,
+    driverName: order.driver?.name ?? null,
+    secondDriverId: order.secondDriverId,
+    secondDriverName: order.secondDriver?.name ?? null,
+    companyId: order.companyId,
+    companyName: order.company.name,
+    extras: order.extras,
+    notes: order.notes,
+    internalNotes: order.internalNotes,
+    confirmed: order.confirmed,
+    designReady: order.designReady,
+    planned: order.planned,
+    paid: order.paid,
+    distanceKm: order.inquiry?.distanceKm ?? null,
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">
-            Auftrag #{order.orderNumber}
-          </h1>
-          <p className="text-muted-foreground">
-            {order.customerName} · {order.eventType}
-          </p>
-        </div>
-        <Badge className={statusColors[order.status] ?? ""}>
-          {statusLabels[order.status] ?? order.status}
-        </Badge>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Kundendaten</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <DetailRow label="Name" value={order.customerName} />
-            <DetailRow label="E-Mail" value={order.customerEmail} />
-            <DetailRow label="Telefon" value={order.customerPhone ?? "–"} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Event-Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <DetailRow label="Eventart" value={order.eventType} />
-            <DetailRow
-              label="Datum"
-              value={new Date(order.eventDate).toLocaleDateString("de-DE", {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            />
-            <DetailRow label="Location" value={order.locationName} />
-            <DetailRow label="Adresse" value={order.locationAddress} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Auftragsdaten</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <DetailRow label="Firma" value={order.company.name} />
-            <DetailRow label="Preis" value={`${order.price.toFixed(2)} €`} />
-            <DetailRow
-              label="Zahlart"
-              value={order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
-            />
-            <DetailRow
-              label="Fahrer"
-              value={order.driver?.name ?? "Nicht zugewiesen"}
-            />
-          </CardContent>
-        </Card>
-
-        {order.extras.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Extras</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {order.extras.map((extra) => (
-                  <Badge key={extra} variant="secondary">
-                    {extra}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {order.notes && (
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Notizen</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm whitespace-pre-wrap">{order.notes}</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {(session?.user?.role === "ADMIN" || session?.user?.role === "ADMIN_ACCOUNTING") && (
-        <>
-          <Separator />
-          <OrderActions
-            orderId={order.id}
-            currentStatus={order.status}
-            currentDriverId={order.driverId}
-            drivers={drivers.map((d) => ({ id: d.id, name: d.name }))}
-          />
-        </>
-      )}
-    </div>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium">{value}</span>
-    </div>
+    <OrderDetail
+      order={serialized}
+      drivers={drivers.map((d) => ({ id: d.id, name: d.name, initials: d.initials }))}
+      companies={companies.map((c) => ({ id: c.id, name: c.name }))}
+      locations={locations.map((l) => ({
+        id: l.id,
+        name: l.name,
+        street: l.street,
+        zip: l.zip,
+        city: l.city,
+        distanceKm: l.distanceKm,
+      }))}
+      isAdmin={isAdmin}
+    />
   );
 }

@@ -16,6 +16,7 @@ export async function GET(
     where: { id },
     include: {
       driver: true,
+      secondDriver: true,
       company: true,
       inquiry: true,
       quotes: true,
@@ -27,7 +28,6 @@ export async function GET(
     return NextResponse.json({ error: "Auftrag nicht gefunden" }, { status: 404 });
   }
 
-  // Hide cash orders from accounting admin
   if (session.user.role === "ADMIN_ACCOUNTING" && order.paymentMethod === "CASH") {
     return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
   }
@@ -63,16 +63,53 @@ export async function PATCH(
   }
 
   // Admins can update everything
+  const data: Record<string, unknown> = {};
+
+  // Basic fields
+  if (body.driverId !== undefined) data.driverId = body.driverId || null;
+  if (body.secondDriverId !== undefined) data.secondDriverId = body.secondDriverId || null;
+  if (body.status) data.status = body.status;
+  if (body.price !== undefined) data.price = Number(body.price);
+  if (body.paymentMethod) data.paymentMethod = body.paymentMethod;
+  if (body.notes !== undefined) data.notes = body.notes || null;
+  if (body.internalNotes !== undefined) data.internalNotes = body.internalNotes || null;
+
+  // Customer & event
+  if (body.customerName !== undefined) data.customerName = body.customerName;
+  if (body.customerEmail !== undefined) data.customerEmail = body.customerEmail;
+  if (body.customerPhone !== undefined) data.customerPhone = body.customerPhone || null;
+  if (body.eventType !== undefined) data.eventType = body.eventType;
+  if (body.eventDate !== undefined) data.eventDate = new Date(body.eventDate);
+  if (body.locationName !== undefined) data.locationName = body.locationName;
+  if (body.locationAddress !== undefined) data.locationAddress = body.locationAddress;
+
+  // Pricing
+  if (body.travelCost !== undefined) data.travelCost = body.travelCost != null ? Number(body.travelCost) : null;
+  if (body.boxPrice !== undefined) data.boxPrice = body.boxPrice != null ? Number(body.boxPrice) : null;
+  if (body.extrasCost !== undefined) data.extrasCost = body.extrasCost != null ? Number(body.extrasCost) : null;
+  if (body.setupCost !== undefined) data.setupCost = body.setupCost != null ? Number(body.setupCost) : null;
+  if (body.materialCost !== undefined) data.materialCost = body.materialCost != null ? Number(body.materialCost) : null;
+  if (body.discount !== undefined) data.discount = body.discount != null ? Number(body.discount) : null;
+  if (body.discountType !== undefined) data.discountType = body.discountType || "AMOUNT";
+
+  // Extras
+  if (body.extras !== undefined) data.extras = body.extras;
+
+  // Status flags
+  if (body.confirmed !== undefined) data.confirmed = body.confirmed;
+  if (body.designReady !== undefined) data.designReady = body.designReady;
+  if (body.planned !== undefined) data.planned = body.planned;
+  if (body.paid !== undefined) data.paid = body.paid;
+
+  // Company
+  if (body.companyId !== undefined) data.companyId = body.companyId;
+
+  // Auto-set completedAt
+  if (body.status === "COMPLETED") data.completedAt = new Date();
+
   const order = await prisma.order.update({
     where: { id },
-    data: {
-      ...(body.driverId !== undefined && { driverId: body.driverId }),
-      ...(body.status && { status: body.status }),
-      ...(body.price !== undefined && { price: body.price }),
-      ...(body.notes !== undefined && { notes: body.notes }),
-      ...(body.paymentMethod && { paymentMethod: body.paymentMethod }),
-      ...(body.status === "COMPLETED" && { completedAt: new Date() }),
-    },
+    data,
   });
 
   return NextResponse.json(order);

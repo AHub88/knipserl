@@ -15,6 +15,7 @@ import {
   IconFileInvoice,
   IconTruck,
   IconInbox,
+  IconMapPin,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -35,6 +36,7 @@ const mainNav = [
   { title: "Aufträge", href: "/orders", icon: IconFileText },
   { title: "Kalender", href: "/calendar", icon: IconCalendar },
   { title: "Fahrer", href: "/drivers", icon: IconTruck },
+  { title: "Locations", href: "/locations", icon: IconMapPin },
 ];
 
 const accountingNav = [

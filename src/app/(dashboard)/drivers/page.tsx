@@ -12,7 +12,7 @@ import {
 
 export default async function DriversPage() {
   const drivers = await prisma.user.findMany({
-    where: { role: "DRIVER" },
+    where: { role: { in: ["DRIVER", "ADMIN"] } },
     orderBy: { name: "asc" },
     include: {
       orders: { where: { status: { in: ["OPEN", "ASSIGNED"] } } },

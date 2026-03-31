@@ -66,12 +66,14 @@ model User {
   phone        String?
   vehiclePlate String?
   maxDistanceKm Int?
+  initials     String?  @unique
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  orders    Order[]
-  vacations Vacation[]
+  orders         Order[]  @relation("driver")
+  secondaryOrders Order[] @relation("secondDriver")
+  vacations      Vacation[]
 
   @@map("users")
 }
@@ -137,11 +139,21 @@ model Order {
   inquiryId       String        @unique
   companyId       String
   driverId        String?
+  secondDriverId  String?
   paymentMethod   PaymentMethod @default(INVOICE)
   status          OrderStatus   @default(OPEN)
   price           Float
+  travelCost      Float?
+  boxPrice        Float?
+  extrasCost      Float?
+  setupCost       Float?
+  materialCost    Float?
+  discount        Float?
+  discountType    String?       @default("AMOUNT")
+  profit          Float?
   extras          String[]      @default([])
   notes           String?
+  internalNotes   String?
   eventDate       DateTime
   eventType       String
   locationName    String
@@ -149,15 +161,25 @@ model Order {
   customerName    String
   customerEmail   String
   customerPhone   String?
+  setupDate       DateTime?
+  setupTime       String?
+  teardownDate    DateTime?
+  teardownTime    String?
+  confirmed       Boolean       @default(false)
+  designReady     Boolean       @default(false)
+  planned         Boolean       @default(false)
+  paid            Boolean       @default(false)
+  graphicUrl      String?
   completedAt     DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  inquiry  Inquiry  @relation(fields: [inquiryId], references: [id])
-  company  Company  @relation(fields: [companyId], references: [id])
-  driver   User?    @relation(fields: [driverId], references: [id])
-  quotes   Quote[]
-  invoices Invoice[]
+  inquiry       Inquiry  @relation(fields: [inquiryId], references: [id])
+  company       Company  @relation(fields: [companyId], references: [id])
+  driver        User?    @relation("driver", fields: [driverId], references: [id])
+  secondDriver  User?    @relation("secondDriver", fields: [secondDriverId], references: [id])
+  quotes        Quote[]
+  invoices      Invoice[]
 
   @@map("orders")
 }
@@ -257,6 +279,31 @@ model BankTransaction {
   matchedIncoming IncomingInvoice? @relation(fields: [matchedIncomingInvoiceId], references: [id])
 
   @@map("bank_transactions")
+}
+
+model Location {
+  id              String   @id @default(cuid())
+  name            String
+  street          String?
+  zip             String?
+  city            String?
+  distanceKm      Float?
+  notes           String?
+  usageCount      Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([name, city])
+  @@map("locations")
+}
+
+model TravelPricingTier {
+  id                 String @id @default(cuid())
+  distanceKm         Int    @unique
+  driverCompensation Float
+  customerPrice      Float
+
+  @@map("travel_pricing_tiers")
 }
 
 model BankConnection {
