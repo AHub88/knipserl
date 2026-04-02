@@ -50,7 +50,7 @@
 
 /* Dark mode by default — Knipserl Theme */
 :root {
-  --background: #0d0e12;
+  --background: #111111;
   --foreground: #fafafa;
   --card: #161719;
   --card-foreground: #fafafa;
