@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Beyond The Mountains';
+  src: url('/fonts/beyond_the_mountains.woff2') format('woff2'),
+       url('/fonts/beyond_the_mountains.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --brand-orange: #F3A300;
+  --brand-orange-hover: #d99200;
+  --brand-dark: #1a171b;
+  --brand-gray: #666666;
+}
+
+@theme inline {
+  --font-sans: var(--font-fira-sans);
+  --font-heading: var(--font-fira-condensed);
+  --color-brand: #F3A300;
+  --color-brand-hover: #d99200;
+  --color-brand-dark: #1a171b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Fira Sans", Helvetica, Arial, sans-serif;
+  color: #1a171b;
+  background: url('/images/misc/main_back.webp') repeat;
+  background-size: 1000px 500px;
+}
+
+/* Heading font */
+h1, h2, h3, h4 {
+  font-family: "Fira Sans Extra Condensed", "Fira Sans", sans-serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* ===== SECTION HEADINGS with sparkle decorations ===== */
+.heading-decorated {
+  position: relative;
+  display: inline-block;
+  padding: 0 50px;
+}
+.heading-decorated::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -10px;
+  width: 45px;
+  height: 45px;
+  background: url('/images/misc/heading-sparks-left.png') no-repeat center;
+  background-size: contain;
+}
+.heading-decorated::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -10px;
+  width: 45px;
+  height: 45px;
+  background: url('/images/misc/heading-sparks-right.png') no-repeat center;
+  background-size: contain;
+}
+
+/* ===== TORN PAPER EDGES ===== */
+section.rough-top,
+section.rough-bottom {
+  overflow-x: clip;
+}
+.rough-top {
+  position: relative;
+}
+.rough-top::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -25px;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: url('/images/misc/rough-top-orig.png') repeat-x;
+  background-size: auto 50px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.rough-bottom {
+  position: relative;
+}
+.rough-bottom::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: url('/images/misc/rough-bottom-2.png') repeat-x;
+  background-size: auto 50px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ===== GLASS CARD ===== */
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+/* ===== BUTTONS ===== */
+.btn-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  background: #F3A300;
+  color: #1a171b;
+  font-family: "Fira Sans Extra Condensed", "Fira Sans", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 2px solid #F3A300;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-align: center;
+}
+.btn-brand:hover {
+  background: #d99200;
+  border-color: #d99200;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  background: transparent;
+  color: white;
+  font-family: "Fira Sans Extra Condensed", "Fira Sans", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 2px solid white;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-align: center;
+}
+.btn-outline:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-outline-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  background: transparent;
+  color: #1a171b;
+  font-family: "Fira Sans Extra Condensed", "Fira Sans", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 2px solid #1a171b;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-align: center;
+}
+.btn-outline-dark:hover {
+  background: #1a171b;
+  color: white;
+}

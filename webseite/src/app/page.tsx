@@ -1,0 +1,374 @@
+import Image from "next/image";
+import Link from "next/link";
+import InquiryForm from "@/components/forms/InquiryForm";
+import { SEO_CITIES } from "@/lib/constants";
+
+const clientLogos = [
+  "adelholzener", "download", "a-business", "anita", "arri", "arrk",
+  "servtec", "cpari", "dav", "dinzler", "diwa-gruppe", "flemings",
+  "floetzinger", "fronius", "gang", "ibm", "ibeko", "infineon", "kpmg",
+  "malteser", "marco-polo", "medical-park", "metzler-vater", "mondi",
+  "landratsamt-muenchen", "prechtl", "rischart", "romed", "schattdecor",
+  "stadtwerke-rosenheim", "starbulls", "th-rosenheim", "timezone",
+];
+
+const galleryImages = [
+  { src: "/images/gallery/fotobox-mieten-5.jpg", alt: "Fotobox im Einsatz bei einer Hochzeit in Rosenheim" },
+  { src: "/images/gallery/fotobox-mieten-7.jpg", alt: "Gäste haben Spaß mit der Knipserl Fotobox" },
+  { src: "/images/gallery/fotobox-mieten-3.jpg", alt: "Fotobox Ausdruck mit individuellen Designs" },
+  { src: "/images/gallery/fotobox-rosenheim-bild2.jpg", alt: "Knipserl Fotobox auf einer Firmenfeier" },
+  { src: "/images/gallery/touchscreen.gif", alt: "Fotobox Touchscreen Bedienung" },
+  { src: "/images/gallery/fotobox-mieten-2.jpg", alt: "Professionelle Fotobox mit Requisiten" },
+  { src: "/images/gallery/fotobox-mieten-1.gif", alt: "Fotobox GIF Animation" },
+  { src: "/images/gallery/fotobox-mieten-5-scaled.jpg", alt: "Fotobox mieten für Events in Oberbayern" },
+];
+
+export default function HomePage() {
+  return (
+    <>
+      {/* ===== HERO / SLIDER ===== */}
+      <section className="relative h-[70vh] md:h-[85vh] lg:h-[100vh] overflow-hidden">
+        {/* Background image */}
+        <Image
+          src="/images/hero/fotobox-rosenheim-muenchen.jpg"
+          alt="Knipserl Fotobox mieten in Rosenheim und München"
+          fill
+          className="object-cover object-center md:object-[center_20%]"
+          priority
+          quality={85}
+        />
+
+        {/* Fotobox - centered on mobile, left on desktop */}
+        <div className="absolute z-20 left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[10%] bottom-[20px] md:bottom-[30px] w-[250px] h-[420px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
+          <Image
+            src="/images/hero/fotobox-startseite.png"
+            alt="Knipserl Fotobox mit Stativ und Blitz"
+            fill
+            className="object-contain object-bottom drop-shadow-2xl"
+            priority
+          />
+        </div>
+
+        {/* Text - hidden on mobile, visible from tablet */}
+        <div className="absolute z-20 text-white hidden md:block md:left-[38%] md:top-[35%] md:max-w-[58%] lg:left-[40%] lg:top-[40%] lg:max-w-[55%]">
+          <h1
+            className="text-[60px] md:text-[90px] lg:text-[130px] leading-[0.9] mb-3"
+            style={{
+              fontFamily: "'Beyond The Mountains', cursive",
+              textTransform: "none",
+              fontWeight: 400,
+              textShadow: "3px 3px 10px rgba(0,0,0,0.4)",
+            }}
+          >
+            Deine Fotobox
+          </h1>
+          <p
+            className="text-[22px] md:text-[30px] lg:text-[40px] leading-[1.1] mb-4 md:mb-6 font-medium font-[family-name:var(--font-fira-sans)]"
+            style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.4)" }}
+          >
+            für Rosenheim, München und Umgebung
+          </p>
+          <Link
+            href="/termin-reservieren"
+            className="inline-block px-6 py-3 md:px-10 md:py-4 bg-white text-[#1a171b] font-bold text-[16px] md:text-[18px] uppercase tracking-[0.1em] rounded-md hover:bg-gray-100 transition-colors"
+            style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif" }}
+          >
+            Jetzt reservieren
+          </Link>
+        </div>
+
+        {/* Holzsteg at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 z-10">
+          <Image
+            src="/images/hero/steg.png"
+            alt=""
+            width={1920}
+            height={217}
+            className="w-full h-auto"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* ===== DARK CTA BAR ===== */}
+      <section
+        className="relative z-10 pt-10 pb-20 rough-bottom"
+        style={{ background: `#666 url('/images/misc/main_back_gr-2.webp') repeat`, backgroundSize: '1000px 500px' }}
+      >
+        <div className="max-w-[1200px] mx-auto px-6 flex flex-col lg:flex-row items-center lg:items-center justify-between gap-6 lg:gap-8 text-center lg:text-left">
+          <div className="text-white lg:max-w-[550px]">
+            <h2 className="text-[28px] md:text-[40px] lg:text-[52px] leading-[1] font-[800]">
+              <span className="text-[#F3A300]">Fotobox</span> für Rosenheim,{" "}
+              München und Umgebung
+            </h2>
+            <p className="text-[16px] md:text-[18px] lg:text-[20px] leading-[24px] lg:leading-[28px] mt-3 font-normal font-[family-name:var(--font-fira-sans)]">
+              Miete jetzt unsere Fotobox für Deine{" "}
+              <Link href="/preise" className="text-[#F3A300] underline hover:no-underline">Hochzeit</Link>,{" "}
+              <Link href="/preise" className="text-[#F3A300] underline hover:no-underline">Firmenfeier</Link>,{" "}
+              <Link href="/preise" className="text-[#F3A300] underline hover:no-underline">Messe</Link>{" "}
+              oder Party.
+            </p>
+          </div>
+          <div className="flex flex-col md:flex-row gap-3 flex-shrink-0 w-full md:w-auto">
+            <Link href="/impressionen" className="btn-outline">Bilder</Link>
+            <Link href="/preise" className="btn-outline">Preise</Link>
+            <Link href="/termin-reservieren" className="btn-brand">Anfragen</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== INTRO / ABOUT ===== */}
+      <section className="py-20 relative z-10" style={{ marginTop: "80px" }}>
+        <div className="max-w-[1100px] mx-auto px-6">
+          {/* Heading with sparks */}
+          <div className="text-center mb-12">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+              Fotobox mit Sofortdruck! Ab 379 EUR
+            </h2>
+            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+              Hochwertige Technik und 24/7 Support garantieren eine sorgenfreie Feier
+            </p>
+          </div>
+
+          {/* Two column: image + text */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            <div className="relative h-[500px]">
+              <Image
+                src="/images/hero/fotobox-startseite-teaser.jpg"
+                alt="Knipserl Fotobox im Einsatz bei einer Party"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div className="text-[#1a171b] text-lg leading-relaxed space-y-5">
+              <p>
+                Du willst eine urige <strong>Fotobox für deine Hochzeit</strong> oder{" "}
+                <em><strong>Party</strong></em> mieten? Dann bist du bei Knipserl genau richtig!
+                Bei uns kannst Du eine hochwertige Fotobox mit eingebautem{" "}
+                <strong>Profi-Drucker</strong> und einer{" "}
+                <strong>hochauflösenden Spiegelreflexkamera</strong> mieten.
+              </p>
+              <p>
+                Du musst Dich den ganzen Abend um nichts kümmern. Wir erledigen den Aufbau
+                und Abbau und unser Knipserl ist für deine Gäste absolut selbsterklärend.
+                Vor Ort ist keine Betreuung nötig.
+              </p>
+              <p>
+                Wir liefern Dir die Fotobox in folgende Landkreise:{" "}
+                <Link href="/fotobox/rosenheim" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Rosenheim</Link>,{" "}
+                <Link href="/fotobox/muenchen" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">München</Link>,{" "}
+                <Link href="/fotobox/ebersberg" className="text-[#F3A300] font-bold underline hover:no-underline">Ebersberg</Link>,{" "}
+                Mühldorf am Inn, Erding,{" "}
+                <Link href="/fotobox/miesbach" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Miesbach</Link>,{" "}
+                <Link href="/fotobox/traunstein" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Traunstein</Link>,{" "}
+                <strong>Wasserburg am Inn</strong> und auch nach{" "}
+                <strong>Kufstein</strong>.
+              </p>
+              <div className="pt-2">
+                <Link href="/termin-reservieren" className="btn-brand">
+                  Jetzt reservieren
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== FEATURES SECTION ===== */}
+      <section
+        className="relative py-24 rough-top rough-bottom overflow-hidden"
+        style={{ marginTop: "20px" }}
+      >
+        <Image
+          src="/images/misc/block-bg-wedding.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          quality={60}
+        />
+        <div className="absolute inset-0 bg-black/50" />
+
+        <div className="relative z-10 max-w-[1300px] mx-auto px-6">
+          {/* Heading */}
+          <div className="text-center mb-16">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
+              Fotobox Features
+            </h2>
+            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+              Perfekt ausgestattet für Deine Party
+            </p>
+          </div>
+
+          {/* Features grid: 3 columns with fotobox in center of top row concept */}
+          {/* Row 1: 2 cards | Fotobox image | 2 cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left column */}
+            <div className="space-y-6">
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Hochwertige Kamera</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  In unseren Fotoboxen sind professionelle <strong>Spiegelreflexkameras</strong> mit
+                  einer Auflösung von <strong>16 Megapixel</strong> verbaut.
+                </p>
+              </div>
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Individuelles Drucklayout</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Wir gestalten Euren Ausdruck ganz individuell nach Euren Wünschen.
+                  Ihr könnte Euch zwischen dem Format 10x15cm und 5x15cm entscheiden.
+                </p>
+              </div>
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Riesiger Touchscreen</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Ihr könnt unsere Fotobox direkt über den großen Full-HD Touchscreen
+                  (22 Zoll!) steuern. Die Bedienung ist kinderleicht!
+                </p>
+              </div>
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Individualisierung / Startscreen</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Unsere Box kann auch von außen für Euch individualisiert werden. Gegen
+                  Aufpreis erstellen wir einen eigenen Startscreen, auch die Farben der
+                  verbauten LEDs können auf Euer Event abgestimmt werden.
+                </p>
+              </div>
+            </div>
+
+            {/* Center: Fotobox image + CTA */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative w-full h-[500px]">
+                <Image
+                  src="/images/hero/fotobox-startseite.png"
+                  alt="Knipserl Fotobox"
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                />
+              </div>
+              <Link href="/termin-reservieren" className="btn-brand mt-6">
+                Jetzt reservieren
+              </Link>
+            </div>
+
+            {/* Right column */}
+            <div className="space-y-6">
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Sofortdruck</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Unser professioneller <strong>Fotodrucker</strong> schafft es, Fotos innerhalb{" "}
+                  <strong>7 Sekunden</strong> auszudrucken. Die Kapazität von bis zu{" "}
+                  <strong>800 Fotos</strong> reicht für eine Tagesveranstaltung locker aus.
+                </p>
+              </div>
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Online-Galerie</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Du bekommst von uns eine Online Galerie mit gesichertem Zugang. Deine
+                  Gäste haben so die Möglichkeit alle geschossenen Bilder von zu Hause aus
+                  anzusehen und herunterzuladen.
+                </p>
+              </div>
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">GIF Animation</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Unsere Fotobox erstellt automatisch aus den geschossenen Bildern eine
+                  GIF-Animation. Diese können sich die Gäste noch einmal anzeigen lassen
+                  oder über unsere Online-Funktion direkt aufs Handy schicken lassen.
+                </p>
+              </div>
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-extrabold mb-3 text-center">Fotoeffekte</h3>
+                <p className="text-sm text-gray-200 leading-relaxed text-center">
+                  Direkt nachdem das Foto geschossen wurde, können Deine Gäste zwischen
+                  diversen Fotoeffekten (Wie z.B. auf Instagram) wählen.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== INQUIRY FORM ===== */}
+      <section id="buchen" className="py-20 relative z-10" style={{ marginTop: "80px" }}>
+        <div className="max-w-[900px] mx-auto px-6">
+          <div className="text-center mb-10">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+              Unverbindlich Anfragen
+            </h2>
+            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+              Prüfe jetzt ob eine Fotobox an Deinem Event verfügbar ist
+            </p>
+          </div>
+          <div className="bg-white p-8 shadow-lg">
+            <InquiryForm />
+          </div>
+        </div>
+      </section>
+
+      {/* ===== IMPRESSIONEN / GALLERY ===== */}
+      <section
+        id="impressionen"
+        className="relative py-24 rough-top rough-bottom overflow-hidden"
+      >
+        <Image
+          src="/images/misc/main_back_gr.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          quality={60}
+        />
+        <div className="relative z-10 max-w-[1300px] mx-auto px-6">
+          <div className="text-center mb-14">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
+              Impressionen
+            </h2>
+            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+              Unsere Fotobox im Einsatz
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {galleryImages.map((img) => (
+              <div key={img.src} className="relative aspect-[4/3] overflow-hidden group cursor-pointer">
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== REZENSIONEN / CLIENT LOGOS ===== */}
+      <section className="py-20 relative z-10 bg-white" style={{ marginTop: "80px" }}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="text-center mb-14">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+              Rezensionen
+            </h2>
+            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+              Auswahl unserer Kunden
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
+            {clientLogos.map((logo) => (
+              <div key={logo} className="relative w-[130px] h-[70px]">
+                <Image
+                  src={`/images/clients/${logo}.png`}
+                  alt={`${logo} - Kunde von Knipserl Fotobox`}
+                  fill
+                  className="object-contain"
+                  sizes="130px"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

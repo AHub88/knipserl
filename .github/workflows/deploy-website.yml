@@ -1,0 +1,39 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'webseite/**'
+      - 'deploy/docker-compose.prod.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "service=knipserl-web-prod" >> $GITHUB_OUTPUT
+            echo "env=production" >> $GITHUB_OUTPUT
+          else
+            echo "service=knipserl-web-dev" >> $GITHUB_OUTPUT
+            echo "env=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/knipserl
+            git fetch origin ${{ github.ref_name }}
+            git checkout ${{ github.ref_name }}
+            git pull origin ${{ github.ref_name }}
+            cd deploy
+            docker compose -f docker-compose.prod.yml build ${{ steps.env.outputs.service }}
+            docker compose -f docker-compose.prod.yml up -d ${{ steps.env.outputs.service }}
+            echo "✓ Website (${{ steps.env.outputs.env }}) deployed successfully"

@@ -1,0 +1,91 @@
+services:
+  # === DATABASE ===
+  knipserl-db:
+    image: postgres:16-alpine
+    container_name: knipserl-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: knipserl
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: knipserl
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - knipserl-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U knipserl -d knipserl"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # === ADMIN DASHBOARD (Production) ===
+  knipserl-admin-prod:
+    build:
+      context: ../admin
+    container_name: knipserl-admin-prod
+    restart: unless-stopped
+    depends_on:
+      knipserl-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@knipserl-db:5432/knipserl?schema=public"
+      AUTH_SECRET: ${AUTH_SECRET}
+      NEXT_PUBLIC_APP_URL: "https://admin.knipserl.de"
+      AUTH_TRUST_HOST: "true"
+    ports:
+      - "127.0.0.1:3001:3000"
+    networks:
+      - knipserl-net
+
+  # === ADMIN DASHBOARD (Dev/Staging) ===
+  knipserl-admin-dev:
+    build:
+      context: ../admin
+    container_name: knipserl-admin-dev
+    restart: unless-stopped
+    depends_on:
+      knipserl-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@knipserl-db:5432/knipserl_dev?schema=public"
+      AUTH_SECRET: ${AUTH_SECRET_DEV}
+      NEXT_PUBLIC_APP_URL: "https://dev-admin.knipserl.de"
+      AUTH_TRUST_HOST: "true"
+    ports:
+      - "127.0.0.1:3002:3000"
+    networks:
+      - knipserl-net
+
+  # === WEBSITE (Production) ===
+  knipserl-web-prod:
+    build:
+      context: ../webseite
+    container_name: knipserl-web-prod
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_SITE_URL: "https://www.knipserl.de"
+    ports:
+      - "127.0.0.1:3003:3000"
+    networks:
+      - knipserl-net
+
+  # === WEBSITE (Dev/Staging) ===
+  knipserl-web-dev:
+    build:
+      context: ../webseite
+    container_name: knipserl-web-dev
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_SITE_URL: "https://dev.knipserl.de"
+      NEXT_PUBLIC_ENV: "staging"
+    ports:
+      - "127.0.0.1:3004:3000"
+    networks:
+      - knipserl-net
+
+volumes:
+  pgdata:
+
+networks:
+  knipserl-net:
+    driver: bridge
