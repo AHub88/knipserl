@@ -1,19 +1,22 @@
+# Host-Netzwerk erforderlich da Server in LXC-Container läuft.
+# Container binden direkt auf localhost-Ports, NGINX/ISPConfig leitet von außen weiter.
+
 services:
   # === DATABASE ===
   knipserl-db:
     image: postgres:16-alpine
     container_name: knipserl-db
     restart: unless-stopped
+    network_mode: host
     environment:
       POSTGRES_USER: knipserl
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: knipserl
+      PGPORT: "5433"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks:
-      - knipserl-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U knipserl -d knipserl"]
+      test: ["CMD-SHELL", "pg_isready -U knipserl -d knipserl -p 5433"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -24,18 +27,17 @@ services:
       context: ../admin
     container_name: knipserl-admin-prod
     restart: unless-stopped
+    network_mode: host
     depends_on:
       knipserl-db:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@knipserl-db:5432/knipserl?schema=public"
+      DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@127.0.0.1:5433/knipserl?schema=public"
       AUTH_SECRET: ${AUTH_SECRET}
       NEXT_PUBLIC_APP_URL: "https://admin.knipserl.de"
       AUTH_TRUST_HOST: "true"
-    ports:
-      - "127.0.0.1:3001:3000"
-    networks:
-      - knipserl-net
+      PORT: "3001"
+      HOSTNAME: "127.0.0.1"
 
   # === ADMIN DASHBOARD (Dev/Staging) ===
   knipserl-admin-dev:
@@ -43,31 +45,17 @@ services:
       context: ../admin
     container_name: knipserl-admin-dev
     restart: unless-stopped
+    network_mode: host
     depends_on:
       knipserl-db:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@knipserl-db:5432/knipserl_dev?schema=public"
+      DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@127.0.0.1:5433/knipserl_dev?schema=public"
       AUTH_SECRET: ${AUTH_SECRET_DEV}
       NEXT_PUBLIC_APP_URL: "https://dev-admin.knipserl.de"
       AUTH_TRUST_HOST: "true"
-    ports:
-      - "127.0.0.1:3002:3000"
-    networks:
-      - knipserl-net
-
-  # === WEBSITE (Production) ===
-  knipserl-web-prod:
-    build:
-      context: ../webseite
-    container_name: knipserl-web-prod
-    restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_SITE_URL: "https://www.knipserl.de"
-    ports:
-      - "127.0.0.1:3003:3000"
-    networks:
-      - knipserl-net
+      PORT: "3002"
+      HOSTNAME: "127.0.0.1"
 
   # === WEBSITE (Dev/Staging) ===
   knipserl-web-dev:
@@ -75,17 +63,24 @@ services:
       context: ../webseite
     container_name: knipserl-web-dev
     restart: unless-stopped
+    network_mode: host
     environment:
       NEXT_PUBLIC_SITE_URL: "https://dev.knipserl.de"
       NEXT_PUBLIC_ENV: "staging"
-    ports:
-      - "127.0.0.1:3004:3000"
-    networks:
-      - knipserl-net
+      PORT: "3004"
+      HOSTNAME: "127.0.0.1"
+
+  # === WEBSITE (Production) — NICHT STARTEN bis Freigabe! ===
+  # knipserl-web-prod:
+  #   build:
+  #     context: ../webseite
+  #   container_name: knipserl-web-prod
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   environment:
+  #     NEXT_PUBLIC_SITE_URL: "https://www.knipserl.de"
+  #     PORT: "3003"
+  #     HOSTNAME: "127.0.0.1"
 
 volumes:
   pgdata:
-
-networks:
-  knipserl-net:
-    driver: bridge
