@@ -1,4 +1,4 @@
-# Knipserl Fotobox – Admin Dashboard
+# Knipserl Fotobox — Admin Dashboard
 
 Admin Dashboard für die Verwaltung der Knipserl Fotobox. Anfragen, Aufträge, Fahrer, Buchhaltung und Bankabgleich – alles in einer Anwendung.
 
