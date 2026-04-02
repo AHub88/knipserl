@@ -137,7 +137,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
             "flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed p-3 cursor-pointer transition-colors " +
             (dragging
               ? "border-[#F6A11C] bg-[#F6A11C]/10"
-              : "border-white/[0.08] bg-card hover:border-white/[0.15] hover:bg-[#1a1d27]")
+              : "border-white/[0.08] bg-card hover:border-white/[0.15] hover:bg-[#1c1d20]")
           }
         >
           {uploading ? (

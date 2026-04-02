@@ -211,7 +211,7 @@ export function InvoiceForm({
           <button
             type="button"
             onClick={addItem}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-card border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#1f2330]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-card border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#222326]"
           >
             <IconPlus className="size-3.5" />
             Position hinzuf&uuml;gen
@@ -290,7 +290,7 @@ export function InvoiceForm({
 
         {/* Total */}
         <div className="flex justify-end">
-          <div className="flex items-center gap-6 rounded-lg bg-[#1a1d27] border border-white/[0.10] px-5 py-3">
+          <div className="flex items-center gap-6 rounded-lg bg-[#1c1d20] border border-white/[0.10] px-5 py-3">
             <span className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
               Gesamtbetrag
             </span>
@@ -322,7 +322,7 @@ export function InvoiceForm({
         <button
           type="button"
           onClick={() => router.push("/accounting/invoices")}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-card px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1f2330] hover:text-zinc-200"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-card px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#222326] hover:text-zinc-200"
         >
           Abbrechen
         </button>

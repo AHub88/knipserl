@@ -61,7 +61,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
   const role = session?.user?.role ?? "";
   const roleConfig = roleLabels[role] ?? {
     label: role,
-    className: "bg-[#2a2f3d]/80 text-zinc-400 border border-zinc-500/30",
+    className: "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
   };
 
   return (
@@ -69,7 +69,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
       <SidebarTrigger className="text-zinc-400 hover:text-zinc-200 transition-colors" />
       <Separator
         orientation="vertical"
-        className="h-5 bg-[#1f2330]"
+        className="h-5 bg-[#222326]"
       />
 
       <div className="flex-1" />
@@ -85,7 +85,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
               className={
                 "h-6 px-2.5 rounded-md text-[11px] font-semibold transition-colors " +
                 (viewMode === mode.key
-                  ? `bg-[#242838] ${mode.className}`
+                  ? `bg-[#28292d] ${mode.className}`
                   : "text-zinc-400 hover:text-zinc-200")
               }
             >
@@ -116,7 +116,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
           <DropdownMenuTrigger
             className={
               buttonVariants({ variant: "ghost" }) +
-              " gap-2.5 h-9 px-2.5 rounded-lg hover:bg-[#1a1d27] transition-colors"
+              " gap-2.5 h-9 px-2.5 rounded-lg hover:bg-[#1c1d20] transition-colors"
             }
           >
             <Avatar className="size-7 ring-1 ring-white/[0.1]">
@@ -159,12 +159,12 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
                 </span>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-[#1f2330]" />
+            <DropdownMenuSeparator className="bg-[#222326]" />
             <DropdownMenuItem className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:text-zinc-100 cursor-pointer">
               <IconUser className="size-4 text-muted-foreground" />
               Profil
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-[#1f2330]" />
+            <DropdownMenuSeparator className="bg-[#222326]" />
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:text-red-300 cursor-pointer"

@@ -89,7 +89,7 @@ export function PricingEditor({
   }
 
   const inputClass =
-    "h-8 w-full rounded-md border border-white/[0.08] bg-[#1a1d27] px-2 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-8 w-full rounded-md border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="space-y-4">
@@ -97,7 +97,7 @@ export function PricingEditor({
       <div className="flex items-center justify-between">
         <button
           onClick={addTier}
-          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-sm font-medium hover:bg-[#1f2330] transition-colors"
+          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors"
         >
           <IconPlus className="size-4" />
           Stufe hinzufügen

@@ -61,7 +61,7 @@ export function ExtrasPricingEditor({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="space-y-4 max-w-lg">

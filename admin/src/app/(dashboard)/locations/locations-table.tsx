@@ -214,7 +214,7 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                   <TableRow
                     key={loc.id}
                     onClick={() => router.push(`/locations/${loc.id}`)}
-                    className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27]"
+                    className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
                   >
                     <TableCell className="font-medium text-zinc-200 max-w-[200px]">
                       <span className="block truncate" title={loc.name}>

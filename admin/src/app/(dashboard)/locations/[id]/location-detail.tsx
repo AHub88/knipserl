@@ -82,7 +82,7 @@ export function LocationDetailView({
       <div className="flex items-center gap-3">
         <Link
           href="/locations"
-          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
         >
           <IconArrowLeft className="size-4" />
         </Link>
@@ -218,7 +218,7 @@ export function LocationDetailView({
                 <TableRow
                   key={o.id}
                   onClick={() => router.push(`/orders/${o.id}`)}
-                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27]"
+                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
                 >
                   <TableCell className="font-mono text-xs text-zinc-400">
                     {o.orderNumber}

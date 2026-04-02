@@ -140,7 +140,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       <div className="flex items-start justify-between">
         <Link
           href="/orders"
-          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors mt-1"
+          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors mt-1"
         >
           <IconArrowLeft className="size-4" />
         </Link>
@@ -149,7 +149,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {isAdmin && (
             <button
               onClick={onEdit}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-sm font-medium hover:bg-[#1f2330] transition-colors"
+              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors"
             >
               <IconEdit className="size-4" />
               Bearbeiten

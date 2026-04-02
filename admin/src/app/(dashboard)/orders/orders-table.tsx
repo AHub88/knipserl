@@ -461,7 +461,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             onChange={setPaidFilter}
             options={yesNoOptions}
           />
-          <span className="w-px h-5 bg-[#1f2330]" />
+          <span className="w-px h-5 bg-[#222326]" />
           <FilterSelect
             label="Zahlart"
             value={paymentFilter}
@@ -495,7 +495,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               { value: "GBR", label: "GbR" },
             ]}
           />
-          <span className="w-px h-5 bg-[#1f2330]" />
+          <span className="w-px h-5 bg-[#222326]" />
           <FilterSelect
             label="Jahr"
             value={yearFilter}
@@ -722,7 +722,7 @@ function FilterSelect({
         "bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] " +
         (value
           ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.08] bg-[#1a1d27] text-zinc-400")
+          : "border-white/[0.08] bg-[#1c1d20] text-zinc-400")
       }
     >
       <option value="" className="bg-card text-zinc-300">
@@ -763,7 +763,7 @@ function MonthGroup({
     <div className={"rounded-xl border overflow-hidden " + (hasNext ? "border-[#F6A11C]/20" : "border-white/[0.10]")}>
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-[#1a1d27] hover:bg-[#1a1d27] transition-colors"
+        className="w-full flex items-center justify-between px-6 py-4 bg-[#1c1d20] hover:bg-[#1c1d20] transition-colors"
       >
         <div className="flex items-center gap-3">
           {collapsed ? (
@@ -867,7 +867,7 @@ function OrderTable({
               ref={isNext ? nextOrderRef : undefined}
               onClick={() => onRowClick(order.id)}
               className={
-                "cursor-pointer border-b transition-colors hover:bg-[#1a1d27] group " +
+                "cursor-pointer border-b transition-colors hover:bg-[#1c1d20] group " +
                 (isNext
                   ? "border-[#F6A11C]/30 bg-[#F6A11C]/8 border-l-2 border-l-[#F6A11C]"
                   : "border-white/[0.10]") +

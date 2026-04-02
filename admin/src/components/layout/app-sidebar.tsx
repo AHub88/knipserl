@@ -95,7 +95,7 @@ function NavGroup({
                     "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 " +
                     (active
                       ? "bg-[#F6A11C]/10 text-[#F6A11C] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-[3px] before:rounded-full before:bg-[#F6A11C]"
-                      : "text-zinc-300 hover:bg-[#1f2330] hover:text-zinc-100")
+                      : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
                   }
                 >
                   <item.icon

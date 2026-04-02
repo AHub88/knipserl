@@ -200,7 +200,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-card px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1a1d27] hover:text-zinc-300"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-card px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1c1d20] hover:text-zinc-300"
         >
           Abbrechen
         </button>

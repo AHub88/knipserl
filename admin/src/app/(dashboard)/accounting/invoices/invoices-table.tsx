@@ -38,7 +38,7 @@ const statusConfig: Record<
   DRAFT: {
     label: "Entwurf",
     className:
-      "bg-[#2a2f3d]/80 text-zinc-400 border border-zinc-500/30",
+      "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
   },
   SENT: {
     label: "Versendet",
@@ -58,7 +58,7 @@ const statusConfig: Record<
   CANCELLED: {
     label: "Storniert",
     className:
-      "bg-[#2a2f3d]/80 text-zinc-400 border border-zinc-500/30",
+      "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
   },
 };
 
@@ -170,7 +170,7 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRow[] }) {
               onClick={() =>
                 router.push(`/accounting/invoices/${invoice.id}`)
               }
-              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27] group"
+              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20] group"
             >
               <TableCell className="font-mono text-xs text-zinc-400">
                 {invoice.invoiceNumber}

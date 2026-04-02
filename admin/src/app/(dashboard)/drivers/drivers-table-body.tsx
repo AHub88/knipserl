@@ -24,7 +24,7 @@ export function DriversTableBody({ drivers }: { drivers: Driver[] }) {
         <TableRow
           key={driver.id}
           onClick={() => router.push(`/drivers/${driver.id}`)}
-          className="cursor-pointer hover:bg-[#1a1d27]"
+          className="cursor-pointer hover:bg-[#1c1d20]"
         >
           <TableCell className="font-medium">{driver.name}</TableCell>
           <TableCell className="font-mono text-sm text-zinc-400">

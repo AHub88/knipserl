@@ -125,7 +125,7 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
           return (
             <TableRow
               key={inv.id}
-              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27] group"
+              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20] group"
             >
               <TableCell className="font-medium text-zinc-200">
                 {inv.vendor}

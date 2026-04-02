@@ -207,12 +207,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   return (
     <div className="space-y-6">
       {/* ── Hero Header ── */}
-      <div className="rounded-2xl border border-white/[0.10] bg-gradient-to-br from-white/[0.03] to-transparent p-6">
+      <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-6">
         {/* Top row */}
         <div className="flex items-center gap-3 mb-4">
           <Link
             href="/orders"
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
           >
             <IconArrowLeft className="size-4" />
           </Link>
@@ -246,7 +246,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
                   (order.confirmedByCustomerAt
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-white/[0.08] bg-[#1a1d27] text-zinc-300 hover:bg-[#1f2330]")
+                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
                 }
               >
                 {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
@@ -256,7 +256,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             <a
               href={`/api/orders/${order.id}/pdf`}
               target="_blank"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-xs font-medium hover:bg-[#1f2330] transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
             >
               <IconFileDownload className="size-3.5" />
               <span className="hidden sm:inline">PDF</span>
@@ -264,7 +264,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             {isAdmin && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-xs font-medium hover:bg-[#1f2330] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
               >
                 <IconEdit className="size-3.5" />
                 <span className="hidden sm:inline">Bearbeiten</span>
@@ -277,7 +277,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="flex items-center gap-2 mb-2">
           <IconCalendar className="size-5 text-[#F6A11C] shrink-0" />
           <span className="text-lg sm:text-xl text-[#F6A11C] font-semibold">{formattedDate}</span>
-          <span className="inline-flex items-center rounded-md bg-[#1f2330] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
+          <span className="inline-flex items-center rounded-md bg-[#222326] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
             {order.eventType}
           </span>
         </div>
@@ -586,7 +586,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <textarea
                     value={notesState}
                     onChange={(e) => setNotesState(e.target.value)}
-                    className="w-full h-24 rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 resize-none"
+                    className="w-full h-24 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 resize-none"
                     placeholder="Kommentar..."
                     autoFocus
                   />

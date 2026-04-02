@@ -162,13 +162,13 @@ export function CalendarView() {
         <div className="flex items-center gap-2">
           <button
             onClick={prevMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <IconChevronLeft className="size-4" />
           </button>
           <button
             onClick={nextMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <IconChevronRight className="size-4" />
           </button>
@@ -249,7 +249,7 @@ export function CalendarView() {
             {Array.from({ length: offset }).map((_, i) => (
               <div
                 key={`e-${i}`}
-                className="min-h-[100px] border-b border-r border-white/[0.10] bg-[#111420]"
+                className="min-h-[100px] border-b border-r border-white/[0.10] bg-[#121315]"
               />
             ))}
             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
@@ -265,7 +265,7 @@ export function CalendarView() {
                   key={day}
                   className={
                     "min-h-[100px] border-b border-r border-white/[0.10] p-1.5 transition-colors " +
-                    (isWeekend ? "bg-[#111420] " : "") +
+                    (isWeekend ? "bg-[#121315] " : "") +
                     (isToday ? "bg-[#F6A11C]/5 " : "")
                   }
                 >
@@ -333,7 +333,7 @@ export function CalendarView() {
                           <div
                             className={
                               "size-1.5 rounded-full shrink-0 " +
-                              (STATUS_DOT[o.status] ?? "bg-[#3a3f50]")
+                              (STATUS_DOT[o.status] ?? "bg-[#3a3b40]")
                             }
                           />
                           {initials && (
@@ -419,12 +419,12 @@ export function CalendarView() {
                         <button
                           key={o.id}
                           onClick={() => router.push(`/orders/${o.id}`)}
-                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-[#1a1d27] transition-colors text-left"
+                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-[#1c1d20] transition-colors text-left"
                         >
                           <div
                             className={
                               "size-2.5 rounded-full shrink-0 " +
-                              (STATUS_DOT[o.status] ?? "bg-[#3a3f50]")
+                              (STATUS_DOT[o.status] ?? "bg-[#3a3b40]")
                             }
                           />
                           <div className="flex-1 min-w-0">

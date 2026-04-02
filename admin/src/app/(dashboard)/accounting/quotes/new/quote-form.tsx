@@ -174,7 +174,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
           <button
             type="button"
             onClick={addItem}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.10] bg-card px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#1a1d27] hover:text-zinc-100"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.10] bg-card px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#1c1d20] hover:text-zinc-100"
           >
             <IconPlus className="size-3.5" />
             Position hinzufügen
@@ -255,7 +255,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
         <button
           type="button"
           onClick={() => router.push("/accounting/quotes")}
-          className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1a1d27] hover:text-zinc-200"
+          className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1c1d20] hover:text-zinc-200"
         >
           Abbrechen
         </button>

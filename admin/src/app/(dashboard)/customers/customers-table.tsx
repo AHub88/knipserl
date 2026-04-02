@@ -82,7 +82,7 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
                 <TableRow
                   key={c.id}
                   onClick={() => router.push(`/customers/${c.id}`)}
-                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27]"
+                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
                 >
                   <TableCell className="font-medium text-zinc-200">{c.name}</TableCell>
                   <TableCell className="text-zinc-400 text-sm">{c.company || <span className="text-muted-foreground">–</span>}</TableCell>

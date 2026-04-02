@@ -256,7 +256,7 @@ function LocationAutocomplete({
             <button
               key={loc.id}
               type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-[#1f2330] transition-colors border-b border-white/[0.10] last:border-0"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
               onMouseDown={(e) => {
                 e.preventDefault();
                 onSelect(loc);
@@ -431,11 +431,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   const driverLabel = (() => {
     const d1 = drivers.find((d) => d.id === driverId);
@@ -495,7 +495,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           <div className="flex items-center gap-3">
             <Link
               href="/orders"
-              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
             >
               <IconArrowLeft className="size-4" />
             </Link>
@@ -512,7 +512,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           {isAdmin && (
             <button
               onClick={() => setEditing(true)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-sm font-medium hover:bg-[#1f2330] transition-colors"
+              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors"
             >
               <IconEdit className="size-4" />
               Bearbeiten
@@ -692,7 +692,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <div className="flex items-center gap-3">
           <button
             onClick={handleCancel}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <IconX className="size-4" />
           </button>
@@ -712,7 +712,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <div className="flex items-center gap-2">
           <button
             onClick={handleCancel}
-            className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
+            className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
           >
             Abbrechen
           </button>

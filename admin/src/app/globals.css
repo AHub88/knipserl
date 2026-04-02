@@ -50,19 +50,19 @@
 
 /* Dark mode by default — Knipserl Theme */
 :root {
-  --background: #0C0E14;
+  --background: #0d0e12;
   --foreground: #fafafa;
-  --card: #141720;
+  --card: #161719;
   --card-foreground: #fafafa;
-  --popover: #141720;
+  --popover: #161719;
   --popover-foreground: #fafafa;
   --primary: #F6A11C;
-  --primary-foreground: #0C0E14;
-  --secondary: #1a1d27;
+  --primary-foreground: #0d0e12;
+  --secondary: #1c1d20;
   --secondary-foreground: #fafafa;
-  --muted: #1a1d27;
+  --muted: #1c1d20;
   --muted-foreground: #a1a1aa;
-  --accent: #1a1d27;
+  --accent: #1c1d20;
   --accent-foreground: #fafafa;
   --destructive: #ef4444;
   --border: rgba(255, 255, 255, 0.12);
@@ -74,11 +74,11 @@
   --chart-4: #a855f7;
   --chart-5: #ec4899;
   --radius: 0.75rem;
-  --sidebar: #141720;
+  --sidebar: #161719;
   --sidebar-foreground: #fafafa;
   --sidebar-primary: #F6A11C;
-  --sidebar-primary-foreground: #0C0E14;
-  --sidebar-accent: #1a1d27;
+  --sidebar-primary-foreground: #0d0e12;
+  --sidebar-accent: #1c1d20;
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255, 255, 255, 0.10);
   --sidebar-ring: #F6A11C;

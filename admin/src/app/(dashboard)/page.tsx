@@ -356,8 +356,8 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>{y.year}</span>
-                      <div className="flex-1 h-8 bg-[#1a1d27] rounded-md overflow-hidden">
-                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#1f2330]")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
+                      <div className="flex-1 h-8 bg-[#1c1d20] rounded-md overflow-hidden">
+                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#222326]")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
                           <span className={"text-[11px] font-mono font-bold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300")}>{y.revenue.toLocaleString("de-DE", { minimumFractionDigits: 0 })}&nbsp;&euro;</span>
                         </div>
                       </div>
@@ -380,8 +380,8 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>{y.year}</span>
-                      <div className="flex-1 h-8 bg-[#1a1d27] rounded-md overflow-hidden">
-                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#1f2330]")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
+                      <div className="flex-1 h-8 bg-[#1c1d20] rounded-md overflow-hidden">
+                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#222326]")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
                           <span className={"text-[11px] font-mono font-bold tabular-nums " + (isCurrentYear ? "text-blue-400" : "text-zinc-300")}>{y.count}</span>
                         </div>
                       </div>
@@ -447,9 +447,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#1f2330]")}
+                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#222326]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300")}>
@@ -484,9 +484,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#1f2330]")}
+                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#222326]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-blue-400" : "text-zinc-300")}>
@@ -525,7 +525,7 @@ export default async function DashboardPage() {
                 return (
                   <div key={y.year} className="flex items-center gap-3">
                     <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                    <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden flex">
+                    <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden flex">
                       {y.cashCount > 0 && (
                         <div
                           className="h-full bg-emerald-500/30 flex items-center justify-center"
@@ -567,9 +567,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-purple-500/30" : "bg-[#1f2330]")}
+                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-purple-500/30" : "bg-[#222326]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-purple-400" : "text-zinc-300")}>
@@ -604,9 +604,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-red-500/30" : "bg-[#1f2330]")}
+                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-red-500/30" : "bg-[#222326]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-red-400" : "text-zinc-300")}>
@@ -675,7 +675,7 @@ export default async function DashboardPage() {
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Monatsvergleich Aufträge</h3>
           <div className="flex items-center gap-4 text-[10px]">
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#F6A11C]" />{now.getFullYear()}</span>
-            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#3a3f50]" />{now.getFullYear() - 1}</span>
+            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#3a3b40]" />{now.getFullYear() - 1}</span>
           </div>
         </div>
         <div className="flex items-end gap-1 sm:gap-2 h-44">
@@ -692,7 +692,7 @@ export default async function DashboardPage() {
                       <span className="text-[9px] font-mono text-zinc-400 mb-0.5 hidden sm:block">{m.lastYear}</span>
                     )}
                     <div
-                      className="w-full bg-[#1f2330] rounded-t-sm"
+                      className="w-full bg-[#222326] rounded-t-sm"
                       style={{ height: `${(m.lastYear / maxVal) * 100}%`, minHeight: m.lastYear > 0 ? "4px" : "0" }}
                     />
                   </div>

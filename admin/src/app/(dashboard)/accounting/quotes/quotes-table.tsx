@@ -25,7 +25,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   DRAFT: {
     label: "Entwurf",
     className:
-      "bg-[#2a2f3d]/80 text-zinc-400 border border-zinc-500/30",
+      "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
   },
   SENT: {
     label: "Versendet",
