@@ -128,7 +128,7 @@ export function AppSidebar() {
     viewMode === "driver" ? "Fahrer" : viewMode === "accounting" ? "Buchhaltung" : "Admin";
 
   return (
-    <Sidebar className="border-r border-white/[0.10] bg-zinc-950 shadow-xl shadow-black/50">
+    <Sidebar className="border-r border-white/[0.10] bg-sidebar shadow-xl shadow-black/50">
       {/* Brand */}
       <SidebarHeader className="border-b border-white/[0.10] py-5">
         <Link href="/" className="flex justify-center w-full">

@@ -65,7 +65,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
   };
 
   return (
-    <header className="flex h-14 items-center gap-3 border-b border-white/[0.10] bg-zinc-950/80 backdrop-blur-sm px-4 shadow-md shadow-black/30">
+    <header className="flex h-14 items-center gap-3 border-b border-white/[0.10] bg-sidebar/80 backdrop-blur-sm px-4 shadow-md shadow-black/30">
       <SidebarTrigger className="text-zinc-400 hover:text-zinc-200 transition-colors" />
       <Separator
         orientation="vertical"
