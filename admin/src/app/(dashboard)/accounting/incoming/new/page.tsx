@@ -26,13 +26,13 @@ export default async function NewIncomingInvoicePage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Neue Eingangsrechnung
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             Eingangsrechnung erfassen
           </p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-6">
+      <div className="rounded-xl border border-white/[0.10] bg-card p-6">
         <IncomingForm companies={companies} />
       </div>
     </div>

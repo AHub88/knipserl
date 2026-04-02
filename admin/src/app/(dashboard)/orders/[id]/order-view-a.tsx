@@ -212,7 +212,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="flex items-center gap-3 mb-4">
           <Link
             href="/orders"
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
           >
             <IconArrowLeft className="size-4" />
           </Link>
@@ -246,7 +246,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
                   (order.confirmedByCustomerAt
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-white/[0.08] bg-white/[0.03] text-zinc-300 hover:bg-white/[0.06]")
+                    : "border-white/[0.08] bg-[#1a1d27] text-zinc-300 hover:bg-[#1f2330]")
                 }
               >
                 {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
@@ -256,7 +256,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             <a
               href={`/api/orders/${order.id}/pdf`}
               target="_blank"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 text-xs font-medium hover:bg-white/[0.06] transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-xs font-medium hover:bg-[#1f2330] transition-colors"
             >
               <IconFileDownload className="size-3.5" />
               <span className="hidden sm:inline">PDF</span>
@@ -264,7 +264,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             {isAdmin && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 text-xs font-medium hover:bg-white/[0.06] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-xs font-medium hover:bg-[#1f2330] transition-colors"
               >
                 <IconEdit className="size-3.5" />
                 <span className="hidden sm:inline">Bearbeiten</span>
@@ -277,7 +277,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="flex items-center gap-2 mb-2">
           <IconCalendar className="size-5 text-[#F6A11C] shrink-0" />
           <span className="text-lg sm:text-xl text-[#F6A11C] font-semibold">{formattedDate}</span>
-          <span className="inline-flex items-center rounded-md bg-white/[0.06] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
+          <span className="inline-flex items-center rounded-md bg-[#1f2330] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
             {order.eventType}
           </span>
         </div>
@@ -297,7 +297,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <IconMapPin className="size-4 shrink-0" />
           <span className="text-base">
             <span className="text-zinc-300 font-medium">{order.locationName}</span>
-            {ort && <span className="text-zinc-500"> &middot; {ort}</span>}
+            {ort && <span className="text-muted-foreground"> &middot; {ort}</span>}
             {order.distanceKm != null && (
               <span className="text-zinc-400"> &middot; {order.distanceKm} km</span>
             )}
@@ -321,9 +321,9 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Status */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Status</h3>
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</h3>
               {isAdmin && !editingStatus && (
                 <button onClick={() => setEditingStatus(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
                   <IconPencil className="size-4.5" />
@@ -394,9 +394,9 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
           {/* Extras */}
           {(activeExtras.length > 0 || editingExtras) && (
-            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
+            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Extras</h3>
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Extras</h3>
                 {isAdmin && !editingExtras && (
                   <button onClick={() => setEditingExtras(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
                     <IconPencil className="size-4.5" />
@@ -434,7 +434,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                             "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 min-w-[90px] cursor-pointer hover:opacity-80 transition-colors " +
                             (active
                               ? "border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C]"
-                              : "border-white/[0.10] bg-white/[0.04] text-zinc-400")
+                              : "border-white/[0.10] bg-card text-zinc-400")
                           }
                         >
                           <ext.icon className="size-8" />
@@ -464,8 +464,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {/* Auftraggeber + Location + Lieferung */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Auftraggeber */}
-            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Auftraggeber</h3>
+            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Auftraggeber</h3>
               <p className="text-base font-semibold text-zinc-100 mb-0.5">{kontakt}</p>
               {firma && (
                 <p className="text-sm text-zinc-400 mb-3">{firma}</p>
@@ -473,7 +473,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               <div className="space-y-2.5 border-t border-white/[0.10] pt-3">
                 {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
                   <div className="flex items-center gap-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-14 shrink-0">E-Mail</span>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">E-Mail</span>
                     <a href={`mailto:${order.customerEmail}`} className="text-sm text-zinc-300 hover:text-[#F6A11C] transition-colors truncate">
                       {order.customerEmail}
                     </a>
@@ -481,22 +481,22 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 )}
                 {order.customerPhone && (
                   <div className="flex items-center gap-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-14 shrink-0">Telefon</span>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
                     <a href={`tel:${order.customerPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-zinc-300 hover:text-[#F6A11C] transition-colors">
                       {order.customerPhone}
                     </a>
                   </div>
                 )}
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-14 shrink-0">Firma</span>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Firma</span>
                   <span className="text-sm text-zinc-300">{order.companyName.includes("GbR") ? "GbR" : "Einzelunternehmen"}</span>
                 </div>
               </div>
             </div>
 
             {/* Location */}
-            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Location</h3>
+            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Location</h3>
               <Link
                 href={order.locationId ? `/locations/${order.locationId}` : `/locations`}
                 className="text-base font-medium text-zinc-200 hover:text-[#F6A11C] transition-colors inline-flex items-center gap-1.5"
@@ -508,7 +508,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               {order.distanceKm != null && (
                 <div className="border-t border-white/[0.10] mt-3 pt-3">
                   <p className="text-sm">
-                    <span className="text-zinc-500">Entfernung: </span>
+                    <span className="text-muted-foreground">Entfernung: </span>
                     <span className="text-zinc-200 font-mono tabular-nums">{order.distanceKm} km</span>
                   </p>
                 </div>
@@ -525,8 +525,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
 
             {/* Lieferung */}
-            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Lieferung</h3>
+            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Lieferung</h3>
               {hasSchedule ? (
                 <div className="space-y-4">
                   {(order.setupDate || order.setupTime) && (
@@ -536,7 +536,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400">Aufbau</p>
                         <p className="text-base font-medium text-zinc-100">
                           {formatDateShort(order.setupDate)}
-                          {order.setupTime && <><span className="text-zinc-500 mx-2">|</span><span className="font-mono">{order.setupTime}</span></>}
+                          {order.setupTime && <><span className="text-muted-foreground mx-2">|</span><span className="font-mono">{order.setupTime}</span></>}
                         </p>
                       </div>
                     </div>
@@ -548,14 +548,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-red-400">Abbau</p>
                         <p className="text-base font-medium text-zinc-100">
                           {formatDateShort(order.teardownDate)}
-                          {order.teardownTime && <><span className="text-zinc-500 mx-2">|</span><span className="font-mono">{order.teardownTime}</span></>}
+                          {order.teardownTime && <><span className="text-muted-foreground mx-2">|</span><span className="font-mono">{order.teardownTime}</span></>}
                         </p>
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-zinc-500 italic">Noch nicht geplant</p>
+                <p className="text-sm text-muted-foreground italic">Noch nicht geplant</p>
               )}
             </div>
           </div>
@@ -564,11 +564,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="space-y-3">
             {/* Kundenkommentar */}
             {(order.notes || editingNotes || isAdmin) && (
-              <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-4">
+              <div className="rounded-xl border border-white/[0.10] bg-card p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <IconMessageCircle className="size-4 text-zinc-500" />
-                    <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Kundenkommentar</h3>
+                    <IconMessageCircle className="size-4 text-muted-foreground" />
+                    <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenkommentar</h3>
                   </div>
                   {isAdmin && !editingNotes && (
                     <button onClick={() => setEditingNotes(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
@@ -586,12 +586,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <textarea
                     value={notesState}
                     onChange={(e) => setNotesState(e.target.value)}
-                    className="w-full h-24 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 resize-none"
+                    className="w-full h-24 rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 resize-none"
                     placeholder="Kommentar..."
                     autoFocus
                   />
                 ) : (
-                  <p className="text-sm text-zinc-300 whitespace-pre-wrap">{order.notes || <span className="text-zinc-500 italic">Kein Kommentar</span>}</p>
+                  <p className="text-sm text-zinc-300 whitespace-pre-wrap">{order.notes || <span className="text-muted-foreground italic">Kein Kommentar</span>}</p>
                 )}
               </div>
             )}
@@ -625,7 +625,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     autoFocus
                   />
                 ) : (
-                  <p className="text-sm text-zinc-400 whitespace-pre-wrap">{order.internalNotes || <span className="text-zinc-500 italic">Kein interner Kommentar</span>}</p>
+                  <p className="text-sm text-zinc-400 whitespace-pre-wrap">{order.internalNotes || <span className="text-muted-foreground italic">Kein interner Kommentar</span>}</p>
                 )}
               </div>
             )}
@@ -635,14 +635,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Right: Sidebar ── */}
         <div className="w-full lg:w-80 shrink-0 space-y-4">
           {/* Drucklayouts - volle Breite */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Drucklayouts</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Drucklayouts</h3>
             <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
           </div>
 
           {/* Kundenpreis */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Preiskalkulation</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Preiskalkulation</h3>
             <div className="space-y-1">
               {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
               {order.travelCost != null && <PriceRow label="Fahrtkosten" value={order.travelCost} />}

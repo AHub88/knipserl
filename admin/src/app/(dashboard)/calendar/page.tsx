@@ -12,7 +12,7 @@ export default function CalendarPage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Kalender
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             Auftr&auml;ge und Fahrer-Urlaube im &Uuml;berblick
           </p>
         </div>

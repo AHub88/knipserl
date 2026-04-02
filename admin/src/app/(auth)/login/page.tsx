@@ -16,10 +16,10 @@ export default async function LoginPage({
       <div className="relative w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
           <img src="/logo.png" alt="Knipserl" className="h-14 w-auto mb-3" />
-          <p className="text-sm text-zinc-500">Admin Dashboard</p>
+          <p className="text-sm text-muted-foreground">Admin Dashboard</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.10] bg-white/[0.04] p-6 backdrop-blur-sm shadow-2xl shadow-black/40">
+        <div className="rounded-2xl border border-white/[0.10] bg-card p-6 backdrop-blur-sm shadow-2xl shadow-black/40">
           <form
             action={async (formData: FormData) => {
               "use server";
@@ -50,7 +50,7 @@ export default async function LoginPage({
                 autoFocus
                 autoComplete="email"
                 placeholder="name@knipserl.de"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-zinc-100 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/40 focus:ring-2 focus:ring-[#F6A11C]/20"
+                className="h-10 w-full rounded-xl border border-white/[0.08] bg-card px-3 text-sm text-zinc-100 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/40 focus:ring-2 focus:ring-[#F6A11C]/20"
               />
             </div>
             <div className="space-y-2">
@@ -63,7 +63,7 @@ export default async function LoginPage({
                 type="password"
                 required
                 autoComplete="current-password"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-zinc-100 outline-none focus:border-[#F6A11C]/40 focus:ring-2 focus:ring-[#F6A11C]/20"
+                className="h-10 w-full rounded-xl border border-white/[0.08] bg-card px-3 text-sm text-zinc-100 outline-none focus:border-[#F6A11C]/40 focus:ring-2 focus:ring-[#F6A11C]/20"
               />
             </div>
 
@@ -82,7 +82,7 @@ export default async function LoginPage({
           </form>
         </div>
 
-        <p className="mt-6 text-center text-[11px] text-zinc-500">
+        <p className="mt-6 text-center text-[11px] text-muted-foreground">
           Knipserl Fotobox Admin &middot; v1.0
         </p>
       </div>

@@ -37,7 +37,7 @@ export default async function QuotesPage() {
             <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
               Angebote
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted-foreground">
               {totalCount} Angebote insgesamt
             </p>
           </div>
@@ -53,32 +53,32 @@ export default async function QuotesPage() {
 
       {/* Quick stats */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Gesamt
           </p>
           <p className="text-2xl font-bold text-zinc-100 tabular-nums">
             {totalCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Entwurf
           </p>
           <p className="text-2xl font-bold text-zinc-400 tabular-nums">
             {draftCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Versendet
           </p>
           <p className="text-2xl font-bold text-blue-400 tabular-nums">
             {sentCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Angenommen
           </p>
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">
@@ -88,14 +88,14 @@ export default async function QuotesPage() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Alle Angebote
           </h2>
         </div>
         {quotes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Noch keine Angebote vorhanden</p>
           </div>

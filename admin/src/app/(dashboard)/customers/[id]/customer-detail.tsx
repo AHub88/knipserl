@@ -85,18 +85,18 @@ export function CustomerDetail({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
   const labelClass =
-    "block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1";
+    "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/customers" className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors">
+          <Link href="/customers" className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors">
             <IconArrowLeft className="size-4" />
           </Link>
           <div className="flex items-center gap-3">
@@ -105,7 +105,7 @@ export function CustomerDetail({
             </div>
             <div>
               <h1 className="text-xl font-bold text-zinc-100">{customer.name}</h1>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-muted-foreground">
                 {customer.company ? `${customer.company} · ` : ""}
                 {customer.customerType === "BUSINESS" ? "Geschäftskunde" : "Privatkunde"}
               </p>
@@ -115,7 +115,7 @@ export function CustomerDetail({
 
         {editing ? (
           <div className="flex items-center gap-2">
-            <button onClick={handleCancel} className="h-9 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors">
+            <button onClick={handleCancel} className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors">
               Abbrechen
             </button>
             <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors">
@@ -124,7 +124,7 @@ export function CustomerDetail({
             </button>
           </div>
         ) : (
-          <button onClick={() => setEditing(true)} className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 text-sm font-medium hover:bg-white/[0.06] transition-colors">
+          <button onClick={() => setEditing(true)} className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-sm font-medium hover:bg-[#1f2330] transition-colors">
             <IconEdit className="size-4" />
             Bearbeiten
           </button>
@@ -133,18 +133,18 @@ export function CustomerDetail({
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Aufträge</p>
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Aufträge</p>
           <p className="text-2xl font-bold text-[#F6A11C] tabular-nums">{orders.length}</p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Umsatz</p>
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Umsatz</p>
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">
             {totalRevenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })} &euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Bezahlt</p>
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Bezahlt</p>
           <p className="text-2xl font-bold text-zinc-200 tabular-nums">
             {paidCount}<span className="text-sm font-normal text-zinc-400">/{orders.length}</span>
           </p>
@@ -153,7 +153,7 @@ export function CustomerDetail({
 
       {/* Kundendaten */}
       {editing ? (
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 max-w-2xl">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4 max-w-2xl">
           <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -175,8 +175,8 @@ export function CustomerDetail({
             <div>
               <label className={labelClass}>Typ</label>
               <select className={selectClass} value={customerType} onChange={(e) => setCustomerType(e.target.value)}>
-                <option value="PRIVATE" className="bg-zinc-900">Privat</option>
-                <option value="BUSINESS" className="bg-zinc-900">Geschäftlich</option>
+                <option value="PRIVATE" className="bg-card">Privat</option>
+                <option value="BUSINESS" className="bg-card">Geschäftlich</option>
               </select>
             </div>
           </div>
@@ -186,19 +186,19 @@ export function CustomerDetail({
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-2">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-2">
           <h2 className="text-sm font-semibold text-zinc-300 mb-3">Kontaktdaten</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-center gap-3">
-              <IconMail className="size-4 text-zinc-500" />
+              <IconMail className="size-4 text-muted-foreground" />
               <span className="text-sm text-zinc-300">{customer.email || "–"}</span>
             </div>
             <div className="flex items-center gap-3">
-              <IconPhoneCall className="size-4 text-zinc-500" />
+              <IconPhoneCall className="size-4 text-muted-foreground" />
               <span className="text-sm text-zinc-300">{customer.phone || "–"}</span>
             </div>
             <div className="flex items-center gap-3">
-              <IconBuildingStore className="size-4 text-zinc-500" />
+              <IconBuildingStore className="size-4 text-muted-foreground" />
               <span className="text-sm text-zinc-300">{customer.company || "–"}</span>
             </div>
           </div>
@@ -212,7 +212,7 @@ export function CustomerDetail({
       )}
 
       {/* Orders */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.10] flex items-center justify-between">
           <h2 className="text-sm font-semibold text-zinc-300">Aufträge</h2>
           <Link href={`/orders/new`} className="text-xs text-[#F6A11C] hover:underline">
@@ -220,18 +220,18 @@ export function CustomerDetail({
           </Link>
         </div>
         {orders.length === 0 ? (
-          <div className="py-12 text-center text-sm text-zinc-500">Noch keine Aufträge</div>
+          <div className="py-12 text-center text-sm text-muted-foreground">Noch keine Aufträge</div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">#</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Datum</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Event</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Location</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Fahrer</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">Preis</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-center">Bezahlt</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">#</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Datum</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Event</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Location</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Fahrer</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">Preis</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">Bezahlt</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -239,7 +239,7 @@ export function CustomerDetail({
                 <TableRow
                   key={o.id}
                   onClick={() => router.push(`/orders/${o.id}`)}
-                  className="cursor-pointer border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors"
+                  className="cursor-pointer border-b border-white/[0.10] hover:bg-[#1a1d27] transition-colors"
                 >
                   <TableCell className="font-mono text-xs text-zinc-400">{o.orderNumber}</TableCell>
                   <TableCell className="text-zinc-400 text-sm tabular-nums">

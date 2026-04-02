@@ -68,7 +68,7 @@ export default async function OrdersPage() {
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
               Auftr&auml;ge
             </h1>
-            <p className="text-xs sm:text-sm text-zinc-500">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {orders.length} insgesamt
             </p>
           </div>
@@ -83,7 +83,7 @@ export default async function OrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] flex flex-col items-center justify-center py-16 text-zinc-500">
+        <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
           <IconFileText className="size-10 mb-3 text-zinc-400" />
           <p className="text-sm">Noch keine Auftr&auml;ge vorhanden</p>
         </div>

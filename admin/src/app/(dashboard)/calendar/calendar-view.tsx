@@ -162,13 +162,13 @@ export function CalendarView() {
         <div className="flex items-center gap-2">
           <button
             onClick={prevMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <IconChevronLeft className="size-4" />
           </button>
           <button
             onClick={nextMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <IconChevronRight className="size-4" />
           </button>
@@ -185,14 +185,14 @@ export function CalendarView() {
           )}
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-white/[0.08] bg-white/[0.04] p-0.5">
+        <div className="flex items-center gap-1 rounded-lg border border-white/[0.08] bg-card p-0.5">
           <button
             onClick={() => setView("month")}
             className={
               "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
               (view === "month"
                 ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                : "text-zinc-500 hover:text-zinc-300")
+                : "text-muted-foreground hover:text-zinc-300")
             }
           >
             <IconCalendarMonth className="size-3.5" />
@@ -204,7 +204,7 @@ export function CalendarView() {
               "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
               (view === "list"
                 ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                : "text-zinc-500 hover:text-zinc-300")
+                : "text-muted-foreground hover:text-zinc-300")
             }
           >
             <IconList className="size-3.5" />
@@ -214,7 +214,7 @@ export function CalendarView() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-500">
+      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <div className="size-2 rounded-full bg-amber-400" /> Offen
         </div>
@@ -231,13 +231,13 @@ export function CalendarView() {
 
       {/* Month View */}
       {view === "month" && (
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
           {/* Weekday headers */}
           <div className="grid grid-cols-7 border-b border-white/[0.10]">
             {WEEKDAYS.map((d) => (
               <div
                 key={d}
-                className="px-2 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-zinc-500"
+                className="px-2 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
               >
                 {d}
               </div>
@@ -249,7 +249,7 @@ export function CalendarView() {
             {Array.from({ length: offset }).map((_, i) => (
               <div
                 key={`e-${i}`}
-                className="min-h-[100px] border-b border-r border-white/[0.04] bg-white/[0.01]"
+                className="min-h-[100px] border-b border-r border-white/[0.10] bg-[#111420]"
               />
             ))}
             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
@@ -264,8 +264,8 @@ export function CalendarView() {
                 <div
                   key={day}
                   className={
-                    "min-h-[100px] border-b border-r border-white/[0.04] p-1.5 transition-colors " +
-                    (isWeekend ? "bg-white/[0.01] " : "") +
+                    "min-h-[100px] border-b border-r border-white/[0.10] p-1.5 transition-colors " +
+                    (isWeekend ? "bg-[#111420] " : "") +
                     (isToday ? "bg-[#F6A11C]/5 " : "")
                   }
                 >
@@ -274,7 +274,7 @@ export function CalendarView() {
                       "text-xs font-medium mb-1 " +
                       (isToday
                         ? "text-[#F6A11C] font-bold"
-                        : "text-zinc-500")
+                        : "text-muted-foreground")
                     }
                   >
                     {day}
@@ -333,7 +333,7 @@ export function CalendarView() {
                           <div
                             className={
                               "size-1.5 rounded-full shrink-0 " +
-                              (STATUS_DOT[o.status] ?? "bg-zinc-500")
+                              (STATUS_DOT[o.status] ?? "bg-[#3a3f50]")
                             }
                           />
                           {initials && (
@@ -367,7 +367,7 @@ export function CalendarView() {
       {view === "list" && (
         <div className="space-y-2">
           {!data || getOrdersByDay().length === 0 ? (
-            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] flex flex-col items-center justify-center py-16 text-zinc-500">
+            <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
               <IconCalendarMonth className="size-10 mb-3 text-zinc-400" />
               <p className="text-sm">Keine Einträge in diesem Monat</p>
             </div>
@@ -381,7 +381,7 @@ export function CalendarView() {
                     "rounded-xl border overflow-hidden " +
                     (isToday
                       ? "border-[#F6A11C]/30 bg-[#F6A11C]/5"
-                      : "border-white/[0.10] bg-white/[0.04]")
+                      : "border-white/[0.10] bg-card")
                   }
                 >
                   {/* Day header */}
@@ -394,7 +394,7 @@ export function CalendarView() {
                     >
                       {day}
                     </span>
-                    <span className="text-xs text-zinc-500 uppercase font-medium">
+                    <span className="text-xs text-muted-foreground uppercase font-medium">
                       {weekday}
                     </span>
                     <span className="text-xs text-zinc-400">
@@ -405,7 +405,7 @@ export function CalendarView() {
                         Heute
                       </span>
                     )}
-                    <span className="ml-auto text-xs text-zinc-500">
+                    <span className="ml-auto text-xs text-muted-foreground">
                       {orders.length} {orders.length === 1 ? "Auftrag" : "Aufträge"}
                     </span>
                   </div>
@@ -419,12 +419,12 @@ export function CalendarView() {
                         <button
                           key={o.id}
                           onClick={() => router.push(`/orders/${o.id}`)}
-                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-white/[0.03] transition-colors text-left"
+                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-[#1a1d27] transition-colors text-left"
                         >
                           <div
                             className={
                               "size-2.5 rounded-full shrink-0 " +
-                              (STATUS_DOT[o.status] ?? "bg-zinc-500")
+                              (STATUS_DOT[o.status] ?? "bg-[#3a3f50]")
                             }
                           />
                           <div className="flex-1 min-w-0">
@@ -432,11 +432,11 @@ export function CalendarView() {
                               <span className="text-sm font-medium text-zinc-200 truncate">
                                 {o.customerName}
                               </span>
-                              <span className="text-xs text-zinc-500">
+                              <span className="text-xs text-muted-foreground">
                                 {o.eventType}
                               </span>
                             </div>
-                            <div className="text-xs text-zinc-500 truncate">
+                            <div className="text-xs text-muted-foreground truncate">
                               {o.locationName}
                             </div>
                           </div>
@@ -489,7 +489,7 @@ export function CalendarView() {
                             Urlaub: {v.driver.name}
                           </span>
                           {v.note && (
-                            <span className="text-xs text-zinc-500 ml-2">
+                            <span className="text-xs text-muted-foreground ml-2">
                               ({v.note})
                             </span>
                           )}

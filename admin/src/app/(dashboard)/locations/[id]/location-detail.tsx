@@ -82,7 +82,7 @@ export function LocationDetailView({
       <div className="flex items-center gap-3">
         <Link
           href="/locations"
-          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
         >
           <IconArrowLeft className="size-4" />
         </Link>
@@ -94,7 +94,7 @@ export function LocationDetailView({
             <h1 className="text-xl font-bold text-zinc-100">
               {location.name}
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted-foreground">
               {[location.street, [location.zip, location.city].filter(Boolean).join(" ")]
                 .filter(Boolean)
                 .join(", ") || "Keine Adresse"}
@@ -105,16 +105,16 @@ export function LocationDetailView({
 
       {/* Info cards */}
       <div className="grid gap-4 sm:grid-cols-5">
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Entfernung
           </p>
           <p className="text-2xl font-bold text-zinc-200 tabular-nums">
             {location.distanceKm != null ? `${location.distanceKm} km` : "–"}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Fahrtkosten Kunde
           </p>
           <p className="text-2xl font-bold text-zinc-200 tabular-nums">
@@ -129,16 +129,16 @@ export function LocationDetailView({
             {location.driverCompensation != null ? `${location.driverCompensation.toFixed(2)} €` : "–"}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Aufträge
           </p>
           <p className="text-2xl font-bold text-[#F6A11C] tabular-nums">
             {orders.length}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Umsatz
           </p>
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">
@@ -172,43 +172,43 @@ export function LocationDetailView({
       </div>
 
       {/* Aufträge */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.10] flex items-center justify-between">
           <h2 className="text-sm font-semibold text-zinc-300">
             Aufträge an dieser Location
           </h2>
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-muted-foreground">
             {paidCount}/{orders.length} bezahlt
           </span>
         </div>
 
         {orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <p className="text-sm">Noch keine Aufträge</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   #
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Datum
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Kunde
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Event
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Fahrer
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
                   Preis
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-center">
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
                   Bezahlt
                 </TableHead>
               </TableRow>
@@ -218,7 +218,7 @@ export function LocationDetailView({
                 <TableRow
                   key={o.id}
                   onClick={() => router.push(`/orders/${o.id}`)}
-                  className="cursor-pointer border-b border-white/[0.04] transition-colors hover:bg-white/[0.03]"
+                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27]"
                 >
                   <TableCell className="font-mono text-xs text-zinc-400">
                     {o.orderNumber}

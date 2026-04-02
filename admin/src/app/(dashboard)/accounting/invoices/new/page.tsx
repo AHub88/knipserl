@@ -49,7 +49,7 @@ export default async function NewInvoicePage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Neue Rechnung
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             <Link
               href="/accounting/invoices"
               className="text-[#F6A11C] hover:underline"
@@ -62,7 +62,7 @@ export default async function NewInvoicePage() {
       </div>
 
       {/* Form card */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Rechnungsdetails

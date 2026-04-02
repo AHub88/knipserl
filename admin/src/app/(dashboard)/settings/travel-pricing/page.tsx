@@ -23,7 +23,7 @@ export default async function TravelPricingPage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Fahrtkosten-Staffelung
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             Preistabelle f&uuml;r Kundenfahrtkosten und Fahrerverg&uuml;tung
           </p>
         </div>

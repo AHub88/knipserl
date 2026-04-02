@@ -103,7 +103,7 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
   }
 
   const thClass =
-    "text-[11px] font-semibold uppercase tracking-wider text-zinc-500";
+    "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
 
   return (
     <Table>
@@ -125,7 +125,7 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
           return (
             <TableRow
               key={inv.id}
-              className="cursor-pointer border-b border-white/[0.04] transition-colors hover:bg-white/[0.03] group"
+              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27] group"
             >
               <TableCell className="font-medium text-zinc-200">
                 {inv.vendor}

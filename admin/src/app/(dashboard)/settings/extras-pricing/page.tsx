@@ -32,7 +32,7 @@ export default async function ExtrasPricingPage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Extras &amp; Preise
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             Preise f&uuml;r Fotobox und Extras verwalten
           </p>
         </div>

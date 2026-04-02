@@ -99,7 +99,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
       {images.length > 0 && (
         <div className={singleColumn ? "space-y-3" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"}>
           {images.map((img) => (
-            <div key={img} className="relative group rounded-lg overflow-hidden border border-white/[0.10] bg-white/[0.04]">
+            <div key={img} className="relative group rounded-lg overflow-hidden border border-white/[0.10] bg-card">
               <button
                 onClick={() => setModalImage(img)}
                 className="block w-full"
@@ -137,7 +137,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
             "flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed p-3 cursor-pointer transition-colors " +
             (dragging
               ? "border-[#F6A11C] bg-[#F6A11C]/10"
-              : "border-white/[0.08] bg-white/[0.04] hover:border-white/[0.15] hover:bg-white/[0.03]")
+              : "border-white/[0.08] bg-card hover:border-white/[0.15] hover:bg-[#1a1d27]")
           }
         >
           {uploading ? (
@@ -149,7 +149,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
               }
             />
           )}
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             {uploading
               ? "Hochladen..."
               : dragging

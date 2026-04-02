@@ -364,18 +364,18 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
       {/* Search bar + actions */}
       <div className="space-y-2">
         <div className="relative">
-          <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+          <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Suche..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-500 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
+            className="h-10 w-full rounded-xl border border-white/[0.08] bg-card pl-9 pr-3 text-sm text-zinc-200 placeholder:text-muted-foreground outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-300"
             >
               <IconX className="size-3.5" />
             </button>
@@ -402,7 +402,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
               (showFilters || activeFilterCount > 0
                 ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:text-zinc-200")
+                : "border-white/[0.08] bg-card text-zinc-400 hover:text-zinc-200")
             }
           >
             <IconFilter className="size-3.5" />
@@ -421,7 +421,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
               (groupByMonth
                 ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:text-zinc-200")
+                : "border-white/[0.08] bg-card text-zinc-400 hover:text-zinc-200")
             }
           >
             {groupByMonth ? (
@@ -436,7 +436,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
 
       {/* Filter dropdowns */}
       {showFilters && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.10] bg-card px-4 py-3">
           <FilterSelect
             label="Bestätigt"
             value={confirmedFilter}
@@ -461,7 +461,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             onChange={setPaidFilter}
             options={yesNoOptions}
           />
-          <span className="w-px h-5 bg-white/[0.08]" />
+          <span className="w-px h-5 bg-[#1f2330]" />
           <FilterSelect
             label="Zahlart"
             value={paymentFilter}
@@ -495,7 +495,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               { value: "GBR", label: "GbR" },
             ]}
           />
-          <span className="w-px h-5 bg-white/[0.08]" />
+          <span className="w-px h-5 bg-[#1f2330]" />
           <FilterSelect
             label="Jahr"
             value={yearFilter}
@@ -594,7 +594,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
           )}
           <button
             onClick={clearAllFilters}
-            className="text-xs text-zinc-500 hover:text-zinc-300 ml-1 transition-colors"
+            className="text-xs text-muted-foreground hover:text-zinc-300 ml-1 transition-colors"
           >
             Alle löschen
           </button>
@@ -602,7 +602,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
       )}
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         {/* Tabs */}
         <div className="flex items-center gap-0 px-6 border-b border-white/[0.10]">
           {tabs.map((tab) => (
@@ -615,7 +615,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                   ? tab.warn
                     ? "text-red-400"
                     : "text-[#F6A11C]"
-                  : "text-zinc-500 hover:text-zinc-300")
+                  : "text-muted-foreground hover:text-zinc-300")
               }
             >
               <span className="flex items-center gap-1.5">
@@ -630,7 +630,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                       ? tab.warn
                         ? "bg-red-500/15 text-red-400"
                         : "bg-[#F6A11C]/15 text-[#F6A11C]"
-                      : "bg-white/[0.04] text-zinc-500")
+                      : "bg-card text-muted-foreground")
                   }
                 >
                   {tab.count}
@@ -648,7 +648,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
           ))}
 
           {/* Result summary - right aligned */}
-          <div className="ml-auto flex items-center gap-4 text-xs text-zinc-500">
+          <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground">
             <span>
               {filtered.length} von {orders.length}
             </span>
@@ -663,7 +663,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
 
         {/* Table content */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <IconSearch className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Keine Aufträge gefunden</p>
             {(search || activeFilterCount > 0) && (
@@ -722,17 +722,17 @@ function FilterSelect({
         "bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] " +
         (value
           ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.08] bg-white/[0.03] text-zinc-400")
+          : "border-white/[0.08] bg-[#1a1d27] text-zinc-400")
       }
     >
-      <option value="" className="bg-zinc-900 text-zinc-300">
+      <option value="" className="bg-card text-zinc-300">
         {label}
       </option>
       {options.map((opt) => (
         <option
           key={opt.value}
           value={opt.value}
-          className="bg-zinc-900 text-zinc-300"
+          className="bg-card text-zinc-300"
         >
           {opt.label}
         </option>
@@ -763,16 +763,16 @@ function MonthGroup({
     <div className={"rounded-xl border overflow-hidden " + (hasNext ? "border-[#F6A11C]/20" : "border-white/[0.10]")}>
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+        className="w-full flex items-center justify-between px-6 py-4 bg-[#1a1d27] hover:bg-[#1a1d27] transition-colors"
       >
         <div className="flex items-center gap-3">
           {collapsed ? (
-            <IconChevronRight className="size-4 text-zinc-500" />
+            <IconChevronRight className="size-4 text-muted-foreground" />
           ) : (
-            <IconChevronDown className="size-4 text-zinc-500" />
+            <IconChevronDown className="size-4 text-muted-foreground" />
           )}
           <span className="text-base font-semibold text-zinc-100">{label}</span>
-          <span className="text-xs text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-md">
+          <span className="text-xs text-muted-foreground bg-card px-2 py-0.5 rounded-md">
             {orders.length} {orders.length === 1 ? "Auftrag" : "Aufträge"}
           </span>
         </div>
@@ -808,40 +808,40 @@ function OrderTable({
     <Table>
       <TableHeader>
         <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Datum
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden lg:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
             Firmenname
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Name
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden md:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">
             Event
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden lg:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
             Location
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden xl:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden xl:table-cell">
             Ort
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right hidden xl:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right hidden xl:table-cell">
             KM
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
             Preis
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden md:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">
             Zahlart
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden lg:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
             Firma
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 hidden sm:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden sm:table-cell">
             Fahrer
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-center">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
             <span className="flex items-center justify-center gap-1.5">
               <IconCircleCheck className="size-4" title="Bestätigt" />
               <IconPalette className="size-4" title="Design" />
@@ -867,10 +867,10 @@ function OrderTable({
               ref={isNext ? nextOrderRef : undefined}
               onClick={() => onRowClick(order.id)}
               className={
-                "cursor-pointer border-b transition-colors hover:bg-white/[0.03] group " +
+                "cursor-pointer border-b transition-colors hover:bg-[#1a1d27] group " +
                 (isNext
                   ? "border-[#F6A11C]/30 bg-[#F6A11C]/8 border-l-2 border-l-[#F6A11C]"
-                  : "border-white/[0.04]") +
+                  : "border-white/[0.10]") +
                 (isPast && !isNext ? " opacity-50" : "")
               }
             >
@@ -885,7 +885,7 @@ function OrderTable({
                 {firma ? (
                   <span className="block truncate" title={firma}>{firma}</span>
                 ) : (
-                  <span className="text-zinc-500">–</span>
+                  <span className="text-muted-foreground">–</span>
                 )}
               </TableCell>
               <TableCell className="font-medium text-zinc-200 max-w-[140px]">
@@ -901,12 +901,12 @@ function OrderTable({
                 {ort ? (
                   <span className="block truncate" title={ort}>{ort}</span>
                 ) : (
-                  <span className="text-zinc-500">–</span>
+                  <span className="text-muted-foreground">–</span>
                 )}
               </TableCell>
               <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums hidden xl:table-cell">
                 {order.distanceKm != null ? order.distanceKm : (
-                  <span className="text-zinc-500">–</span>
+                  <span className="text-muted-foreground">–</span>
                 )}
               </TableCell>
               <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
@@ -935,13 +935,13 @@ function OrderTable({
                   >
                     {order.driverInitials ?? order.driverName}
                     {order.secondDriverInitials && (
-                      <span className="text-zinc-500">
+                      <span className="text-muted-foreground">
                         /{order.secondDriverInitials}
                       </span>
                     )}
                   </span>
                 ) : (
-                  <span className="text-sm text-zinc-500 italic">–</span>
+                  <span className="text-sm text-muted-foreground italic">–</span>
                 )}
               </TableCell>
               <TableCell>

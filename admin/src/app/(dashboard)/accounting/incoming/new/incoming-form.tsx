@@ -76,7 +76,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
 
   const labelClass = "text-sm font-medium text-zinc-300";
   const inputClass =
-    "bg-white/[0.04] border-white/[0.08] text-zinc-200 placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20";
+    "bg-card border-white/[0.08] text-zinc-200 placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -182,7 +182,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
           className={`${inputClass} file:mr-3 file:rounded-md file:border-0 file:bg-[#F6A11C]/10 file:px-3 file:py-1 file:text-sm file:font-medium file:text-[#F6A11C] hover:file:bg-[#F6A11C]/20`}
         />
         {pdfFilename && (
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-muted-foreground">
             Ausgew&auml;hlt: {pdfFilename}
           </p>
         )}
@@ -200,7 +200,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-zinc-300"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-card px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1a1d27] hover:text-zinc-300"
         >
           Abbrechen
         </button>

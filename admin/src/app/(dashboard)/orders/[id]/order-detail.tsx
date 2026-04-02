@@ -133,7 +133,7 @@ function ExtraIcon({
         "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-w-[80px] transition-colors " +
         (active
           ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.10] bg-white/[0.04] text-zinc-400") +
+          : "border-white/[0.10] bg-card text-zinc-400") +
         (editable ? " cursor-pointer hover:opacity-80" : "")
       }
     >
@@ -193,9 +193,9 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-start gap-3 py-1.5">
-      {Icon && <Icon className="size-4 text-zinc-500 mt-0.5 shrink-0" />}
+      {Icon && <Icon className="size-4 text-muted-foreground mt-0.5 shrink-0" />}
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           {label}
         </p>
         <p className="text-sm text-zinc-200 break-words">{value || "–"}</p>
@@ -251,12 +251,12 @@ function LocationAutocomplete({
         placeholder="Location eingeben..."
       />
       {open && suggestions.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-zinc-900 shadow-xl max-h-56 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-56 overflow-y-auto">
           {suggestions.map((loc) => (
             <button
               key={loc.id}
               type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-white/[0.06] transition-colors border-b border-white/[0.04] last:border-0"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-[#1f2330] transition-colors border-b border-white/[0.10] last:border-0"
               onMouseDown={(e) => {
                 e.preventDefault();
                 onSelect(loc);
@@ -265,7 +265,7 @@ function LocationAutocomplete({
             >
               <span className="text-zinc-200 font-medium">{loc.name}</span>
               {loc.city && (
-                <span className="text-zinc-500 ml-2">
+                <span className="text-muted-foreground ml-2">
                   {loc.street ? `${loc.street}, ` : ""}
                   {loc.zip} {loc.city}
                   {loc.distanceKm != null && ` · ${loc.distanceKm} km`}
@@ -431,11 +431,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
   const labelClass =
-    "block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1";
+    "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   const driverLabel = (() => {
     const d1 = drivers.find((d) => d.id === driverId);
@@ -495,7 +495,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           <div className="flex items-center gap-3">
             <Link
               href="/orders"
-              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
             >
               <IconArrowLeft className="size-4" />
             </Link>
@@ -503,7 +503,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               <h1 className="text-xl font-bold text-zinc-100">
                 Auftrag #{order.orderNumber}
               </h1>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-muted-foreground">
                 {order.customerName} &middot; {order.eventType}
               </p>
             </div>
@@ -512,7 +512,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           {isAdmin && (
             <button
               onClick={() => setEditing(true)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 text-sm font-medium hover:bg-white/[0.06] transition-colors"
+              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-sm font-medium hover:bg-[#1f2330] transition-colors"
             >
               <IconEdit className="size-4" />
               Bearbeiten
@@ -529,7 +529,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Extras */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
           <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
           <div className="flex flex-wrap gap-2">
             {EXTRAS_CONFIG.map((ext) => (
@@ -547,7 +547,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Kunde & Event */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-1">
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-1">
             <h2 className="text-sm font-semibold text-zinc-300 mb-3">
               Kunde &amp; Event
             </h2>
@@ -559,7 +559,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           {/* Location */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-1">
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-1">
             <h2 className="text-sm font-semibold text-zinc-300 mb-3">
               Location
             </h2>
@@ -569,7 +569,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           {/* Zuordnung */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-1">
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-1">
             <h2 className="text-sm font-semibold text-zinc-300 mb-3">
               Zuordnung
             </h2>
@@ -582,7 +582,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         {/* Preiskalkulationen */}
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Kunde */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-2">
+          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-2">
             <h2 className="text-sm font-semibold text-zinc-300 mb-2">
               Preiskalkulation Kunde
             </h2>
@@ -649,7 +649,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         {(order.notes || order.internalNotes) && (
           <div className="grid gap-6 lg:grid-cols-2">
             {order.notes && (
-              <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
+              <div className="rounded-xl border border-white/[0.10] bg-card p-5">
                 <h2 className="text-sm font-semibold text-zinc-300 mb-2">
                   Kundenkommentar
                 </h2>
@@ -672,7 +672,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         )}
 
         {/* Drucklayouts */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
           <h2 className="text-sm font-semibold text-zinc-300">Drucklayouts</h2>
           <ImageGallery
             orderId={order.id}
@@ -692,7 +692,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <div className="flex items-center gap-3">
           <button
             onClick={handleCancel}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <IconX className="size-4" />
           </button>
@@ -703,7 +703,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
                 Bearbeiten
               </span>
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted-foreground">
               {order.customerName} &middot; {order.eventType}
             </p>
           </div>
@@ -712,7 +712,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <div className="flex items-center gap-2">
           <button
             onClick={handleCancel}
-            className="h-9 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
+            className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
           >
             Abbrechen
           </button>
@@ -736,7 +736,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
+      <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
         <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
@@ -755,7 +755,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Kundendaten */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -774,7 +774,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               <label className={labelClass}>Firma</label>
               <select className={selectClass} value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
                 {companies.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-zinc-900">{c.name}</option>
+                  <option key={c.id} value={c.id} className="bg-card">{c.name}</option>
                 ))}
               </select>
             </div>
@@ -782,7 +782,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Event-Details */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Event-Details</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -828,7 +828,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Preiskalkulation Kunde */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation Kunde</h2>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
@@ -850,8 +850,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             <div>
               <label className={labelClass}>Rabatt-Typ</label>
               <select className={selectClass} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
-                <option value="AMOUNT" className="bg-zinc-900">Betrag (&euro;)</option>
-                <option value="PERCENT" className="bg-zinc-900">Prozent (%)</option>
+                <option value="AMOUNT" className="bg-card">Betrag (&euro;)</option>
+                <option value="PERCENT" className="bg-card">Prozent (%)</option>
               </select>
             </div>
             <div>
@@ -877,32 +877,32 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Zuordnung & Zahlart */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Zuordnung &amp; Zahlung</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Fahrer</label>
               <select className={selectClass} value={driverId} onChange={(e) => setDriverId(e.target.value)}>
-                <option value="" className="bg-zinc-900">– Kein Fahrer –</option>
+                <option value="" className="bg-card">– Kein Fahrer –</option>
                 {drivers.map((d) => (
-                  <option key={d.id} value={d.id} className="bg-zinc-900">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
+                  <option key={d.id} value={d.id} className="bg-card">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
                 ))}
               </select>
             </div>
             <div>
               <label className={labelClass}>2. Fahrer</label>
               <select className={selectClass} value={secondDriverId} onChange={(e) => setSecondDriverId(e.target.value)}>
-                <option value="" className="bg-zinc-900">– Kein 2. Fahrer –</option>
+                <option value="" className="bg-card">– Kein 2. Fahrer –</option>
                 {drivers.map((d) => (
-                  <option key={d.id} value={d.id} className="bg-zinc-900">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
+                  <option key={d.id} value={d.id} className="bg-card">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
                 ))}
               </select>
             </div>
             <div>
               <label className={labelClass}>Zahlart</label>
               <select className={selectClass} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-                <option value="CASH" className="bg-zinc-900">Bar</option>
-                <option value="INVOICE" className="bg-zinc-900">Rechnung</option>
+                <option value="CASH" className="bg-card">Bar</option>
+                <option value="INVOICE" className="bg-card">Rechnung</option>
               </select>
             </div>
             <div>
@@ -915,7 +915,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Notizen */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 lg:col-span-2">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4 lg:col-span-2">
           <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -940,7 +940,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Drucklayouts */}
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3 lg:col-span-2">
+        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3 lg:col-span-2">
           <h2 className="text-sm font-semibold text-zinc-300">Drucklayouts</h2>
           <ImageGallery
             orderId={order.id}

@@ -61,7 +61,7 @@ export function ExtrasPricingEditor({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="space-y-4 max-w-lg">
@@ -83,7 +83,7 @@ export function ExtrasPricingEditor({
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         {/* Fotobox */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.10]">
           <span className="text-sm font-semibold text-[#F6A11C]">Fotobox (Grundpreis)</span>
@@ -95,7 +95,7 @@ export function ExtrasPricingEditor({
               value={boxPrice}
               onChange={(e) => setBoxPrice(e.target.value)}
             />
-            <span className="text-xs text-zinc-500">&euro;</span>
+            <span className="text-xs text-muted-foreground">&euro;</span>
           </div>
         </div>
 
@@ -103,7 +103,7 @@ export function ExtrasPricingEditor({
         {initialExtras.map((e) => (
           <div
             key={e.key}
-            className="flex items-center justify-between px-5 py-3 border-b border-white/[0.04] last:border-0"
+            className="flex items-center justify-between px-5 py-3 border-b border-white/[0.10] last:border-0"
           >
             <span className="text-sm text-zinc-300">
               {EXTRAS_LABELS[e.key] ?? e.key}
@@ -116,7 +116,7 @@ export function ExtrasPricingEditor({
                 value={prices[e.key] ?? "0"}
                 onChange={(ev) => updatePrice(e.key, ev.target.value)}
               />
-              <span className="text-xs text-zinc-500">&euro;</span>
+              <span className="text-xs text-muted-foreground">&euro;</span>
             </div>
           </div>
         ))}

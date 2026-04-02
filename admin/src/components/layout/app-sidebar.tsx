@@ -95,7 +95,7 @@ function NavGroup({
                     "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 " +
                     (active
                       ? "bg-[#F6A11C]/10 text-[#F6A11C] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-[3px] before:rounded-full before:bg-[#F6A11C]"
-                      : "text-zinc-300 hover:bg-white/[0.06] hover:text-zinc-100")
+                      : "text-zinc-300 hover:bg-[#1f2330] hover:text-zinc-100")
                   }
                 >
                   <item.icon
@@ -171,10 +171,10 @@ export function AppSidebar() {
       {/* Footer */}
       <SidebarFooter className="border-t border-white/[0.10] px-5 py-4">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] text-zinc-500">
+          <span className="text-[11px] text-muted-foreground">
             Knipserl Dashboard
           </span>
-          <span className="text-[10px] font-mono text-zinc-500">v1.0</span>
+          <span className="text-[10px] font-mono text-muted-foreground">v1.0</span>
         </div>
       </SidebarFooter>
     </Sidebar>

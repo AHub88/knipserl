@@ -32,7 +32,7 @@ export default async function SettingsPage() {
         {/* Link zu Fahrtkosten */}
         <Link
           href="/settings/travel-pricing"
-          className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 hover:bg-white/[0.04] transition-colors group"
+          className="rounded-xl border border-white/[0.10] bg-card p-5 hover:bg-card transition-colors group"
         >
           <div className="flex items-center gap-3 mb-2">
             <IconCar className="size-5 text-[#F6A11C]" />
@@ -40,7 +40,7 @@ export default async function SettingsPage() {
               Fahrtkosten-Staffelung
             </h2>
           </div>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-muted-foreground">
             Preistabelle f&uuml;r Kundenfahrtkosten und Fahrerverg&uuml;tung verwalten
           </p>
         </Link>
@@ -48,7 +48,7 @@ export default async function SettingsPage() {
         {/* Link zu Extras-Preise */}
         <Link
           href="/settings/extras-pricing"
-          className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 hover:bg-white/[0.04] transition-colors group"
+          className="rounded-xl border border-white/[0.10] bg-card p-5 hover:bg-card transition-colors group"
         >
           <div className="flex items-center gap-3 mb-2">
             <IconCurrencyEuro className="size-5 text-[#F6A11C]" />
@@ -56,7 +56,7 @@ export default async function SettingsPage() {
               Extras &amp; Preise
             </h2>
           </div>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-muted-foreground">
             Preise f&uuml;r Fotobox und Extras bearbeiten
           </p>
         </Link>

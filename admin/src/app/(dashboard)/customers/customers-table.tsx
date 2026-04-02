@@ -37,22 +37,22 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
   return (
     <div className="space-y-4">
       <div className="relative">
-        <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+        <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <input
           type="text"
           placeholder="Suche nach Name, E-Mail, Firma, Telefon..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
+          className="h-10 w-full rounded-xl border border-white/[0.08] bg-card pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
         />
         {search && (
-          <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300">
+          <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-300">
             <IconX className="size-3.5" />
           </button>
         )}
       </div>
 
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             {filtered.length} von {customers.length} Kunden
@@ -60,7 +60,7 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <IconSearch className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Keine Kunden gefunden</p>
           </div>
@@ -68,13 +68,13 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
           <Table>
             <TableHeader>
               <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Name</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Firma</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">E-Mail</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Telefon</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Typ</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">Aufträge</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Letzter Auftrag</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Name</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Firma</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">E-Mail</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Telefon</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Typ</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">Aufträge</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Letzter Auftrag</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -82,12 +82,12 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
                 <TableRow
                   key={c.id}
                   onClick={() => router.push(`/customers/${c.id}`)}
-                  className="cursor-pointer border-b border-white/[0.04] transition-colors hover:bg-white/[0.03]"
+                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1a1d27]"
                 >
                   <TableCell className="font-medium text-zinc-200">{c.name}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{c.company || <span className="text-zinc-500">–</span>}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{c.email || <span className="text-zinc-500">–</span>}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{c.phone || <span className="text-zinc-500">–</span>}</TableCell>
+                  <TableCell className="text-zinc-400 text-sm">{c.company || <span className="text-muted-foreground">–</span>}</TableCell>
+                  <TableCell className="text-zinc-400 text-sm">{c.email || <span className="text-muted-foreground">–</span>}</TableCell>
+                  <TableCell className="text-zinc-400 text-sm">{c.phone || <span className="text-muted-foreground">–</span>}</TableCell>
                   <TableCell>
                     <span className={
                       "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold " +
@@ -102,7 +102,7 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
                   <TableCell className="text-zinc-400 text-sm tabular-nums">
                     {c.lastOrderDate
                       ? new Date(c.lastOrderDate).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
-                      : <span className="text-zinc-500">–</span>}
+                      : <span className="text-muted-foreground">–</span>}
                   </TableCell>
                 </TableRow>
               ))}

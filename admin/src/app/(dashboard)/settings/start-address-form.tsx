@@ -86,12 +86,12 @@ export function StartAddressForm({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1a1d27] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
   const labelClass =
-    "block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1";
+    "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
+    <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <IconMapPin className="size-5 text-[#F6A11C]" />
@@ -107,7 +107,7 @@ export function StartAddressForm({
         </button>
       </div>
 
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-muted-foreground">
         Ausgangspunkt f&uuml;r die Entfernungsberechnung zu Locations.
       </p>
 
@@ -123,12 +123,12 @@ export function StartAddressForm({
             placeholder="Adresse eingeben..."
           />
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-zinc-900 shadow-xl max-h-48 overflow-y-auto">
+            <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-48 overflow-y-auto">
               {suggestions.map((s, i) => (
                 <button
                   key={i}
                   type="button"
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-white/[0.06] transition-colors border-b border-white/[0.04] last:border-0"
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-[#1f2330] transition-colors border-b border-white/[0.10] last:border-0"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     selectSuggestion(s);
@@ -144,11 +144,11 @@ export function StartAddressForm({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={labelClass}>Breitengrad</label>
-            <input className={inputClass + " text-zinc-500"} value={lat} readOnly />
+            <input className={inputClass + " text-muted-foreground"} value={lat} readOnly />
           </div>
           <div>
             <label className={labelClass}>Längengrad</label>
-            <input className={inputClass + " text-zinc-500"} value={lng} readOnly />
+            <input className={inputClass + " text-muted-foreground"} value={lng} readOnly />
           </div>
         </div>
       </div>

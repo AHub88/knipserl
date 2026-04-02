@@ -39,7 +39,7 @@ export default async function LocationsPage() {
             <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
               Locations
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted-foreground">
               {locations.length} Locations gesamt
             </p>
           </div>

@@ -25,7 +25,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   DRAFT: {
     label: "Entwurf",
     className:
-      "bg-zinc-500/15 text-zinc-400 border border-zinc-500/30",
+      "bg-[#2a2f3d]/80 text-zinc-400 border border-zinc-500/30",
   },
   SENT: {
     label: "Versendet",
@@ -82,22 +82,22 @@ export function QuotesTable({ quotes }: { quotes: QuoteRow[] }) {
     <Table>
       <TableHeader>
         <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Nummer
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Kunde
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Firma
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
             Betrag
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Status
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Datum
           </TableHead>
         </TableRow>
@@ -110,7 +110,7 @@ export function QuotesTable({ quotes }: { quotes: QuoteRow[] }) {
             <TableRow
               key={quote.id}
               onClick={() => alert(`Quote ID: ${quote.id}`)}
-              className="cursor-pointer border-b border-white/[0.04] transition-colors hover:bg-[#F6A11C]/[0.04] group"
+              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#F6A11C]/[0.04] group"
             >
               <TableCell className="font-mono text-xs text-zinc-400">
                 {quote.quoteNumber}

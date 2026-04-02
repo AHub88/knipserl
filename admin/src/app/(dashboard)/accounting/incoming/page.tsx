@@ -54,7 +54,7 @@ export default async function IncomingInvoicesPage() {
             <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
               Eingangsrechnungen
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted-foreground">
               {invoices.length} Rechnungen insgesamt
             </p>
           </div>
@@ -69,32 +69,32 @@ export default async function IncomingInvoicesPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Gesamt
           </p>
           <p className="text-2xl font-bold text-zinc-100 tabular-nums">
             {fmt(totalAmount)}&nbsp;&euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Ausstehend
           </p>
           <p className="text-2xl font-bold text-amber-400 tabular-nums">
             {fmt(pendingAmount)}&nbsp;&euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Bezahlt
           </p>
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">
             {fmt(paidAmount)}&nbsp;&euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             &Uuml;berf&auml;llig
           </p>
           <p className="text-2xl font-bold text-red-400 tabular-nums">
@@ -104,14 +104,14 @@ export default async function IncomingInvoicesPage() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Alle Eingangsrechnungen
           </h2>
         </div>
         {invoices.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Noch keine Eingangsrechnungen vorhanden</p>
           </div>

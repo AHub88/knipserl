@@ -114,22 +114,22 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
       {/* Order selection */}
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Auftrag
           </Label>
           <select
             value={selectedOrderId}
             onChange={(e) => setSelectedOrderId(e.target.value)}
-            className="flex h-9 w-full rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 py-1 text-sm text-zinc-200 transition-colors focus:border-[#F6A11C]/50 focus:outline-none focus:ring-2 focus:ring-[#F6A11C]/20"
+            className="flex h-9 w-full rounded-lg border border-white/[0.10] bg-card px-3 py-1 text-sm text-zinc-200 transition-colors focus:border-[#F6A11C]/50 focus:outline-none focus:ring-2 focus:ring-[#F6A11C]/20"
           >
-            <option value="" className="bg-zinc-900 text-zinc-400">
+            <option value="" className="bg-card text-zinc-400">
               Auftrag auswählen...
             </option>
             {orders.map((order) => (
               <option
                 key={order.id}
                 value={order.id}
-                className="bg-zinc-900 text-zinc-200"
+                className="bg-card text-zinc-200"
               >
                 #{order.orderNumber} - {order.customerName} ({order.eventType},{" "}
                 {new Date(order.eventDate).toLocaleDateString("de-DE")})
@@ -139,10 +139,10 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Firma
           </Label>
-          <div className="flex h-9 w-full items-center rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 text-sm text-zinc-400">
+          <div className="flex h-9 w-full items-center rounded-lg border border-white/[0.10] bg-card px-3 text-sm text-zinc-400">
             {selectedOrder ? (
               <span className="text-zinc-200">{selectedOrder.companyName}</span>
             ) : (
@@ -154,27 +154,27 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
 
       {/* Valid until */}
       <div className="max-w-xs space-y-2">
-        <Label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Gültig bis
         </Label>
         <Input
           type="date"
           value={validUntil}
           onChange={(e) => setValidUntil(e.target.value)}
-          className="border-white/[0.10] bg-white/[0.04] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20 [color-scheme:dark]"
+          className="border-white/[0.10] bg-card text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20 [color-scheme:dark]"
         />
       </div>
 
       {/* Line items */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Positionen
           </Label>
           <button
             type="button"
             onClick={addItem}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-zinc-100"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.10] bg-card px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#1a1d27] hover:text-zinc-100"
           >
             <IconPlus className="size-3.5" />
             Position hinzufügen
@@ -183,14 +183,14 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
 
         <div className="rounded-lg border border-white/[0.10] overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_100px_140px_40px] gap-3 px-4 py-2.5 border-b border-white/[0.10] bg-white/[0.04]">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <div className="grid grid-cols-[1fr_100px_140px_40px] gap-3 px-4 py-2.5 border-b border-white/[0.10] bg-card">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Beschreibung
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Menge
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Einzelpreis
             </span>
             <span />
@@ -200,13 +200,13 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-[1fr_100px_140px_40px] gap-3 px-4 py-2.5 border-b border-white/[0.04] last:border-b-0 items-center"
+              className="grid grid-cols-[1fr_100px_140px_40px] gap-3 px-4 py-2.5 border-b border-white/[0.10] last:border-b-0 items-center"
             >
               <Input
                 placeholder="Beschreibung der Leistung"
                 value={item.description}
                 onChange={(e) => updateItem(index, "description", e.target.value)}
-                className="border-white/[0.10] bg-white/[0.04] text-zinc-200 text-sm placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+                className="border-white/[0.10] bg-card text-zinc-200 text-sm placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
               />
               <Input
                 type="number"
@@ -216,7 +216,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
                 onChange={(e) =>
                   updateItem(index, "quantity", parseInt(e.target.value) || 0)
                 }
-                className="border-white/[0.10] bg-white/[0.04] text-zinc-200 text-sm tabular-nums focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+                className="border-white/[0.10] bg-card text-zinc-200 text-sm tabular-nums focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
               />
               <Input
                 type="number"
@@ -227,13 +227,13 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
                   updateItem(index, "unitPrice", parseFloat(e.target.value) || 0)
                 }
                 placeholder="0,00"
-                className="border-white/[0.10] bg-white/[0.04] text-zinc-200 text-sm tabular-nums placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+                className="border-white/[0.10] bg-card text-zinc-200 text-sm tabular-nums placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
               />
               <button
                 type="button"
                 onClick={() => removeItem(index)}
                 disabled={items.length <= 1}
-                className="flex items-center justify-center size-8 rounded-md text-zinc-500 transition-colors hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30 disabled:pointer-events-none"
+                className="flex items-center justify-center size-8 rounded-md text-muted-foreground transition-colors hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30 disabled:pointer-events-none"
               >
                 <IconTrash className="size-4" />
               </button>
@@ -255,7 +255,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
         <button
           type="button"
           onClick={() => router.push("/accounting/quotes")}
-          className="rounded-lg border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-zinc-200"
+          className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1a1d27] hover:text-zinc-200"
         >
           Abbrechen
         </button>

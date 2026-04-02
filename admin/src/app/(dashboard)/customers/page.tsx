@@ -36,7 +36,7 @@ export default async function CustomersPage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Kunden
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             {customers.length} Kunden gesamt
           </p>
         </div>

@@ -61,7 +61,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
   const role = session?.user?.role ?? "";
   const roleConfig = roleLabels[role] ?? {
     label: role,
-    className: "bg-zinc-500/15 text-zinc-400 border border-zinc-500/30",
+    className: "bg-[#2a2f3d]/80 text-zinc-400 border border-zinc-500/30",
   };
 
   return (
@@ -69,14 +69,14 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
       <SidebarTrigger className="text-zinc-400 hover:text-zinc-200 transition-colors" />
       <Separator
         orientation="vertical"
-        className="h-5 bg-white/[0.08]"
+        className="h-5 bg-[#1f2330]"
       />
 
       <div className="flex-1" />
 
       {/* View mode toggle - only for admins */}
       {isAdmin && (
-        <div className="hidden sm:flex items-center gap-1 rounded-lg border border-white/[0.12] bg-white/[0.04] p-0.5 shadow-sm shadow-black/20">
+        <div className="hidden sm:flex items-center gap-1 rounded-lg border border-white/[0.12] bg-card p-0.5 shadow-sm shadow-black/20">
           <IconEye className="size-3.5 text-zinc-400 ml-1.5 mr-0.5" />
           {viewModeConfig.map((mode) => (
             <button
@@ -85,7 +85,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
               className={
                 "h-6 px-2.5 rounded-md text-[11px] font-semibold transition-colors " +
                 (viewMode === mode.key
-                  ? `bg-white/[0.10] ${mode.className}`
+                  ? `bg-[#242838] ${mode.className}`
                   : "text-zinc-400 hover:text-zinc-200")
               }
             >
@@ -102,9 +102,9 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
           onChange={(e) => setImpersonateDriverId(e.target.value || null)}
           className="h-7 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 px-2 pr-6 text-[11px] font-semibold outline-none cursor-pointer appearance-none bg-[length:10px] bg-[right_4px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2334d399%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
         >
-          <option value="" className="bg-zinc-900 text-zinc-300">Alle Fahrer</option>
+          <option value="" className="bg-card text-zinc-300">Alle Fahrer</option>
           {drivers.map((d) => (
-            <option key={d.id} value={d.id} className="bg-zinc-900 text-zinc-300">
+            <option key={d.id} value={d.id} className="bg-card text-zinc-300">
               {d.name} {d.initials ? `(${d.initials})` : ""}
             </option>
           ))}
@@ -116,7 +116,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
           <DropdownMenuTrigger
             className={
               buttonVariants({ variant: "ghost" }) +
-              " gap-2.5 h-9 px-2.5 rounded-lg hover:bg-white/[0.05] transition-colors"
+              " gap-2.5 h-9 px-2.5 rounded-lg hover:bg-[#1a1d27] transition-colors"
             }
           >
             <Avatar className="size-7 ring-1 ring-white/[0.1]">
@@ -137,12 +137,12 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
                 {roleConfig.label}
               </span>
             </div>
-            <IconChevronDown className="size-3.5 text-zinc-500 hidden sm:block" />
+            <IconChevronDown className="size-3.5 text-muted-foreground hidden sm:block" />
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
             align="end"
-            className="w-52 rounded-xl border border-white/[0.12] bg-zinc-900 p-1 shadow-2xl shadow-black/60"
+            className="w-52 rounded-xl border border-white/[0.12] bg-card p-1 shadow-2xl shadow-black/60"
           >
             <DropdownMenuLabel className="px-3 py-2.5">
               <div className="flex flex-col gap-1">
@@ -159,12 +159,12 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
                 </span>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/[0.06]" />
+            <DropdownMenuSeparator className="bg-[#1f2330]" />
             <DropdownMenuItem className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:text-zinc-100 cursor-pointer">
-              <IconUser className="size-4 text-zinc-500" />
+              <IconUser className="size-4 text-muted-foreground" />
               Profil
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/[0.06]" />
+            <DropdownMenuSeparator className="bg-[#1f2330]" />
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:text-red-300 cursor-pointer"

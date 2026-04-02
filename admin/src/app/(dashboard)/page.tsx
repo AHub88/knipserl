@@ -330,22 +330,22 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
           Dashboard
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-sm text-muted-foreground">
           Willkommen zur&uuml;ck, {session?.user?.name}
         </p>
       </div>
 
       {/* YTD Comparison - last 4 years */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+      <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
           Standpunkt heute ({ytdDateLabel})
         </h3>
-        <p className="text-xs text-zinc-500 mb-5">
+        <p className="text-xs text-muted-foreground mb-5">
           Wie standen wir jeweils am {ytdDateLabel}?
         </p>
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Umsatz bis {ytdDateLabel}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Umsatz bis {ytdDateLabel}</p>
             <div className="space-y-2">
               {(() => {
                 const maxRev = Math.max(...ytdYears.map((y) => y.revenue), 1);
@@ -355,13 +355,13 @@ export default async function DashboardPage() {
                   const change = prev && prev.revenue > 0 ? Math.round(((y.revenue - prev.revenue) / prev.revenue) * 100) : null;
                   return (
                     <div key={y.year} className="flex items-center gap-3">
-                      <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-500")}>{y.year}</span>
-                      <div className="flex-1 h-8 bg-white/[0.03] rounded-md overflow-hidden">
-                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-zinc-700/50")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
+                      <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>{y.year}</span>
+                      <div className="flex-1 h-8 bg-[#1a1d27] rounded-md overflow-hidden">
+                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#1f2330]")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
                           <span className={"text-[11px] font-mono font-bold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300")}>{y.revenue.toLocaleString("de-DE", { minimumFractionDigits: 0 })}&nbsp;&euro;</span>
                         </div>
                       </div>
-                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-zinc-500" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
+                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-muted-foreground" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
                     </div>
                   );
                 });
@@ -369,7 +369,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Aufträge bis {ytdDateLabel}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Aufträge bis {ytdDateLabel}</p>
             <div className="space-y-2">
               {(() => {
                 const maxCount = Math.max(...ytdYears.map((y) => y.count), 1);
@@ -379,13 +379,13 @@ export default async function DashboardPage() {
                   const change = prev && prev.count > 0 ? Math.round(((y.count - prev.count) / prev.count) * 100) : null;
                   return (
                     <div key={y.year} className="flex items-center gap-3">
-                      <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-500")}>{y.year}</span>
-                      <div className="flex-1 h-8 bg-white/[0.03] rounded-md overflow-hidden">
-                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-zinc-700/50")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
+                      <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>{y.year}</span>
+                      <div className="flex-1 h-8 bg-[#1a1d27] rounded-md overflow-hidden">
+                        <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#1f2330]")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
                           <span className={"text-[11px] font-mono font-bold tabular-nums " + (isCurrentYear ? "text-blue-400" : "text-zinc-300")}>{y.count}</span>
                         </div>
                       </div>
-                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-zinc-500" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
+                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-muted-foreground" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
                     </div>
                   );
                 });
@@ -402,7 +402,7 @@ export default async function DashboardPage() {
           return (
             <Card
               key={kpi.label}
-              className="border-white/10 bg-white/[0.04] backdrop-blur"
+              className="border-white/10 bg-card backdrop-blur"
             >
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
@@ -416,7 +416,7 @@ export default async function DashboardPage() {
                       <p className="text-3xl font-bold tracking-tight text-zinc-100 tabular-nums">
                         {kpi.value}
                       </p>
-                      <p className="mt-0.5 text-sm text-zinc-500">
+                      <p className="mt-0.5 text-sm text-muted-foreground">
                         {kpi.label}
                       </p>
                     </div>
@@ -433,8 +433,8 @@ export default async function DashboardPage() {
       {yearlyData.length > 0 && (
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Umsatz Chart */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Umsatz pro Jahr</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Umsatz pro Jahr</h3>
             <div className="space-y-2.5">
               {(() => {
                 const maxRev = Math.max(...yearlyData.map((d) => d.revenue), 1);
@@ -447,9 +447,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-white/[0.03] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-zinc-700/50")}
+                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#1f2330]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300")}>
@@ -470,8 +470,8 @@ export default async function DashboardPage() {
           </div>
 
           {/* Aufträge Chart */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Aufträge pro Jahr</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Aufträge pro Jahr</h3>
             <div className="space-y-2.5">
               {(() => {
                 const maxCount = Math.max(...yearlyData.map((d) => d.count), 1);
@@ -484,9 +484,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-white/[0.03] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-blue-500/30" : "bg-zinc-700/50")}
+                          className={"h-full rounded-md flex items-center px-2 transition-all " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#1f2330]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-blue-400" : "text-zinc-300")}>
@@ -512,8 +512,8 @@ export default async function DashboardPage() {
       {yearlyData.length > 0 && (
         <div className="grid gap-6 lg:grid-cols-2">
           {/* BAR vs Rechnung */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Bar vs. Rechnung</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Bar vs. Rechnung</h3>
             <div className="flex items-center gap-4 mb-4 text-[10px]">
               <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-emerald-400" />Bar</span>
               <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-blue-400" />Rechnung</span>
@@ -525,7 +525,7 @@ export default async function DashboardPage() {
                 return (
                   <div key={y.year} className="flex items-center gap-3">
                     <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                    <div className="flex-1 h-7 bg-white/[0.03] rounded-md overflow-hidden flex">
+                    <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden flex">
                       {y.cashCount > 0 && (
                         <div
                           className="h-full bg-emerald-500/30 flex items-center justify-center"
@@ -553,8 +553,8 @@ export default async function DashboardPage() {
           </div>
 
           {/* Durchschnittl. Umsatz pro Auftrag */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">&Oslash; Umsatz pro Auftrag</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">&Oslash; Umsatz pro Auftrag</h3>
             <div className="space-y-2.5">
               {(() => {
                 const maxAvg = Math.max(...yearlyData.map((d) => d.avgRevenue), 1);
@@ -567,9 +567,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-white/[0.03] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-purple-500/30" : "bg-zinc-700/50")}
+                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-purple-500/30" : "bg-[#1f2330]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-purple-400" : "text-zinc-300")}>
@@ -590,8 +590,8 @@ export default async function DashboardPage() {
           </div>
 
           {/* Vergütung Fahrer */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Verg&uuml;tung Fahrer pro Jahr</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Verg&uuml;tung Fahrer pro Jahr</h3>
             <div className="space-y-2.5">
               {(() => {
                 const maxVal = Math.max(...yearlyData.map((d) => d.driverCosts), 1);
@@ -604,9 +604,9 @@ export default async function DashboardPage() {
                   return (
                     <div key={y.year} className="flex items-center gap-3">
                       <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                      <div className="flex-1 h-7 bg-white/[0.03] rounded-md overflow-hidden">
+                      <div className="flex-1 h-7 bg-[#1a1d27] rounded-md overflow-hidden">
                         <div
-                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-red-500/30" : "bg-zinc-700/50")}
+                          className={"h-full rounded-md flex items-center px-2 " + (isCurrentYear ? "bg-red-500/30" : "bg-[#1f2330]")}
                           style={{ width: `${Math.max(widthPercent, 3)}%` }}
                         >
                           <span className={"text-[11px] font-mono font-semibold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-red-400" : "text-zinc-300")}>
@@ -627,8 +627,8 @@ export default async function DashboardPage() {
           </div>
 
           {/* Extras pro Jahr */}
-          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Extras-Buchungen pro Jahr</h3>
+          <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Extras-Buchungen pro Jahr</h3>
             <div className="overflow-x-auto">
               {(() => {
                 const filteredYears = yearlyData.filter((y) => y.year >= 2022);
@@ -636,9 +636,9 @@ export default async function DashboardPage() {
                   <table className="w-full text-[11px]">
                     <thead>
                       <tr className="border-b border-white/[0.10]">
-                        <th className="text-left py-1.5 font-semibold text-zinc-500 uppercase tracking-wider">Extra</th>
+                        <th className="text-left py-1.5 font-semibold text-muted-foreground uppercase tracking-wider">Extra</th>
                         {filteredYears.map((y) => (
-                          <th key={y.year} className={"text-right py-1.5 font-semibold tabular-nums px-1.5 " + (y.year === now.getFullYear() ? "text-[#F6A11C]" : "text-zinc-500")}>
+                          <th key={y.year} className={"text-right py-1.5 font-semibold tabular-nums px-1.5 " + (y.year === now.getFullYear() ? "text-[#F6A11C]" : "text-muted-foreground")}>
                             {y.year}
                           </th>
                         ))}
@@ -646,7 +646,7 @@ export default async function DashboardPage() {
                     </thead>
                     <tbody>
                       {allExtrasKeys.map((ext) => (
-                        <tr key={ext} className="border-b border-white/[0.04]">
+                        <tr key={ext} className="border-b border-white/[0.10]">
                           <td className="py-1.5 text-zinc-300 font-medium">{ext}</td>
                           {filteredYears.map((y) => {
                             const count = y.extras[ext] ?? 0;
@@ -654,7 +654,7 @@ export default async function DashboardPage() {
                             return (
                               <td key={y.year} className="text-right py-1.5 tabular-nums px-1.5">
                                 <span className="text-zinc-300">{count}</span>
-                                <span className="text-zinc-500 ml-1">({pct}%)</span>
+                                <span className="text-muted-foreground ml-1">({pct}%)</span>
                               </td>
                             );
                           })}
@@ -670,12 +670,12 @@ export default async function DashboardPage() {
       )}
 
       {/* Monthly Comparison: This Year vs Last Year */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
+      <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Monatsvergleich Aufträge</h3>
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Monatsvergleich Aufträge</h3>
           <div className="flex items-center gap-4 text-[10px]">
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#F6A11C]" />{now.getFullYear()}</span>
-            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-zinc-600" />{now.getFullYear() - 1}</span>
+            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#3a3f50]" />{now.getFullYear() - 1}</span>
           </div>
         </div>
         <div className="flex items-end gap-1 sm:gap-2 h-44">
@@ -692,14 +692,14 @@ export default async function DashboardPage() {
                       <span className="text-[9px] font-mono text-zinc-400 mb-0.5 hidden sm:block">{m.lastYear}</span>
                     )}
                     <div
-                      className="w-full bg-zinc-700/50 rounded-t-sm"
+                      className="w-full bg-[#1f2330] rounded-t-sm"
                       style={{ height: `${(m.lastYear / maxVal) * 100}%`, minHeight: m.lastYear > 0 ? "4px" : "0" }}
                     />
                   </div>
                   {/* This year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
                     {m.thisYear > 0 && (
-                      <span className={"text-[9px] font-mono mb-0.5 hidden sm:block " + (isCurrentMonth ? "text-[#F6A11C]" : "text-zinc-500")}>{m.thisYear}</span>
+                      <span className={"text-[9px] font-mono mb-0.5 hidden sm:block " + (isCurrentMonth ? "text-[#F6A11C]" : "text-muted-foreground")}>{m.thisYear}</span>
                     )}
                     <div
                       className={"w-full rounded-t-sm " + (isFuture ? "bg-[#F6A11C]/15" : isCurrentMonth ? "bg-[#F6A11C]" : "bg-[#F6A11C]/50")}
@@ -725,12 +725,12 @@ export default async function DashboardPage() {
       </div>
 
       {/* Upcoming Orders */}
-      <Card className="border-white/10 bg-white/[0.04]">
+      <Card className="border-white/10 bg-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-zinc-100">
             N&auml;chste Auftr&auml;ge
           </CardTitle>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             Die n&auml;chsten anstehenden Events &mdash; klicken zum
             &Ouml;ffnen
           </p>

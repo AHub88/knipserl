@@ -159,16 +159,16 @@ export function InvoiceForm({
           <select
             value={selectedOrderId}
             onChange={(e) => handleOrderChange(e.target.value)}
-            className="flex h-8 w-full items-center rounded-lg border border-white/[0.1] bg-white/[0.04] px-2.5 py-1 text-sm text-zinc-200 outline-none transition-colors focus:border-[#F6A11C]/50 focus:ring-2 focus:ring-[#F6A11C]/20"
+            className="flex h-8 w-full items-center rounded-lg border border-white/[0.1] bg-card px-2.5 py-1 text-sm text-zinc-200 outline-none transition-colors focus:border-[#F6A11C]/50 focus:ring-2 focus:ring-[#F6A11C]/20"
           >
-            <option value="" className="bg-zinc-900 text-zinc-400">
+            <option value="" className="bg-card text-zinc-400">
               Auftrag ausw&auml;hlen...
             </option>
             {orders.map((order) => (
               <option
                 key={order.id}
                 value={order.id}
-                className="bg-zinc-900 text-zinc-200"
+                className="bg-card text-zinc-200"
                 disabled={order.hasInvoice}
               >
                 #{order.orderNumber} &ndash; {order.customerName} &ndash;{" "}
@@ -181,11 +181,11 @@ export function InvoiceForm({
 
         <div className="space-y-2">
           <Label className="text-zinc-300">Firma</Label>
-          <div className="flex h-8 items-center rounded-lg border border-white/[0.1] bg-white/[0.04] px-2.5 text-sm text-zinc-400">
+          <div className="flex h-8 items-center rounded-lg border border-white/[0.1] bg-card px-2.5 text-sm text-zinc-400">
             {selectedCompany ? (
               <span className="text-zinc-200">{selectedCompany.name}</span>
             ) : (
-              <span className="text-zinc-500 italic">
+              <span className="text-muted-foreground italic">
                 Wird vom Auftrag \u00fcbernommen
               </span>
             )}
@@ -200,7 +200,7 @@ export function InvoiceForm({
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="bg-white/[0.04] border-white/[0.1] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+          className="bg-card border-white/[0.1] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
         />
       </div>
 
@@ -211,7 +211,7 @@ export function InvoiceForm({
           <button
             type="button"
             onClick={addItem}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-white/[0.08]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-card border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#1f2330]"
           >
             <IconPlus className="size-3.5" />
             Position hinzuf&uuml;gen
@@ -220,17 +220,17 @@ export function InvoiceForm({
 
         <div className="rounded-lg border border-white/[0.10] overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 px-4 py-2.5 bg-white/[0.04] border-b border-white/[0.10]">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+          <div className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 px-4 py-2.5 bg-card border-b border-white/[0.10]">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Beschreibung
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-center">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
               Menge
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
               Einzelpreis
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 text-right">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
               Gesamt
             </span>
             <span />
@@ -240,7 +240,7 @@ export function InvoiceForm({
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 items-center px-4 py-2 border-b border-white/[0.04] last:border-b-0"
+              className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 items-center px-4 py-2 border-b border-white/[0.10] last:border-b-0"
             >
               <Input
                 value={item.description}
@@ -280,7 +280,7 @@ export function InvoiceForm({
                 type="button"
                 onClick={() => removeItem(index)}
                 disabled={items.length <= 1}
-                className="flex items-center justify-center size-7 rounded-md text-zinc-500 transition-colors hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex items-center justify-center size-7 rounded-md text-muted-foreground transition-colors hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <IconTrash className="size-3.5" />
               </button>
@@ -290,7 +290,7 @@ export function InvoiceForm({
 
         {/* Total */}
         <div className="flex justify-end">
-          <div className="flex items-center gap-6 rounded-lg bg-white/[0.03] border border-white/[0.10] px-5 py-3">
+          <div className="flex items-center gap-6 rounded-lg bg-[#1a1d27] border border-white/[0.10] px-5 py-3">
             <span className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
               Gesamtbetrag
             </span>
@@ -322,7 +322,7 @@ export function InvoiceForm({
         <button
           type="button"
           onClick={() => router.push("/accounting/invoices")}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.04] px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-card px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1f2330] hover:text-zinc-200"
         >
           Abbrechen
         </button>

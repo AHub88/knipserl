@@ -89,7 +89,7 @@ export function PricingEditor({
   }
 
   const inputClass =
-    "h-8 w-full rounded-md border border-white/[0.08] bg-white/[0.03] px-2 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-8 w-full rounded-md border border-white/[0.08] bg-[#1a1d27] px-2 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="space-y-4">
@@ -97,7 +97,7 @@ export function PricingEditor({
       <div className="flex items-center justify-between">
         <button
           onClick={addTier}
-          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 text-sm font-medium hover:bg-white/[0.06] transition-colors"
+          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1a1d27] text-zinc-300 text-sm font-medium hover:bg-[#1f2330] transition-colors"
         >
           <IconPlus className="size-4" />
           Stufe hinzufügen
@@ -113,20 +113,20 @@ export function PricingEditor({
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-[120px]">
+              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-[120px]">
                 KM
               </TableHead>
-              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-[160px]">
+              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-[160px]">
                 Vergütung Fahrer
               </TableHead>
-              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-[160px]">
+              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-[160px]">
                 Preis Kunde
               </TableHead>
-              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-[60px]" />
+              <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-[60px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -135,7 +135,7 @@ export function PricingEditor({
               .map((tier, i) => (
                 <TableRow
                   key={i}
-                  className="border-b border-white/[0.04] hover:bg-white/[0.04]"
+                  className="border-b border-white/[0.10] hover:bg-card"
                 >
                   <TableCell>
                     <div className="flex items-center gap-1">
@@ -148,7 +148,7 @@ export function PricingEditor({
                           updateTier(i, "distanceKm", e.target.value)
                         }
                       />
-                      <span className="text-xs text-zinc-500">km</span>
+                      <span className="text-xs text-muted-foreground">km</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -163,7 +163,7 @@ export function PricingEditor({
                           updateTier(i, "driverCompensation", e.target.value)
                         }
                       />
-                      <span className="text-xs text-zinc-500">&euro;</span>
+                      <span className="text-xs text-muted-foreground">&euro;</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -178,7 +178,7 @@ export function PricingEditor({
                           updateTier(i, "customerPrice", e.target.value)
                         }
                       />
-                      <span className="text-xs text-zinc-500">&euro;</span>
+                      <span className="text-xs text-muted-foreground">&euro;</span>
                     </div>
                   </TableCell>
                   <TableCell>
