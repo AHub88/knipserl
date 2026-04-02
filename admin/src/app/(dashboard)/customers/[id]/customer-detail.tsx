@@ -133,27 +133,27 @@ export function CustomerDetail({
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Aufträge</p>
           <p className="text-2xl font-bold text-[#F6A11C] tabular-nums">{orders.length}</p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Umsatz</p>
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">
             {totalRevenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })} &euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Bezahlt</p>
           <p className="text-2xl font-bold text-zinc-200 tabular-nums">
-            {paidCount}<span className="text-sm font-normal text-zinc-600">/{orders.length}</span>
+            {paidCount}<span className="text-sm font-normal text-zinc-400">/{orders.length}</span>
           </p>
         </div>
       </div>
 
       {/* Kundendaten */}
       {editing ? (
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4 max-w-2xl">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 max-w-2xl">
           <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -186,7 +186,7 @@ export function CustomerDetail({
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-2">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-2">
           <h2 className="text-sm font-semibold text-zinc-300 mb-3">Kontaktdaten</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-center gap-3">
@@ -212,8 +212,8 @@ export function CustomerDetail({
       )}
 
       {/* Orders */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.10] flex items-center justify-between">
           <h2 className="text-sm font-semibold text-zinc-300">Aufträge</h2>
           <Link href={`/orders/new`} className="text-xs text-[#F6A11C] hover:underline">
             + Neuer Auftrag
@@ -224,7 +224,7 @@ export function CustomerDetail({
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
+              <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">#</TableHead>
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Datum</TableHead>
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Event</TableHead>
@@ -249,7 +249,7 @@ export function CustomerDetail({
                   <TableCell className="text-zinc-400 text-sm max-w-[150px]">
                     <span className="block truncate">{o.locationName}</span>
                   </TableCell>
-                  <TableCell className="text-sm text-zinc-300">{o.driverInitials ?? o.driverName ?? <span className="text-zinc-600">–</span>}</TableCell>
+                  <TableCell className="text-sm text-zinc-300">{o.driverInitials ?? o.driverName ?? <span className="text-zinc-400">–</span>}</TableCell>
                   <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">{o.price.toFixed(2)}&nbsp;&euro;</TableCell>
                   <TableCell className="text-center">
                     <span className={"inline-block size-2.5 rounded-full " + (o.paid ? "bg-emerald-400" : "bg-red-400/60")} />

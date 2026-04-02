@@ -52,8 +52,8 @@ export default async function NewQuotePage() {
       </Link>
 
       {/* Form card */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.06]">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Angebot erstellen
           </h2>
@@ -61,7 +61,7 @@ export default async function NewQuotePage() {
         <div className="p-6">
           {serializedOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
-              <IconFileInvoice className="size-10 mb-3 text-zinc-600" />
+              <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
               <p className="text-sm">
                 Keine Auftr&auml;ge ohne Angebot vorhanden
               </p>

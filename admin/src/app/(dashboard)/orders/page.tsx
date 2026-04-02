@@ -83,8 +83,8 @@ export default async function OrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] flex flex-col items-center justify-center py-16 text-zinc-500">
-          <IconFileText className="size-10 mb-3 text-zinc-600" />
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] flex flex-col items-center justify-center py-16 text-zinc-500">
+          <IconFileText className="size-10 mb-3 text-zinc-400" />
           <p className="text-sm">Noch keine Auftr&auml;ge vorhanden</p>
         </div>
       ) : (

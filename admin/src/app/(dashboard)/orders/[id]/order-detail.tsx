@@ -133,7 +133,7 @@ function ExtraIcon({
         "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-w-[80px] transition-colors " +
         (active
           ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.06] bg-white/[0.02] text-zinc-600") +
+          : "border-white/[0.10] bg-white/[0.04] text-zinc-400") +
         (editable ? " cursor-pointer hover:opacity-80" : "")
       }
     >
@@ -529,7 +529,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Extras */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-3">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
           <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
           <div className="flex flex-wrap gap-2">
             {EXTRAS_CONFIG.map((ext) => (
@@ -547,7 +547,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Kunde & Event */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-1">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-1">
             <h2 className="text-sm font-semibold text-zinc-300 mb-3">
               Kunde &amp; Event
             </h2>
@@ -559,7 +559,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           {/* Location */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-1">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-1">
             <h2 className="text-sm font-semibold text-zinc-300 mb-3">
               Location
             </h2>
@@ -569,7 +569,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           {/* Zuordnung */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-1">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-1">
             <h2 className="text-sm font-semibold text-zinc-300 mb-3">
               Zuordnung
             </h2>
@@ -582,7 +582,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         {/* Preiskalkulationen */}
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Kunde */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-2">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-2">
             <h2 className="text-sm font-semibold text-zinc-300 mb-2">
               Preiskalkulation Kunde
             </h2>
@@ -594,7 +594,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               ))}
               {customerSubtotal > 0 && discountAmount > 0 && (
                 <>
-                  <div className="border-t border-white/[0.06] mt-2 pt-2">
+                  <div className="border-t border-white/[0.10] mt-2 pt-2">
                     <PriceRow label="Zwischensumme" value={customerSubtotal} />
                   </div>
                   <div className="flex items-center justify-between py-1">
@@ -607,7 +607,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
                   </div>
                 </>
               )}
-              <div className="border-t border-white/[0.06] mt-2 pt-2 flex items-center justify-between">
+              <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
                 <span className="text-sm font-semibold text-zinc-200">Kundenpreis</span>
                 <span className="text-base font-bold font-mono tabular-nums text-[#F6A11C]">
                   {customerTotal.toFixed(2)} &euro;
@@ -649,7 +649,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         {(order.notes || order.internalNotes) && (
           <div className="grid gap-6 lg:grid-cols-2">
             {order.notes && (
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+              <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
                 <h2 className="text-sm font-semibold text-zinc-300 mb-2">
                   Kundenkommentar
                 </h2>
@@ -672,7 +672,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         )}
 
         {/* Drucklayouts */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-3">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
           <h2 className="text-sm font-semibold text-zinc-300">Drucklayouts</h2>
           <ImageGallery
             orderId={order.id}
@@ -736,7 +736,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-3">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
         <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
@@ -755,7 +755,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Kundendaten */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -782,7 +782,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Event-Details */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Event-Details</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -828,7 +828,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Preiskalkulation Kunde */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation Kunde</h2>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
@@ -877,7 +877,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Zuordnung & Zahlart */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Zuordnung &amp; Zahlung</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -915,7 +915,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Notizen */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4 lg:col-span-2">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 lg:col-span-2">
           <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -940,7 +940,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Drucklayouts */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-3 lg:col-span-2">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3 lg:col-span-2">
           <h2 className="text-sm font-semibold text-zinc-300">Drucklayouts</h2>
           <ImageGallery
             orderId={order.id}

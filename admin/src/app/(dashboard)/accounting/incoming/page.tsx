@@ -69,7 +69,7 @@ export default async function IncomingInvoicesPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Gesamt
           </p>
@@ -77,7 +77,7 @@ export default async function IncomingInvoicesPage() {
             {fmt(totalAmount)}&nbsp;&euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Ausstehend
           </p>
@@ -85,7 +85,7 @@ export default async function IncomingInvoicesPage() {
             {fmt(pendingAmount)}&nbsp;&euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Bezahlt
           </p>
@@ -93,7 +93,7 @@ export default async function IncomingInvoicesPage() {
             {fmt(paidAmount)}&nbsp;&euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             &Uuml;berf&auml;llig
           </p>
@@ -104,15 +104,15 @@ export default async function IncomingInvoicesPage() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.06]">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Alle Eingangsrechnungen
           </h2>
         </div>
         {invoices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-            <IconFileInvoice className="size-10 mb-3 text-zinc-600" />
+            <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Noch keine Eingangsrechnungen vorhanden</p>
           </div>
         ) : (

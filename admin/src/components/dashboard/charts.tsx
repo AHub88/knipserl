@@ -73,7 +73,7 @@ export function MonthlyOrdersChart({
   data = defaultMonthlyData,
 }: MonthlyOrdersChartProps) {
   return (
-    <Card className="border-white/5 bg-white/[0.02]">
+    <Card className="border-white/10 bg-white/[0.03]">
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold text-zinc-100">
           Auftr&auml;ge pro Monat
@@ -160,7 +160,7 @@ export function EventTypesPieChart({
   data = defaultEventData,
 }: EventTypesPieChartProps) {
   return (
-    <Card className="border-white/5 bg-white/[0.02]">
+    <Card className="border-white/10 bg-white/[0.03]">
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold text-zinc-100">
           Eventarten
@@ -275,7 +275,7 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
           <div
             key={order.id}
             onClick={() => router.push(`/orders/${order.id}`)}
-            className="group flex cursor-pointer items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4 transition-all hover:border-[#F6A11C]/20 hover:bg-[#F6A11C]/[0.04]"
+            className="group flex cursor-pointer items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] p-4 transition-all hover:border-[#F6A11C]/20 hover:bg-[#F6A11C]/[0.04]"
           >
             <div className="min-w-0 flex-1 space-y-1">
               <p className="font-medium text-zinc-100 group-hover:text-[#F6A11C] transition-colors">
@@ -296,7 +296,7 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
                   {order.driverName}
                 </span>
               ) : (
-                <span className="text-sm text-zinc-600 italic">
+                <span className="text-sm text-zinc-400 italic">
                   Kein Fahrer
                 </span>
               )}

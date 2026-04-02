@@ -71,7 +71,7 @@ function ExtraToggle({
         "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-w-[80px] transition-colors cursor-pointer hover:opacity-80 " +
         (active
           ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.06] bg-white/[0.02] text-zinc-600")
+          : "border-white/[0.10] bg-white/[0.04] text-zinc-400")
       }
     >
       <Icon className="size-7" />
@@ -354,7 +354,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-3">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-3">
         <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
@@ -372,7 +372,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Kundendaten */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -399,7 +399,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Event-Details */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Event-Details</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -426,7 +426,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Preiskalkulation Kunde - dynamisch */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation Kunde</h2>
           <div className="space-y-0.5">
             <PriceRow label="Fotobox" value={boxPrice} />
@@ -436,7 +436,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
             ))}
             {discountAmount > 0 && (
               <>
-                <div className="border-t border-white/[0.06] mt-2 pt-2">
+                <div className="border-t border-white/[0.10] mt-2 pt-2">
                   <PriceRow label="Zwischensumme" value={customerSubtotal} />
                 </div>
                 <div className="flex items-center justify-between py-0.5">
@@ -449,7 +449,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
                 </div>
               </>
             )}
-            <div className="border-t border-white/[0.06] mt-2 pt-2 flex items-center justify-between">
+            <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
               <span className="text-sm font-semibold text-zinc-200">Kundenpreis</span>
               <span className="text-base font-bold font-mono tabular-nums text-[#F6A11C]">
                 {customerTotal.toFixed(2)} &euro;
@@ -458,7 +458,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
           </div>
 
           {/* Editable fields */}
-          <div className="border-t border-white/[0.06] pt-4 grid gap-3 sm:grid-cols-3">
+          <div className="border-t border-white/[0.10] pt-4 grid gap-3 sm:grid-cols-3">
             <div>
               <label className={labelClass}>Fahrtkosten</label>
               <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
@@ -524,7 +524,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Zuordnung & Zahlart */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Zuordnung &amp; Zahlung</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -556,7 +556,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Notizen */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
           <div className="space-y-3">
             <div>

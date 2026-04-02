@@ -159,7 +159,7 @@ export function InvoiceForm({
           <select
             value={selectedOrderId}
             onChange={(e) => handleOrderChange(e.target.value)}
-            className="flex h-8 w-full items-center rounded-lg border border-white/[0.1] bg-white/[0.02] px-2.5 py-1 text-sm text-zinc-200 outline-none transition-colors focus:border-[#F6A11C]/50 focus:ring-2 focus:ring-[#F6A11C]/20"
+            className="flex h-8 w-full items-center rounded-lg border border-white/[0.1] bg-white/[0.04] px-2.5 py-1 text-sm text-zinc-200 outline-none transition-colors focus:border-[#F6A11C]/50 focus:ring-2 focus:ring-[#F6A11C]/20"
           >
             <option value="" className="bg-zinc-900 text-zinc-400">
               Auftrag ausw&auml;hlen...
@@ -200,7 +200,7 @@ export function InvoiceForm({
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="bg-white/[0.02] border-white/[0.1] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+          className="bg-white/[0.04] border-white/[0.1] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
         />
       </div>
 
@@ -218,9 +218,9 @@ export function InvoiceForm({
           </button>
         </div>
 
-        <div className="rounded-lg border border-white/[0.06] overflow-hidden">
+        <div className="rounded-lg border border-white/[0.10] overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 px-4 py-2.5 bg-white/[0.02] border-b border-white/[0.06]">
+          <div className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 px-4 py-2.5 bg-white/[0.04] border-b border-white/[0.10]">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
               Beschreibung
             </span>
@@ -290,7 +290,7 @@ export function InvoiceForm({
 
         {/* Total */}
         <div className="flex justify-end">
-          <div className="flex items-center gap-6 rounded-lg bg-white/[0.03] border border-white/[0.06] px-5 py-3">
+          <div className="flex items-center gap-6 rounded-lg bg-white/[0.03] border border-white/[0.10] px-5 py-3">
             <span className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
               Gesamtbetrag
             </span>
@@ -322,7 +322,7 @@ export function InvoiceForm({
         <button
           type="button"
           onClick={() => router.push("/accounting/invoices")}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.02] px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.04] px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
         >
           Abbrechen
         </button>

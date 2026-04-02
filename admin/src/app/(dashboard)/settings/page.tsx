@@ -32,7 +32,7 @@ export default async function SettingsPage() {
         {/* Link zu Fahrtkosten */}
         <Link
           href="/settings/travel-pricing"
-          className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 hover:bg-white/[0.04] transition-colors group"
+          className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 hover:bg-white/[0.04] transition-colors group"
         >
           <div className="flex items-center gap-3 mb-2">
             <IconCar className="size-5 text-[#F6A11C]" />
@@ -48,7 +48,7 @@ export default async function SettingsPage() {
         {/* Link zu Extras-Preise */}
         <Link
           href="/settings/extras-pricing"
-          className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 hover:bg-white/[0.04] transition-colors group"
+          className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 hover:bg-white/[0.04] transition-colors group"
         >
           <div className="flex items-center gap-3 mb-2">
             <IconCurrencyEuro className="size-5 text-[#F6A11C]" />

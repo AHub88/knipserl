@@ -70,7 +70,7 @@ export default function NewDriverPage() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4 max-w-2xl">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 max-w-2xl">
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Name *</label>

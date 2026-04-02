@@ -139,7 +139,7 @@ export default function NewLocationPage() {
 
       <div className="grid gap-6 lg:grid-cols-2 max-w-4xl">
         {/* Location-Name */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Location</h2>
           <div>
             <label className={labelClass}>Name *</label>
@@ -148,7 +148,7 @@ export default function NewLocationPage() {
         </div>
 
         {/* Adresssuche */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Adresse suchen</h2>
           <div className="relative">
             <label className={labelClass}>Adresse eingeben</label>
@@ -178,13 +178,13 @@ export default function NewLocationPage() {
               </div>
             )}
           </div>
-          <p className="text-xs text-zinc-600">
+          <p className="text-xs text-zinc-400">
             Adresse w&auml;hlen &rarr; Stra&szlig;e, PLZ, Ort und Entfernung werden automatisch ausgef&uuml;llt.
           </p>
         </div>
 
         {/* Adressfelder */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4 lg:col-span-2">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 lg:col-span-2">
           <h2 className="text-sm font-semibold text-zinc-300">Adressdaten</h2>
           <div className="grid gap-3 sm:grid-cols-4">
             <div className="sm:col-span-2">
@@ -214,7 +214,7 @@ export default function NewLocationPage() {
                   <IconLoader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-[#F6A11C] animate-spin" />
                 )}
               </div>
-              <p className="text-[10px] text-zinc-600 mt-1">
+              <p className="text-[10px] text-zinc-400 mt-1">
                 Wird automatisch als Wegstrecke berechnet
               </p>
             </div>

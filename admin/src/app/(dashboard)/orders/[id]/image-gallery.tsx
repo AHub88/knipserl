@@ -99,7 +99,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
       {images.length > 0 && (
         <div className={singleColumn ? "space-y-3" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"}>
           {images.map((img) => (
-            <div key={img} className="relative group rounded-lg overflow-hidden border border-white/[0.06] bg-white/[0.02]">
+            <div key={img} className="relative group rounded-lg overflow-hidden border border-white/[0.10] bg-white/[0.04]">
               <button
                 onClick={() => setModalImage(img)}
                 className="block w-full"
@@ -137,7 +137,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
             "flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed p-3 cursor-pointer transition-colors " +
             (dragging
               ? "border-[#F6A11C] bg-[#F6A11C]/10"
-              : "border-white/[0.08] bg-white/[0.02] hover:border-white/[0.15] hover:bg-white/[0.03]")
+              : "border-white/[0.08] bg-white/[0.04] hover:border-white/[0.15] hover:bg-white/[0.03]")
           }
         >
           {uploading ? (
@@ -145,7 +145,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
           ) : (
             <IconUpload
               className={
-                "size-5 " + (dragging ? "text-[#F6A11C]" : "text-zinc-600")
+                "size-5 " + (dragging ? "text-[#F6A11C]" : "text-zinc-400")
               }
             />
           )}
@@ -156,7 +156,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
               ? "Hier ablegen"
               : "Bilder hierher ziehen oder klicken"}
           </p>
-          <p className="text-[10px] text-zinc-600">PNG, JPG</p>
+          <p className="text-[10px] text-zinc-400">PNG, JPG</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -173,7 +173,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
 
       {/* Empty state */}
       {images.length === 0 && !isAdmin && (
-        <div className="flex flex-col items-center justify-center py-8 text-zinc-600">
+        <div className="flex flex-col items-center justify-center py-8 text-zinc-400">
           <IconPhoto className="size-8 mb-2" />
           <p className="text-sm">Keine Drucklayouts vorhanden</p>
         </div>

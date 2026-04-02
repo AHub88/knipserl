@@ -370,7 +370,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             placeholder="Suche..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.02] pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-500 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
+            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-500 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
           />
           {search && (
             <button
@@ -402,7 +402,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
               (showFilters || activeFilterCount > 0
                 ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                : "border-white/[0.08] bg-white/[0.02] text-zinc-400 hover:text-zinc-200")
+                : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:text-zinc-200")
             }
           >
             <IconFilter className="size-3.5" />
@@ -421,7 +421,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
               (groupByMonth
                 ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                : "border-white/[0.08] bg-white/[0.02] text-zinc-400 hover:text-zinc-200")
+                : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:text-zinc-200")
             }
           >
             {groupByMonth ? (
@@ -436,7 +436,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
 
       {/* Filter dropdowns */}
       {showFilters && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-3">
           <FilterSelect
             label="Bestätigt"
             value={confirmedFilter}
@@ -602,9 +602,9 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
       )}
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
         {/* Tabs */}
-        <div className="flex items-center gap-0 px-6 border-b border-white/[0.06]">
+        <div className="flex items-center gap-0 px-6 border-b border-white/[0.10]">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -664,7 +664,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
         {/* Table content */}
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-            <IconSearch className="size-10 mb-3 text-zinc-600" />
+            <IconSearch className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Keine Aufträge gefunden</p>
             {(search || activeFilterCount > 0) && (
               <button
@@ -760,7 +760,7 @@ function MonthGroup({
   const revenue = orders.reduce((s, o) => s + o.price, 0);
 
   return (
-    <div className={"rounded-xl border overflow-hidden " + (hasNext ? "border-[#F6A11C]/20" : "border-white/[0.06]")}>
+    <div className={"rounded-xl border overflow-hidden " + (hasNext ? "border-[#F6A11C]/20" : "border-white/[0.10]")}>
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="w-full flex items-center justify-between px-6 py-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
@@ -782,7 +782,7 @@ function MonthGroup({
         </span>
       </button>
       {!collapsed && (
-        <div className="border-t border-white/[0.06]">
+        <div className="border-t border-white/[0.10]">
           <OrderTable orders={orders} onRowClick={onRowClick} nextOrderId={nextOrderId} nextOrderRef={nextOrderRef} />
         </div>
       )}
@@ -807,7 +807,7 @@ function OrderTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
+        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
             Datum
           </TableHead>

@@ -120,7 +120,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
           <select
             value={selectedOrderId}
             onChange={(e) => setSelectedOrderId(e.target.value)}
-            className="flex h-9 w-full rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1 text-sm text-zinc-200 transition-colors focus:border-[#F6A11C]/50 focus:outline-none focus:ring-2 focus:ring-[#F6A11C]/20"
+            className="flex h-9 w-full rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 py-1 text-sm text-zinc-200 transition-colors focus:border-[#F6A11C]/50 focus:outline-none focus:ring-2 focus:ring-[#F6A11C]/20"
           >
             <option value="" className="bg-zinc-900 text-zinc-400">
               Auftrag auswählen...
@@ -142,11 +142,11 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
           <Label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
             Firma
           </Label>
-          <div className="flex h-9 w-full items-center rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 text-sm text-zinc-400">
+          <div className="flex h-9 w-full items-center rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 text-sm text-zinc-400">
             {selectedOrder ? (
               <span className="text-zinc-200">{selectedOrder.companyName}</span>
             ) : (
-              <span className="text-zinc-600">Wird vom Auftrag übernommen</span>
+              <span className="text-zinc-400">Wird vom Auftrag übernommen</span>
             )}
           </div>
         </div>
@@ -161,7 +161,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
           type="date"
           value={validUntil}
           onChange={(e) => setValidUntil(e.target.value)}
-          className="border-white/[0.06] bg-white/[0.02] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20 [color-scheme:dark]"
+          className="border-white/[0.10] bg-white/[0.04] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20 [color-scheme:dark]"
         />
       </div>
 
@@ -174,16 +174,16 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
           <button
             type="button"
             onClick={addItem}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-zinc-100"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-zinc-100"
           >
             <IconPlus className="size-3.5" />
             Position hinzufügen
           </button>
         </div>
 
-        <div className="rounded-lg border border-white/[0.06] overflow-hidden">
+        <div className="rounded-lg border border-white/[0.10] overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_100px_140px_40px] gap-3 px-4 py-2.5 border-b border-white/[0.06] bg-white/[0.02]">
+          <div className="grid grid-cols-[1fr_100px_140px_40px] gap-3 px-4 py-2.5 border-b border-white/[0.10] bg-white/[0.04]">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
               Beschreibung
             </span>
@@ -206,7 +206,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
                 placeholder="Beschreibung der Leistung"
                 value={item.description}
                 onChange={(e) => updateItem(index, "description", e.target.value)}
-                className="border-white/[0.06] bg-white/[0.02] text-zinc-200 text-sm placeholder:text-zinc-600 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+                className="border-white/[0.10] bg-white/[0.04] text-zinc-200 text-sm placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
               />
               <Input
                 type="number"
@@ -216,7 +216,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
                 onChange={(e) =>
                   updateItem(index, "quantity", parseInt(e.target.value) || 0)
                 }
-                className="border-white/[0.06] bg-white/[0.02] text-zinc-200 text-sm tabular-nums focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+                className="border-white/[0.10] bg-white/[0.04] text-zinc-200 text-sm tabular-nums focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
               />
               <Input
                 type="number"
@@ -227,7 +227,7 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
                   updateItem(index, "unitPrice", parseFloat(e.target.value) || 0)
                 }
                 placeholder="0,00"
-                className="border-white/[0.06] bg-white/[0.02] text-zinc-200 text-sm tabular-nums placeholder:text-zinc-600 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
+                className="border-white/[0.10] bg-white/[0.04] text-zinc-200 text-sm tabular-nums placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
               />
               <button
                 type="button"
@@ -251,11 +251,11 @@ export function QuoteForm({ orders }: { orders: OrderOption[] }) {
       </div>
 
       {/* Submit */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.06]">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.10]">
         <button
           type="button"
           onClick={() => router.push("/accounting/quotes")}
-          className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-zinc-200"
+          className="rounded-lg border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-zinc-200"
         >
           Abbrechen
         </button>

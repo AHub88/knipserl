@@ -81,7 +81,7 @@ export function QuotesTable({ quotes }: { quotes: QuoteRow[] }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
+        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
             Nummer
           </TableHead>

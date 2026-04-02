@@ -62,8 +62,8 @@ export default async function NewInvoicePage() {
       </div>
 
       {/* Form card */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.06]">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Rechnungsdetails
           </h2>

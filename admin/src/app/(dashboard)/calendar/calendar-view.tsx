@@ -185,7 +185,7 @@ export function CalendarView() {
           )}
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-white/[0.08] bg-white/[0.02] p-0.5">
+        <div className="flex items-center gap-1 rounded-lg border border-white/[0.08] bg-white/[0.04] p-0.5">
           <button
             onClick={() => setView("month")}
             className={
@@ -231,9 +231,9 @@ export function CalendarView() {
 
       {/* Month View */}
       {view === "month" && (
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 border-b border-white/[0.06]">
+          <div className="grid grid-cols-7 border-b border-white/[0.10]">
             {WEEKDAYS.map((d) => (
               <div
                 key={d}
@@ -351,7 +351,7 @@ export function CalendarView() {
                       );
                     })}
                     {orders.length > 3 && (
-                      <div className="text-[10px] text-zinc-600 px-1">
+                      <div className="text-[10px] text-zinc-400 px-1">
                         +{orders.length - 3} weitere
                       </div>
                     )}
@@ -367,8 +367,8 @@ export function CalendarView() {
       {view === "list" && (
         <div className="space-y-2">
           {!data || getOrdersByDay().length === 0 ? (
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] flex flex-col items-center justify-center py-16 text-zinc-500">
-              <IconCalendarMonth className="size-10 mb-3 text-zinc-600" />
+            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] flex flex-col items-center justify-center py-16 text-zinc-500">
+              <IconCalendarMonth className="size-10 mb-3 text-zinc-400" />
               <p className="text-sm">Keine Einträge in diesem Monat</p>
             </div>
           ) : (
@@ -381,11 +381,11 @@ export function CalendarView() {
                     "rounded-xl border overflow-hidden " +
                     (isToday
                       ? "border-[#F6A11C]/30 bg-[#F6A11C]/5"
-                      : "border-white/[0.06] bg-white/[0.02]")
+                      : "border-white/[0.10] bg-white/[0.04]")
                   }
                 >
                   {/* Day header */}
-                  <div className="px-4 py-2 border-b border-white/[0.06] flex items-center gap-3">
+                  <div className="px-4 py-2 border-b border-white/[0.10] flex items-center gap-3">
                     <span
                       className={
                         "text-lg font-bold tabular-nums " +
@@ -397,7 +397,7 @@ export function CalendarView() {
                     <span className="text-xs text-zinc-500 uppercase font-medium">
                       {weekday}
                     </span>
-                    <span className="text-xs text-zinc-600">
+                    <span className="text-xs text-zinc-400">
                       {MONTH_NAMES[month - 1]}
                     </span>
                     {isToday && (

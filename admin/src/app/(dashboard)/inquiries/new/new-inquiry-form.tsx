@@ -156,7 +156,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
 
       <div className="grid gap-6 lg:grid-cols-2 max-w-4xl">
         {/* Kundendaten */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -182,7 +182,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
         </div>
 
         {/* Event-Details */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Event-Details</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -215,7 +215,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
         </div>
 
         {/* Notizen */}
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4 lg:col-span-2">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4 lg:col-span-2">
           <h2 className="text-sm font-semibold text-zinc-300">Weitere Infos</h2>
           <div>
             <label className={labelClass}>Kommentar</label>

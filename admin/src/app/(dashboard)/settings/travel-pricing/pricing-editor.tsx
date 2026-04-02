@@ -113,10 +113,10 @@ export function PricingEditor({
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
+            <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
               <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-[120px]">
                 KM
               </TableHead>
@@ -135,7 +135,7 @@ export function PricingEditor({
               .map((tier, i) => (
                 <TableRow
                   key={i}
-                  className="border-b border-white/[0.04] hover:bg-white/[0.02]"
+                  className="border-b border-white/[0.04] hover:bg-white/[0.04]"
                 >
                   <TableCell>
                     <div className="flex items-center gap-1">
@@ -185,7 +185,7 @@ export function PricingEditor({
                     <button
                       onClick={() => removeTier(i)}
                       disabled={tiers.length <= 1}
-                      className="text-zinc-600 hover:text-red-400 disabled:opacity-30 transition-colors"
+                      className="text-zinc-400 hover:text-red-400 disabled:opacity-30 transition-colors"
                     >
                       <IconTrash className="size-4" />
                     </button>
@@ -196,7 +196,7 @@ export function PricingEditor({
         </Table>
       </div>
 
-      <p className="text-xs text-zinc-600">
+      <p className="text-xs text-zinc-400">
         Die Berechnung verwendet die h&ouml;chste Stufe &le; der tats&auml;chlichen Entfernung.
         Beispiel: 25 km → Stufe 20 km.
       </p>

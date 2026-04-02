@@ -207,7 +207,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   return (
     <div className="space-y-6">
       {/* ── Hero Header ── */}
-      <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent p-6">
+      <div className="rounded-2xl border border-white/[0.10] bg-gradient-to-br from-white/[0.03] to-transparent p-6">
         {/* Top row */}
         <div className="flex items-center gap-3 mb-4">
           <Link
@@ -216,7 +216,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           >
             <IconArrowLeft className="size-4" />
           </Link>
-          <span className="text-xs font-mono text-zinc-600">#{order.orderNumber}</span>
+          <span className="text-xs font-mono text-zinc-400">#{order.orderNumber}</span>
 
           <div className="flex items-center gap-2 ml-auto shrink-0">
             <div className="hidden sm:flex items-center gap-2 mr-1">
@@ -299,7 +299,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             <span className="text-zinc-300 font-medium">{order.locationName}</span>
             {ort && <span className="text-zinc-500"> &middot; {ort}</span>}
             {order.distanceKm != null && (
-              <span className="text-zinc-600"> &middot; {order.distanceKm} km</span>
+              <span className="text-zinc-400"> &middot; {order.distanceKm} km</span>
             )}
           </span>
         </div>
@@ -321,11 +321,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Status */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Status</h3>
               {isAdmin && !editingStatus && (
-                <button onClick={() => setEditingStatus(true)} className="text-zinc-600 hover:text-zinc-300 transition-colors">
+                <button onClick={() => setEditingStatus(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
                   <IconPencil className="size-4.5" />
                 </button>
               )}
@@ -345,7 +345,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
                       setEditingStatus(false);
                     }}
-                    className="text-zinc-600 hover:text-zinc-300 transition-colors"
+                    className="text-zinc-400 hover:text-zinc-300 transition-colors"
                   >
                     <IconX className="size-5" />
                   </button>
@@ -394,11 +394,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
           {/* Extras */}
           {(activeExtras.length > 0 || editingExtras) && (
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Extras</h3>
                 {isAdmin && !editingExtras && (
-                  <button onClick={() => setEditingExtras(true)} className="text-zinc-600 hover:text-zinc-300 transition-colors">
+                  <button onClick={() => setEditingExtras(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
                     <IconPencil className="size-4.5" />
                   </button>
                 )}
@@ -415,7 +415,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     </button>
                     <button
                       onClick={() => { setExtrasState(order.extras); setEditingExtras(false); }}
-                      className="text-zinc-600 hover:text-zinc-300 transition-colors"
+                      className="text-zinc-400 hover:text-zinc-300 transition-colors"
                     >
                       <IconX className="size-5" />
                     </button>
@@ -434,7 +434,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                             "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 min-w-[90px] cursor-pointer hover:opacity-80 transition-colors " +
                             (active
                               ? "border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C]"
-                              : "border-white/[0.06] bg-white/[0.02] text-zinc-600")
+                              : "border-white/[0.10] bg-white/[0.04] text-zinc-400")
                           }
                         >
                           <ext.icon className="size-8" />
@@ -464,13 +464,13 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {/* Auftraggeber + Location + Lieferung */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Auftraggeber */}
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Auftraggeber</h3>
               <p className="text-base font-semibold text-zinc-100 mb-0.5">{kontakt}</p>
               {firma && (
                 <p className="text-sm text-zinc-400 mb-3">{firma}</p>
               )}
-              <div className="space-y-2.5 border-t border-white/[0.06] pt-3">
+              <div className="space-y-2.5 border-t border-white/[0.10] pt-3">
                 {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
                   <div className="flex items-center gap-3">
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 w-14 shrink-0">E-Mail</span>
@@ -495,7 +495,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
 
             {/* Location */}
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Location</h3>
               <Link
                 href={order.locationId ? `/locations/${order.locationId}` : `/locations`}
@@ -506,7 +506,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </Link>
               <p className="text-sm text-zinc-200 mt-1">{order.locationAddress}</p>
               {order.distanceKm != null && (
-                <div className="border-t border-white/[0.06] mt-3 pt-3">
+                <div className="border-t border-white/[0.10] mt-3 pt-3">
                   <p className="text-sm">
                     <span className="text-zinc-500">Entfernung: </span>
                     <span className="text-zinc-200 font-mono tabular-nums">{order.distanceKm} km</span>
@@ -525,7 +525,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
 
             {/* Lieferung */}
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Lieferung</h3>
               {hasSchedule ? (
                 <div className="space-y-4">
@@ -564,21 +564,21 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="space-y-3">
             {/* Kundenkommentar */}
             {(order.notes || editingNotes || isAdmin) && (
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+              <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <IconMessageCircle className="size-4 text-zinc-500" />
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Kundenkommentar</h3>
                   </div>
                   {isAdmin && !editingNotes && (
-                    <button onClick={() => setEditingNotes(true)} className="text-zinc-600 hover:text-zinc-300 transition-colors">
+                    <button onClick={() => setEditingNotes(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
                       <IconPencil className="size-4.5" />
                     </button>
                   )}
                   {editingNotes && (
                     <div className="flex items-center gap-1">
                       <button onClick={() => { saveField({ notes: notesState || null }); setEditingNotes(false); }} className="text-emerald-400 hover:text-emerald-300"><IconCheck className="size-4" /></button>
-                      <button onClick={() => { setNotesState(order.notes ?? ""); setEditingNotes(false); }} className="text-zinc-600 hover:text-zinc-300"><IconX className="size-4" /></button>
+                      <button onClick={() => { setNotesState(order.notes ?? ""); setEditingNotes(false); }} className="text-zinc-400 hover:text-zinc-300"><IconX className="size-4" /></button>
                     </div>
                   )}
                 </div>
@@ -605,14 +605,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
                   </div>
                   {isAdmin && !editingInternal && (
-                    <button onClick={() => setEditingInternal(true)} className="text-zinc-600 hover:text-zinc-300 transition-colors">
+                    <button onClick={() => setEditingInternal(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
                       <IconPencil className="size-4.5" />
                     </button>
                   )}
                   {editingInternal && (
                     <div className="flex items-center gap-1">
                       <button onClick={() => { saveField({ internalNotes: internalState || null }); setEditingInternal(false); }} className="text-emerald-400 hover:text-emerald-300"><IconCheck className="size-4" /></button>
-                      <button onClick={() => { setInternalState(order.internalNotes ?? ""); setEditingInternal(false); }} className="text-zinc-600 hover:text-zinc-300"><IconX className="size-4" /></button>
+                      <button onClick={() => { setInternalState(order.internalNotes ?? ""); setEditingInternal(false); }} className="text-zinc-400 hover:text-zinc-300"><IconX className="size-4" /></button>
                     </div>
                   )}
                 </div>
@@ -635,13 +635,13 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Right: Sidebar ── */}
         <div className="w-full lg:w-80 shrink-0 space-y-4">
           {/* Drucklayouts - volle Breite */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Drucklayouts</h3>
             <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
           </div>
 
           {/* Kundenpreis */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Preiskalkulation</h3>
             <div className="space-y-1">
               {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
@@ -659,7 +659,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </span>
                 </div>
               )}
-              <div className="border-t border-white/[0.06] mt-2 pt-2 flex items-center justify-between">
+              <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
                 <span className="text-sm font-semibold text-zinc-200">Gesamt</span>
                 <span className="text-lg font-bold font-mono tabular-nums text-[#F6A11C]">
                   {customerTotal.toFixed(2)}&euro;

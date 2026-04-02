@@ -76,7 +76,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
 
   const labelClass = "text-sm font-medium text-zinc-300";
   const inputClass =
-    "bg-white/[0.04] border-white/[0.08] text-zinc-200 placeholder:text-zinc-600 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20";
+    "bg-white/[0.04] border-white/[0.08] text-zinc-200 placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -189,7 +189,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+      <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
         <button
           type="submit"
           disabled={submitting}
@@ -200,7 +200,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-zinc-300"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-zinc-300"
         >
           Abbrechen
         </button>

@@ -79,7 +79,7 @@ function NavGroup({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500 mb-1">
+      <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-400 mb-1">
         {label}
       </SidebarGroupLabel>
       <SidebarGroupContent>
@@ -95,13 +95,13 @@ function NavGroup({
                     "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 " +
                     (active
                       ? "bg-[#F6A11C]/10 text-[#F6A11C] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-[3px] before:rounded-full before:bg-[#F6A11C]"
-                      : "text-zinc-400 hover:bg-white/[0.05] hover:text-zinc-200")
+                      : "text-zinc-300 hover:bg-white/[0.06] hover:text-zinc-100")
                   }
                 >
                   <item.icon
                     className={
                       "size-[18px] shrink-0 " +
-                      (active ? "text-[#F6A11C]" : "text-zinc-500")
+                      (active ? "text-[#F6A11C]" : "text-zinc-400")
                     }
                   />
                   <span>{item.title}</span>
@@ -128,9 +128,9 @@ export function AppSidebar() {
     viewMode === "driver" ? "Fahrer" : viewMode === "accounting" ? "Buchhaltung" : "Admin";
 
   return (
-    <Sidebar className="border-r border-white/[0.06] bg-zinc-950">
+    <Sidebar className="border-r border-white/[0.10] bg-zinc-950 shadow-xl shadow-black/50">
       {/* Brand */}
-      <SidebarHeader className="border-b border-white/[0.06] py-5">
+      <SidebarHeader className="border-b border-white/[0.10] py-5">
         <Link href="/" className="flex justify-center w-full">
           <img
             src="/logo.png"
@@ -169,12 +169,12 @@ export function AppSidebar() {
       </SidebarContent>
 
       {/* Footer */}
-      <SidebarFooter className="border-t border-white/[0.06] px-5 py-4">
+      <SidebarFooter className="border-t border-white/[0.10] px-5 py-4">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] text-zinc-600">
+          <span className="text-[11px] text-zinc-500">
             Knipserl Dashboard
           </span>
-          <span className="text-[10px] font-mono text-zinc-700">v1.0</span>
+          <span className="text-[10px] font-mono text-zinc-500">v1.0</span>
         </div>
       </SidebarFooter>
     </Sidebar>

@@ -82,7 +82,7 @@ export default async function InvoicesPage() {
 
       {/* Quick stats */}
       <div className="grid grid-cols-5 gap-4">
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Gesamt
           </p>
@@ -90,7 +90,7 @@ export default async function InvoicesPage() {
             {totalCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Entwurf
           </p>
@@ -98,7 +98,7 @@ export default async function InvoicesPage() {
             {draftCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Versendet
           </p>
@@ -106,7 +106,7 @@ export default async function InvoicesPage() {
             {sentCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             Bezahlt
           </p>
@@ -114,7 +114,7 @@ export default async function InvoicesPage() {
             {paidCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
             &Uuml;berf&auml;llig
           </p>
@@ -125,15 +125,15 @@ export default async function InvoicesPage() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.06]">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             Alle Rechnungen
           </h2>
         </div>
         {invoices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-            <IconFileInvoice className="size-10 mb-3 text-zinc-600" />
+            <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Noch keine Rechnungen vorhanden</p>
           </div>
         ) : (

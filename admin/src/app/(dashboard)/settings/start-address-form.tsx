@@ -91,7 +91,7 @@ export function StartAddressForm({
     "block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1";
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+    <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <IconMapPin className="size-5 text-[#F6A11C]" />

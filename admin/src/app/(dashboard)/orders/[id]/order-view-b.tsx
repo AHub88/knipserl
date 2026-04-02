@@ -145,7 +145,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <IconArrowLeft className="size-4" />
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-zinc-600">#{order.orderNumber}</span>
+          <span className="text-xs font-mono text-zinc-400">#{order.orderNumber}</span>
           {isAdmin && (
             <button
               onClick={onEdit}
@@ -163,7 +163,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="flex items-center gap-2 text-sm">
           <IconCalendar className="size-4 text-[#F6A11C]" />
           <span className="text-[#F6A11C] font-medium">{weekday}, {dateStr}</span>
-          <span className="text-zinc-600">&middot;</span>
+          <span className="text-zinc-400">&middot;</span>
           <span className="text-zinc-400">{order.eventType}</span>
         </div>
 
@@ -179,12 +179,12 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <IconMapPin className="size-4 shrink-0" />
           <span className="text-base font-medium text-zinc-300">{order.locationName}</span>
           {ort && <span className="text-zinc-500">&middot; {ort}</span>}
-          {order.distanceKm != null && <span className="text-zinc-600">&middot; {order.distanceKm} km</span>}
+          {order.distanceKm != null && <span className="text-zinc-400">&middot; {order.distanceKm} km</span>}
         </div>
       </div>
 
       {/* ── Status + Kontakt Bar ── */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 space-y-3">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-4 space-y-3">
         {/* Status */}
         <div className="flex flex-wrap gap-2">
           {statusFlags.map((s) => (
@@ -204,29 +204,29 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         </div>
 
         {/* Contact chips */}
-        <div className="border-t border-white/[0.06] pt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+        <div className="border-t border-white/[0.10] pt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
           {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
             <span className="flex items-center gap-1.5 text-zinc-400">
-              <IconMail className="size-3.5 text-zinc-600" />
+              <IconMail className="size-3.5 text-zinc-400" />
               {order.customerEmail}
             </span>
           )}
           {order.customerPhone && (
             <span className="flex items-center gap-1.5 text-zinc-400">
-              <IconPhoneCall className="size-3.5 text-zinc-600" />
+              <IconPhoneCall className="size-3.5 text-zinc-400" />
               {order.customerPhone}
             </span>
           )}
           <span className="flex items-center gap-1.5 text-zinc-400">
-            <IconSteeringWheel className="size-3.5 text-zinc-600" />
-            {driverLabel ?? <span className="text-zinc-600 italic">Kein Fahrer</span>}
+            <IconSteeringWheel className="size-3.5 text-zinc-400" />
+            {driverLabel ?? <span className="text-zinc-400 italic">Kein Fahrer</span>}
           </span>
           <span className="flex items-center gap-1.5 text-zinc-400">
-            <IconCash className="size-3.5 text-zinc-600" />
+            <IconCash className="size-3.5 text-zinc-400" />
             {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
           </span>
           <span className="flex items-center gap-1.5 text-zinc-400">
-            <IconBuildingStore className="size-3.5 text-zinc-600" />
+            <IconBuildingStore className="size-3.5 text-zinc-400" />
             {order.companyName.includes("GbR") ? "GbR" : "EU"}
           </span>
         </div>
@@ -250,7 +250,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
       {/* ── Preis Grid ── */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+        <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-5">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Kundenpreis</h3>
           <div className="space-y-1">
             {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
@@ -264,7 +264,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 <span className="text-sm font-mono tabular-nums text-red-400">&minus;{discountAmount.toFixed(2)}&euro;</span>
               </div>
             )}
-            <div className="border-t border-white/[0.06] mt-2 pt-2 flex items-center justify-between">
+            <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
               <span className="text-sm font-semibold text-zinc-200">Gesamt</span>
               <span className="text-xl font-bold font-mono tabular-nums text-[#F6A11C]">{customerTotal.toFixed(2)}&euro;</span>
             </div>
@@ -303,7 +303,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       {(order.notes || (order.internalNotes && showInternal)) && (
         <div className="grid gap-4 sm:grid-cols-2">
           {order.notes && (
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-4">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-2">Kundenkommentar</h3>
               <p className="text-sm text-zinc-300 whitespace-pre-wrap">{order.notes}</p>
             </div>
@@ -318,7 +318,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       )}
 
       {/* ── Drucklayouts ── */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-4">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Drucklayouts</h3>
         <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} />
       </div>

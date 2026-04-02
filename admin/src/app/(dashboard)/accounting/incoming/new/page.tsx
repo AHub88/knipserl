@@ -32,7 +32,7 @@ export default async function NewIncomingInvoicePage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-6">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-6">
         <IncomingForm companies={companies} />
       </div>
     </div>

@@ -65,7 +65,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
   };
 
   return (
-    <header className="flex h-14 items-center gap-3 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm px-4">
+    <header className="flex h-14 items-center gap-3 border-b border-white/[0.10] bg-zinc-950/80 backdrop-blur-sm px-4 shadow-md shadow-black/30">
       <SidebarTrigger className="text-zinc-400 hover:text-zinc-200 transition-colors" />
       <Separator
         orientation="vertical"
@@ -76,8 +76,8 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
 
       {/* View mode toggle - only for admins */}
       {isAdmin && (
-        <div className="hidden sm:flex items-center gap-1 rounded-lg border border-white/[0.08] bg-white/[0.02] p-0.5">
-          <IconEye className="size-3.5 text-zinc-600 ml-1.5 mr-0.5" />
+        <div className="hidden sm:flex items-center gap-1 rounded-lg border border-white/[0.12] bg-white/[0.04] p-0.5 shadow-sm shadow-black/20">
+          <IconEye className="size-3.5 text-zinc-400 ml-1.5 mr-0.5" />
           {viewModeConfig.map((mode) => (
             <button
               key={mode.key}
@@ -85,8 +85,8 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
               className={
                 "h-6 px-2.5 rounded-md text-[11px] font-semibold transition-colors " +
                 (viewMode === mode.key
-                  ? `bg-white/[0.08] ${mode.className}`
-                  : "text-zinc-500 hover:text-zinc-300")
+                  ? `bg-white/[0.10] ${mode.className}`
+                  : "text-zinc-400 hover:text-zinc-200")
               }
             >
               {mode.label}
@@ -142,7 +142,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
 
           <DropdownMenuContent
             align="end"
-            className="w-52 rounded-xl border border-white/[0.08] bg-zinc-900 p-1 shadow-xl shadow-black/40"
+            className="w-52 rounded-xl border border-white/[0.12] bg-zinc-900 p-1 shadow-2xl shadow-black/60"
           >
             <DropdownMenuLabel className="px-3 py-2.5">
               <div className="flex flex-col gap-1">

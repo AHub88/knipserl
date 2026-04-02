@@ -108,7 +108,7 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
+        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
           <TableHead className={thClass}>Lieferant</TableHead>
           <TableHead className={thClass}>Rechnungsnr</TableHead>
           <TableHead className={`${thClass} text-right`}>Betrag</TableHead>

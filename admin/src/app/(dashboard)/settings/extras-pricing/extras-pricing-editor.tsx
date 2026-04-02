@@ -83,9 +83,9 @@ export function ExtrasPricingEditor({
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
         {/* Fotobox */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.10]">
           <span className="text-sm font-semibold text-[#F6A11C]">Fotobox (Grundpreis)</span>
           <div className="flex items-center gap-1 w-28">
             <input
@@ -122,7 +122,7 @@ export function ExtrasPricingEditor({
         ))}
       </div>
 
-      <p className="text-xs text-zinc-600">
+      <p className="text-xs text-zinc-400">
         Drucker ist im Grundpreis enthalten und hat keinen eigenen Aufpreis.
       </p>
     </div>

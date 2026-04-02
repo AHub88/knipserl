@@ -43,7 +43,7 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
           placeholder="Suche nach Name, E-Mail, Firma, Telefon..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.02] pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
+          className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
         />
         {search && (
           <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300">
@@ -52,8 +52,8 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
         )}
       </div>
 
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.06]">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.10]">
           <h2 className="text-sm font-semibold text-zinc-300">
             {filtered.length} von {customers.length} Kunden
           </h2>
@@ -61,13 +61,13 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
 
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-            <IconSearch className="size-10 mb-3 text-zinc-600" />
+            <IconSearch className="size-10 mb-3 text-zinc-400" />
             <p className="text-sm">Keine Kunden gefunden</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
+              <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Name</TableHead>
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Firma</TableHead>
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">E-Mail</TableHead>

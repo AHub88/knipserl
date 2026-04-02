@@ -336,7 +336,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* YTD Comparison - last 4 years */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">
           Standpunkt heute ({ytdDateLabel})
         </h3>
@@ -361,7 +361,7 @@ export default async function DashboardPage() {
                           <span className={"text-[11px] font-mono font-bold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300")}>{y.revenue.toLocaleString("de-DE", { minimumFractionDigits: 0 })}&nbsp;&euro;</span>
                         </div>
                       </div>
-                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-zinc-700" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
+                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-zinc-500" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
                     </div>
                   );
                 });
@@ -385,7 +385,7 @@ export default async function DashboardPage() {
                           <span className={"text-[11px] font-mono font-bold tabular-nums " + (isCurrentYear ? "text-blue-400" : "text-zinc-300")}>{y.count}</span>
                         </div>
                       </div>
-                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-zinc-700" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
+                      <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-zinc-500" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "–" : `${change >= 0 ? "+" : ""}${change}%`}</span>
                     </div>
                   );
                 });
@@ -402,7 +402,7 @@ export default async function DashboardPage() {
           return (
             <Card
               key={kpi.label}
-              className="border-white/5 bg-white/[0.02] backdrop-blur"
+              className="border-white/10 bg-white/[0.04] backdrop-blur"
             >
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
@@ -433,7 +433,7 @@ export default async function DashboardPage() {
       {yearlyData.length > 0 && (
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Umsatz Chart */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Umsatz pro Jahr</h3>
             <div className="space-y-2.5">
               {(() => {
@@ -470,7 +470,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Aufträge Chart */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Aufträge pro Jahr</h3>
             <div className="space-y-2.5">
               {(() => {
@@ -512,7 +512,7 @@ export default async function DashboardPage() {
       {yearlyData.length > 0 && (
         <div className="grid gap-6 lg:grid-cols-2">
           {/* BAR vs Rechnung */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Bar vs. Rechnung</h3>
             <div className="flex items-center gap-4 mb-4 text-[10px]">
               <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-emerald-400" />Bar</span>
@@ -553,7 +553,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Durchschnittl. Umsatz pro Auftrag */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">&Oslash; Umsatz pro Auftrag</h3>
             <div className="space-y-2.5">
               {(() => {
@@ -590,7 +590,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Vergütung Fahrer */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Verg&uuml;tung Fahrer pro Jahr</h3>
             <div className="space-y-2.5">
               {(() => {
@@ -627,7 +627,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Extras pro Jahr */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">Extras-Buchungen pro Jahr</h3>
             <div className="overflow-x-auto">
               {(() => {
@@ -635,7 +635,7 @@ export default async function DashboardPage() {
                 return (
                   <table className="w-full text-[11px]">
                     <thead>
-                      <tr className="border-b border-white/[0.06]">
+                      <tr className="border-b border-white/[0.10]">
                         <th className="text-left py-1.5 font-semibold text-zinc-500 uppercase tracking-wider">Extra</th>
                         {filteredYears.map((y) => (
                           <th key={y.year} className={"text-right py-1.5 font-semibold tabular-nums px-1.5 " + (y.year === now.getFullYear() ? "text-[#F6A11C]" : "text-zinc-500")}>
@@ -670,7 +670,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Monthly Comparison: This Year vs Last Year */}
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+      <div className="rounded-xl border border-white/[0.10] bg-white/[0.04] shadow-lg shadow-black/30 p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Monatsvergleich Aufträge</h3>
           <div className="flex items-center gap-4 text-[10px]">
@@ -689,7 +689,7 @@ export default async function DashboardPage() {
                   {/* Last year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
                     {m.lastYear > 0 && (
-                      <span className="text-[9px] font-mono text-zinc-600 mb-0.5 hidden sm:block">{m.lastYear}</span>
+                      <span className="text-[9px] font-mono text-zinc-400 mb-0.5 hidden sm:block">{m.lastYear}</span>
                     )}
                     <div
                       className="w-full bg-zinc-700/50 rounded-t-sm"
@@ -707,7 +707,7 @@ export default async function DashboardPage() {
                     />
                   </div>
                 </div>
-                <span className={"text-[10px] " + (isCurrentMonth ? "text-[#F6A11C] font-semibold" : "text-zinc-600")}>{m.month}</span>
+                <span className={"text-[10px] " + (isCurrentMonth ? "text-[#F6A11C] font-semibold" : "text-zinc-400")}>{m.month}</span>
               </div>
             );
           })}
@@ -725,7 +725,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Upcoming Orders */}
-      <Card className="border-white/5 bg-white/[0.02]">
+      <Card className="border-white/10 bg-white/[0.04]">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold text-zinc-100">
             N&auml;chste Auftr&auml;ge
