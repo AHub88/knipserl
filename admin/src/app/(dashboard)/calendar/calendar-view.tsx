@@ -26,6 +26,7 @@ interface Order {
 
 interface Vacation {
   id: string;
+  type: "ABSENT" | "LIMITED";
   startDate: string;
   endDate: string;
   note: string | null;
@@ -128,10 +129,19 @@ export function CalendarView() {
     return data.orders.filter((o) => new Date(o.eventDate).getDate() === day);
   }
 
+  // Sort vacations once, consistently by startDate then id
+  const sortedVacations = data
+    ? [...data.vacations].sort((a, b) => {
+        const diff = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        return diff !== 0 ? diff : a.id.localeCompare(b.id);
+      })
+    : [];
+
   function getVacationsForDay(day: number): Vacation[] {
     if (!data) return [];
     const dayDate = new Date(year, month - 1, day);
-    return data.vacations.filter((v) => {
+    dayDate.setHours(12, 0, 0, 0); // noon to avoid timezone edge cases
+    return sortedVacations.filter((v) => {
       const start = new Date(v.startDate);
       const end = new Date(v.endDate);
       start.setHours(0, 0, 0, 0);
@@ -225,7 +235,10 @@ export function CalendarView() {
           <div className="size-2 rounded-full bg-emerald-400" /> Abgeschlossen
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="size-2.5 w-4 rounded bg-orange-500/20 border border-orange-500/30" /> Urlaub
+          <div className="size-2.5 w-4 rounded bg-orange-500/20 border border-orange-500/30" /> Abwesend
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="size-2.5 w-4 rounded bg-yellow-500/20 border border-yellow-500/30" /> Bedingt
         </div>
       </div>
 
@@ -295,21 +308,29 @@ export function CalendarView() {
                       const isSunday = currentDay.getDay() === 0;
                       const isFirstOfMonth = day === 1;
                       const isLastOfMonth = day === daysInMonth;
-                      const showLabel = isStart || isMonday || isFirstOfMonth;
-                      const title = `${v.driver.name}${v.note ? ` – ${v.note}` : ""}`;
+                      const isLimited = v.type === "LIMITED";
+                      const typePrefix = isLimited ? "\u26A0 " : "";
+                      const label = `${typePrefix}${v.driver.name}${v.note ? ` – ${v.note}` : ""}`;
+                      const title = `${v.driver.name}${isLimited ? " (bedingt)" : " (abwesend)"}${v.note ? ` – ${v.note}` : ""}`;
+                      const isLeftEdge = isSingle || isStart || isMonday || isFirstOfMonth;
+                      const isRightEdge = isSingle || isEnd || isSunday || isLastOfMonth;
 
                       return (
                         <div
                           key={v.id}
+                          style={{
+                            backgroundColor: isLimited ? "rgba(234,179,8,0.12)" : "rgba(249,115,22,0.12)",
+                            borderColor: isLimited ? "rgba(234,179,8,0.25)" : "rgba(249,115,22,0.25)",
+                            color: isLimited ? "#facc15" : "#fb923c",
+                          }}
                           className={
-                            "bg-orange-500/15 border-y border-orange-500/20 px-1 py-0.5 text-[10px] leading-tight text-orange-400 truncate -mx-1.5 " +
-                            (isSingle ? "rounded mx-0 border-x " : "") +
-                            (!isSingle && (isStart || isMonday || isFirstOfMonth) ? "rounded-l ml-0 border-l " : "") +
-                            (!isSingle && (isEnd || isSunday || isLastOfMonth) ? "rounded-r mr-0 border-r " : "")
+                            "border-y px-1 py-0.5 text-[10px] leading-tight truncate -mx-1.5 " +
+                            (isLeftEdge ? "rounded-l ml-0 border-l " : "") +
+                            (isRightEdge ? "rounded-r mr-0 border-r " : "")
                           }
                           title={title}
                         >
-                          {showLabel ? title : "\u00A0"}
+                          {label}
                         </div>
                       );
                     })}
@@ -478,15 +499,17 @@ export function CalendarView() {
                         </button>
                       );
                     })}
-                    {vacations.map((v) => (
+                    {vacations.map((v) => {
+                      const isLimited = v.type === "LIMITED";
+                      return (
                       <div
                         key={v.id}
-                        className="flex items-center gap-4 px-4 py-3 bg-orange-500/5"
+                        className={"flex items-center gap-4 px-4 py-3 " + (isLimited ? "bg-yellow-500/5" : "bg-orange-500/5")}
                       >
-                        <div className="size-2.5 rounded-full bg-orange-400 shrink-0" />
+                        <div className={"size-2.5 rounded-full shrink-0 " + (isLimited ? "bg-yellow-400" : "bg-orange-400")} />
                         <div className="flex-1">
-                          <span className="text-sm text-orange-400">
-                            Urlaub: {v.driver.name}
+                          <span className={"text-sm " + (isLimited ? "text-yellow-400" : "text-orange-400")}>
+                            {isLimited ? "Bedingt: " : "Abwesend: "}{v.driver.name}
                           </span>
                           {v.note && (
                             <span className="text-xs text-muted-foreground ml-2">
@@ -495,7 +518,8 @@ export function CalendarView() {
                           )}
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               );

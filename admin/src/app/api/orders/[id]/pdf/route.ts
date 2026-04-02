@@ -2,16 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
+function svg(path: string, vb = "0 0 24 24") {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
+
 const EXTRAS_CONFIG: Record<string, { label: string; icon: string }> = {
-  Drucker: { label: "DRUCKER", icon: "🖨️" },
-  Props: { label: "REQUISITEN", icon: "🎭" },
-  Stick: { label: "USB STICK", icon: "💾" },
-  HG: { label: "HINTERGRUND", icon: "🖼️" },
-  LOVE: { label: "LOVE LETTERS", icon: "❤️" },
-  Social: { label: "ONLINE-GALERIE", icon: "🌐" },
-  Book: { label: "GÄSTEBUCH", icon: "📖" },
-  TV: { label: "TV SLIDESHOW", icon: "🖥️" },
-  Telefon: { label: "GÄSTETELEFON", icon: "📞" },
+  Drucker: { label: "DRUCKER", icon: svg('<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>') },
+  Props: { label: "REQUISITEN", icon: svg('<path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/><path d="M3 12h1m16 0h1M12 3v1m0 16v1m-7.07-2.93l.71-.71m12.73-12.73l.7-.7M4.93 4.93l.71.71m12.73 12.73l.7.7"/>', '0 0 24 24') },
+  Stick: { label: "USB STICK", icon: svg('<path d="M8 2h8l4 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8l4-6z"/><line x1="10" y1="12" x2="10" y2="16"/><line x1="14" y1="12" x2="14" y2="16"/>') },
+  HG: { label: "HINTERGRUND", icon: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>') },
+  LOVE: { label: "LOVE LETTERS", icon: svg('<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>') },
+  Social: { label: "ONLINE-GALERIE", icon: svg('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>') },
+  Book: { label: "GÄSTEBUCH", icon: svg('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>') },
+  TV: { label: "TV SLIDESHOW", icon: svg('<rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>') },
+  Telefon: { label: "GÄSTETELEFON", icon: svg('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>') },
 };
 
 const EXTRAS_PRICES: Record<string, number> = {
@@ -96,9 +100,10 @@ export async function GET(
   const extrasHtml = allExtras
     .map(([key, cfg]) => {
       const active = order.extras.includes(key);
-      return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border-radius:8px;border:2px solid ${active ? "#F6A11C" : "#e0e0e0"};opacity:${active ? 1 : 0.4};min-width:100px;">
-        <span style="font-size:24px;">${cfg.icon}</span>
-        <span style="font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:${active ? "#F6A11C" : "#999"};">${cfg.label}</span>
+      const color = active ? "#F6A11C" : "#bbb";
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:8px;border:2px solid ${active ? "#F6A11C" : "#e0e0e0"};opacity:${active ? 1 : 0.35};min-width:100px;color:${color};">
+        ${cfg.icon}
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:${color};">${cfg.label}</span>
       </div>`;
     })
     .join("");
@@ -120,8 +125,10 @@ export async function GET(
   <style>
     @page { size: A4; margin: 0; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #e8e8e8; }
-    .page { width: 210mm; min-height: 297mm; margin: 0 auto; background: white; position: relative; padding: 40px 50px; page-break-after: always; }
+    html { background: #d4d4d4; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #d4d4d4; padding: 40px 0; }
+    .page { width: 210mm; height: 297mm; margin: 0 auto 40px auto; background: white; position: relative; padding: 40px 50px; box-shadow: 0 4px 24px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.12); border-radius: 2px; overflow: hidden; }
+    .page:last-child { margin-bottom: 40px; }
     .accent { color: #F6A11C; }
     .section-bar { background: #1a1a1a; color: white; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 16px; border-radius: 4px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
     .section-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #F6A11C; }
@@ -136,8 +143,9 @@ export async function GET(
     .badge-teardown { background: #ef4444; }
     .badge-event { background: #e8e8e8; color: #666; font-size: 10px; padding: 3px 12px; }
     @media print {
-      body { background: white; }
-      .page { margin: 0; box-shadow: none; }
+      html, body { background: white; padding: 0; }
+      .page { margin: 0; box-shadow: none; border-radius: 0; height: auto; min-height: 297mm; page-break-after: always; }
+      .page:last-child { page-break-after: avoid; }
     }
   </style>
 </head>
@@ -154,7 +162,7 @@ export async function GET(
       ${firma ? `<div style="font-size:14px;color:#666;">${firma}</div>` : ""}
       <span class="badge badge-event" style="margin-top:6px;">${order.eventType}</span>
     </div>
-    <img src="/logo.png" alt="Knipserl" style="height:50px;" />
+    <img src="/knipserl-logo.png" alt="Knipserl" style="height:50px;" />
   </div>
 
   <div class="divider"></div>
@@ -224,7 +232,7 @@ export async function GET(
 
 <!-- Page 2: Layout Ausdruck -->
 ${order.graphicUrl ? `
-<div class="page" style="display:flex;flex-direction:column;">
+<div class="page" style="display:flex;flex-direction:column;padding-bottom:50px;">
   <div style="background:#1a1a1a;border-radius:8px;padding:20px;text-align:center;margin-bottom:24px;">
     <div style="color:#F6A11C;font-size:20px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;">Layout Ausdruck</div>
     <div style="color:#999;font-size:12px;margin-top:4px;font-style:italic;">Bitte genau prüfen – bei Änderungswünschen bitte melden</div>

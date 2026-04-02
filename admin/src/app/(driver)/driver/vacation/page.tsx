@@ -34,6 +34,7 @@ export default async function DriverVacationPage() {
           <VacationList
             vacations={vacations.map((v) => ({
               id: v.id,
+              type: v.type as "ABSENT" | "LIMITED",
               startDate: v.startDate.toISOString(),
               endDate: v.endDate.toISOString(),
               note: v.note,

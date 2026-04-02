@@ -7,6 +7,7 @@ const createVacationSchema = z.object({
   startDate: z.string().transform((s) => new Date(s)),
   endDate: z.string().transform((s) => new Date(s)),
   note: z.string().optional(),
+  type: z.enum(["ABSENT", "LIMITED"]).optional(),
 });
 
 export async function GET() {
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
     const vacation = await prisma.vacation.create({
       data: {
         driverId,
+        type: data.type ?? "ABSENT",
         startDate: data.startDate,
         endDate: data.endDate,
         note: data.note,

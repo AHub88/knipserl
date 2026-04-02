@@ -17,6 +17,11 @@ export default async function DashboardLayout({
 
   const viewMode = await getEffectiveViewMode(session.user.role ?? "");
 
+  // Read impersonateDriverId from cookie
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const impersonateDriverId = cookieStore.get("impersonateDriverId")?.value ?? null;
+
   // Load drivers for admin impersonation dropdown
   const drivers = session.user.role === "ADMIN"
     ? await prisma.user.findMany({
@@ -27,7 +32,7 @@ export default async function DashboardLayout({
     : [];
 
   return (
-    <ViewModeProvider userRole={session.user.role ?? ""} initialViewMode={viewMode}>
+    <ViewModeProvider userRole={session.user.role ?? ""} initialViewMode={viewMode} initialDriverId={impersonateDriverId}>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>

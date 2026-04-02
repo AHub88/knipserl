@@ -49,6 +49,22 @@ export async function PATCH(
   const { id } = await params;
   const body = await request.json();
 
+  // Handle "self" claim — driver or admin impersonating
+  if (body.driverId === "self") {
+    let claimDriverId = session.user.id;
+    if (session.user.role === "ADMIN") {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const impersonateId = cookieStore.get("impersonateDriverId")?.value;
+      if (impersonateId) claimDriverId = impersonateId;
+    }
+    const order = await prisma.order.update({
+      where: { id },
+      data: { driverId: claimDriverId, status: "ASSIGNED" },
+    });
+    return NextResponse.json(order);
+  }
+
   // Drivers can only assign themselves
   if (session.user.role === "DRIVER") {
     if (body.driverId && body.driverId !== session.user.id) {

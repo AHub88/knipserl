@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export type ViewMode = "admin" | "driver" | "accounting";
@@ -25,17 +25,28 @@ export function ViewModeProvider({
   children,
   userRole,
   initialViewMode,
+  initialDriverId,
 }: {
   children: React.ReactNode;
   userRole: string;
   initialViewMode?: ViewMode;
+  initialDriverId?: string | null;
 }) {
   const router = useRouter();
   const isAdmin = userRole === "ADMIN";
+
+  function readCookie(name: string): string | null {
+    if (typeof document === "undefined") return null;
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
   const [viewMode, setViewModeState] = useState<ViewMode>(
-    initialViewMode ?? "admin"
+    () => (readCookie("viewMode") as ViewMode) || initialViewMode || "admin"
   );
-  const [impersonateDriverId, setImpersonateDriverIdState] = useState<string | null>(null);
+  const [impersonateDriverId, setImpersonateDriverIdState] = useState<string | null>(
+    () => readCookie("impersonateDriverId") || initialDriverId || null
+  );
 
   const setViewMode = useCallback(
     (mode: ViewMode) => {
@@ -51,16 +62,17 @@ export function ViewModeProvider({
   );
 
   const setImpersonateDriverId = useCallback(
-    (id: string | null) => {
+    async (id: string | null) => {
       setImpersonateDriverIdState(id);
       if (id) {
-        document.cookie = `impersonateDriverId=${id};path=/;max-age=86400`;
+        document.cookie = `impersonateDriverId=${id};path=/;max-age=86400;SameSite=Lax`;
       } else {
-        document.cookie = "impersonateDriverId=;path=/;max-age=0";
+        document.cookie = "impersonateDriverId=;path=/;max-age=0;SameSite=Lax";
       }
-      router.refresh();
+      // Force full page reload so server components re-read the cookie
+      window.location.reload();
     },
-    [router]
+    []
   );
 
   return (

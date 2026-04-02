@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -144,34 +145,40 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
             align="end"
             className="w-52 rounded-xl border border-white/[0.12] bg-card p-1 shadow-2xl shadow-black/60"
           >
-            <DropdownMenuLabel className="px-3 py-2.5">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-semibold text-zinc-200">
-                  {session.user.name}
-                </span>
-                <span
-                  className={
-                    "inline-flex items-center self-start rounded px-1.5 py-px text-[9px] font-semibold uppercase tracking-wider " +
-                    roleConfig.className
-                  }
-                >
-                  {roleConfig.label}
-                </span>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="px-3 py-2.5">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-semibold text-zinc-200">
+                    {session.user.name}
+                  </span>
+                  <span
+                    className={
+                      "inline-flex items-center self-start rounded px-1.5 py-px text-[9px] font-semibold uppercase tracking-wider " +
+                      roleConfig.className
+                    }
+                  >
+                    {roleConfig.label}
+                  </span>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator className="bg-[#222326]" />
-            <DropdownMenuItem className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:text-zinc-100 cursor-pointer">
-              <IconUser className="size-4 text-muted-foreground" />
-              Profil
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:text-zinc-100 cursor-pointer">
+                <IconUser className="size-4 text-muted-foreground" />
+                Profil
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator className="bg-[#222326]" />
-            <DropdownMenuItem
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:text-red-300 cursor-pointer"
-            >
-              <IconLogout className="size-4" />
-              Abmelden
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:text-red-300 cursor-pointer"
+              >
+                <IconLogout className="size-4" />
+                Abmelden
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
