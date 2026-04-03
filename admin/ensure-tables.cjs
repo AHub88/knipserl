@@ -1,6 +1,19 @@
-// Ensures all required database tables exist before the app starts.
+// Ensures all required database tables and types exist before the app starts.
 // Uses pg directly (CommonJS) - no prisma CLI, no tsx needed.
 "use strict";
+
+// PostgreSQL enum types required by Prisma schema
+const ENUMS = {
+  VacationType: ["ABSENT", "LIMITED"],
+  Role: ["ADMIN", "ADMIN_ACCOUNTING", "DRIVER"],
+  InquiryStatus: ["NEW", "ACCEPTED", "REJECTED"],
+  OrderStatus: ["OPEN", "ASSIGNED", "COMPLETED", "CANCELLED"],
+  PaymentMethod: ["INVOICE", "CASH"],
+  CustomerType: ["PRIVATE", "BUSINESS"],
+  QuoteStatus: ["DRAFT", "SENT", "ACCEPTED", "REJECTED"],
+  InvoiceStatus: ["DRAFT", "SENT", "PAID", "OVERDUE", "CANCELLED"],
+  IncomingInvoiceStatus: ["PENDING", "PAID", "OVERDUE"],
+};
 
 async function main() {
   const url = process.env.DATABASE_URL;
@@ -25,20 +38,35 @@ async function main() {
     await client.connect();
     console.log("[ensure-tables] Connected to database.");
 
-    // Check what tables exist
+    // 1. Ensure all enum types exist
+    const existingTypes = await client.query(
+      "SELECT typname FROM pg_type WHERE typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')"
+    );
+    const typeNames = existingTypes.rows.map(r => r.typname);
+
+    for (const [name, values] of Object.entries(ENUMS)) {
+      if (!typeNames.includes(name)) {
+        const valuesStr = values.map(v => `'${v}'`).join(", ");
+        console.log(`[ensure-tables] Creating enum type "${name}"...`);
+        await client.query(`CREATE TYPE "${name}" AS ENUM (${valuesStr})`);
+      }
+    }
+
+    // 2. Check what tables exist
     const res = await client.query(
       "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"
     );
     const tables = res.rows.map(r => r.tablename);
     console.log("[ensure-tables] Existing tables:", tables.join(", "));
 
+    // 3. Ensure vacations table exists with correct schema
     if (!tables.includes("vacations")) {
       console.log("[ensure-tables] Creating vacations table...");
       await client.query(`
         CREATE TABLE "vacations" (
           "id" TEXT NOT NULL,
           "driverId" TEXT NOT NULL,
-          "type" TEXT NOT NULL DEFAULT 'ABSENT',
+          "type" "VacationType" NOT NULL DEFAULT 'ABSENT'::"VacationType",
           "startDate" TIMESTAMP(3) NOT NULL,
           "endDate" TIMESTAMP(3) NOT NULL,
           "note" TEXT,
@@ -52,23 +80,28 @@ async function main() {
     } else {
       console.log("[ensure-tables] vacations table exists, checking columns...");
 
-      // Add missing columns
       const cols = await client.query(
-        "SELECT column_name FROM information_schema.columns WHERE table_name = 'vacations'"
+        "SELECT column_name, data_type, udt_name FROM information_schema.columns WHERE table_name = 'vacations'"
       );
-      const colNames = cols.rows.map(r => r.column_name);
-      console.log("[ensure-tables] vacations columns:", colNames.join(", "));
+      const colMap = {};
+      cols.rows.forEach(r => { colMap[r.column_name] = r; });
+      console.log("[ensure-tables] vacations columns:", Object.keys(colMap).join(", "));
 
-      if (!colNames.includes("type")) {
-        console.log("[ensure-tables] Adding missing 'type' column...");
-        await client.query(`ALTER TABLE "vacations" ADD COLUMN "type" TEXT NOT NULL DEFAULT 'ABSENT'`);
+      // Add missing columns
+      if (!colMap["type"]) {
+        console.log("[ensure-tables] Adding 'type' column...");
+        await client.query(`ALTER TABLE "vacations" ADD COLUMN "type" "VacationType" NOT NULL DEFAULT 'ABSENT'::"VacationType"`);
+      } else if (colMap["type"].udt_name === "text") {
+        // Column exists but is TEXT instead of enum - convert it
+        console.log("[ensure-tables] Converting 'type' column from TEXT to VacationType enum...");
+        await client.query(`ALTER TABLE "vacations" ALTER COLUMN "type" TYPE "VacationType" USING "type"::"VacationType"`);
+        await client.query(`ALTER TABLE "vacations" ALTER COLUMN "type" SET DEFAULT 'ABSENT'::"VacationType"`);
       }
-      if (!colNames.includes("note")) {
-        console.log("[ensure-tables] Adding missing 'note' column...");
+
+      if (!colMap["note"]) {
         await client.query(`ALTER TABLE "vacations" ADD COLUMN "note" TEXT`);
       }
-      if (!colNames.includes("createdAt")) {
-        console.log("[ensure-tables] Adding missing 'createdAt' column...");
+      if (!colMap["createdAt"]) {
         await client.query(`ALTER TABLE "vacations" ADD COLUMN "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP`);
       }
 

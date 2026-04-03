@@ -48,6 +48,34 @@ export async function GET() {
     checks.allTables = `FAIL: ${e instanceof Error ? e.message : String(e)}`;
   }
 
+  // Check enum types
+  try {
+    const types = await prisma.$queryRaw<{typname: string}[]>`
+      SELECT typname FROM pg_type WHERE typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public') AND typtype = 'e' ORDER BY typname
+    `;
+    checks.enumTypes = types.map((t: {typname: string}) => t.typname);
+  } catch (e: unknown) {
+    checks.enumTypes = `FAIL: ${e instanceof Error ? e.message : String(e)}`;
+  }
+
+  // Check vacations table columns
+  try {
+    const cols = await prisma.$queryRaw<{column_name: string, udt_name: string}[]>`
+      SELECT column_name, udt_name FROM information_schema.columns WHERE table_name = 'vacations' ORDER BY ordinal_position
+    `;
+    checks.vacationsColumns = cols.map((c: {column_name: string, udt_name: string}) => `${c.column_name} (${c.udt_name})`);
+  } catch (e: unknown) {
+    checks.vacationsColumns = `FAIL: ${e instanceof Error ? e.message : String(e)}`;
+  }
+
+  // Try creating a vacation (dry run - rollback)
+  try {
+    await prisma.$queryRaw`SELECT 1 FROM "vacations" LIMIT 0`;
+    checks.vacationQueryTest = "OK";
+  } catch (e: unknown) {
+    checks.vacationQueryTest = `FAIL: ${e instanceof Error ? e.message : String(e)}`;
+  }
+
   checks.env = {
     DATABASE_URL: process.env.DATABASE_URL ? "SET (hidden)" : "NOT SET",
     NODE_ENV: process.env.NODE_ENV,
