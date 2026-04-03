@@ -177,7 +177,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
   const [monthFilter, setMonthFilter] = useState("");
 
   // View mode
-  const [groupByMonth, setGroupByMonth] = useState(false);
+  const [groupByMonth, setGroupByMonth] = useState(true);
 
   // Filter expanded
   const [showFilters, setShowFilters] = useState(false);
@@ -209,7 +209,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
     return upcoming[0]?.id ?? null;
   }, [orders]);
 
-  const nextOrderRef = useRef<HTMLTableRowElement>(null);
+  const nextOrderRef = useRef<HTMLElement>(null);
 
   function scrollToNext() {
     if (nextOrderRef.current) {
@@ -601,8 +601,23 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
         </div>
       )}
 
-      {/* Table card */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+      {/* Mobile tab dropdown */}
+      <div className="md:hidden">
+        <select
+          value={activeTab}
+          onChange={(e) => setActiveTab(e.target.value as Tab)}
+          className="w-full h-10 rounded-xl border border-white/[0.08] bg-card px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors appearance-none bg-[length:12px] bg-[right_12px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+        >
+          {tabs.map((tab) => (
+            <option key={tab.key} value={tab.key} className="bg-card text-zinc-300">
+              {tab.label} ({tab.count})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Desktop tabs + content card */}
+      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden hidden md:block">
         {/* Tabs */}
         <div className="flex items-center gap-0 px-6 border-b border-white/[0.10]">
           {tabs.map((tab) => (
@@ -661,7 +676,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
           </div>
         </div>
 
-        {/* Table content */}
+        {/* Desktop table content */}
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <IconSearch className="size-10 mb-3 text-zinc-400" />
@@ -695,6 +710,46 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             nextOrderId={nextOrderId}
             nextOrderRef={nextOrderRef}
           />
+        )}
+      </div>
+
+      {/* Mobile content (no outer card border) */}
+      <div className="md:hidden">
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+            <IconSearch className="size-10 mb-3 text-zinc-400" />
+            <p className="text-sm">Keine Aufträge gefunden</p>
+            {(search || activeFilterCount > 0) && (
+              <button
+                onClick={clearAllFilters}
+                className="mt-2 text-xs text-[#F6A11C] hover:underline"
+              >
+                Filter zurücksetzen
+              </button>
+            )}
+          </div>
+        ) : groupByMonth && grouped ? (
+          <div className="space-y-3">
+            {grouped.map(([key, group]) => (
+              <MonthGroup
+                key={key}
+                label={group.label}
+                orders={group.orders}
+                onRowClick={(id) => router.push(`/orders/${id}`)}
+                nextOrderId={nextOrderId}
+                nextOrderRef={nextOrderRef}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+            <OrderTable
+              orders={filtered}
+              onRowClick={(id) => router.push(`/orders/${id}`)}
+              nextOrderId={nextOrderId}
+              nextOrderRef={nextOrderRef}
+            />
+          </div>
         )}
       </div>
     </div>
@@ -753,36 +808,39 @@ function MonthGroup({
   orders: OrderRow[];
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
-  nextOrderRef?: React.RefObject<HTMLTableRowElement | null>;
+  nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   const hasNext = nextOrderId ? orders.some((o) => o.id === nextOrderId) : false;
   const [collapsed, setCollapsed] = useState(false);
   const revenue = orders.reduce((s, o) => s + o.price, 0);
 
   return (
-    <div className={"rounded-xl border overflow-hidden " + (hasNext ? "border-[#F6A11C]/20" : "border-white/[0.10]")}>
+    <div className="rounded-xl overflow-hidden">
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-[#1c1d20] hover:bg-[#1c1d20] transition-colors"
+        className={
+          "w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 rounded-t-xl transition-colors " +
+          (hasNext ? "bg-[#F6A11C]/10" : "bg-[#1c1d20]")
+        }
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           {collapsed ? (
             <IconChevronRight className="size-4 text-muted-foreground" />
           ) : (
             <IconChevronDown className="size-4 text-muted-foreground" />
           )}
-          <span className="text-base font-semibold text-zinc-100">{label}</span>
-          <span className="text-xs text-muted-foreground bg-card px-2 py-0.5 rounded-md">
-            {orders.length} {orders.length === 1 ? "Auftrag" : "Aufträge"}
+          <span className="text-sm md:text-base font-semibold text-zinc-100">{label}</span>
+          <span className="text-[11px] md:text-xs text-muted-foreground bg-card px-2 py-0.5 rounded-md">
+            {orders.length}
           </span>
         </div>
-        <span className="font-mono text-sm font-semibold tabular-nums text-zinc-300">
+        <span className="font-mono text-xs md:text-sm font-semibold tabular-nums text-zinc-300">
           {revenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })}
           &nbsp;&euro;
         </span>
       </button>
       {!collapsed && (
-        <div className="border-t border-white/[0.10]">
+        <div>
           <OrderTable orders={orders} onRowClick={onRowClick} nextOrderId={nextOrderId} nextOrderRef={nextOrderRef} />
         </div>
       )}
@@ -800,7 +858,7 @@ function MobileOrderList({
   orders: OrderRow[];
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
-  nextOrderRef?: React.RefObject<HTMLTableRowElement | null>;
+  nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   return (
     <div className="divide-y divide-white/[0.10]">
@@ -809,75 +867,97 @@ function MobileOrderList({
         const displayName = firma || kontakt;
         const isNext = nextOrderId === order.id;
         const isPast = new Date(order.eventDate) < new Date();
+        const d = new Date(order.eventDate);
+        const payment = paymentConfig[order.paymentMethod] ?? paymentConfig.CASH;
 
         return (
           <div
             key={order.id}
-            ref={isNext ? (nextOrderRef as React.RefObject<HTMLDivElement>) : undefined}
+            ref={isNext ? (nextOrderRef as React.RefObject<HTMLDivElement | null>) : undefined}
             onClick={() => onRowClick(order.id)}
             className={
-              "cursor-pointer px-4 py-3 transition-colors active:bg-[#1c1d20] " +
+              "cursor-pointer px-3 py-2.5 transition-colors active:bg-[#1c1d20] " +
               (isNext
                 ? "border-l-2 border-l-[#F6A11C] bg-[#F6A11C]/8"
                 : "") +
               (isPast && !isNext ? " opacity-50" : "")
             }
           >
-            {/* Line 1: Datum – Name – Fahrerkürzel */}
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xs text-zinc-500 tabular-nums shrink-0">
-                {new Date(order.eventDate).toLocaleDateString("de-DE", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </span>
-              <span className="text-sm font-medium text-zinc-200 truncate" title={displayName}>
-                {displayName}
-              </span>
-              {order.driverInitials && (
-                <span
-                  className="ml-auto shrink-0 text-xs font-medium text-zinc-400 bg-white/[0.06] rounded px-1.5 py-0.5"
-                  title={
-                    order.secondDriverName
-                      ? `${order.driverName} / ${order.secondDriverName}`
-                      : order.driverName ?? ""
-                  }
-                >
-                  {order.driverInitials}
-                  {order.secondDriverInitials && (
-                    <span className="text-muted-foreground">/{order.secondDriverInitials}</span>
-                  )}
+            <div className="flex gap-2.5 min-w-0">
+              {/* Date pill – spans both lines */}
+              <div className="shrink-0 flex items-center self-stretch">
+                <span className="flex flex-col items-center justify-center rounded-lg bg-white/[0.06] px-2 py-1.5 h-full min-w-[44px]">
+                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300 leading-tight">
+                    {d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}
+                  </span>
+                  <span className="text-[10px] tabular-nums text-zinc-500 leading-tight">
+                    {d.getFullYear()}
+                  </span>
                 </span>
-              )}
-            </div>
-            {/* Line 2: Location – Status Icons */}
-            <div className="flex items-center gap-2 mt-1 min-w-0">
-              <span className="text-xs text-zinc-500 truncate" title={order.locationName}>
-                {order.locationName || "–"}
-              </span>
-              <span className="ml-auto flex items-center gap-1 shrink-0">
-                <StatusIcon
-                  done={order.confirmed}
-                  icon={IconCircleCheck}
-                  title={order.confirmed ? "Bestätigt" : "Nicht bestätigt"}
-                />
-                <StatusIcon
-                  done={order.designReady}
-                  icon={IconPalette}
-                  title={order.designReady ? "Design fertig" : "Design offen"}
-                />
-                <StatusIcon
-                  done={order.planned}
-                  icon={IconTruck}
-                  title={order.planned ? "Geplant" : "Nicht geplant"}
-                />
-                <StatusIcon
-                  done={order.paid}
-                  icon={IconCoin}
-                  title={order.paid ? "Bezahlt" : "Nicht bezahlt"}
-                />
-              </span>
+              </div>
+
+              {/* Right content – two lines */}
+              <div className="flex-1 min-w-0">
+                {/* Line 1: Name – Fahrerkürzel – Zahlart */}
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-sm font-medium text-zinc-200 truncate" title={displayName}>
+                    {displayName}
+                  </span>
+                  <span className="ml-auto flex items-center gap-1.5 shrink-0">
+                    {order.driverInitials && (
+                      <span
+                        className="text-[11px] font-medium text-zinc-400 bg-white/[0.06] rounded px-1.5 py-0.5"
+                        title={
+                          order.secondDriverName
+                            ? `${order.driverName} / ${order.secondDriverName}`
+                            : order.driverName ?? ""
+                        }
+                      >
+                        {order.driverInitials}
+                        {order.secondDriverInitials && (
+                          <span className="text-muted-foreground">/{order.secondDriverInitials}</span>
+                        )}
+                      </span>
+                    )}
+                    <span
+                      className={
+                        "rounded px-1.5 py-0.5 text-[10px] font-semibold " +
+                        payment.className
+                      }
+                    >
+                      {payment.label}
+                    </span>
+                  </span>
+                </div>
+                {/* Line 2: Location – Status Icons */}
+                <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+                  <span className="text-xs text-zinc-500 truncate" title={order.locationName}>
+                    {order.locationName || "–"}
+                  </span>
+                  <span className="ml-auto flex items-center gap-1 shrink-0">
+                    <StatusIcon
+                      done={order.confirmed}
+                      icon={IconCircleCheck}
+                      title={order.confirmed ? "Bestätigt" : "Nicht bestätigt"}
+                    />
+                    <StatusIcon
+                      done={order.designReady}
+                      icon={IconPalette}
+                      title={order.designReady ? "Design fertig" : "Design offen"}
+                    />
+                    <StatusIcon
+                      done={order.planned}
+                      icon={IconTruck}
+                      title={order.planned ? "Geplant" : "Nicht geplant"}
+                    />
+                    <StatusIcon
+                      done={order.paid}
+                      icon={IconCoin}
+                      title={order.paid ? "Bezahlt" : "Nicht bezahlt"}
+                    />
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -898,7 +978,7 @@ function OrderTable({
   orders: OrderRow[];
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
-  nextOrderRef?: React.RefObject<HTMLTableRowElement | null>;
+  nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   return (
     <>
@@ -972,7 +1052,7 @@ function OrderTable({
           return (
             <TableRow
               key={order.id}
-              ref={isNext ? nextOrderRef : undefined}
+              ref={isNext ? (nextOrderRef as React.RefObject<HTMLTableRowElement | null>) : undefined}
               onClick={() => onRowClick(order.id)}
               className={
                 "cursor-pointer border-b transition-colors hover:bg-[#1c1d20] group " +
