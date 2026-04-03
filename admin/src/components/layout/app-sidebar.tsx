@@ -31,6 +31,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const mainNav = [
@@ -77,6 +78,8 @@ function NavGroup({
   items: NavItem[];
   isActive: (href: string) => boolean;
 }) {
+  const { setOpenMobile } = useSidebar();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-400 mb-1">
@@ -89,7 +92,7 @@ function NavGroup({
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  render={<Link href={item.href} />}
+                  render={<Link href={item.href} onClick={() => setOpenMobile(false)} />}
                   isActive={active}
                   className={
                     "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 " +
