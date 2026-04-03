@@ -23,8 +23,7 @@ services:
 
   # === ADMIN DASHBOARD (Production) ===
   knipserl-admin-prod:
-    build:
-      context: ../admin
+    image: ghcr.io/ahub88/knipserl/admin:latest
     container_name: knipserl-admin-prod
     restart: unless-stopped
     network_mode: host
@@ -41,8 +40,7 @@ services:
 
   # === ADMIN DASHBOARD (Dev/Staging) ===
   knipserl-admin-dev:
-    build:
-      context: ../admin
+    image: ghcr.io/ahub88/knipserl/admin:dev
     container_name: knipserl-admin-dev
     restart: unless-stopped
     network_mode: host
@@ -59,8 +57,7 @@ services:
 
   # === WEBSITE (Dev/Staging) ===
   knipserl-web-dev:
-    build:
-      context: ../webseite
+    image: ghcr.io/ahub88/knipserl/website:dev
     container_name: knipserl-web-dev
     restart: unless-stopped
     network_mode: host
@@ -72,8 +69,7 @@ services:
 
   # === WEBSITE (Production) — NICHT STARTEN bis Freigabe! ===
   # knipserl-web-prod:
-  #   build:
-  #     context: ../webseite
+  #   image: ghcr.io/ahub88/knipserl/website:latest
   #   container_name: knipserl-web-prod
   #   restart: unless-stopped
   #   network_mode: host
