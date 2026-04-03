@@ -34,6 +34,7 @@ jobs:
             git checkout ${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
             cd deploy
-            docker compose -f docker-compose.prod.yml build ${{ steps.env.outputs.service }}
+            DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker compose -f docker-compose.prod.yml build ${{ steps.env.outputs.service }}
             docker compose -f docker-compose.prod.yml up -d ${{ steps.env.outputs.service }}
+            docker image prune -f
             echo "✓ Website (${{ steps.env.outputs.env }}) deployed successfully"

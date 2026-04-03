@@ -809,6 +809,8 @@ function MobileOrderList({
         const displayName = firma || kontakt;
         const isNext = nextOrderId === order.id;
         const isPast = new Date(order.eventDate) < new Date();
+        const d = new Date(order.eventDate);
+        const payment = paymentConfig[order.paymentMethod] ?? paymentConfig.CASH;
 
         return (
           <div
@@ -816,68 +818,88 @@ function MobileOrderList({
             ref={isNext ? (nextOrderRef as React.RefObject<HTMLDivElement>) : undefined}
             onClick={() => onRowClick(order.id)}
             className={
-              "cursor-pointer px-4 py-3 transition-colors active:bg-[#1c1d20] " +
+              "cursor-pointer px-3 py-2.5 transition-colors active:bg-[#1c1d20] " +
               (isNext
                 ? "border-l-2 border-l-[#F6A11C] bg-[#F6A11C]/8"
                 : "") +
               (isPast && !isNext ? " opacity-50" : "")
             }
           >
-            {/* Line 1: Datum – Name – Fahrerkürzel */}
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xs text-zinc-500 tabular-nums shrink-0">
-                {new Date(order.eventDate).toLocaleDateString("de-DE", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </span>
-              <span className="text-sm font-medium text-zinc-200 truncate" title={displayName}>
-                {displayName}
-              </span>
-              {order.driverInitials && (
-                <span
-                  className="ml-auto shrink-0 text-xs font-medium text-zinc-400 bg-white/[0.06] rounded px-1.5 py-0.5"
-                  title={
-                    order.secondDriverName
-                      ? `${order.driverName} / ${order.secondDriverName}`
-                      : order.driverName ?? ""
-                  }
-                >
-                  {order.driverInitials}
-                  {order.secondDriverInitials && (
-                    <span className="text-muted-foreground">/{order.secondDriverInitials}</span>
-                  )}
+            <div className="flex gap-2.5 min-w-0">
+              {/* Date pill – spans both lines */}
+              <div className="shrink-0 flex items-center self-stretch">
+                <span className="flex flex-col items-center justify-center rounded-lg bg-white/[0.06] px-2 py-1.5 h-full min-w-[44px]">
+                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300 leading-tight">
+                    {d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}
+                  </span>
+                  <span className="text-[10px] tabular-nums text-zinc-500 leading-tight">
+                    {d.getFullYear()}
+                  </span>
                 </span>
-              )}
-            </div>
-            {/* Line 2: Location – Status Icons */}
-            <div className="flex items-center gap-2 mt-1 min-w-0">
-              <span className="text-xs text-zinc-500 truncate" title={order.locationName}>
-                {order.locationName || "–"}
-              </span>
-              <span className="ml-auto flex items-center gap-1 shrink-0">
-                <StatusIcon
-                  done={order.confirmed}
-                  icon={IconCircleCheck}
-                  title={order.confirmed ? "Bestätigt" : "Nicht bestätigt"}
-                />
-                <StatusIcon
-                  done={order.designReady}
-                  icon={IconPalette}
-                  title={order.designReady ? "Design fertig" : "Design offen"}
-                />
-                <StatusIcon
-                  done={order.planned}
-                  icon={IconTruck}
-                  title={order.planned ? "Geplant" : "Nicht geplant"}
-                />
-                <StatusIcon
-                  done={order.paid}
-                  icon={IconCoin}
-                  title={order.paid ? "Bezahlt" : "Nicht bezahlt"}
-                />
-              </span>
+              </div>
+
+              {/* Right content – two lines */}
+              <div className="flex-1 min-w-0">
+                {/* Line 1: Name – Fahrerkürzel – Zahlart */}
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-sm font-medium text-zinc-200 truncate" title={displayName}>
+                    {displayName}
+                  </span>
+                  <span className="ml-auto flex items-center gap-1.5 shrink-0">
+                    {order.driverInitials && (
+                      <span
+                        className="text-[11px] font-medium text-zinc-400 bg-white/[0.06] rounded px-1.5 py-0.5"
+                        title={
+                          order.secondDriverName
+                            ? `${order.driverName} / ${order.secondDriverName}`
+                            : order.driverName ?? ""
+                        }
+                      >
+                        {order.driverInitials}
+                        {order.secondDriverInitials && (
+                          <span className="text-muted-foreground">/{order.secondDriverInitials}</span>
+                        )}
+                      </span>
+                    )}
+                    <span
+                      className={
+                        "rounded px-1.5 py-0.5 text-[10px] font-semibold " +
+                        payment.className
+                      }
+                    >
+                      {payment.label}
+                    </span>
+                  </span>
+                </div>
+                {/* Line 2: Location – Status Icons */}
+                <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+                  <span className="text-xs text-zinc-500 truncate" title={order.locationName}>
+                    {order.locationName || "–"}
+                  </span>
+                  <span className="ml-auto flex items-center gap-1 shrink-0">
+                    <StatusIcon
+                      done={order.confirmed}
+                      icon={IconCircleCheck}
+                      title={order.confirmed ? "Bestätigt" : "Nicht bestätigt"}
+                    />
+                    <StatusIcon
+                      done={order.designReady}
+                      icon={IconPalette}
+                      title={order.designReady ? "Design fertig" : "Design offen"}
+                    />
+                    <StatusIcon
+                      done={order.planned}
+                      icon={IconTruck}
+                      title={order.planned ? "Geplant" : "Nicht geplant"}
+                    />
+                    <StatusIcon
+                      done={order.paid}
+                      icon={IconCoin}
+                      title={order.paid ? "Bezahlt" : "Nicht bezahlt"}
+                    />
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         );
