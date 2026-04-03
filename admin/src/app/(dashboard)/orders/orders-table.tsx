@@ -210,10 +210,18 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
   }, [orders]);
 
   const scrollToNext = useCallback(() => {
-    requestAnimationFrame(() => {
+    // Try immediately, then retry after short delay if element not yet rendered
+    const tryScroll = () => {
       const el = document.querySelector('[data-next-order="true"]');
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        return true;
+      }
+      return false;
+    };
+    if (!tryScroll()) {
+      setTimeout(tryScroll, 100);
+    }
   }, []);
 
   // Filtered orders
