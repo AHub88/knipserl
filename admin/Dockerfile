@@ -39,8 +39,9 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 COPY --from=builder /app/package.json ./package.json
 
-# Entrypoint script for migrations
+# Scripts
 COPY entrypoint.sh ./entrypoint.sh
+COPY setup-db.sh ./setup-db.sh
 
 USER nextjs
 
