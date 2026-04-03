@@ -211,11 +211,12 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
 
   const nextOrderRef = useRef<HTMLElement>(null);
 
-  function scrollToNext() {
-    if (nextOrderRef.current) {
-      nextOrderRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }
+  const scrollToNext = useCallback(() => {
+    // Small delay to ensure DOM is rendered (e.g. after month group expands)
+    requestAnimationFrame(() => {
+      nextOrderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, []);
 
   // Filtered orders
   const filtered = useMemo(() => {
@@ -811,7 +812,14 @@ function MonthGroup({
   nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   const hasNext = nextOrderId ? orders.some((o) => o.id === nextOrderId) : false;
-  const [collapsed, setCollapsed] = useState(false);
+  const isPastMonth = (() => {
+    if (orders.length === 0) return false;
+    const d = new Date(orders[0].eventDate);
+    const now = new Date();
+    return d.getFullYear() < now.getFullYear() ||
+      (d.getFullYear() === now.getFullYear() && d.getMonth() < now.getMonth());
+  })();
+  const [collapsed, setCollapsed] = useState(isPastMonth && !hasNext);
   const revenue = orders.reduce((s, o) => s + o.price, 0);
 
   return (
