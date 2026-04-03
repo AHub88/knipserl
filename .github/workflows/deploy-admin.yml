@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/admin
+  IMAGE: ghcr.io/ahub88/knipserl/admin
 
 jobs:
   build-and-deploy:
@@ -49,7 +49,7 @@ jobs:
         with:
           context: ./admin
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.env.outputs.tag }}
+          tags: ${{ env.IMAGE }}:${{ steps.env.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -62,11 +62,9 @@ jobs:
           script: |
             cd /opt/knipserl/deploy
 
-            # Pull the pre-built image
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.CR_PAT }}
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.env.outputs.tag }}
+            docker pull ${{ env.IMAGE }}:${{ steps.env.outputs.tag }}
 
-            # Update compose file and restart
             git fetch origin ${{ github.ref_name }}
             git checkout ${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
