@@ -138,7 +138,7 @@ export function InquiriesTable({
   const handleRowClick = (id: string) => router.push(`/inquiries/${id}`);
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+    <div className="rounded-xl border border-white/[0.10] bg-card overflow-x-auto">
       {/* Mobile list */}
       <div className="md:hidden">
         <MobileInquiryList
@@ -151,7 +151,10 @@ export function InquiriesTable({
       <Table className="hidden md:table">
         <TableHeader>
           <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-            <TableHead className="pl-6 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <TableHead className="pl-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Datum
+            </TableHead>
+            <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Kunde
             </TableHead>
             <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -160,17 +163,11 @@ export function InquiriesTable({
             <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Location
             </TableHead>
-            <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Datum
+            <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
+              KM
             </TableHead>
-            <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Typ
-            </TableHead>
-            <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <TableHead className="pr-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Status
-            </TableHead>
-            <TableHead className="pr-6 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Entfernung
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -182,17 +179,28 @@ export function InquiriesTable({
               <TableRow
                 key={inquiry.id}
                 onClick={() => handleRowClick(inquiry.id)}
-                className="cursor-pointer transition-colors hover:bg-[#F6A11C]/5"
+                className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
               >
+                {/* Date */}
+                <TableCell className="pl-4 text-sm tabular-nums text-zinc-400">
+                  {new Date(inquiry.eventDate).toLocaleDateString("de-DE", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </TableCell>
+
                 {/* Customer */}
-                <TableCell className="pl-6">
+                <TableCell>
                   <div className="flex flex-col">
                     <span className="font-medium text-zinc-200">
                       {inquiry.customerName}
                     </span>
-                    <span className="text-xs text-muted-foreground">
-                      {inquiry.customerEmail}
-                    </span>
+                    {inquiry.customerEmail && (
+                      <span className="text-xs text-muted-foreground">
+                        {inquiry.customerEmail}
+                      </span>
+                    )}
                   </div>
                 </TableCell>
 
@@ -205,55 +213,27 @@ export function InquiriesTable({
 
                 {/* Location */}
                 <TableCell>
-                  <span className="text-sm text-zinc-300">
-                    {inquiry.locationName}
+                  <span className="text-sm text-zinc-300 block max-w-[180px] truncate" title={inquiry.locationName}>
+                    {inquiry.locationName || "–"}
                   </span>
-                </TableCell>
-
-                {/* Date */}
-                <TableCell>
-                  <span className="text-sm tabular-nums text-zinc-300">
-                    {new Date(inquiry.eventDate).toLocaleDateString("de-DE", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}
-                  </span>
-                </TableCell>
-
-                {/* Customer type */}
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={
-                      inquiry.customerType === "BUSINESS"
-                        ? "bg-blue-500/10 text-blue-600 border-blue-500/25 dark:text-blue-400"
-                        : "bg-secondary text-secondary-foreground"
-                    }
-                  >
-                    {inquiry.customerType === "BUSINESS" ? "Firma" : "Privat"}
-                  </Badge>
-                </TableCell>
-
-                {/* Status */}
-                <TableCell>
-                  <Badge variant="outline" className={status.className}>
-                    {status.label}
-                  </Badge>
                 </TableCell>
 
                 {/* Distance */}
-                <TableCell className="pr-6 text-right">
+                <TableCell className="hidden lg:table-cell">
                   {inquiry.distanceKm != null ? (
-                    <span className="inline-flex items-center gap-1 text-sm tabular-nums text-muted-foreground">
-                      <IconMapPin className="size-3.5" />
-                      {inquiry.distanceKm.toFixed(1)} km
+                    <span className="text-sm tabular-nums text-zinc-400">
+                      {inquiry.distanceKm.toFixed(0)} km
                     </span>
                   ) : (
-                    <span className="text-xs text-muted-foreground/50">
-                      --
-                    </span>
+                    <span className="text-xs text-muted-foreground/50">–</span>
                   )}
+                </TableCell>
+
+                {/* Status */}
+                <TableCell className="pr-4">
+                  <Badge variant="outline" className={status.className}>
+                    {status.label}
+                  </Badge>
                 </TableCell>
               </TableRow>
             );

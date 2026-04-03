@@ -100,6 +100,10 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       toast.error("Name, Datum und Eventart sind Pflichtfelder");
       return;
     }
+    if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      toast.error("Bitte eine gültige E-Mail-Adresse eingeben oder das Feld leer lassen");
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch("/api/inquiries", {
