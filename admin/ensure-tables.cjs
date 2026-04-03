@@ -50,7 +50,29 @@ async function main() {
       `);
       console.log("[ensure-tables] vacations table created.");
     } else {
-      console.log("[ensure-tables] vacations table already exists.");
+      console.log("[ensure-tables] vacations table exists, checking columns...");
+
+      // Add missing columns
+      const cols = await client.query(
+        "SELECT column_name FROM information_schema.columns WHERE table_name = 'vacations'"
+      );
+      const colNames = cols.rows.map(r => r.column_name);
+      console.log("[ensure-tables] vacations columns:", colNames.join(", "));
+
+      if (!colNames.includes("type")) {
+        console.log("[ensure-tables] Adding missing 'type' column...");
+        await client.query(`ALTER TABLE "vacations" ADD COLUMN "type" TEXT NOT NULL DEFAULT 'ABSENT'`);
+      }
+      if (!colNames.includes("note")) {
+        console.log("[ensure-tables] Adding missing 'note' column...");
+        await client.query(`ALTER TABLE "vacations" ADD COLUMN "note" TEXT`);
+      }
+      if (!colNames.includes("createdAt")) {
+        console.log("[ensure-tables] Adding missing 'createdAt' column...");
+        await client.query(`ALTER TABLE "vacations" ADD COLUMN "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP`);
+      }
+
+      console.log("[ensure-tables] vacations table OK.");
     }
 
     console.log("[ensure-tables] Done.");
