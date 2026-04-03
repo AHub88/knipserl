@@ -16,16 +16,24 @@ export async function GET() {
     return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
   }
 
-  const where =
-    session.user.role === "DRIVER" ? { driverId: session.user.id } : {};
+  try {
+    const where =
+      session.user.role === "DRIVER" ? { driverId: session.user.id } : {};
 
-  const vacations = await prisma.vacation.findMany({
-    where,
-    orderBy: { startDate: "asc" },
-    include: { driver: { select: { id: true, name: true } } },
-  });
+    const vacations = await prisma.vacation.findMany({
+      where,
+      orderBy: { startDate: "asc" },
+      include: { driver: { select: { id: true, name: true } } },
+    });
 
-  return NextResponse.json(vacations);
+    return NextResponse.json(vacations);
+  } catch (error) {
+    console.error("[vacations GET]", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Interner Serverfehler" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -61,12 +69,16 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(vacation, { status: 201 });
   } catch (error) {
+    console.error("[vacations POST]", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validierungsfehler", details: error.issues },
         { status: 400 }
       );
     }
-    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Interner Serverfehler" },
+      { status: 500 }
+    );
   }
 }
