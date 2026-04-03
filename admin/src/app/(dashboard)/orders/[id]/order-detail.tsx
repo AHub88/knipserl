@@ -340,9 +340,27 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   const [extras, setExtras] = useState<string[]>(order.extras);
 
   function toggleExtra(key: string) {
-    setExtras((prev) =>
-      prev.includes(key) ? prev.filter((e) => e !== key) : [...prev, key]
-    );
+    setExtras((prev) => {
+      const next = prev.includes(key) ? prev.filter((e) => e !== key) : [...prev, key];
+      // Auto-update extras cost
+      setExtrasCost(String(calculateExtrasTotal(next)));
+      return next;
+    });
+  }
+
+  // Computed pricing
+  const calcBoxPrice = Number(boxPrice) || 0;
+  const calcTravelCost = Number(travelCost) || 0;
+  const calcExtrasCost = Number(extrasCost) || 0;
+  const calcSubtotal = calcBoxPrice + calcTravelCost + calcExtrasCost;
+  const calcDiscount = Number(discount) || 0;
+  const calcDiscountAmount = discountType === "PERCENT"
+    ? (calcSubtotal * calcDiscount) / 100
+    : calcDiscount;
+  const calcTotal = calcSubtotal - calcDiscountAmount;
+
+  function recalcPrice() {
+    setPrice(String(Math.round(calcTotal * 100) / 100));
   }
 
   function handleCancel() {
@@ -826,8 +844,10 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 4: Preise */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preise</h2>
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-4">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h2>
+
+        {/* Price inputs */}
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
           <div>
             <label className={labelClass}>Fotobox</label>
@@ -838,33 +858,80 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
           </div>
           <div>
-            <label className={labelClass}>Extras</label>
+            <label className={labelClass}>Extras ({extras.length})</label>
             <input className={inputClass} type="number" step="0.01" value={extrasCost} onChange={(e) => setExtrasCost(e.target.value)} placeholder="–" />
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
+
+        {/* Rabatt */}
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="sm:col-span-2">
             <label className={labelClass}>Rabatt</label>
-            <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="–" />
+            <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
           </div>
           <div>
-            <label className={labelClass}>Rabatt-Typ</label>
+            <label className={labelClass}>Typ</label>
             <select className={selectClass} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
-              <option value="AMOUNT" className="bg-card">Betrag (&euro;)</option>
-              <option value="PERCENT" className="bg-card">Prozent (%)</option>
+              <option value="AMOUNT" className="bg-card">&euro; Betrag</option>
+              <option value="PERCENT" className="bg-card">% Prozent</option>
             </select>
           </div>
         </div>
+
+        {/* Live calculation summary */}
+        <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
+          <div className="flex justify-between text-xs text-zinc-400">
+            <span>Fotobox</span>
+            <span className="tabular-nums">{calcBoxPrice.toFixed(2)} &euro;</span>
+          </div>
+          <div className="flex justify-between text-xs text-zinc-400">
+            <span>Fahrt</span>
+            <span className="tabular-nums">{calcTravelCost.toFixed(2)} &euro;</span>
+          </div>
+          <div className="flex justify-between text-xs text-zinc-400">
+            <span>Extras</span>
+            <span className="tabular-nums">{calcExtrasCost.toFixed(2)} &euro;</span>
+          </div>
+          {calcDiscount > 0 && (
+            <div className="flex justify-between text-xs text-red-400">
+              <span>Rabatt{discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}</span>
+              <span className="tabular-nums">-{calcDiscountAmount.toFixed(2)} &euro;</span>
+            </div>
+          )}
+          <div className="border-t border-white/[0.10] pt-1.5 flex justify-between text-sm font-semibold">
+            <span className="text-zinc-300">Kalkuliert</span>
+            <span className="text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
+          </div>
+        </div>
+
+        {/* Gesamtpreis with auto-calc button */}
         <div>
           <label className={labelClass}>Gesamtpreis</label>
-          <input className={inputClass + " font-semibold text-[#F6A11C] text-lg h-11"} type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+          <div className="flex gap-2">
+            <input className={inputClass + " font-semibold text-[#F6A11C] text-lg h-11 flex-1"} type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+            <button
+              type="button"
+              onClick={recalcPrice}
+              className="h-11 px-3 rounded-lg border border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C] text-xs font-semibold hover:bg-[#F6A11C]/20 transition-colors whitespace-nowrap"
+              title="Preis aus Kalkulation übernehmen"
+            >
+              &#x21BB; Berechnen
+            </button>
+          </div>
+          {Math.abs(Number(price) - calcTotal) > 0.01 && Number(price) > 0 && calcTotal > 0 && (
+            <p className="text-[11px] text-amber-400 mt-1">
+              Abweichung: {(Number(price) - calcTotal).toFixed(2)} &euro; vom kalkulierten Preis
+            </p>
+          )}
         </div>
+
+        {/* Interne Kosten */}
         <div className="border-t border-white/[0.10] pt-3">
           <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400">Interne Kosten</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>Aufbau</label>
+                <label className={labelClass}>Aufbau / Fahrer</label>
                 <input className={inputClass} type="number" step="0.01" value={setupCost} onChange={(e) => setSetupCost(e.target.value)} placeholder="–" />
               </div>
               <div>
@@ -872,6 +939,14 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
                 <input className={inputClass} type="number" step="0.01" value={materialCost} onChange={(e) => setMaterialCost(e.target.value)} placeholder="–" />
               </div>
             </div>
+            {Number(price) > 0 && (
+              <div className="flex justify-between text-xs pt-1 border-t border-amber-500/10">
+                <span className="text-amber-400/70">Marge</span>
+                <span className="text-amber-400 font-semibold tabular-nums">
+                  {(Number(price) - Math.abs(Number(setupCost) || 0) - Math.abs(Number(materialCost) || 0)).toFixed(2)} &euro;
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
