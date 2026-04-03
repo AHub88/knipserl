@@ -3,8 +3,8 @@ set -e
 
 echo "Starting knipserl admin..."
 
-# Run Prisma migrations
-npx prisma migrate deploy 2>/dev/null || echo "No migrations to run"
+# Sync database schema (creates missing tables/columns)
+npx prisma db push --skip-generate 2>&1 || echo "Schema sync skipped"
 
 # Start the application
 node server.js
