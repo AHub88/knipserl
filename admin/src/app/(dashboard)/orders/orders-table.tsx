@@ -210,12 +210,13 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
   }, [orders]);
 
   const scrollToNext = useCallback(() => {
-    // Try immediately, then retry after short delay if element not yet rendered
     const tryScroll = () => {
-      const el = document.querySelector('[data-next-order="true"]');
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-        return true;
+      const els = document.querySelectorAll('[data-next-order="true"]');
+      for (const el of els) {
+        if (el instanceof HTMLElement && el.offsetParent !== null) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          return true;
+        }
       }
       return false;
     };
