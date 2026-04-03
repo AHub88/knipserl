@@ -207,9 +207,9 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   return (
     <div className="space-y-6">
       {/* ── Hero Header ── */}
-      <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-6">
+      <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-4 sm:p-6">
         {/* Top row */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4">
           <Link
             href="/orders"
             className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
@@ -218,7 +218,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           </Link>
           <span className="text-xs font-mono text-zinc-400">#{order.orderNumber}</span>
 
-          <div className="flex items-center gap-2 ml-auto shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto shrink-0">
             <div className="hidden sm:flex items-center gap-2 mr-1">
               <span className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 px-3 py-1.5 text-sm font-medium">
                 <IconSteeringWheel className="size-4" />
@@ -243,40 +243,40 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   toast.success("Bestätigungslink kopiert");
                 }}
                 className={
-                  "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                  "flex items-center justify-center size-8 sm:h-8 sm:w-auto sm:px-3 rounded-lg border text-xs font-medium transition-colors " +
                   (order.confirmedByCustomerAt
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                     : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
                 }
               >
                 {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
-                <span className="hidden sm:inline">{order.confirmedByCustomerAt ? "Bestätigt" : "Link kopieren"}</span>
+                <span className="hidden sm:inline sm:ml-1.5">{order.confirmedByCustomerAt ? "Bestätigt" : "Link kopieren"}</span>
               </button>
             )}
             <a
               href={`/api/orders/${order.id}/pdf`}
               target="_blank"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
+              className="flex items-center justify-center size-8 sm:h-8 sm:w-auto sm:px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
             >
               <IconFileDownload className="size-3.5" />
-              <span className="hidden sm:inline">PDF</span>
+              <span className="hidden sm:inline sm:ml-1.5">PDF</span>
             </a>
             {isAdmin && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
+                className="flex items-center justify-center size-8 sm:h-8 sm:w-auto sm:px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
               >
                 <IconEdit className="size-3.5" />
-                <span className="hidden sm:inline">Bearbeiten</span>
+                <span className="hidden sm:inline sm:ml-1.5">Bearbeiten</span>
               </button>
             )}
           </div>
         </div>
 
         {/* Date */}
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
           <IconCalendar className="size-5 text-[#F6A11C] shrink-0" />
-          <span className="text-lg sm:text-xl text-[#F6A11C] font-semibold">{formattedDate}</span>
+          <span className="text-base sm:text-xl text-[#F6A11C] font-semibold">{formattedDate}</span>
           <span className="inline-flex items-center rounded-md bg-[#222326] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
             {order.eventType}
           </span>
@@ -285,17 +285,17 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* Customer Name */}
         {firma ? (
           <div className="mb-1.5">
-            <p className="text-base text-zinc-400 mb-0.5">{firma}</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100">{kontakt}</h1>
+            <p className="text-sm sm:text-base text-zinc-400 mb-0.5">{firma}</p>
+            <h1 className="text-xl sm:text-3xl font-bold text-zinc-100">{kontakt}</h1>
           </div>
         ) : (
-          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-1.5">{kontakt}</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-zinc-100 mb-1.5">{kontakt}</h1>
         )}
 
         {/* Location */}
-        <div className="flex items-center gap-2 text-zinc-400">
-          <IconMapPin className="size-4 shrink-0" />
-          <span className="text-base">
+        <div className="flex items-start gap-2 text-zinc-400">
+          <IconMapPin className="size-4 shrink-0 mt-0.5" />
+          <span className="text-sm sm:text-base">
             <span className="text-zinc-300 font-medium">{order.locationName}</span>
             {ort && <span className="text-muted-foreground"> &middot; {ort}</span>}
             {order.distanceKm != null && (
