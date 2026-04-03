@@ -37,7 +37,7 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const { action, price, paymentMethod } = body;
+  const { action, price, paymentMethod, boxPrice, travelCost, extrasCost, extras, discount, discountType } = body;
 
   const inquiry = await prisma.inquiry.findUnique({ where: { id } });
   if (!inquiry) {
@@ -101,6 +101,11 @@ export async function PATCH(
           companyId: company.id,
           paymentMethod: paymentMethod ?? "INVOICE",
           price: price ?? 0,
+          boxPrice: boxPrice ?? null,
+          travelCost: travelCost ?? null,
+          extrasCost: extrasCost ?? null,
+          discount: discount ?? null,
+          discountType: discountType ?? null,
           eventDate: inquiry.eventDate,
           eventType: inquiry.eventType,
           locationName: inquiry.locationName,
@@ -108,7 +113,7 @@ export async function PATCH(
           customerName: inquiry.customerName,
           customerEmail: inquiry.customerEmail,
           customerPhone: inquiry.customerPhone,
-          extras: inquiry.extras,
+          extras: extras ?? inquiry.extras,
         },
       });
 

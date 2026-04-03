@@ -1,13 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
   IconCheck,
@@ -17,27 +11,86 @@ import {
   IconLoader2,
   IconBriefcase,
   IconUser,
+  IconPrinter,
+  IconMask,
+  IconUsb,
+  IconPhoto,
+  IconHeart,
+  IconWorldWww,
+  IconBook,
+  IconDeviceTv,
+  IconPhone,
 } from "@tabler/icons-react";
+import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
+
+const EXTRAS_CONFIG = [
+  { key: "Drucker", label: "Drucker", icon: IconPrinter },
+  { key: "Props", label: "Requisiten", icon: IconMask },
+  { key: "Stick", label: "USB Stick", icon: IconUsb },
+  { key: "HG", label: "Hintergrund", icon: IconPhoto },
+  { key: "LOVE", label: "LOVE", icon: IconHeart },
+  { key: "Social", label: "Online", icon: IconWorldWww },
+  { key: "Book", label: "Gästebuch", icon: IconBook },
+  { key: "TV", label: "TV", icon: IconDeviceTv },
+  { key: "Telefon", label: "Telefon", icon: IconPhone },
+] as const;
 
 interface InquiryActionsProps {
   inquiryId: string;
   customerType: string;
+  inquiryExtras: string[];
+  distanceKm: number | null;
 }
 
 export function InquiryActions({
   inquiryId,
   customerType,
+  inquiryExtras,
+  distanceKm,
 }: InquiryActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<"accept" | "reject" | null>(null);
-  const [price, setPrice] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"INVOICE" | "CASH">(
-    "INVOICE"
-  );
+
+  // Pricing state
+  const [extras, setExtras] = useState<string[]>(inquiryExtras);
+  const [boxPrice, setBoxPrice] = useState(String(BOX_PRICE));
+  const [travelCost, setTravelCost] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [discountType, setDiscountType] = useState("AMOUNT");
+  const [paymentMethod, setPaymentMethod] = useState<"INVOICE" | "CASH">("INVOICE");
+
+  // Auto-fetch travel cost based on distance
+  useEffect(() => {
+    if (distanceKm != null && distanceKm > 0) {
+      fetch(`/api/travel-pricing/calculate?distanceKm=${distanceKm}`)
+        .then((res) => res.ok ? res.json() : null)
+        .then((data) => {
+          if (data?.customerPrice) setTravelCost(String(data.customerPrice));
+        })
+        .catch(() => {});
+    }
+  }, [distanceKm]);
+
+  function toggleExtra(key: string) {
+    setExtras((prev) =>
+      prev.includes(key) ? prev.filter((e) => e !== key) : [...prev, key]
+    );
+  }
+
+  // Live calculation
+  const calcBox = Number(boxPrice) || 0;
+  const calcTravel = Number(travelCost) || 0;
+  const calcExtras = calculateExtrasTotal(extras);
+  const calcSubtotal = calcBox + calcTravel + calcExtras;
+  const calcDiscount = Number(discount) || 0;
+  const calcDiscountAmount = discountType === "PERCENT"
+    ? (calcSubtotal * calcDiscount) / 100
+    : calcDiscount;
+  const calcTotal = Math.round((calcSubtotal - calcDiscountAmount) * 100) / 100;
 
   async function handleAction(action: "accept" | "reject") {
-    if (action === "accept" && !price) {
-      toast.error("Bitte einen Preis eingeben");
+    if (action === "accept" && calcTotal <= 0) {
+      toast.error("Bitte einen gültigen Preis konfigurieren");
       return;
     }
 
@@ -48,7 +101,13 @@ export function InquiryActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action,
-          price: action === "accept" ? parseFloat(price) : undefined,
+          price: action === "accept" ? calcTotal : undefined,
+          boxPrice: action === "accept" ? calcBox : undefined,
+          travelCost: action === "accept" ? calcTravel : undefined,
+          extrasCost: action === "accept" ? calcExtras : undefined,
+          discount: action === "accept" && calcDiscount > 0 ? calcDiscount : undefined,
+          discountType: action === "accept" && calcDiscount > 0 ? discountType : undefined,
+          extras: action === "accept" ? extras : undefined,
           paymentMethod: action === "accept" ? paymentMethod : undefined,
         }),
       });
@@ -60,149 +119,189 @@ export function InquiryActions({
 
       toast.success(
         action === "accept"
-          ? "Anfrage angenommen -- Auftrag erstellt"
+          ? "Anfrage angenommen – Auftrag erstellt"
           : "Anfrage abgelehnt"
       );
       router.refresh();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Ein Fehler ist aufgetreten"
-      );
+      toast.error(error instanceof Error ? error.message : "Ein Fehler ist aufgetreten");
     } finally {
       setLoading(null);
     }
   }
 
   const isBusiness = customerType === "BUSINESS";
+  const inputClass = "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  const labelClass = "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
-    <Card className="border-[#F6A11C]/20 shadow-sm">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Anfrage bearbeiten</CardTitle>
-          <Badge
-            variant="outline"
+    <div className="rounded-xl border border-[#F6A11C]/20 bg-card p-4 sm:p-5 space-y-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-zinc-200">Anfrage bearbeiten</h2>
+        <span className={
+          "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold border " +
+          (isBusiness
+            ? "bg-blue-500/10 text-blue-400 border-blue-500/25"
+            : "bg-zinc-500/10 text-zinc-400 border-zinc-500/25")
+        }>
+          {isBusiness ? <IconBriefcase className="size-3" /> : <IconUser className="size-3" />}
+          {isBusiness ? "GbR" : "Einzelunternehmen"}
+        </span>
+      </div>
+
+      {/* Extras Selection */}
+      <div>
+        <p className={labelClass}>Extras</p>
+        <div className="flex flex-wrap gap-1.5">
+          {EXTRAS_CONFIG.map((ext) => {
+            const active = extras.includes(ext.key);
+            const price = EXTRAS_PRICES[ext.key];
+            return (
+              <button
+                key={ext.key}
+                type="button"
+                onClick={() => toggleExtra(ext.key)}
+                className={
+                  "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors " +
+                  (active
+                    ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
+                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
+                }
+              >
+                <ext.icon className="size-3.5" />
+                {ext.label}
+                {price != null && price > 0 && (
+                  <span className="text-[10px] opacity-70 tabular-nums">{price}&thinsp;&euro;</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Price inputs */}
+      <div className="grid gap-3 grid-cols-3">
+        <div>
+          <label className={labelClass}>Fotobox</label>
+          <input className={inputClass} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
+        </div>
+        <div>
+          <label className={labelClass}>Fahrt</label>
+          <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
+        </div>
+        <div>
+          <label className={labelClass}>Extras</label>
+          <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default"}>
+            {calcExtras.toFixed(2)} &euro;
+          </div>
+        </div>
+      </div>
+
+      {/* Discount */}
+      <div className="grid gap-3 grid-cols-3">
+        <div className="col-span-2">
+          <label className={labelClass}>Rabatt</label>
+          <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
+        </div>
+        <div>
+          <label className={labelClass}>Typ</label>
+          <select className={inputClass + " cursor-pointer"} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
+            <option value="AMOUNT" className="bg-card">&euro;</option>
+            <option value="PERCENT" className="bg-card">%</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Live calculation */}
+      <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
+        <div className="flex justify-between text-xs text-zinc-400">
+          <span>Fotobox</span>
+          <span className="tabular-nums">{calcBox.toFixed(2)} &euro;</span>
+        </div>
+        {calcTravel > 0 && (
+          <div className="flex justify-between text-xs text-zinc-400">
+            <span>Fahrt{distanceKm ? ` (${distanceKm} km)` : ""}</span>
+            <span className="tabular-nums">{calcTravel.toFixed(2)} &euro;</span>
+          </div>
+        )}
+        {calcExtras > 0 && (
+          <div className="flex justify-between text-xs text-zinc-400">
+            <span>Extras ({extras.length})</span>
+            <span className="tabular-nums">{calcExtras.toFixed(2)} &euro;</span>
+          </div>
+        )}
+        {calcDiscountAmount > 0 && (
+          <div className="flex justify-between text-xs text-red-400">
+            <span>Rabatt{discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}</span>
+            <span className="tabular-nums">-{calcDiscountAmount.toFixed(2)} &euro;</span>
+          </div>
+        )}
+        <div className="border-t border-white/[0.10] pt-1.5 flex justify-between items-center">
+          <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
+          <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
+        </div>
+      </div>
+
+      {/* Payment method */}
+      <div>
+        <p className={labelClass}>Zahlungsart</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setPaymentMethod("INVOICE")}
             className={
-              isBusiness
-                ? "bg-blue-500/10 text-blue-600 border-blue-500/25 dark:text-blue-400"
-                : "bg-secondary text-secondary-foreground"
+              "flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
+              (paymentMethod === "INVOICE"
+                ? "border-purple-500/40 bg-purple-500/10 text-purple-400"
+                : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
             }
           >
-            {isBusiness ? (
-              <IconBriefcase className="mr-1 size-3" />
-            ) : (
-              <IconUser className="mr-1 size-3" />
-            )}
-            {isBusiness ? "Firmenkunde" : "Privatkunde"}
-          </Badge>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
-        {/* Entity info */}
-        <div className="rounded-lg bg-muted/50 px-4 py-3">
-          <p className="text-sm text-muted-foreground">
-            Auftrag wird erstellt als{" "}
-            <span className="font-semibold text-foreground">
-              {isBusiness ? "GbR" : "Einzelunternehmen"}
-            </span>
-          </p>
-        </div>
-
-        {/* Price input with integrated euro symbol */}
-        <div className="space-y-2">
-          <Label htmlFor="price" className="text-sm font-medium">
-            Preis
-          </Label>
-          <div className="relative">
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="450.00"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="pr-10 text-lg font-medium tabular-nums"
-            />
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <span className="text-base font-semibold text-muted-foreground">
-                &euro;
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Payment method toggle */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Zahlungsart</Label>
-          <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/50 p-1">
-            <button
-              type="button"
-              onClick={() => setPaymentMethod("INVOICE")}
-              className={`
-                flex items-center justify-center gap-2 rounded-md px-4 py-2.5
-                text-sm font-medium transition-all duration-200
-                ${
-                  paymentMethod === "INVOICE"
-                    ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                    : "text-muted-foreground hover:text-foreground"
-                }
-              `}
-            >
-              <IconFileInvoice className="size-4" />
-              Rechnung
-            </button>
-            <button
-              type="button"
-              onClick={() => setPaymentMethod("CASH")}
-              className={`
-                flex items-center justify-center gap-2 rounded-md px-4 py-2.5
-                text-sm font-medium transition-all duration-200
-                ${
-                  paymentMethod === "CASH"
-                    ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                    : "text-muted-foreground hover:text-foreground"
-                }
-              `}
-            >
-              <IconCash className="size-4" />
-              Bar
-            </button>
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Action buttons */}
-        <div className="flex gap-3">
-          <Button
-            onClick={() => handleAction("accept")}
-            disabled={loading !== null}
-            className="flex-1 bg-emerald-600 text-white hover:bg-emerald-700 transition-all duration-200 active:scale-[0.98]"
+            <IconFileInvoice className="size-4" />
+            Rechnung
+          </button>
+          <button
+            type="button"
+            onClick={() => setPaymentMethod("CASH")}
+            className={
+              "flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
+              (paymentMethod === "CASH"
+                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
+            }
           >
-            {loading === "accept" ? (
-              <IconLoader2 className="mr-2 size-4 animate-spin" />
-            ) : (
-              <IconCheck className="mr-2 size-4" />
-            )}
-            Annehmen
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={() => handleAction("reject")}
-            disabled={loading !== null}
-            className="flex-1 transition-all duration-200 active:scale-[0.98]"
-          >
-            {loading === "reject" ? (
-              <IconLoader2 className="mr-2 size-4 animate-spin" />
-            ) : (
-              <IconX className="mr-2 size-4" />
-            )}
-            Ablehnen
-          </Button>
+            <IconCash className="size-4" />
+            Bar
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex gap-3 pt-2">
+        <button
+          onClick={() => handleAction("accept")}
+          disabled={loading !== null}
+          className="flex-1 flex items-center justify-center gap-2 h-11 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+        >
+          {loading === "accept" ? (
+            <IconLoader2 className="size-4 animate-spin" />
+          ) : (
+            <IconCheck className="size-4" />
+          )}
+          Annehmen
+        </button>
+        <button
+          onClick={() => handleAction("reject")}
+          disabled={loading !== null}
+          className="flex-1 flex items-center justify-center gap-2 h-11 rounded-lg bg-red-600/80 text-white font-semibold hover:bg-red-600 disabled:opacity-50 transition-colors"
+        >
+          {loading === "reject" ? (
+            <IconLoader2 className="size-4 animate-spin" />
+          ) : (
+            <IconX className="size-4" />
+          )}
+          Ablehnen
+        </button>
+      </div>
+    </div>
   );
 }

@@ -155,6 +155,8 @@ export default async function InquiryDetailPage({
         <InquiryActions
           inquiryId={inquiry.id}
           customerType={inquiry.customerType}
+          inquiryExtras={inquiry.extras}
+          distanceKm={inquiry.distanceKm}
         />
       )}
 
