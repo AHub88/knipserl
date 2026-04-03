@@ -624,10 +624,11 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
         </select>
       </div>
 
-      {/* Desktop tabs + content card */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden hidden md:block">
-        {/* Tabs */}
-        <div className="flex items-center gap-0 px-6 border-b border-white/[0.10]">
+      {/* Desktop tabs + content */}
+      <div className="hidden md:block">
+        {/* Tabs bar */}
+        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+          <div className="flex items-center gap-0 px-6">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -682,6 +683,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               &nbsp;&euro;
             </span>
           </div>
+          </div>
         </div>
 
         {/* Desktop table content */}
@@ -699,7 +701,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             )}
           </div>
         ) : groupByMonth && grouped ? (
-          <div className="space-y-4">
+          <div className="space-y-4 mt-4">
             {grouped.map(([key, group]) => (
               <MonthGroup
                 key={key}
@@ -707,17 +709,19 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                 orders={group.orders}
                 onRowClick={(id) => router.push(`/orders/${id}`)}
                 nextOrderId={nextOrderId}
-                
+
               />
             ))}
           </div>
         ) : (
-          <OrderTable
-            orders={filtered}
-            onRowClick={(id) => router.push(`/orders/${id}`)}
-            nextOrderId={nextOrderId}
-            
-          />
+          <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden mt-4">
+            <OrderTable
+              orders={filtered}
+              onRowClick={(id) => router.push(`/orders/${id}`)}
+              nextOrderId={nextOrderId}
+
+            />
+          </div>
         )}
       </div>
 
