@@ -1,22 +1,13 @@
 import { prisma } from "@/lib/db";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   IconInbox,
   IconMapPin,
   IconCalendarEvent,
   IconPlus,
+  IconMail,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { InquiriesTableBody } from "./inquiries-table-body";
+import { InquiriesTable } from "./inquiries-table-body";
 
 export default async function InquiriesPage() {
   const inquiries = await prisma.inquiry.findMany({
@@ -47,108 +38,83 @@ export default async function InquiriesPage() {
   }));
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Anfragen</h1>
-          <p className="mt-1 text-muted-foreground">
-            Alle eingehenden Anfragen verwalten
-          </p>
+    <div className="space-y-4 sm:space-y-6">
+      {/* Page header */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C] shrink-0">
+            <IconMail className="size-5" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
+              Anfragen
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {countByStatus.total} insgesamt
+            </p>
+          </div>
         </div>
-        <Link href="/inquiries/new" className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors">
+        <Link
+          href="/inquiries/new"
+          className="flex items-center gap-2 h-9 px-3 sm:px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors"
+        >
           <IconPlus className="size-4" />
-          Neue Anfrage
+          <span className="hidden sm:inline">Neue Anfrage</span>
         </Link>
       </div>
 
-      {/* Stats cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F6A11C]/15">
-              <IconInbox className="size-5 text-[#F6A11C]" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{countByStatus.total}</p>
-              <p className="text-xs text-muted-foreground">Gesamt</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/15">
-              <IconCalendarEvent className="size-5 text-amber-500" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{countByStatus.new}</p>
-              <p className="text-xs text-muted-foreground">Neu</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15">
-              <IconMapPin className="size-5 text-emerald-500" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{countByStatus.accepted}</p>
-              <p className="text-xs text-muted-foreground">Angenommen</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15">
-              <IconInbox className="size-5 text-red-500" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{countByStatus.rejected}</p>
-              <p className="text-xs text-muted-foreground">Abgelehnt</p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Stats cards - compact */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 rounded-xl border border-white/[0.10] bg-card px-3 py-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#F6A11C]/15">
+            <IconInbox className="size-4 text-[#F6A11C]" />
+          </div>
+          <div>
+            <p className="text-xl font-bold text-zinc-100">{countByStatus.total}</p>
+            <p className="text-[11px] text-zinc-400">Gesamt</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-white/[0.10] bg-card px-3 py-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/15">
+            <IconCalendarEvent className="size-4 text-amber-500" />
+          </div>
+          <div>
+            <p className="text-xl font-bold text-zinc-100">{countByStatus.new}</p>
+            <p className="text-[11px] text-zinc-400">Neu</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-white/[0.10] bg-card px-3 py-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15">
+            <IconMapPin className="size-4 text-emerald-500" />
+          </div>
+          <div>
+            <p className="text-xl font-bold text-zinc-100">{countByStatus.accepted}</p>
+            <p className="text-[11px] text-zinc-400">Angenommen</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-white/[0.10] bg-card px-3 py-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-500/15">
+            <IconInbox className="size-4 text-red-500" />
+          </div>
+          <div>
+            <p className="text-xl font-bold text-zinc-100">{countByStatus.rejected}</p>
+            <p className="text-[11px] text-zinc-400">Abgelehnt</p>
+          </div>
+        </div>
       </div>
 
-      {/* Table */}
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">
-            Alle Anfragen
-            <Badge variant="secondary" className="ml-3 tabular-nums">
-              {inquiries.length}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-0 pb-0">
-          {inquiries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="flex size-14 items-center justify-center rounded-full bg-muted mb-4">
-                <IconInbox className="size-6 text-muted-foreground" />
-              </div>
-              <p className="text-sm font-medium">Noch keine Anfragen</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Neue Anfragen erscheinen hier automatisch.
-              </p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="pl-6">Kunde</TableHead>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Datum</TableHead>
-                  <TableHead>Typ</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="pr-6 text-right">Entfernung</TableHead>
-                </TableRow>
-              </TableHeader>
-              <InquiriesTableBody inquiries={serializedInquiries} />
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      {/* Table / Mobile list */}
+      {inquiries.length === 0 ? (
+        <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
+          <IconInbox className="size-10 mb-3 text-zinc-400" />
+          <p className="text-sm font-medium">Noch keine Anfragen</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Neue Anfragen erscheinen hier automatisch.
+          </p>
+        </div>
+      ) : (
+        <InquiriesTable inquiries={serializedInquiries} />
+      )}
     </div>
   );
 }

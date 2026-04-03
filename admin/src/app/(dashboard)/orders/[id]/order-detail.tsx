@@ -686,44 +686,41 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
   // ──────────────────── EDIT MODE ────────────────────
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleCancel}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
-          >
-            <IconX className="size-4" />
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-zinc-100">
+    <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-6">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur pb-4 -mx-4 px-4 sm:-mx-6 sm:px-6">
+        <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleCancel}
+              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              <IconX className="size-4" />
+            </button>
+            <h1 className="text-lg sm:text-xl font-bold text-zinc-100">
               Auftrag #{order.orderNumber}
               <span className="ml-2 text-sm font-normal text-[#F6A11C]">
                 Bearbeiten
               </span>
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {order.customerName} &middot; {order.eventType}
-            </p>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCancel}
-            className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
-          >
-            Abbrechen
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
-          >
-            <IconDeviceFloppy className="size-4" />
-            {saving ? "Speichern..." : "Speichern"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCancel}
+              className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
+            >
+              Abbrechen
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="hidden sm:flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+            >
+              <IconDeviceFloppy className="size-4" />
+              {saving ? "Speichern..." : "Speichern"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -735,9 +732,84 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <StatusToggle label="Bezahlt" icon={IconCoin} checked={paid} onChange={setPaid} editable />
       </div>
 
-      {/* Extras */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
+      {/* Section 1: Event & Location */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event &amp; Location</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>Eventart</label>
+            <input className={inputClass} value={eventType} onChange={(e) => setEventType(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelClass}>Datum</label>
+            <input className={inputClass} type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
+          </div>
+        </div>
+        <div>
+          <label className={labelClass}>Location</label>
+          <LocationAutocomplete
+            value={locationName}
+            onChange={setLocationName}
+            onSelect={handleLocationSelect}
+            locations={locations}
+            inputClass={inputClass}
+          />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>Adresse</label>
+            <input
+              className={inputClass}
+              value={locationAddress}
+              onChange={(e) => setLocationAddress(e.target.value)}
+              disabled={!isPrivateLocation}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Entfernung (KM)</label>
+            <input
+              className={inputClass}
+              type="number"
+              step="0.1"
+              value={distanceKm}
+              onChange={(e) => setDistanceKm(e.target.value)}
+              disabled={!isPrivateLocation}
+              placeholder="–"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Section 2: Kunde */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kunde</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>Name</label>
+            <input className={inputClass} value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelClass}>E-Mail</label>
+            <input className={inputClass} type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelClass}>Telefon</label>
+            <input className={inputClass} value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelClass}>Firma</label>
+            <select className={selectClass} value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id} className="bg-card">{c.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 3: Extras */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
             <ExtraIcon
@@ -753,201 +825,132 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Kundendaten */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Name</label>
-              <input className={inputClass} value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-            </div>
-            <div>
-              <label className={labelClass}>E-Mail</label>
-              <input className={inputClass} type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} />
-            </div>
-            <div>
-              <label className={labelClass}>Telefon</label>
-              <input className={inputClass} value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
-            </div>
-            <div>
-              <label className={labelClass}>Firma</label>
-              <select className={selectClass} value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
-                {companies.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-card">{c.name}</option>
-                ))}
-              </select>
-            </div>
+      {/* Section 4: Preise */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preise</h2>
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+          <div>
+            <label className={labelClass}>Fotobox</label>
+            <input className={inputClass} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} placeholder="–" />
+          </div>
+          <div>
+            <label className={labelClass}>Fahrt</label>
+            <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
+          </div>
+          <div>
+            <label className={labelClass}>Extras</label>
+            <input className={inputClass} type="number" step="0.01" value={extrasCost} onChange={(e) => setExtrasCost(e.target.value)} placeholder="–" />
           </div>
         </div>
-
-        {/* Event-Details */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Event-Details</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Eventart</label>
-              <input className={inputClass} value={eventType} onChange={(e) => setEventType(e.target.value)} />
-            </div>
-            <div>
-              <label className={labelClass}>Datum</label>
-              <input className={inputClass} type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
-            </div>
-            <div className="sm:col-span-2">
-              <label className={labelClass}>Location</label>
-              <LocationAutocomplete
-                value={locationName}
-                onChange={setLocationName}
-                onSelect={handleLocationSelect}
-                locations={locations}
-                inputClass={inputClass}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Adresse</label>
-              <input
-                className={inputClass}
-                value={locationAddress}
-                onChange={(e) => setLocationAddress(e.target.value)}
-                disabled={!isPrivateLocation}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Entfernung (KM)</label>
-              <input
-                className={inputClass}
-                type="number"
-                step="0.1"
-                value={distanceKm}
-                onChange={(e) => setDistanceKm(e.target.value)}
-                disabled={!isPrivateLocation}
-                placeholder="–"
-              />
-            </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>Rabatt</label>
+            <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="–" />
+          </div>
+          <div>
+            <label className={labelClass}>Rabatt-Typ</label>
+            <select className={selectClass} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
+              <option value="AMOUNT" className="bg-card">Betrag (&euro;)</option>
+              <option value="PERCENT" className="bg-card">Prozent (%)</option>
+            </select>
           </div>
         </div>
-
-        {/* Preiskalkulation Kunde */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation Kunde</h2>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div>
-              <label className={labelClass}>Fotobox</label>
-              <input className={inputClass} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} placeholder="–" />
-            </div>
-            <div>
-              <label className={labelClass}>Fahrt</label>
-              <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
-            </div>
-            <div>
-              <label className={labelClass}>Extras</label>
-              <input className={inputClass} type="number" step="0.01" value={extrasCost} onChange={(e) => setExtrasCost(e.target.value)} placeholder="–" />
-            </div>
-            <div>
-              <label className={labelClass}>Rabatt</label>
-              <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="–" />
-            </div>
-            <div>
-              <label className={labelClass}>Rabatt-Typ</label>
-              <select className={selectClass} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
-                <option value="AMOUNT" className="bg-card">Betrag (&euro;)</option>
-                <option value="PERCENT" className="bg-card">Prozent (%)</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Gesamtpreis</label>
-              <input className={inputClass + " font-semibold text-[#F6A11C]"} type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
-            </div>
-          </div>
+        <div>
+          <label className={labelClass}>Gesamtpreis</label>
+          <input className={inputClass + " font-semibold text-[#F6A11C] text-lg h-11"} type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
         </div>
-
-        {/* Preiskalkulation intern */}
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-amber-400">Preiskalkulation intern</h2>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div>
-              <label className={labelClass}>Aufbau</label>
-              <input className={inputClass} type="number" step="0.01" value={setupCost} onChange={(e) => setSetupCost(e.target.value)} placeholder="–" />
-            </div>
-            <div>
-              <label className={labelClass}>Material</label>
-              <input className={inputClass} type="number" step="0.01" value={materialCost} onChange={(e) => setMaterialCost(e.target.value)} placeholder="–" />
-            </div>
-          </div>
-        </div>
-
-        {/* Zuordnung & Zahlart */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Zuordnung &amp; Zahlung</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Fahrer</label>
-              <select className={selectClass} value={driverId} onChange={(e) => setDriverId(e.target.value)}>
-                <option value="" className="bg-card">– Kein Fahrer –</option>
-                {drivers.map((d) => (
-                  <option key={d.id} value={d.id} className="bg-card">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>2. Fahrer</label>
-              <select className={selectClass} value={secondDriverId} onChange={(e) => setSecondDriverId(e.target.value)}>
-                <option value="" className="bg-card">– Kein 2. Fahrer –</option>
-                {drivers.map((d) => (
-                  <option key={d.id} value={d.id} className="bg-card">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Zahlart</label>
-              <select className={selectClass} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-                <option value="CASH" className="bg-card">Bar</option>
-                <option value="INVOICE" className="bg-card">Rechnung</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>KM Entfernung</label>
-              <div className="h-9 flex items-center text-sm text-zinc-400 px-3">
-                {order.distanceKm != null ? `${order.distanceKm} km` : "–"}
+        <div className="border-t border-white/[0.10] pt-3">
+          <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className={labelClass}>Aufbau</label>
+                <input className={inputClass} type="number" step="0.01" value={setupCost} onChange={(e) => setSetupCost(e.target.value)} placeholder="–" />
+              </div>
+              <div>
+                <label className={labelClass}>Material</label>
+                <input className={inputClass} type="number" step="0.01" value={materialCost} onChange={(e) => setMaterialCost(e.target.value)} placeholder="–" />
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Notizen */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Kundenkommentar</label>
-              <textarea
-                className={inputClass + " h-24 py-2 resize-none"}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Sichtbar für den Kunden..."
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Interner Kommentar</label>
-              <textarea
-                className={inputClass + " h-24 py-2 resize-none"}
-                value={internalNotes}
-                onChange={(e) => setInternalNotes(e.target.value)}
-                placeholder="Nur intern sichtbar..."
-              />
-            </div>
+      {/* Section 5: Zuordnung & Zahlung */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zuordnung &amp; Zahlung</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>Fahrer</label>
+            <select className={selectClass} value={driverId} onChange={(e) => setDriverId(e.target.value)}>
+              <option value="" className="bg-card">– Kein Fahrer –</option>
+              {drivers.map((d) => (
+                <option key={d.id} value={d.id} className="bg-card">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>2. Fahrer</label>
+            <select className={selectClass} value={secondDriverId} onChange={(e) => setSecondDriverId(e.target.value)}>
+              <option value="" className="bg-card">– Kein 2. Fahrer –</option>
+              {drivers.map((d) => (
+                <option key={d.id} value={d.id} className="bg-card">{d.name} {d.initials ? `(${d.initials})` : ""}</option>
+              ))}
+            </select>
           </div>
         </div>
+        <div>
+          <label className={labelClass}>Zahlart</label>
+          <select className={selectClass} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+            <option value="CASH" className="bg-card">Bar</option>
+            <option value="INVOICE" className="bg-card">Rechnung</option>
+          </select>
+        </div>
+      </div>
 
-        {/* Drucklayouts */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-zinc-300">Drucklayouts</h2>
-          <ImageGallery
-            orderId={order.id}
-            images={order.images}
-            isAdmin={isAdmin}
+      {/* Section 6: Notizen */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
+        <div>
+          <label className={labelClass}>Kundenkommentar</label>
+          <textarea
+            className={inputClass + " h-24 py-2 resize-none"}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Sichtbar für den Kunden..."
           />
         </div>
+        <div>
+          <label className={labelClass}>Interner Kommentar</label>
+          <textarea
+            className={inputClass + " h-24 py-2 resize-none"}
+            value={internalNotes}
+            onChange={(e) => setInternalNotes(e.target.value)}
+            placeholder="Nur intern sichtbar..."
+          />
+        </div>
+      </div>
+
+      {/* Section 7: Drucklayouts */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h2>
+        <ImageGallery
+          orderId={order.id}
+          images={order.images}
+          isAdmin={isAdmin}
+        />
+      </div>
+
+      {/* Mobile floating save button */}
+      <div className="fixed bottom-4 left-4 right-4 sm:hidden z-20">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full h-12 rounded-xl bg-[#F6A11C] text-black font-semibold text-base shadow-lg shadow-[#F6A11C]/20 hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+        >
+          <IconDeviceFloppy className="size-5" />
+          {saving ? "Speichern..." : "Speichern"}
+        </button>
       </div>
     </div>
   );
