@@ -1,10 +1,8 @@
 #!/bin/sh
-set -e
-
 echo "Starting knipserl admin..."
 
-# Ensure all database tables exist
-node ensure-tables.mjs
+# Ensure all database tables exist (never blocks startup)
+node ensure-tables.cjs || echo "[entrypoint] Table check had issues, continuing..."
 
 # Start the application
-node server.js
+exec node server.js
