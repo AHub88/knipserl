@@ -16,28 +16,42 @@ export async function GET(request: NextRequest) {
   const startOfMonth = new Date(year, month - 1, 1);
   const endOfMonth = new Date(year, month, 0, 23, 59, 59);
 
-  const paymentFilter = await getPaymentFilter(session.user.role ?? "");
+  try {
+    const paymentFilter = await getPaymentFilter(session.user.role ?? "");
 
-  const [orders, vacations] = await Promise.all([
-    prisma.order.findMany({
+    const orders = await prisma.order.findMany({
       where: {
         eventDate: { gte: startOfMonth, lte: endOfMonth },
         ...paymentFilter,
       },
       include: { driver: { select: { id: true, name: true, initials: true } } },
       orderBy: { eventDate: "asc" },
-    }),
-    prisma.vacation.findMany({
-      where: {
-        OR: [
-          { startDate: { gte: startOfMonth, lte: endOfMonth } },
-          { endDate: { gte: startOfMonth, lte: endOfMonth } },
-          { startDate: { lte: startOfMonth }, endDate: { gte: endOfMonth } },
-        ],
-      },
-      include: { driver: { select: { id: true, name: true } } },
-    }),
-  ]);
+    });
 
-  return NextResponse.json({ orders, vacations });
+    // Vacations query - gracefully handle if table doesn't exist
+    let vacations: unknown[] = [];
+    try {
+      vacations = await prisma.vacation.findMany({
+        where: {
+          OR: [
+            { startDate: { gte: startOfMonth, lte: endOfMonth } },
+            { endDate: { gte: startOfMonth, lte: endOfMonth } },
+            { startDate: { lte: startOfMonth }, endDate: { gte: endOfMonth } },
+          ],
+        },
+        include: { driver: { select: { id: true, name: true } } },
+      });
+    } catch {
+      // vacations table might not exist yet - continue without
+      vacations = [];
+    }
+
+    return NextResponse.json({ orders, vacations });
+  } catch (error) {
+    console.error("[calendar API]", error);
+    return NextResponse.json(
+      { error: "Interner Fehler", detail: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
+  }
 }

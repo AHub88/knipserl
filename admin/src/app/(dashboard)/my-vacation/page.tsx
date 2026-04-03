@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { cookies } from "next/headers";
 import { VacationForm } from "@/app/(driver)/driver/vacation/vacation-form";
 import { VacationList } from "@/app/(driver)/driver/vacation/vacation-list";
-import { IconBeach } from "@tabler/icons-react";
+import { IconBeach, IconAlertTriangle } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";
 
@@ -13,13 +13,25 @@ export default async function MyVacationPage() {
   const impersonateId = cookieStore.get("impersonateDriverId")?.value;
   const driverId = (session!.user.role === "ADMIN" && impersonateId) ? impersonateId : session!.user.id;
 
-  const [vacations, driver] = await Promise.all([
-    prisma.vacation.findMany({
-      where: { driverId },
-      orderBy: { startDate: "asc" },
-    }),
-    prisma.user.findUnique({ where: { id: driverId }, select: { name: true } }),
-  ]);
+  let vacations: { id: string; type: string; startDate: Date; endDate: Date; note: string | null }[] = [];
+  let driver: { name: string | null } | null = null;
+  let dbError: string | null = null;
+
+  try {
+    [vacations, driver] = await Promise.all([
+      prisma.vacation.findMany({
+        where: { driverId },
+        orderBy: { startDate: "asc" },
+      }),
+      prisma.user.findUnique({ where: { id: driverId }, select: { name: true } }),
+    ]);
+  } catch (error) {
+    dbError = error instanceof Error ? error.message : String(error);
+    // Still try to get the driver name
+    try {
+      driver = await prisma.user.findUnique({ where: { id: driverId }, select: { name: true } });
+    } catch { /* ignore */ }
+  }
 
   const isImpersonating = session!.user.role === "ADMIN" && impersonateId && impersonateId !== session!.user.id;
 
@@ -36,6 +48,20 @@ export default async function MyVacationPage() {
           </p>
         </div>
       </div>
+
+      {dbError && (
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 flex items-start gap-3">
+          <IconAlertTriangle className="size-5 text-red-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-red-400">Datenbank-Fehler</p>
+            <p className="text-xs text-red-400/70 mt-1 break-all">{dbError}</p>
+            <p className="text-xs text-zinc-500 mt-2">
+              Die Tabelle &quot;vacations&quot; existiert möglicherweise noch nicht.
+              Rufe <code className="bg-white/5 px-1 rounded">/api/health</code> auf um den DB-Status zu prüfen.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">

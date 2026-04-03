@@ -9,57 +9,59 @@ async function main() {
     return;
   }
 
-  let pg;
+  let Client;
   try {
-    pg = require("pg");
+    const pg = require("pg");
+    Client = pg.Client || (pg.default && pg.default.Client);
+    if (!Client) throw new Error("pg.Client not found in module exports");
   } catch (e) {
-    console.log("[ensure-tables] pg module not found, skipping:", e.message);
+    console.log("[ensure-tables] Cannot load pg:", e.message);
     return;
   }
 
-  const client = new pg.Client({ connectionString: url });
+  const client = new Client({ connectionString: url });
 
   try {
     await client.connect();
     console.log("[ensure-tables] Connected to database.");
 
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS "vacations" (
-        "id" TEXT NOT NULL,
-        "driverId" TEXT NOT NULL,
-        "type" TEXT NOT NULL DEFAULT 'ABSENT',
-        "startDate" TIMESTAMP(3) NOT NULL,
-        "endDate" TIMESTAMP(3) NOT NULL,
-        "note" TEXT,
-        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        CONSTRAINT "vacations_pkey" PRIMARY KEY ("id")
-      );
-    `);
+    // Check what tables exist
+    const res = await client.query(
+      "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"
+    );
+    const tables = res.rows.map(r => r.tablename);
+    console.log("[ensure-tables] Existing tables:", tables.join(", "));
 
-    // Add foreign key only if missing
-    await client.query(`
-      DO $$ BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_name = 'vacations_driverId_fkey'
-            AND table_name = 'vacations'
-        ) THEN
-          ALTER TABLE "vacations"
-            ADD CONSTRAINT "vacations_driverId_fkey"
-            FOREIGN KEY ("driverId") REFERENCES "users"("id")
-            ON DELETE RESTRICT ON UPDATE CASCADE;
-        END IF;
-      END $$;
-    `);
+    if (!tables.includes("vacations")) {
+      console.log("[ensure-tables] Creating vacations table...");
+      await client.query(`
+        CREATE TABLE "vacations" (
+          "id" TEXT NOT NULL,
+          "driverId" TEXT NOT NULL,
+          "type" TEXT NOT NULL DEFAULT 'ABSENT',
+          "startDate" TIMESTAMP(3) NOT NULL,
+          "endDate" TIMESTAMP(3) NOT NULL,
+          "note" TEXT,
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT "vacations_pkey" PRIMARY KEY ("id"),
+          CONSTRAINT "vacations_driverId_fkey" FOREIGN KEY ("driverId")
+            REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+        );
+      `);
+      console.log("[ensure-tables] vacations table created.");
+    } else {
+      console.log("[ensure-tables] vacations table already exists.");
+    }
 
-    console.log("[ensure-tables] All tables verified.");
+    console.log("[ensure-tables] Done.");
   } catch (err) {
-    console.log("[ensure-tables] Warning:", err.message);
+    console.log("[ensure-tables] Error:", err.message);
+    if (err.stack) console.log("[ensure-tables] Stack:", err.stack.split("\n").slice(0, 3).join("\n"));
   } finally {
     try { await client.end(); } catch (_) {}
   }
 }
 
 main().catch((err) => {
-  console.log("[ensure-tables] Unexpected error:", err.message);
+  console.log("[ensure-tables] Unexpected:", err.message);
 });
