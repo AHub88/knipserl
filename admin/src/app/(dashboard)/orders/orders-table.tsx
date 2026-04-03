@@ -790,6 +790,102 @@ function MonthGroup({
   );
 }
 
+// Mobile card list (< md)
+function MobileOrderList({
+  orders,
+  onRowClick,
+  nextOrderId,
+  nextOrderRef,
+}: {
+  orders: OrderRow[];
+  onRowClick: (id: string) => void;
+  nextOrderId?: string | null;
+  nextOrderRef?: React.RefObject<HTMLTableRowElement | null>;
+}) {
+  return (
+    <div className="divide-y divide-white/[0.10]">
+      {orders.map((order) => {
+        const { firma, kontakt } = splitCustomerName(order.customerName);
+        const displayName = firma || kontakt;
+        const isNext = nextOrderId === order.id;
+        const isPast = new Date(order.eventDate) < new Date();
+
+        return (
+          <div
+            key={order.id}
+            ref={isNext ? (nextOrderRef as React.RefObject<HTMLDivElement>) : undefined}
+            onClick={() => onRowClick(order.id)}
+            className={
+              "cursor-pointer px-4 py-3 transition-colors active:bg-[#1c1d20] " +
+              (isNext
+                ? "border-l-2 border-l-[#F6A11C] bg-[#F6A11C]/8"
+                : "") +
+              (isPast && !isNext ? " opacity-50" : "")
+            }
+          >
+            {/* Line 1: Datum – Name – Fahrerkürzel */}
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xs text-zinc-500 tabular-nums shrink-0">
+                {new Date(order.eventDate).toLocaleDateString("de-DE", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </span>
+              <span className="text-sm font-medium text-zinc-200 truncate" title={displayName}>
+                {displayName}
+              </span>
+              {order.driverInitials && (
+                <span
+                  className="ml-auto shrink-0 text-xs font-medium text-zinc-400 bg-white/[0.06] rounded px-1.5 py-0.5"
+                  title={
+                    order.secondDriverName
+                      ? `${order.driverName} / ${order.secondDriverName}`
+                      : order.driverName ?? ""
+                  }
+                >
+                  {order.driverInitials}
+                  {order.secondDriverInitials && (
+                    <span className="text-muted-foreground">/{order.secondDriverInitials}</span>
+                  )}
+                </span>
+              )}
+            </div>
+            {/* Line 2: Location – Status Icons */}
+            <div className="flex items-center gap-2 mt-1 min-w-0">
+              <span className="text-xs text-zinc-500 truncate" title={order.locationName}>
+                {order.locationName || "–"}
+              </span>
+              <span className="ml-auto flex items-center gap-1 shrink-0">
+                <StatusIcon
+                  done={order.confirmed}
+                  icon={IconCircleCheck}
+                  title={order.confirmed ? "Bestätigt" : "Nicht bestätigt"}
+                />
+                <StatusIcon
+                  done={order.designReady}
+                  icon={IconPalette}
+                  title={order.designReady ? "Design fertig" : "Design offen"}
+                />
+                <StatusIcon
+                  done={order.planned}
+                  icon={IconTruck}
+                  title={order.planned ? "Geplant" : "Nicht geplant"}
+                />
+                <StatusIcon
+                  done={order.paid}
+                  icon={IconCoin}
+                  title={order.paid ? "Bezahlt" : "Nicht bezahlt"}
+                />
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // Column order:
 // 1. Datum  2. Firmenname  3. Name  4. Event  5. Location  6. Ort  7. KM
 // 8. Preis  9. Zahlart  10. Firma  11. Fahrer  12. Status-Icons
@@ -805,7 +901,19 @@ function OrderTable({
   nextOrderRef?: React.RefObject<HTMLTableRowElement | null>;
 }) {
   return (
-    <Table>
+    <>
+      {/* Mobile list */}
+      <div className="md:hidden">
+        <MobileOrderList
+          orders={orders}
+          onRowClick={onRowClick}
+          nextOrderId={nextOrderId}
+          nextOrderRef={nextOrderRef}
+        />
+      </div>
+
+      {/* Desktop table */}
+      <Table className="hidden md:table">
       <TableHeader>
         <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -817,7 +925,7 @@ function OrderTable({
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Name
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Event
           </TableHead>
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
@@ -832,13 +940,13 @@ function OrderTable({
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
             Preis
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Zahlart
           </TableHead>
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
             Firma
           </TableHead>
-          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hidden sm:table-cell">
+          <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Fahrer
           </TableHead>
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
@@ -891,7 +999,7 @@ function OrderTable({
               <TableCell className="font-medium text-zinc-200 max-w-[140px]">
                 <span className="block truncate" title={kontakt}>{kontakt}</span>
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm hidden md:table-cell">
+              <TableCell className="text-zinc-400 text-sm">
                 {order.eventType}
               </TableCell>
               <TableCell className="text-zinc-400 text-sm max-w-[140px] hidden lg:table-cell">
@@ -912,7 +1020,7 @@ function OrderTable({
               <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
                 {order.price.toFixed(2)}&nbsp;&euro;
               </TableCell>
-              <TableCell className="hidden md:table-cell">
+              <TableCell>
                 <span
                   className={
                     "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold " +
@@ -923,7 +1031,7 @@ function OrderTable({
                 </span>
               </TableCell>
               <TableCell className="hidden lg:table-cell">{companyTag(order.companyName)}</TableCell>
-              <TableCell className="hidden sm:table-cell">
+              <TableCell>
                 {order.driverName ? (
                   <span
                     className="text-sm font-medium text-zinc-300"
@@ -977,5 +1085,6 @@ function OrderTable({
         })}
       </TableBody>
     </Table>
+    </>
   );
 }
