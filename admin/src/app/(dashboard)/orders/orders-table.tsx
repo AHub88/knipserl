@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   IconSearch,
@@ -209,12 +209,10 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
     return upcoming[0]?.id ?? null;
   }, [orders]);
 
-  const nextOrderRef = useRef<HTMLElement>(null);
-
   const scrollToNext = useCallback(() => {
-    // Small delay to ensure DOM is rendered (e.g. after month group expands)
     requestAnimationFrame(() => {
-      nextOrderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const el = document.querySelector('[data-next-order="true"]');
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   }, []);
 
@@ -700,7 +698,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                 orders={group.orders}
                 onRowClick={(id) => router.push(`/orders/${id}`)}
                 nextOrderId={nextOrderId}
-                nextOrderRef={nextOrderRef}
+                
               />
             ))}
           </div>
@@ -709,7 +707,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             orders={filtered}
             onRowClick={(id) => router.push(`/orders/${id}`)}
             nextOrderId={nextOrderId}
-            nextOrderRef={nextOrderRef}
+            
           />
         )}
       </div>
@@ -738,7 +736,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                 orders={group.orders}
                 onRowClick={(id) => router.push(`/orders/${id}`)}
                 nextOrderId={nextOrderId}
-                nextOrderRef={nextOrderRef}
+                
               />
             ))}
           </div>
@@ -748,7 +746,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               orders={filtered}
               onRowClick={(id) => router.push(`/orders/${id}`)}
               nextOrderId={nextOrderId}
-              nextOrderRef={nextOrderRef}
+              
             />
           </div>
         )}
@@ -803,13 +801,11 @@ function MonthGroup({
   orders,
   onRowClick,
   nextOrderId,
-  nextOrderRef,
 }: {
   label: string;
   orders: OrderRow[];
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
-  nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   const hasNext = nextOrderId ? orders.some((o) => o.id === nextOrderId) : false;
   const isPastMonth = (() => {
@@ -849,7 +845,7 @@ function MonthGroup({
       </button>
       {!collapsed && (
         <div>
-          <OrderTable orders={orders} onRowClick={onRowClick} nextOrderId={nextOrderId} nextOrderRef={nextOrderRef} />
+          <OrderTable orders={orders} onRowClick={onRowClick} nextOrderId={nextOrderId} />
         </div>
       )}
     </div>
@@ -861,12 +857,10 @@ function MobileOrderList({
   orders,
   onRowClick,
   nextOrderId,
-  nextOrderRef,
 }: {
   orders: OrderRow[];
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
-  nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   return (
     <div className="divide-y divide-white/[0.10]">
@@ -881,7 +875,7 @@ function MobileOrderList({
         return (
           <div
             key={order.id}
-            ref={isNext ? (nextOrderRef as React.RefObject<HTMLDivElement | null>) : undefined}
+            data-next-order={isNext ? "true" : undefined}
             onClick={() => onRowClick(order.id)}
             className={
               "cursor-pointer px-3 py-2.5 transition-colors active:bg-[#1c1d20] " +
@@ -981,12 +975,10 @@ function OrderTable({
   orders,
   onRowClick,
   nextOrderId,
-  nextOrderRef,
 }: {
   orders: OrderRow[];
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
-  nextOrderRef?: React.RefObject<HTMLElement | null>;
 }) {
   return (
     <>
@@ -996,7 +988,7 @@ function OrderTable({
           orders={orders}
           onRowClick={onRowClick}
           nextOrderId={nextOrderId}
-          nextOrderRef={nextOrderRef}
+          
         />
       </div>
 
@@ -1060,7 +1052,7 @@ function OrderTable({
           return (
             <TableRow
               key={order.id}
-              ref={isNext ? (nextOrderRef as React.RefObject<HTMLTableRowElement | null>) : undefined}
+              data-next-order={isNext ? "true" : undefined}
               onClick={() => onRowClick(order.id)}
               className={
                 "cursor-pointer border-b transition-colors hover:bg-[#1c1d20] group " +
