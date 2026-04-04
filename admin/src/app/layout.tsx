@@ -18,6 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Knipserl – Admin Dashboard",
   description: "Verwaltung der Knipserl Fotobox",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({

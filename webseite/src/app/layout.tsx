@@ -18,6 +18,8 @@ const firaCondensed = Fira_Sans_Extra_Condensed({
   weight: ["400", "700", "800"],
 });
 
+const isStaging = process.env.NEXT_PUBLIC_ENV === "staging";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -48,17 +50,19 @@ export const metadata: Metadata = {
       "Professionelle Fotobox mit Sofortdruck mieten ab 379€. Inklusive Auf- & Abbau, Druckflatrate und 24/7 Support.",
     images: [{ url: "/images/og-default.jpg", width: 1200, height: 630 }],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  robots: isStaging
+    ? { index: false, follow: false }
+    : {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      },
 };
 
 export default function RootLayout({
