@@ -19,6 +19,15 @@ export const metadata: Metadata = {
   title: "Knipserl – Admin Dashboard",
   description: "Verwaltung der Knipserl Fotobox",
   robots: { index: false, follow: false },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Knipserl",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({
@@ -31,6 +40,10 @@ export default function RootLayout({
       lang="de"
       className={`${inter.variable} ${geistMono.variable} h-full dark`}
     >
+      <head>
+        <meta name="theme-color" content="#18181b" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+      </head>
       <body className="min-h-full flex flex-col antialiased">
         <SessionProvider>
           {children}
