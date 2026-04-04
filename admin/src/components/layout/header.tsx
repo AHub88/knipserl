@@ -70,10 +70,16 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
       <SidebarTrigger className="text-zinc-400 hover:text-zinc-200 transition-colors" />
       <Separator
         orientation="vertical"
-        className="h-5 bg-[#222326]"
+        className="h-5 bg-[#222326] hidden sm:block"
       />
 
-      <div className="flex-1" />
+      {/* Mobile: centered logo */}
+      <div className="flex-1 flex justify-center sm:hidden">
+        <img src="/logo.png" alt="Knipserl" className="h-7 w-auto" />
+      </div>
+
+      {/* Desktop: spacer */}
+      <div className="flex-1 hidden sm:block" />
 
       {/* View mode toggle - only for admins */}
       {isAdmin && (
