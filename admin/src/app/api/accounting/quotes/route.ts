@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { getNextQuoteNumber } from "@/lib/numbering";
-
-const createQuoteSchema = z.object({
-  orderId: z.string(),
-  companyId: z.string(),
-  items: z.array(
-    z.object({
-      description: z.string(),
-      quantity: z.number().min(1),
-      unitPrice: z.number().min(0),
-    })
-  ),
-  validUntil: z.string().transform((s) => new Date(s)),
-});
 
 export async function GET() {
   const session = await auth();
@@ -28,6 +14,7 @@ export async function GET() {
     include: {
       order: { select: { customerName: true, orderNumber: true } },
       company: { select: { name: true } },
+      customer: { select: { name: true } },
     },
   });
 
@@ -42,24 +29,42 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = createQuoteSchema.parse(body);
+    const { companyId, orderId, customerId, recipientName, recipientAddress, recipientEmail, items, validUntil, deliveryDate, notes } = body;
 
-    const items = data.items.map((item) => ({
-      ...item,
-      total: item.quantity * item.unitPrice,
+    if (!companyId || !recipientName || !items?.length || !validUntil) {
+      return NextResponse.json({ error: "Firma, Empfänger, Positionen und Gültig-bis sind Pflichtfelder" }, { status: 400 });
+    }
+
+    const processedItems = items.map((item: { title: string; description?: string; quantity: number; unitPrice: number; optional?: boolean }) => ({
+      title: item.title,
+      description: item.description || "",
+      quantity: item.quantity || 1,
+      unitPrice: item.unitPrice || 0,
+      total: (item.quantity || 1) * (item.unitPrice || 0),
+      optional: item.optional || false,
     }));
-    const totalAmount = items.reduce((sum, item) => sum + item.total, 0);
 
-    const quoteNumber = await getNextQuoteNumber(data.companyId);
+    // Total only includes non-optional items
+    const totalAmount = processedItems
+      .filter((item: { optional: boolean }) => !item.optional)
+      .reduce((sum: number, item: { total: number }) => sum + item.total, 0);
+
+    const quoteNumber = await getNextQuoteNumber(companyId);
 
     const quote = await prisma.quote.create({
       data: {
-        orderId: data.orderId,
-        companyId: data.companyId,
+        companyId,
+        orderId: orderId || null,
+        customerId: customerId || null,
         quoteNumber,
-        items: JSON.parse(JSON.stringify(items)),
+        recipientName,
+        recipientAddress: recipientAddress || null,
+        recipientEmail: recipientEmail || null,
+        items: processedItems,
         totalAmount,
-        validUntil: data.validUntil,
+        validUntil: new Date(validUntil),
+        deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+        notes: notes || null,
       },
       include: {
         order: { select: { customerName: true } },
@@ -69,13 +74,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(quote, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Validierungsfehler", details: error.issues },
-        { status: 400 }
-      );
-    }
     console.error("Error creating quote:", error);
-    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Interner Serverfehler" },
+      { status: 500 }
+    );
   }
 }

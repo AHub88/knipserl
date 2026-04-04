@@ -20,14 +20,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    type DocItem = { title?: string; description?: string; quantity: number; unitPrice: number; total: number; optional?: boolean };
     let doc: {
       number: string;
-      items: Array<{ description: string; quantity: number; unitPrice: number; total: number }>;
+      items: DocItem[];
       totalAmount: number;
       date: Date;
       dueOrValid: Date;
-      customerName: string;
-      customerEmail: string;
+      deliveryDate: Date | null;
+      recipientName: string;
+      recipientAddress: string | null;
+      recipientEmail: string | null;
+      notes: string | null;
       company: {
         name: string;
         address: string;
@@ -47,43 +51,43 @@ export async function GET(request: NextRequest) {
     if (type === "invoice") {
       const invoice = await prisma.invoice.findUnique({
         where: { id },
-        include: {
-          order: { select: { customerName: true, customerEmail: true, locationAddress: true } },
-          company: true,
-        },
+        include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!invoice) {
         return NextResponse.json({ error: "Rechnung nicht gefunden" }, { status: 404 });
       }
       doc = {
         number: invoice.invoiceNumber,
-        items: invoice.items as typeof doc.items,
+        items: invoice.items as DocItem[],
         totalAmount: invoice.totalAmount,
         date: invoice.createdAt,
         dueOrValid: invoice.dueDate,
-        customerName: invoice.order.customerName,
-        customerEmail: invoice.order.customerEmail ?? "",
+        deliveryDate: invoice.deliveryDate,
+        recipientName: invoice.recipientName || invoice.order?.customerName || "",
+        recipientAddress: invoice.recipientAddress,
+        recipientEmail: invoice.recipientEmail || invoice.order?.customerEmail || null,
+        notes: invoice.notes,
         company: invoice.company,
       };
     } else {
       const quote = await prisma.quote.findUnique({
         where: { id },
-        include: {
-          order: { select: { customerName: true, customerEmail: true, locationAddress: true } },
-          company: true,
-        },
+        include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!quote) {
         return NextResponse.json({ error: "Angebot nicht gefunden" }, { status: 404 });
       }
       doc = {
         number: quote.quoteNumber,
-        items: quote.items as typeof doc.items,
+        items: quote.items as DocItem[],
         totalAmount: quote.totalAmount,
         date: quote.createdAt,
         dueOrValid: quote.validUntil,
-        customerName: quote.order.customerName,
-        customerEmail: quote.order.customerEmail ?? "",
+        deliveryDate: quote.deliveryDate,
+        recipientName: quote.recipientName || quote.order?.customerName || "",
+        recipientAddress: quote.recipientAddress,
+        recipientEmail: quote.recipientEmail || quote.order?.customerEmail || null,
+        notes: quote.notes,
         company: quote.company,
       };
     }
@@ -135,17 +139,25 @@ export async function GET(request: NextRequest) {
 
     const footerLine = `${escapeHtml(doc.company.name)} | ${escapeHtml(doc.company.address)} | ${escapeHtml(doc.company.zip)} ${escapeHtml(doc.company.city)}${doc.company.taxNumber ? ` | Steuernr: ${escapeHtml(doc.company.taxNumber)}` : ""}`;
 
-    function renderItemRows(items: typeof doc.items, startPos: number) {
+    function renderItemRows(items: DocItem[], startPos: number) {
       return items
         .map(
-          (item, i) => `
+          (item, i) => {
+            const isOpt = item.optional === true;
+            const optStyle = isOpt ? "color:#999;font-style:italic;" : "";
+            const optBorder = isOpt ? "border-bottom:1px dashed #e5e5e5;" : "border-bottom:1px solid #e5e5e5;";
+            const label = item.title || item.description || "";
+            const desc = item.title && item.description ? `<br/><span style="font-size:10px;color:#888;">${escapeHtml(item.description)}</span>` : "";
+            const optBadge = isOpt ? ' <span style="font-size:9px;background:#f0f0f0;color:#999;padding:1px 5px;border-radius:3px;">optional</span>' : "";
+            return `
           <tr>
-            <td style="padding:7px 10px;border-bottom:1px solid #e5e5e5;text-align:center;color:#666;font-size:12px;">${startPos + i}</td>
-            <td style="padding:7px 10px;border-bottom:1px solid #e5e5e5;font-size:12px;">${escapeHtml(item.description)}</td>
-            <td style="padding:7px 10px;border-bottom:1px solid #e5e5e5;text-align:center;font-size:12px;">${item.quantity}</td>
-            <td style="padding:7px 10px;border-bottom:1px solid #e5e5e5;text-align:right;font-size:12px;">${formatAmount(item.unitPrice)} &euro;</td>
-            <td style="padding:7px 10px;border-bottom:1px solid #e5e5e5;text-align:right;font-weight:600;font-size:12px;">${formatAmount(item.total)} &euro;</td>
-          </tr>`
+            <td style="padding:7px 10px;${optBorder}text-align:center;color:#666;font-size:12px;${optStyle}">${startPos + i}</td>
+            <td style="padding:7px 10px;${optBorder}font-size:12px;${optStyle}">${escapeHtml(label)}${optBadge}${desc}</td>
+            <td style="padding:7px 10px;${optBorder}text-align:center;font-size:12px;${optStyle}">${item.quantity}</td>
+            <td style="padding:7px 10px;${optBorder}text-align:right;font-size:12px;${optStyle}">${formatAmount(item.unitPrice)} &euro;</td>
+            <td style="padding:7px 10px;${optBorder}text-align:right;font-weight:600;font-size:12px;${optStyle}">${formatAmount(item.total)} &euro;</td>
+          </tr>`;
+          }
         )
         .join("\n");
     }
@@ -213,8 +225,9 @@ export async function GET(request: NextRequest) {
               <p style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:4px;">
                 ${isInvoice ? "Rechnungsempf\u00e4nger" : "Angebotsempf\u00e4nger"}
               </p>
-              <p style="font-size:13px;font-weight:600;">${escapeHtml(doc.customerName)}</p>
-              ${doc.customerEmail ? `<p style="font-size:11px;color:#666;">${escapeHtml(doc.customerEmail)}</p>` : ""}
+              <p style="font-size:13px;font-weight:600;">${escapeHtml(doc.recipientName)}</p>
+              ${doc.recipientAddress ? `<p style="font-size:11px;color:#666;white-space:pre-line;">${escapeHtml(doc.recipientAddress)}</p>` : ""}
+              ${doc.recipientEmail ? `<p style="font-size:11px;color:#666;">${escapeHtml(doc.recipientEmail)}</p>` : ""}
             </div>
             <div style="text-align:right;">
               <table style="font-size:11px;margin-left:auto;">
@@ -230,6 +243,10 @@ export async function GET(request: NextRequest) {
                   <td style="padding:2px 10px 2px 0;color:#666;">${dueLabel}:</td>
                   <td>${formatDate(doc.dueOrValid)}</td>
                 </tr>
+                ${doc.deliveryDate ? `<tr>
+                  <td style="padding:2px 10px 2px 0;color:#666;">Lieferdatum:</td>
+                  <td>${formatDate(doc.deliveryDate)}</td>
+                </tr>` : ""}
               </table>
             </div>
           </div>`;
@@ -250,6 +267,7 @@ export async function GET(request: NextRequest) {
 
       // Total + footer content on last page
       if (isLast) {
+        const optionalTotal = doc.items.filter(i => i.optional).reduce((s, i) => s + i.total, 0);
         pagesHtml += `
           <div style="display:flex;justify-content:flex-end;margin-top:16px;margin-bottom:8px;">
             <table style="font-size:13px;">
@@ -257,8 +275,13 @@ export async function GET(request: NextRequest) {
                 <td style="padding:6px 16px 6px 0;font-weight:700;">Gesamtbetrag:</td>
                 <td style="padding:6px 0;font-weight:700;font-size:15px;">${formatAmount(doc.totalAmount)} &euro;</td>
               </tr>
+              ${optionalTotal > 0 ? `<tr>
+                <td style="padding:2px 16px 2px 0;font-size:11px;color:#999;">davon optional:</td>
+                <td style="padding:2px 0;font-size:11px;color:#999;">${formatAmount(optionalTotal)} &euro;</td>
+              </tr>` : ""}
             </table>
           </div>
+          ${doc.notes ? `<div style="margin-top:16px;padding:12px;background:#fafafa;border-radius:6px;font-size:11px;color:#666;line-height:1.6;white-space:pre-line;">${escapeHtml(doc.notes)}</div>` : ""}
           ${kleinunternehmerNotice}
           ${bankInfo}`;
       }

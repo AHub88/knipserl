@@ -121,6 +121,94 @@ async function main() {
       console.log("[ensure-tables] vacations table OK.");
     }
 
+    // 4. Ensure standard_line_items table
+    if (!tables.includes("standard_line_items")) {
+      console.log("[ensure-tables] Creating standard_line_items table...");
+      await client.query(`
+        CREATE TABLE "standard_line_items" (
+          "id" TEXT NOT NULL,
+          "title" TEXT NOT NULL,
+          "description" TEXT,
+          "unitPrice" DOUBLE PRECISION NOT NULL,
+          "category" TEXT,
+          "sortOrder" INTEGER NOT NULL DEFAULT 0,
+          "active" BOOLEAN NOT NULL DEFAULT true,
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT "standard_line_items_pkey" PRIMARY KEY ("id")
+        );
+      `);
+      console.log("[ensure-tables] standard_line_items created.");
+    }
+
+    // 5. Ensure order_confirmations table
+    if (!tables.includes("order_confirmations")) {
+      console.log("[ensure-tables] Creating order_confirmations table...");
+      await client.query(`
+        CREATE TABLE "order_confirmations" (
+          "id" TEXT NOT NULL,
+          "orderId" TEXT NOT NULL,
+          "companyId" TEXT NOT NULL,
+          "confirmationNumber" TEXT NOT NULL,
+          "recipientName" TEXT NOT NULL,
+          "recipientAddress" TEXT,
+          "recipientEmail" TEXT,
+          "items" JSONB NOT NULL,
+          "totalAmount" DOUBLE PRECISION NOT NULL,
+          "deliveryDate" TIMESTAMP(3),
+          "notes" TEXT,
+          "pdfUrl" TEXT,
+          "sentAt" TIMESTAMP(3),
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT "order_confirmations_pkey" PRIMARY KEY ("id"),
+          CONSTRAINT "order_confirmations_confirmationNumber_key" UNIQUE ("confirmationNumber"),
+          CONSTRAINT "order_confirmations_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+          CONSTRAINT "order_confirmations_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "companies"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+        );
+      `);
+      console.log("[ensure-tables] order_confirmations created.");
+    }
+
+    // 6. Add missing columns to existing tables
+    async function addColumnIfMissing(table, column, type) {
+      const check = await client.query(
+        "SELECT 1 FROM information_schema.columns WHERE table_name = $1 AND column_name = $2",
+        [table, column]
+      );
+      if (check.rows.length === 0) {
+        console.log(`[ensure-tables] Adding ${table}.${column}...`);
+        await client.query(`ALTER TABLE "${table}" ADD COLUMN "${column}" ${type}`);
+      }
+    }
+
+    // quotes: new columns
+    await addColumnIfMissing("quotes", "customerId", "TEXT");
+    await addColumnIfMissing("quotes", "recipientName", "TEXT DEFAULT ''");
+    await addColumnIfMissing("quotes", "recipientAddress", "TEXT");
+    await addColumnIfMissing("quotes", "recipientEmail", "TEXT");
+    await addColumnIfMissing("quotes", "deliveryDate", "TIMESTAMP(3)");
+    await addColumnIfMissing("quotes", "notes", "TEXT");
+
+    // invoices: new columns
+    await addColumnIfMissing("invoices", "customerId", "TEXT");
+    await addColumnIfMissing("invoices", "quoteId", "TEXT");
+    await addColumnIfMissing("invoices", "recipientName", "TEXT DEFAULT ''");
+    await addColumnIfMissing("invoices", "recipientAddress", "TEXT");
+    await addColumnIfMissing("invoices", "recipientEmail", "TEXT");
+    await addColumnIfMissing("invoices", "deliveryDate", "TIMESTAMP(3)");
+    await addColumnIfMissing("invoices", "notes", "TEXT");
+
+    // companies: confirmation number sequence
+    await addColumnIfMissing("companies", "confirmationPrefix", "TEXT DEFAULT 'AB'");
+    await addColumnIfMissing("companies", "confirmationNumberCurrent", "INTEGER DEFAULT 0");
+
+    // Make orderId nullable on quotes and invoices (allow standalone documents)
+    try {
+      await client.query(`ALTER TABLE "quotes" ALTER COLUMN "orderId" DROP NOT NULL`);
+      await client.query(`ALTER TABLE "invoices" ALTER COLUMN "orderId" DROP NOT NULL`);
+    } catch (_) { /* already nullable */ }
+
     console.log("[ensure-tables] Done.");
   } catch (err) {
     console.log("[ensure-tables] Error:", err.message);

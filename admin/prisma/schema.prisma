@@ -99,19 +99,22 @@ model Company {
   bankBic              String?
   invoicePrefix        String
   invoiceNumberCurrent Int     @default(0)
-  quotePrefix          String
-  quoteNumberCurrent   Int     @default(0)
-  isKleinunternehmer   Boolean @default(true)
+  quotePrefix                String
+  quoteNumberCurrent         Int     @default(0)
+  confirmationPrefix         String  @default("AB")
+  confirmationNumberCurrent  Int     @default(0)
+  isKleinunternehmer         Boolean @default(true)
   logoUrl              String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  orders           Order[]
-  quotes           Quote[]
-  invoices         Invoice[]
-  incomingInvoices IncomingInvoice[]
-  bankConnections  BankConnection[]
-  bankTransactions BankTransaction[]
+  orders              Order[]
+  quotes              Quote[]
+  invoices            Invoice[]
+  orderConfirmations  OrderConfirmation[]
+  incomingInvoices    IncomingInvoice[]
+  bankConnections     BankConnection[]
+  bankTransactions    BankTransaction[]
 
   @@map("companies")
 }
@@ -129,6 +132,8 @@ model Customer {
 
   orders    Order[]
   inquiries Inquiry[]
+  quotes    Quote[]
+  invoices  Invoice[]
 
   @@map("customers")
 }
@@ -209,8 +214,9 @@ model Order {
   company       Company  @relation(fields: [companyId], references: [id])
   driver        User?    @relation("driver", fields: [driverId], references: [id])
   secondDriver  User?    @relation("secondDriver", fields: [secondDriverId], references: [id])
-  quotes        Quote[]
-  invoices      Invoice[]
+  quotes             Quote[]
+  invoices           Invoice[]
+  orderConfirmations OrderConfirmation[]
 
   @@map("orders")
 }
@@ -231,44 +237,96 @@ model Vacation {
 
 model Quote {
   id          String      @id @default(cuid())
-  orderId     String
+  orderId     String?
   companyId   String
+  customerId  String?
   quoteNumber String      @unique
-  items       Json
+  recipientName    String
+  recipientAddress String?
+  recipientEmail   String?
+  items       Json        // [{title, description, quantity, unitPrice, total, optional}]
   totalAmount Float
   status      QuoteStatus @default(DRAFT)
   validUntil  DateTime
+  deliveryDate DateTime?
+  notes       String?
   pdfUrl      String?
   sentAt      DateTime?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  order   Order   @relation(fields: [orderId], references: [id])
-  company Company @relation(fields: [companyId], references: [id])
+  order    Order?    @relation(fields: [orderId], references: [id])
+  company  Company   @relation(fields: [companyId], references: [id])
+  customer Customer? @relation(fields: [customerId], references: [id])
 
   @@map("quotes")
 }
 
 model Invoice {
   id            String        @id @default(cuid())
-  orderId       String
+  orderId       String?
   companyId     String
+  customerId    String?
+  quoteId       String?
   invoiceNumber String        @unique
-  items         Json
+  recipientName    String
+  recipientAddress String?
+  recipientEmail   String?
+  items         Json          // [{title, description, quantity, unitPrice, total, optional}]
   totalAmount   Float
   status        InvoiceStatus @default(DRAFT)
   dueDate       DateTime
+  deliveryDate  DateTime?
+  notes         String?
   paidAt        DateTime?
   pdfUrl        String?
   sentAt        DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  order            Order            @relation(fields: [orderId], references: [id])
+  order            Order?           @relation(fields: [orderId], references: [id])
   company          Company          @relation(fields: [companyId], references: [id])
+  customer         Customer?        @relation(fields: [customerId], references: [id])
   bankTransactions BankTransaction[]
 
   @@map("invoices")
+}
+
+model OrderConfirmation {
+  id                 String @id @default(cuid())
+  orderId            String
+  companyId          String
+  confirmationNumber String @unique
+  recipientName      String
+  recipientAddress   String?
+  recipientEmail     String?
+  items              Json
+  totalAmount        Float
+  deliveryDate       DateTime?
+  notes              String?
+  pdfUrl             String?
+  sentAt             DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("order_confirmations")
+}
+
+model StandardLineItem {
+  id          String @id @default(cuid())
+  title       String
+  description String?
+  unitPrice   Float
+  category    String?
+  sortOrder   Int    @default(0)
+  active      Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("standard_line_items")
 }
 
 model IncomingInvoice {

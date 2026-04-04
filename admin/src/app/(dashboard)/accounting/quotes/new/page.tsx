@@ -4,24 +4,26 @@ import Link from "next/link";
 import { QuoteForm } from "./quote-form";
 
 export default async function NewQuotePage() {
-  // Fetch orders that don't have a quote yet
-  const orders = await prisma.order.findMany({
-    where: {
-      quotes: { none: {} },
-    },
-    orderBy: { eventDate: "desc" },
-    include: { company: true },
-  });
+  const [orders, companies] = await Promise.all([
+    prisma.order.findMany({
+      where: {
+        quotes: { none: {} },
+      },
+      orderBy: { eventDate: "desc" },
+      include: { company: true },
+    }),
+    prisma.company.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+  ]);
 
   const serializedOrders = orders.map((order) => ({
     id: order.id,
     orderNumber: order.orderNumber,
     customerName: order.customerName,
-    eventType: order.eventType,
-    eventDate: order.eventDate.toISOString(),
     price: order.price,
     companyId: order.company.id,
-    companyName: order.company.name,
   }));
 
   return (
@@ -51,26 +53,8 @@ export default async function NewQuotePage() {
         &larr; Zur&uuml;ck zur &Uuml;bersicht
       </Link>
 
-      {/* Form card */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.10]">
-          <h2 className="text-sm font-semibold text-zinc-300">
-            Angebot erstellen
-          </h2>
-        </div>
-        <div className="p-6">
-          {serializedOrders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
-              <p className="text-sm">
-                Keine Auftr&auml;ge ohne Angebot vorhanden
-              </p>
-            </div>
-          ) : (
-            <QuoteForm orders={serializedOrders} />
-          )}
-        </div>
-      </div>
+      {/* Form */}
+      <QuoteForm companies={companies} orders={serializedOrders} />
     </div>
   );
 }

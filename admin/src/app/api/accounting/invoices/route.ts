@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { getNextInvoiceNumber } from "@/lib/numbering";
-
-const createInvoiceSchema = z.object({
-  orderId: z.string(),
-  companyId: z.string(),
-  items: z.array(
-    z.object({
-      description: z.string(),
-      quantity: z.number().min(1),
-      unitPrice: z.number().min(0),
-    })
-  ),
-  dueDate: z.string().transform((s) => new Date(s)),
-});
 
 export async function GET() {
   const session = await auth();
@@ -28,6 +14,7 @@ export async function GET() {
     include: {
       order: { select: { customerName: true, orderNumber: true, paymentMethod: true } },
       company: { select: { name: true } },
+      customer: { select: { name: true } },
     },
   });
 
@@ -42,54 +29,62 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = createInvoiceSchema.parse(body);
+    const { companyId, orderId, customerId, quoteId, recipientName, recipientAddress, recipientEmail, items, dueDate, deliveryDate, notes } = body;
 
-    // Check that the order uses INVOICE payment method
-    const order = await prisma.order.findUnique({
-      where: { id: data.orderId },
-    });
-    if (!order) {
-      return NextResponse.json({ error: "Auftrag nicht gefunden" }, { status: 404 });
-    }
-    if (order.paymentMethod === "CASH") {
-      return NextResponse.json(
-        { error: "Für BAR-Aufträge werden keine Rechnungen erstellt" },
-        { status: 400 }
-      );
+    if (!companyId || !recipientName || !items?.length || !dueDate) {
+      return NextResponse.json({ error: "Firma, Empfänger, Positionen und Fälligkeitsdatum sind Pflichtfelder" }, { status: 400 });
     }
 
-    const items = data.items.map((item) => ({
-      ...item,
-      total: item.quantity * item.unitPrice,
+    // Validate order payment method if linked
+    if (orderId) {
+      const order = await prisma.order.findUnique({ where: { id: orderId } });
+      if (order?.paymentMethod === "CASH") {
+        return NextResponse.json(
+          { error: "Für BAR-Aufträge werden keine Rechnungen erstellt" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const processedItems = items.map((item: { title: string; description?: string; quantity: number; unitPrice: number }) => ({
+      title: item.title,
+      description: item.description || "",
+      quantity: item.quantity || 1,
+      unitPrice: item.unitPrice || 0,
+      total: (item.quantity || 1) * (item.unitPrice || 0),
     }));
-    const totalAmount = items.reduce((sum, item) => sum + item.total, 0);
 
-    const invoiceNumber = await getNextInvoiceNumber(data.companyId);
+    const totalAmount = processedItems.reduce((sum: number, item: { total: number }) => sum + item.total, 0);
+
+    const invoiceNumber = await getNextInvoiceNumber(companyId);
 
     const invoice = await prisma.invoice.create({
       data: {
-        orderId: data.orderId,
-        companyId: data.companyId,
+        companyId,
+        orderId: orderId || null,
+        customerId: customerId || null,
+        quoteId: quoteId || null,
         invoiceNumber,
-        items: JSON.parse(JSON.stringify(items)),
+        recipientName,
+        recipientAddress: recipientAddress || null,
+        recipientEmail: recipientEmail || null,
+        items: processedItems,
         totalAmount,
-        dueDate: data.dueDate,
+        dueDate: new Date(dueDate),
+        deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+        notes: notes || null,
       },
       include: {
-        order: { select: { customerName: true } },
         company: { select: { name: true } },
       },
     });
 
     return NextResponse.json(invoice, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Validierungsfehler", details: error.issues },
-        { status: 400 }
-      );
-    }
     console.error("Error creating invoice:", error);
-    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Interner Serverfehler" },
+      { status: 500 }
+    );
   }
 }
