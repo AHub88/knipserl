@@ -4,7 +4,7 @@ import Link from "next/link";
 import { QuotesTable } from "./quotes-table";
 
 export default async function QuotesPage() {
-  let quotes: Awaited<ReturnType<typeof prisma.quote.findMany>>;
+  let quotes;
   try {
     quotes = await prisma.quote.findMany({
       orderBy: { createdAt: "desc" },

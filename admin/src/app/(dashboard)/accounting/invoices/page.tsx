@@ -10,7 +10,7 @@ export default async function InvoicesPage() {
     return null;
   }
 
-  let invoices: Awaited<ReturnType<typeof prisma.invoice.findMany>>;
+  let invoices;
   try {
     invoices = await prisma.invoice.findMany({
       orderBy: { createdAt: "desc" },
