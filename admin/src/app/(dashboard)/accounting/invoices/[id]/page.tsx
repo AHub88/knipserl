@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { SendEmailButton } from "@/components/accounting/send-email-button";
 
 const statusConfig: Record<
   string,
@@ -100,6 +101,12 @@ export default async function InvoiceDetailPage({
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <SendEmailButton
+              type="invoice"
+              id={invoice.id}
+              recipientEmail={invoice.recipientEmail || invoice.order?.customerEmail}
+              alreadySent={!!invoice.sentAt}
+            />
             <a
               href={`/api/accounting/pdf?type=invoice&id=${invoice.id}`}
               target="_blank"

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ConvertToInvoice } from "./convert-to-invoice";
+import { SendEmailButton } from "@/components/accounting/send-email-button";
 
 const statusConfig: Record<
   string,
@@ -100,6 +101,12 @@ export default async function QuoteDetailPage({
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <SendEmailButton
+              type="quote"
+              id={quote.id}
+              recipientEmail={quote.recipientEmail || quote.order?.customerEmail}
+              alreadySent={!!quote.sentAt}
+            />
             <a
               href={`/api/accounting/pdf?type=quote&id=${quote.id}`}
               target="_blank"
