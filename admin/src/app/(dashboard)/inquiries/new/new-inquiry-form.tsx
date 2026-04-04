@@ -17,7 +17,7 @@ import {
   IconPhone,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
-import { EXTRAS_PRICES } from "@/lib/extras-pricing";
+import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
 
 const EXTRAS_CONFIG = [
   { key: "Drucker", label: "Drucker", icon: IconPrinter },
@@ -121,6 +121,12 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
   // Extras - Drucker standardmäßig ausgewählt
   const [extras, setExtras] = useState<string[]>(["Drucker"]);
 
+  // Kalkulation
+  const [boxPrice, setBoxPrice] = useState(String(BOX_PRICE));
+  const [travelCost, setTravelCost] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [discountType, setDiscountType] = useState("AMOUNT");
+
   // Notes
   const [comments, setComments] = useState("");
 
@@ -137,6 +143,13 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       .filter(Boolean).join(", ");
     setLocationAddress(addr);
     setDistanceKm(loc.distanceKm != null ? String(loc.distanceKm) : "");
+    // Auto-fetch travel cost
+    if (loc.distanceKm != null && loc.distanceKm > 0) {
+      fetch(`/api/travel-pricing/calculate?distanceKm=${loc.distanceKm}`)
+        .then((res) => res.ok ? res.json() : null)
+        .then((data) => { if (data?.customerPrice) setTravelCost(String(data.customerPrice)); })
+        .catch(() => {});
+    }
   }
 
   async function handleSaveLocation() {
@@ -352,6 +365,91 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             );
           })}
         </div>
+      </div>
+
+      {/* Kalkulation */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kalkulation</h2>
+        <div className="grid gap-3 grid-cols-3">
+          <div>
+            <label className={labelClass}>Fotobox</label>
+            <div className="relative">
+              <input className={inputClass + " pr-10"} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Fahrt</label>
+            <div className="relative">
+              <input className={inputClass + " pr-10"} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Extras</label>
+            <div className="relative">
+              <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>
+                {calculateExtrasTotal(extras).toFixed(2)}
+              </div>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-3 grid-cols-3">
+          <div className="col-span-2">
+            <label className={labelClass}>Rabatt</label>
+            <div className="relative">
+              <input className={inputClass + " pr-10"} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Typ</label>
+            <select className={selectClass} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
+              <option value="AMOUNT" className="bg-card">&euro;</option>
+              <option value="PERCENT" className="bg-card">%</option>
+            </select>
+          </div>
+        </div>
+        {(() => {
+          const calcBox = Number(boxPrice) || 0;
+          const calcTravel = Number(travelCost) || 0;
+          const calcExtras = calculateExtrasTotal(extras);
+          const calcSubtotal = calcBox + calcTravel + calcExtras;
+          const calcDisc = Number(discount) || 0;
+          const calcDiscAmt = discountType === "PERCENT" ? (calcSubtotal * calcDisc) / 100 : calcDisc;
+          const calcTotal = Math.round((calcSubtotal - calcDiscAmt) * 100) / 100;
+          return (
+            <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
+              <div className="flex justify-between text-xs text-zinc-400">
+                <span>Fotobox</span>
+                <span className="tabular-nums">{calcBox.toFixed(2)} &euro;</span>
+              </div>
+              {calcTravel > 0 && (
+                <div className="flex justify-between text-xs text-zinc-400">
+                  <span>Fahrt{distanceKm ? ` (${distanceKm} km)` : ""}</span>
+                  <span className="tabular-nums">{calcTravel.toFixed(2)} &euro;</span>
+                </div>
+              )}
+              {calcExtras > 0 && (
+                <div className="flex justify-between text-xs text-zinc-400">
+                  <span>Extras ({extras.length})</span>
+                  <span className="tabular-nums">{calcExtras.toFixed(2)} &euro;</span>
+                </div>
+              )}
+              {calcDiscAmt > 0 && (
+                <div className="flex justify-between text-xs text-red-400">
+                  <span>Rabatt{discountType === "PERCENT" ? ` (${calcDisc}%)` : ""}</span>
+                  <span className="tabular-nums">-{calcDiscAmt.toFixed(2)} &euro;</span>
+                </div>
+              )}
+              <div className="border-t border-white/[0.10] pt-1.5 flex justify-between items-center">
+                <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
+                <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Notizen */}
