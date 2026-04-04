@@ -4,26 +4,41 @@ import Link from "next/link";
 import { QuoteForm } from "./quote-form";
 
 export default async function NewQuotePage() {
-  const [orders, companies] = await Promise.all([
-    prisma.order.findMany({
-      where: {
-        quotes: { none: {} },
-      },
-      orderBy: { eventDate: "desc" },
-      include: { company: true },
-    }),
-    prisma.company.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-  ]);
+  let orders;
+  let companies;
+  try {
+    [orders, companies] = await Promise.all([
+      prisma.order.findMany({
+        orderBy: { eventDate: "desc" },
+        take: 50,
+        select: {
+          id: true,
+          orderNumber: true,
+          customerName: true,
+          price: true,
+          companyId: true,
+        },
+      }),
+      prisma.company.findMany({
+        orderBy: { name: "asc" },
+        select: { id: true, name: true },
+      }),
+    ]);
+  } catch (e) {
+    return (
+      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6">
+        <p className="text-red-400 font-medium">Fehler beim Laden</p>
+        <p className="text-xs text-red-400/70 mt-2 break-all">{e instanceof Error ? e.message : String(e)}</p>
+      </div>
+    );
+  }
 
   const serializedOrders = orders.map((order) => ({
     id: order.id,
     orderNumber: order.orderNumber,
     customerName: order.customerName,
     price: order.price,
-    companyId: order.company.id,
+    companyId: order.companyId,
   }));
 
   return (
