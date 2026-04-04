@@ -76,13 +76,12 @@ export default async function QuoteDetailPage({
     },
   });
 
-  if (!quote) {
-    notFound();
-  }
+  if (!quote) notFound();
 
-  const items = quote.items as LineItem[];
-  const status = statusConfig[quote.status] ?? statusConfig.DRAFT;
-  const isGbr = quote.company.name.includes("GbR");
+  const q = quote!;
+  const items = q.items as LineItem[];
+  const status = statusConfig[q.status] ?? statusConfig.DRAFT;
+  const isGbr = q.company.name.includes("GbR");
 
   const optionalItems = items.filter((item) => item.optional);
 
@@ -100,7 +99,7 @@ export default async function QuoteDetailPage({
               &larr; Zur&uuml;ck
             </Link>
             <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
-              {quote.quoteNumber}
+              {q.quoteNumber}
             </h1>
             <span
               className={
@@ -116,12 +115,12 @@ export default async function QuoteDetailPage({
           <div className="flex items-center gap-2">
             <SendEmailButton
               type="quote"
-              id={quote.id}
-              recipientEmail={quote.order?.customerEmail}
-              alreadySent={!!quote.sentAt}
+              id={q.id}
+              recipientEmail={q.order?.customerEmail}
+              alreadySent={!!q.sentAt}
             />
             <a
-              href={`/api/accounting/pdf?type=quote&id=${quote.id}`}
+              href={`/api/accounting/pdf?type=quote&id=${q.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-[#1c1d20] hover:text-zinc-100"
@@ -129,7 +128,7 @@ export default async function QuoteDetailPage({
               PDF
             </a>
 
-            {quote.status !== "REJECTED" && (
+            {q.status !== "REJECTED" && (
               <a
                 href={`#convert`}
                 className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-[#1c1d20] hover:text-zinc-100"
@@ -138,25 +137,25 @@ export default async function QuoteDetailPage({
               </a>
             )}
 
-            {quote.status === "DRAFT" && (
+            {q.status === "DRAFT" && (
               <StatusButton
-                quoteId={quote.id}
+                quoteId={q.id}
                 action="SENT"
                 label="Als gesendet markieren"
                 className="bg-blue-500/15 text-blue-400 border border-blue-500/30 hover:bg-blue-500/25"
               />
             )}
 
-            {quote.status === "SENT" && (
+            {q.status === "SENT" && (
               <>
                 <StatusButton
-                  quoteId={quote.id}
+                  quoteId={q.id}
                   action="ACCEPTED"
                   label="Angenommen"
                   className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
                 />
                 <StatusButton
-                  quoteId={quote.id}
+                  quoteId={q.id}
                   action="REJECTED"
                   label="Abgelehnt"
                   className="bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25"
@@ -171,7 +170,7 @@ export default async function QuoteDetailPage({
           <div className="space-y-3">
             <div>
               <p className="text-lg font-semibold text-zinc-100">
-                {quote.order?.customerName ?? "–"}
+                {q.order?.customerName ?? "–"}
               </p>
             </div>
             <div>
@@ -183,7 +182,7 @@ export default async function QuoteDetailPage({
                     : "bg-blue-500/15 text-blue-400 border border-blue-500/30")
                 }
               >
-                {quote.company.name}
+                {q.company.name}
               </span>
             </div>
           </div>
@@ -192,39 +191,39 @@ export default async function QuoteDetailPage({
             <div className="flex justify-between">
               <span className="text-zinc-400">G&uuml;ltig bis</span>
               <span className="text-zinc-200 tabular-nums">
-                {formatDate(quote.validUntil)}
+                {formatDate(q.validUntil)}
               </span>
             </div>
             {false && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Lieferdatum</span>
                 <span className="text-zinc-200 tabular-nums">
-                  {formatDate(quote.deliveryDate)}
+                  {formatDate(q.deliveryDate)}
                 </span>
               </div>
             )}
-            {quote.order && (
+            {q.order && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Auftrag</span>
                 <Link
-                  href={`/orders/${quote.order.id}`}
+                  href={`/orders/${q.order.id}`}
                   className="text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors"
                 >
-                  #{quote.order.orderNumber}
+                  #{q.order.orderNumber}
                 </Link>
               </div>
             )}
             <div className="flex justify-between">
               <span className="text-zinc-400">Erstellt am</span>
               <span className="text-zinc-200 tabular-nums">
-                {formatDate(quote.createdAt)}
+                {formatDate(q.createdAt)}
               </span>
             </div>
-            {quote.sentAt && (
+            {q.sentAt && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Gesendet am</span>
                 <span className="text-zinc-200 tabular-nums">
-                  {formatDate(quote.sentAt)}
+                  {formatDate(q.sentAt)}
                 </span>
               </div>
             )}
@@ -311,31 +310,31 @@ export default async function QuoteDetailPage({
               Gesamtbetrag
             </span>
             <span className="text-xl font-bold text-zinc-100 tabular-nums font-mono">
-              {formatEUR(quote.totalAmount)}
+              {formatEUR(q.totalAmount)}
             </span>
           </div>
         </div>
       </div>
 
       {/* Notes */}
-      {quote.notes && (
+      {q.notes && (
         <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
           <div className="px-6 py-4 border-b border-white/[0.10]">
             <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
           </div>
           <div className="px-6 py-4">
             <p className="text-sm text-zinc-400 whitespace-pre-line">
-              {quote.notes}
+              {q.notes}
             </p>
           </div>
         </div>
       )}
 
       {/* Convert to Invoice Section */}
-      {(quote.status === "ACCEPTED" || quote.status === "SENT") && (
+      {(q.status === "ACCEPTED" || q.status === "SENT") && (
         <div id="convert">
           <ConvertToInvoice
-            quoteId={quote.id}
+            quoteId={q.id}
             optionalItems={optionalItems.map((item) => ({
               title: item.title,
               description: item.description,

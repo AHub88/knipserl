@@ -79,13 +79,12 @@ export default async function InvoiceDetailPage({
     },
   });
 
-  if (!invoice) {
-    notFound();
-  }
+  if (!invoice) notFound();
 
-  const items = invoice.items as LineItem[];
-  const status = statusConfig[invoice.status] ?? statusConfig.DRAFT;
-  const isGbr = invoice.company.name.includes("GbR");
+  const inv = invoice!;
+  const items = inv.items as LineItem[];
+  const status = statusConfig[inv.status] ?? statusConfig.DRAFT;
+  const isGbr = inv.company.name.includes("GbR");
 
   return (
     <div className="space-y-8">
@@ -101,7 +100,7 @@ export default async function InvoiceDetailPage({
               &larr; Zur&uuml;ck
             </Link>
             <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
-              {invoice.invoiceNumber}
+              {inv.invoiceNumber}
             </h1>
             <span
               className={
@@ -117,12 +116,12 @@ export default async function InvoiceDetailPage({
           <div className="flex items-center gap-2">
             <SendEmailButton
               type="invoice"
-              id={invoice.id}
-              recipientEmail={invoice.order?.customerEmail}
-              alreadySent={!!invoice.sentAt}
+              id={inv.id}
+              recipientEmail={inv.order?.customerEmail}
+              alreadySent={!!inv.sentAt}
             />
             <a
-              href={`/api/accounting/pdf?type=invoice&id=${invoice.id}`}
+              href={`/api/accounting/pdf?type=invoice&id=${inv.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-[#1c1d20] hover:text-zinc-100"
@@ -130,25 +129,25 @@ export default async function InvoiceDetailPage({
               PDF
             </a>
 
-            {invoice.status === "DRAFT" && (
+            {inv.status === "DRAFT" && (
               <StatusButton
-                invoiceId={invoice.id}
+                invoiceId={inv.id}
                 action="SENT"
                 label="Als gesendet markieren"
                 className="bg-blue-500/15 text-blue-400 border border-blue-500/30 hover:bg-blue-500/25"
               />
             )}
 
-            {(invoice.status === "SENT" || invoice.status === "OVERDUE") && (
+            {(inv.status === "SENT" || inv.status === "OVERDUE") && (
               <>
                 <StatusButton
-                  invoiceId={invoice.id}
+                  invoiceId={inv.id}
                   action="PAID"
                   label="Als bezahlt markieren"
                   className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
                 />
                 <StatusButton
-                  invoiceId={invoice.id}
+                  invoiceId={inv.id}
                   action="CANCELLED"
                   label="Stornieren"
                   className="bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25"
@@ -163,7 +162,7 @@ export default async function InvoiceDetailPage({
           <div className="space-y-3">
             <div>
               <p className="text-lg font-semibold text-zinc-100">
-                {invoice.order?.customerName ?? "–"}
+                {inv.order?.customerName ?? "–"}
               </p>
             </div>
             <div>
@@ -175,7 +174,7 @@ export default async function InvoiceDetailPage({
                     : "bg-blue-500/15 text-blue-400 border border-blue-500/30")
                 }
               >
-                {invoice.company.name}
+                {inv.company.name}
               </span>
             </div>
           </div>
@@ -184,33 +183,33 @@ export default async function InvoiceDetailPage({
             <div className="flex justify-between">
               <span className="text-zinc-400">F&auml;llig am</span>
               <span className="text-zinc-200 tabular-nums">
-                {formatDate(invoice.dueDate)}
+                {formatDate(inv.dueDate)}
               </span>
             </div>
             {false && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Lieferdatum</span>
                 <span className="text-zinc-200 tabular-nums">
-                  {formatDate(invoice.deliveryDate)}
+                  {formatDate(inv.deliveryDate)}
                 </span>
               </div>
             )}
-            {invoice.paidAt && (
+            {inv.paidAt && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Bezahlt am</span>
                 <span className="text-emerald-400 tabular-nums">
-                  {formatDate(invoice.paidAt)}
+                  {formatDate(inv.paidAt)}
                 </span>
               </div>
             )}
-            {invoice.order && (
+            {inv.order && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Auftrag</span>
                 <Link
-                  href={`/orders/${invoice.order.id}`}
+                  href={`/orders/${inv.order.id}`}
                   className="text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors"
                 >
-                  #{invoice.order.orderNumber}
+                  #{inv.order.orderNumber}
                 </Link>
               </div>
             )}
@@ -218,7 +217,7 @@ export default async function InvoiceDetailPage({
               <div className="flex justify-between">
                 <span className="text-zinc-400">Angebot</span>
                 <Link
-                  href={`/accounting/quotes/${invoice.quoteId}`}
+                  href={`/accounting/quotes/${inv.quoteId}`}
                   className="text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors"
                 >
                   Angebot ansehen
@@ -228,14 +227,14 @@ export default async function InvoiceDetailPage({
             <div className="flex justify-between">
               <span className="text-zinc-400">Erstellt am</span>
               <span className="text-zinc-200 tabular-nums">
-                {formatDate(invoice.createdAt)}
+                {formatDate(inv.createdAt)}
               </span>
             </div>
-            {invoice.sentAt && (
+            {inv.sentAt && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Gesendet am</span>
                 <span className="text-zinc-200 tabular-nums">
-                  {formatDate(invoice.sentAt)}
+                  {formatDate(inv.sentAt)}
                 </span>
               </div>
             )}
@@ -310,7 +309,7 @@ export default async function InvoiceDetailPage({
               Gesamtbetrag
             </span>
             <span className="text-xl font-bold text-zinc-100 tabular-nums font-mono">
-              {formatEUR(invoice.totalAmount)}
+              {formatEUR(inv.totalAmount)}
             </span>
           </div>
         </div>
@@ -324,14 +323,14 @@ export default async function InvoiceDetailPage({
           </div>
           <div className="px-6 py-4">
             <p className="text-sm text-zinc-400 whitespace-pre-line">
-              {invoice.notes}
+              {inv.notes}
             </p>
           </div>
         </div>
       )}
 
       {/* Kleinunternehmer notice */}
-      {invoice.company.isKleinunternehmer && (
+      {inv.company.isKleinunternehmer && (
         <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3">
           <p className="text-sm text-amber-300/80">
             Gem&auml;&szlig; &sect;19 UStG wird keine Umsatzsteuer berechnet
@@ -341,7 +340,7 @@ export default async function InvoiceDetailPage({
       )}
 
       {/* Bank info */}
-      {(invoice.company.bankIban || invoice.company.bankBic || invoice.company.bankName) && (
+      {(inv.company.bankIban || inv.company.bankBic || inv.company.bankName) && (
         <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
           <div className="px-6 py-4 border-b border-white/[0.10]">
             <h2 className="text-sm font-semibold text-zinc-300">
@@ -349,25 +348,25 @@ export default async function InvoiceDetailPage({
             </h2>
           </div>
           <div className="px-6 py-4 space-y-2 text-sm">
-            {invoice.company.bankName && (
+            {inv.company.bankName && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Bank</span>
-                <span className="text-zinc-200">{invoice.company.bankName}</span>
+                <span className="text-zinc-200">{inv.company.bankName}</span>
               </div>
             )}
-            {invoice.company.bankIban && (
+            {inv.company.bankIban && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">IBAN</span>
                 <span className="text-zinc-200 font-mono text-xs tracking-wider">
-                  {invoice.company.bankIban}
+                  {inv.company.bankIban}
                 </span>
               </div>
             )}
-            {invoice.company.bankBic && (
+            {inv.company.bankBic && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">BIC</span>
                 <span className="text-zinc-200 font-mono text-xs tracking-wider">
-                  {invoice.company.bankBic}
+                  {inv.company.bankBic}
                 </span>
               </div>
             )}
