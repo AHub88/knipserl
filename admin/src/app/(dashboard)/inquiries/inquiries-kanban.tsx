@@ -179,7 +179,7 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
       )}
 
       {/* Kanban columns - horizontal scroll on mobile */}
-      <div className="flex flex-col gap-3 md:grid md:grid-cols-4 md:overflow-visible">
+      <div className="flex flex-col gap-3 md:grid md:grid-cols-3 md:overflow-visible">
         {COLUMNS.map((col) => {
           const colors = columnColors[col.color];
           const columnItems = activeItems.filter((i) => i.status === col.key);
