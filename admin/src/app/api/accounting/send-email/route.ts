@@ -39,17 +39,17 @@ export async function POST(request: NextRequest) {
     if (type === "quote") {
       const quote = await prisma.quote.findUnique({
         where: { id },
-        include: { company: true, order: true },
+        include: { company: { select: { name: true, bankName: true, bankIban: true, bankBic: true } }, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!quote) return NextResponse.json({ error: "Angebot nicht gefunden" }, { status: 404 });
 
-      const recipientEmail = quote.recipientEmail || quote.order?.customerEmail;
+      const recipientEmail = quote.order?.customerEmail;
       if (!recipientEmail) {
         return NextResponse.json({ error: "Keine E-Mail-Adresse beim Empfänger hinterlegt" }, { status: 400 });
       }
 
       const { subject, html } = quoteEmail({
-        recipientName: quote.recipientName || quote.order?.customerName || "Kunde",
+        recipientName: quote.order?.customerName || "Kunde",
         quoteNumber: quote.quoteNumber,
         companyName: quote.company.name,
         items: quote.items as LineItem[],
@@ -73,17 +73,17 @@ export async function POST(request: NextRequest) {
     if (type === "invoice") {
       const invoice = await prisma.invoice.findUnique({
         where: { id },
-        include: { company: true, order: true },
+        include: { company: { select: { name: true, bankName: true, bankIban: true, bankBic: true } }, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!invoice) return NextResponse.json({ error: "Rechnung nicht gefunden" }, { status: 404 });
 
-      const recipientEmail = invoice.recipientEmail || invoice.order?.customerEmail;
+      const recipientEmail = invoice.order?.customerEmail;
       if (!recipientEmail) {
         return NextResponse.json({ error: "Keine E-Mail-Adresse beim Empfänger hinterlegt" }, { status: 400 });
       }
 
       const { subject, html } = invoiceEmail({
-        recipientName: invoice.recipientName || invoice.order?.customerName || "Kunde",
+        recipientName: invoice.order?.customerName || "Kunde",
         invoiceNumber: invoice.invoiceNumber,
         companyName: invoice.company.name,
         items: invoice.items as LineItem[],
@@ -109,17 +109,17 @@ export async function POST(request: NextRequest) {
     if (type === "confirmation") {
       const conf = await prisma.orderConfirmation.findUnique({
         where: { id },
-        include: { company: true, order: true },
+        include: { company: { select: { name: true, bankName: true, bankIban: true, bankBic: true } }, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!conf) return NextResponse.json({ error: "Bestätigung nicht gefunden" }, { status: 404 });
 
-      const recipientEmail = conf.recipientEmail || conf.order?.customerEmail;
+      const recipientEmail = conf.order?.customerEmail;
       if (!recipientEmail) {
         return NextResponse.json({ error: "Keine E-Mail-Adresse beim Empfänger hinterlegt" }, { status: 400 });
       }
 
       const { subject, html } = confirmationEmail({
-        recipientName: conf.recipientName || conf.order?.customerName || "Kunde",
+        recipientName: conf.order?.customerName || "Kunde",
         confirmationNumber: conf.confirmationNumber,
         companyName: conf.company.name,
         items: conf.items as LineItem[],

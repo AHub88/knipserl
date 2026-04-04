@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     if (type === "invoice") {
       const invoice = await prisma.invoice.findUnique({
         where: { id },
-        include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
+        include: { company: { select: { name: true, address: true, city: true, zip: true, taxNumber: true, email: true, phone: true, bankName: true, bankIban: true, bankBic: true, isKleinunternehmer: true, logoUrl: true } }, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!invoice) {
         return NextResponse.json({ error: "Rechnung nicht gefunden" }, { status: 404 });
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     } else if (type === "quote") {
       const quote = await prisma.quote.findUnique({
         where: { id },
-        include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
+        include: { company: { select: { name: true, address: true, city: true, zip: true, taxNumber: true, email: true, phone: true, bankName: true, bankIban: true, bankBic: true, isKleinunternehmer: true, logoUrl: true } }, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!quote) {
         return NextResponse.json({ error: "Angebot nicht gefunden" }, { status: 404 });
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     } else {
       const confirmation = await prisma.orderConfirmation.findUnique({
         where: { id },
-        include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
+        include: { company: { select: { name: true, address: true, city: true, zip: true, taxNumber: true, email: true, phone: true, bankName: true, bankIban: true, bankBic: true, isKleinunternehmer: true, logoUrl: true } }, order: { select: { customerName: true, customerEmail: true } } },
       });
       if (!confirmation) {
         return NextResponse.json({ error: "Auftragsbestätigung nicht gefunden" }, { status: 404 });
