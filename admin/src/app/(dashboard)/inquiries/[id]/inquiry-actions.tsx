@@ -114,8 +114,6 @@ export function InquiryActions({
     }
     lines.push(`─────────────`);
     lines.push(`Gesamt: ${calcTotal.toFixed(2)} €`);
-    lines.push(`Zahlungsart: ${paymentMethod === "CASH" ? "Bar" : "Rechnung"}`);
-    lines.push(`Firma: ${companyLabel}`);
     return lines.join("\n");
   }
 
@@ -217,17 +215,26 @@ export function InquiryActions({
       {/* Price inputs */}
       <div className="grid gap-3 grid-cols-3">
         <div>
-          <label className={labelClass}>Fotobox &euro;</label>
-          <input className={inputClass} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
+          <label className={labelClass}>Fotobox</label>
+          <div className="relative">
+            <input className={inputClass + " pr-10"} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+          </div>
         </div>
         <div>
-          <label className={labelClass}>Fahrt &euro;</label>
-          <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
+          <label className={labelClass}>Fahrt</label>
+          <div className="relative">
+            <input className={inputClass + " pr-10"} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+          </div>
         </div>
         <div>
-          <label className={labelClass}>Extras &euro;</label>
-          <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default"}>
-            {calcExtras.toFixed(2)}
+          <label className={labelClass}>Extras</label>
+          <div className="relative">
+            <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>
+              {calcExtras.toFixed(2)}
+            </div>
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
           </div>
         </div>
       </div>
@@ -236,7 +243,10 @@ export function InquiryActions({
       <div className="grid gap-3 grid-cols-3">
         <div className="col-span-2">
           <label className={labelClass}>Rabatt</label>
-          <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
+          <div className="relative">
+            <input className={inputClass + " pr-10"} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+          </div>
         </div>
         <div>
           <label className={labelClass}>Typ</label>
