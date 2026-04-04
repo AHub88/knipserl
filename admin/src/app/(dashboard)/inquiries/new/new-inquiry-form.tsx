@@ -118,20 +118,61 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
   const [locationAddress, setLocationAddress] = useState("");
   const [distanceKm, setDistanceKm] = useState("");
 
-  // Extras
-  const [extras, setExtras] = useState<string[]>([]);
+  // Extras - Drucker standardmäßig ausgewählt
+  const [extras, setExtras] = useState<string[]>(["Drucker"]);
 
   // Notes
   const [comments, setComments] = useState("");
 
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [savingLocation, setSavingLocation] = useState(false);
+
   const isPrivateLocation = locationName.toLowerCase() === "privat";
+  const isNewLocation = locationName.length > 1 && !selectedLocationId && !isPrivateLocation;
 
   function handleLocationSelect(loc: LocationOption) {
     setLocationName(loc.name);
+    setSelectedLocationId(loc.id);
     const addr = [loc.street, [loc.zip, loc.city].filter(Boolean).join(" ")]
       .filter(Boolean).join(", ");
     setLocationAddress(addr);
     setDistanceKm(loc.distanceKm != null ? String(loc.distanceKm) : "");
+  }
+
+  async function handleSaveLocation() {
+    if (!locationName) return;
+    setSavingLocation(true);
+    try {
+      const parts = locationAddress.split(",").map((s) => s.trim());
+      const street = parts[0] || null;
+      const cityPart = parts[1] || "";
+      const zipMatch = cityPart.match(/^(\d{5})\s*(.*)/);
+      const zip = zipMatch?.[1] || null;
+      const city = zipMatch?.[2] || cityPart || null;
+
+      const res = await fetch("/api/locations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: locationName,
+          street,
+          zip,
+          city,
+          distanceKm: distanceKm ? Number(distanceKm) : null,
+        }),
+      });
+      if (res.ok) {
+        const loc = await res.json();
+        setSelectedLocationId(loc.id);
+        toast.success("Location gespeichert");
+      } else {
+        toast.error("Fehler beim Speichern der Location");
+      }
+    } catch {
+      toast.error("Fehler beim Speichern");
+    } finally {
+      setSavingLocation(false);
+    }
   }
 
   function toggleExtra(key: string) {
@@ -182,7 +223,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors [&::-webkit-calendar-picker-indicator]:invert";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
@@ -226,11 +267,21 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
           <label className={labelClass}>Location</label>
           <LocationAutocomplete
             value={locationName}
-            onChange={setLocationName}
+            onChange={(v) => { setLocationName(v); setSelectedLocationId(null); }}
             onSelect={handleLocationSelect}
             locations={locations}
             inputClass={inputClass}
           />
+          {isNewLocation && (
+            <button
+              type="button"
+              onClick={handleSaveLocation}
+              disabled={savingLocation}
+              className="mt-1.5 text-xs text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors disabled:opacity-50"
+            >
+              {savingLocation ? "Speichern..." : "+ Als neue Location speichern"}
+            </button>
+          )}
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
@@ -276,7 +327,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       {/* Extras */}
       <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => {
             const active = extras.includes(ext.key);
             const price = EXTRAS_PRICES[ext.key];
@@ -286,16 +337,16 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
                 type="button"
                 onClick={() => toggleExtra(ext.key)}
                 className={
-                  "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors " +
+                  "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors " +
                   (active
                     ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
                     : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
                 }
               >
-                <ext.icon className="size-3.5" />
+                <ext.icon className="size-4" />
                 {ext.label}
                 {price != null && price > 0 && (
-                  <span className="text-[10px] opacity-70 tabular-nums">{price}&thinsp;&euro;</span>
+                  <span className="text-xs opacity-70 tabular-nums">{price}&thinsp;&euro;</span>
                 )}
               </button>
             );
