@@ -14,7 +14,6 @@ export async function GET() {
     include: {
       order: { select: { customerName: true, orderNumber: true } },
       company: { select: { name: true } },
-      customer: { select: { name: true } },
     },
   });
 

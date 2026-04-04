@@ -60,7 +60,7 @@ export default async function QuoteDetailPage({
 
   const quote = await prisma.quote.findUnique({
     where: { id },
-    include: { company: true, order: true, customer: true },
+    include: { company: true, order: true },
   });
 
   if (!quote) {
