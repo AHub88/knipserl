@@ -20,6 +20,7 @@ import {
   IconBook,
   IconDeviceTv,
   IconPhone,
+  IconCopy,
 } from "@tabler/icons-react";
 import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
 
@@ -59,6 +60,9 @@ export function InquiryActions({
   const [discountType, setDiscountType] = useState("AMOUNT");
   const [paymentMethod, setPaymentMethod] = useState<"INVOICE" | "CASH">("INVOICE");
 
+  // Dynamic company type based on payment method
+  const companyLabel = paymentMethod === "CASH" ? "Einzelunternehmen" : "GbR";
+
   // Auto-fetch travel cost based on distance
   useEffect(() => {
     if (distanceKm != null && distanceKm > 0) {
@@ -87,6 +91,38 @@ export function InquiryActions({
     ? (calcSubtotal * calcDiscount) / 100
     : calcDiscount;
   const calcTotal = Math.round((calcSubtotal - calcDiscountAmount) * 100) / 100;
+
+  // Individual extras with prices for the summary
+  const activeExtrasWithPrices = extras
+    .map((key) => {
+      const cfg = EXTRAS_CONFIG.find((e) => e.key === key);
+      return cfg ? { label: cfg.label, price: EXTRAS_PRICES[key] ?? 0 } : null;
+    })
+    .filter(Boolean) as { label: string; price: number }[];
+
+  function buildCalcText(): string {
+    const lines: string[] = [];
+    lines.push(`Fotobox: ${calcBox.toFixed(2)} €`);
+    if (calcTravel > 0) {
+      lines.push(`Fahrt${distanceKm ? ` (${distanceKm} km)` : ""}: ${calcTravel.toFixed(2)} €`);
+    }
+    for (const ext of activeExtrasWithPrices) {
+      if (ext.price > 0) lines.push(`${ext.label}: ${ext.price.toFixed(2)} €`);
+    }
+    if (calcDiscountAmount > 0) {
+      lines.push(`Rabatt${discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}: -${calcDiscountAmount.toFixed(2)} €`);
+    }
+    lines.push(`─────────────`);
+    lines.push(`Gesamt: ${calcTotal.toFixed(2)} €`);
+    lines.push(`Zahlungsart: ${paymentMethod === "CASH" ? "Bar" : "Rechnung"}`);
+    lines.push(`Firma: ${companyLabel}`);
+    return lines.join("\n");
+  }
+
+  function copyCalc() {
+    navigator.clipboard.writeText(buildCalcText());
+    toast.success("Kalkulation kopiert");
+  }
 
   async function handleAction(action: "accept" | "reject") {
     if (action === "accept" && calcTotal <= 0) {
@@ -119,8 +155,8 @@ export function InquiryActions({
 
       toast.success(
         action === "accept"
-          ? "Anfrage angenommen – Auftrag erstellt"
-          : "Anfrage abgelehnt"
+          ? "Anfrage zugesagt – Auftrag erstellt"
+          : "Anfrage abgesagt"
       );
       router.refresh();
     } catch (error) {
@@ -130,7 +166,6 @@ export function InquiryActions({
     }
   }
 
-  const isBusiness = customerType === "BUSINESS";
   const inputClass = "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
   const labelClass = "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
@@ -139,13 +174,13 @@ export function InquiryActions({
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-zinc-200">Anfrage bearbeiten</h2>
         <span className={
-          "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold border " +
-          (isBusiness
+          "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold border transition-colors " +
+          (paymentMethod === "INVOICE"
             ? "bg-blue-500/10 text-blue-400 border-blue-500/25"
             : "bg-zinc-500/10 text-zinc-400 border-zinc-500/25")
         }>
-          {isBusiness ? <IconBriefcase className="size-3" /> : <IconUser className="size-3" />}
-          {isBusiness ? "GbR" : "Einzelunternehmen"}
+          {paymentMethod === "INVOICE" ? <IconBriefcase className="size-3" /> : <IconUser className="size-3" />}
+          {companyLabel}
         </span>
       </div>
 
@@ -182,17 +217,17 @@ export function InquiryActions({
       {/* Price inputs */}
       <div className="grid gap-3 grid-cols-3">
         <div>
-          <label className={labelClass}>Fotobox</label>
+          <label className={labelClass}>Fotobox &euro;</label>
           <input className={inputClass} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
         </div>
         <div>
-          <label className={labelClass}>Fahrt</label>
+          <label className={labelClass}>Fahrt &euro;</label>
           <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
         </div>
         <div>
-          <label className={labelClass}>Extras</label>
+          <label className={labelClass}>Extras &euro;</label>
           <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default"}>
-            {calcExtras.toFixed(2)} &euro;
+            {calcExtras.toFixed(2)}
           </div>
         </div>
       </div>
@@ -224,12 +259,14 @@ export function InquiryActions({
             <span className="tabular-nums">{calcTravel.toFixed(2)} &euro;</span>
           </div>
         )}
-        {calcExtras > 0 && (
-          <div className="flex justify-between text-xs text-zinc-400">
-            <span>Extras ({extras.length})</span>
-            <span className="tabular-nums">{calcExtras.toFixed(2)} &euro;</span>
-          </div>
-        )}
+        {activeExtrasWithPrices.map((ext) => (
+          ext.price > 0 && (
+            <div key={ext.label} className="flex justify-between text-xs text-zinc-400">
+              <span>{ext.label}</span>
+              <span className="tabular-nums">{ext.price.toFixed(2)} &euro;</span>
+            </div>
+          )
+        ))}
         {calcDiscountAmount > 0 && (
           <div className="flex justify-between text-xs text-red-400">
             <span>Rabatt{discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}</span>
@@ -240,6 +277,16 @@ export function InquiryActions({
           <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
           <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
         </div>
+
+        {/* Copy button */}
+        <button
+          type="button"
+          onClick={copyCalc}
+          className="w-full flex items-center justify-center gap-1.5 mt-1.5 pt-1.5 border-t border-white/[0.06] text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors"
+        >
+          <IconCopy className="size-3" />
+          Kalkulation kopieren
+        </button>
       </div>
 
       {/* Payment method */}
@@ -250,27 +297,33 @@ export function InquiryActions({
             type="button"
             onClick={() => setPaymentMethod("INVOICE")}
             className={
-              "flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
+              "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
               (paymentMethod === "INVOICE"
                 ? "border-purple-500/40 bg-purple-500/10 text-purple-400"
                 : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
             }
           >
-            <IconFileInvoice className="size-4" />
-            Rechnung
+            <div className="flex items-center gap-2">
+              <IconFileInvoice className="size-4" />
+              Rechnung
+            </div>
+            <span className="text-[10px] opacity-70">GbR</span>
           </button>
           <button
             type="button"
             onClick={() => setPaymentMethod("CASH")}
             className={
-              "flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
+              "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
               (paymentMethod === "CASH"
                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
                 : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
             }
           >
-            <IconCash className="size-4" />
-            Bar
+            <div className="flex items-center gap-2">
+              <IconCash className="size-4" />
+              Bar
+            </div>
+            <span className="text-[10px] opacity-70">Einzelunternehmen</span>
           </button>
         </div>
       </div>
@@ -287,7 +340,7 @@ export function InquiryActions({
           ) : (
             <IconCheck className="size-4" />
           )}
-          Annehmen
+          Zugesagt
         </button>
         <button
           onClick={() => handleAction("reject")}
@@ -299,7 +352,7 @@ export function InquiryActions({
           ) : (
             <IconX className="size-4" />
           )}
-          Ablehnen
+          Abgesagt
         </button>
       </div>
     </div>
