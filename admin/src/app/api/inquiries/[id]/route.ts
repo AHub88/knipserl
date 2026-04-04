@@ -44,9 +44,9 @@ export async function PATCH(
     return NextResponse.json({ error: "Anfrage nicht gefunden" }, { status: 404 });
   }
 
-  if (inquiry.status !== "NEW") {
+  if (inquiry.status === "ACCEPTED" || inquiry.status === "REJECTED") {
     return NextResponse.json(
-      { error: "Anfrage wurde bereits bearbeitet" },
+      { error: "Anfrage wurde bereits abgeschlossen" },
       { status: 400 }
     );
   }
@@ -133,6 +133,19 @@ export async function PATCH(
 
     // TODO: Send rejection email to customer
 
+    return NextResponse.json(updatedInquiry);
+  }
+
+  if (action === "updateStatus") {
+    const { status: newStatus } = body;
+    const validStatuses = ["NEW", "CONTACTED", "WAITING", "ACCEPTED", "REJECTED"];
+    if (!validStatuses.includes(newStatus)) {
+      return NextResponse.json({ error: "Ungültiger Status" }, { status: 400 });
+    }
+    const updatedInquiry = await prisma.inquiry.update({
+      where: { id },
+      data: { status: newStatus },
+    });
     return NextResponse.json(updatedInquiry);
   }
 

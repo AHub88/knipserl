@@ -7,7 +7,7 @@ import {
   IconMail,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { InquiriesTable } from "./inquiries-table-body";
+import { InquiriesView } from "./inquiries-view";
 
 export default async function InquiriesPage() {
   const inquiries = await prisma.inquiry.findMany({
@@ -103,7 +103,7 @@ export default async function InquiriesPage() {
         </div>
       </div>
 
-      {/* Table / Mobile list */}
+      {/* Content */}
       {inquiries.length === 0 ? (
         <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
           <IconInbox className="size-10 mb-3 text-zinc-400" />
@@ -113,7 +113,7 @@ export default async function InquiriesPage() {
           </p>
         </div>
       ) : (
-        <InquiriesTable inquiries={serializedInquiries} />
+        <InquiriesView inquiries={serializedInquiries} />
       )}
     </div>
   );

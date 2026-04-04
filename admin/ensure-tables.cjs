@@ -6,7 +6,7 @@
 const ENUMS = {
   VacationType: ["ABSENT", "LIMITED"],
   Role: ["ADMIN", "ADMIN_ACCOUNTING", "DRIVER"],
-  InquiryStatus: ["NEW", "ACCEPTED", "REJECTED"],
+  InquiryStatus: ["NEW", "CONTACTED", "WAITING", "ACCEPTED", "REJECTED"],
   OrderStatus: ["OPEN", "ASSIGNED", "COMPLETED", "CANCELLED"],
   PaymentMethod: ["INVOICE", "CASH"],
   CustomerType: ["PRIVATE", "BUSINESS"],
@@ -49,6 +49,19 @@ async function main() {
         const valuesStr = values.map(v => `'${v}'`).join(", ");
         console.log(`[ensure-tables] Creating enum type "${name}"...`);
         await client.query(`CREATE TYPE "${name}" AS ENUM (${valuesStr})`);
+      } else {
+        // Add missing values to existing enum
+        const existing = await client.query(
+          `SELECT enumlabel FROM pg_enum WHERE enumtypid = (SELECT oid FROM pg_type WHERE typname = $1) ORDER BY enumsortorder`,
+          [name]
+        );
+        const existingValues = existing.rows.map(r => r.enumlabel);
+        for (const val of values) {
+          if (!existingValues.includes(val)) {
+            console.log(`[ensure-tables] Adding "${val}" to enum "${name}"...`);
+            await client.query(`ALTER TYPE "${name}" ADD VALUE IF NOT EXISTS '${val}'`);
+          }
+        }
       }
     }
 

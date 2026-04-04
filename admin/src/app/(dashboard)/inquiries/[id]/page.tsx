@@ -150,8 +150,8 @@ export default async function InquiryDetailPage({
         </div>
       </div>
 
-      {/* ── Actions (prominent when NEW) ── */}
-      {inquiry.status === "NEW" && (
+      {/* ── Actions (shown for open inquiries) ── */}
+      {["NEW", "CONTACTED", "WAITING"].includes(inquiry.status) && (
         <InquiryActions
           inquiryId={inquiry.id}
           customerType={inquiry.customerType}
