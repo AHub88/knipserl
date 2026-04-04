@@ -180,7 +180,7 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
       )}
 
       {/* Kanban columns - horizontal scroll on mobile */}
-      <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory md:snap-none md:grid md:grid-cols-4 md:overflow-visible">
+      <div className="flex flex-col gap-3 md:grid md:grid-cols-4 md:overflow-visible">
         {COLUMNS.map((col) => {
           const colors = columnColors[col.color];
           const columnItems = activeItems.filter((i) => i.status === col.key);
@@ -190,7 +190,7 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
             <div
               key={col.key}
               className={
-                "flex-shrink-0 w-[280px] md:w-auto snap-center rounded-xl border transition-colors " +
+                "rounded-xl border transition-colors " +
                 (isDragTarget
                   ? `${colors.border} ${colors.bg}`
                   : "border-white/[0.06] bg-white/[0.01]")
