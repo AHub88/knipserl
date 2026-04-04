@@ -60,7 +60,20 @@ export default async function QuoteDetailPage({
 
   const quote = await prisma.quote.findUnique({
     where: { id },
-    include: { company: true, order: true },
+    select: {
+      id: true,
+      quoteNumber: true,
+      items: true,
+      totalAmount: true,
+      status: true,
+      validUntil: true,
+      createdAt: true,
+      sentAt: true,
+      orderId: true,
+      companyId: true,
+      company: { select: { id: true, name: true, address: true, city: true, zip: true, taxNumber: true, email: true, phone: true, bankName: true, bankIban: true, bankBic: true, isKleinunternehmer: true, invoicePrefix: true, quotePrefix: true } },
+      order: { select: { id: true, customerName: true, customerEmail: true, orderNumber: true } },
+    },
   });
 
   if (!quote) {
@@ -104,7 +117,7 @@ export default async function QuoteDetailPage({
             <SendEmailButton
               type="quote"
               id={quote.id}
-              recipientEmail={quote.recipientEmail || quote.order?.customerEmail}
+              recipientEmail={quote.order?.customerEmail}
               alreadySent={!!quote.sentAt}
             />
             <a
@@ -158,13 +171,8 @@ export default async function QuoteDetailPage({
           <div className="space-y-3">
             <div>
               <p className="text-lg font-semibold text-zinc-100">
-                {quote.recipientName}
+                {quote.order?.customerName ?? "–"}
               </p>
-              {quote.recipientAddress && (
-                <p className="text-sm text-zinc-400 whitespace-pre-line mt-1">
-                  {quote.recipientAddress}
-                </p>
-              )}
             </div>
             <div>
               <span
@@ -187,7 +195,7 @@ export default async function QuoteDetailPage({
                 {formatDate(quote.validUntil)}
               </span>
             </div>
-            {quote.deliveryDate && (
+            {false && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Lieferdatum</span>
                 <span className="text-zinc-200 tabular-nums">

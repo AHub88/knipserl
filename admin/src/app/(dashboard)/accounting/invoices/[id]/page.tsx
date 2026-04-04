@@ -62,7 +62,21 @@ export default async function InvoiceDetailPage({
 
   const invoice = await prisma.invoice.findUnique({
     where: { id },
-    include: { company: true, order: true },
+    select: {
+      id: true,
+      invoiceNumber: true,
+      items: true,
+      totalAmount: true,
+      status: true,
+      dueDate: true,
+      paidAt: true,
+      sentAt: true,
+      createdAt: true,
+      orderId: true,
+      companyId: true,
+      company: { select: { id: true, name: true, address: true, city: true, zip: true, taxNumber: true, email: true, phone: true, bankName: true, bankIban: true, bankBic: true, isKleinunternehmer: true } },
+      order: { select: { id: true, customerName: true, customerEmail: true, orderNumber: true } },
+    },
   });
 
   if (!invoice) {
@@ -104,7 +118,7 @@ export default async function InvoiceDetailPage({
             <SendEmailButton
               type="invoice"
               id={invoice.id}
-              recipientEmail={invoice.recipientEmail || invoice.order?.customerEmail}
+              recipientEmail={invoice.order?.customerEmail}
               alreadySent={!!invoice.sentAt}
             />
             <a
@@ -149,13 +163,8 @@ export default async function InvoiceDetailPage({
           <div className="space-y-3">
             <div>
               <p className="text-lg font-semibold text-zinc-100">
-                {invoice.recipientName}
+                {invoice.order?.customerName ?? "–"}
               </p>
-              {invoice.recipientAddress && (
-                <p className="text-sm text-zinc-400 whitespace-pre-line mt-1">
-                  {invoice.recipientAddress}
-                </p>
-              )}
             </div>
             <div>
               <span
@@ -178,7 +187,7 @@ export default async function InvoiceDetailPage({
                 {formatDate(invoice.dueDate)}
               </span>
             </div>
-            {invoice.deliveryDate && (
+            {false && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Lieferdatum</span>
                 <span className="text-zinc-200 tabular-nums">
@@ -205,7 +214,7 @@ export default async function InvoiceDetailPage({
                 </Link>
               </div>
             )}
-            {invoice.quoteId && (
+            {false && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Angebot</span>
                 <Link
@@ -308,7 +317,7 @@ export default async function InvoiceDetailPage({
       </div>
 
       {/* Notes */}
-      {invoice.notes && (
+      {false && (
         <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
           <div className="px-6 py-4 border-b border-white/[0.10]">
             <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>

@@ -14,17 +14,25 @@ export default async function InvoicesPage() {
   try {
     invoices = await prisma.invoice.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
+      select: {
+        id: true,
+        invoiceNumber: true,
+        totalAmount: true,
+        status: true,
+        dueDate: true,
+        paidAt: true,
+        createdAt: true,
+        orderId: true,
         order: {
           select: {
             customerName: true,
             orderNumber: true,
             paymentMethod: true,
           },
+        },
+        company: { select: { name: true } },
       },
-      company: { select: { name: true } },
-    },
-  });
+    });
   } catch (e) {
     return (
       <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6">
@@ -46,7 +54,7 @@ export default async function InvoicesPage() {
     return {
       id: invoice.id,
       invoiceNumber: invoice.invoiceNumber,
-      customerName: invoice.order?.customerName ?? invoice.recipientName ?? "–",
+      customerName: invoice.order?.customerName ?? "–",
       companyName: invoice.company.name,
       totalAmount: invoice.totalAmount,
       status: invoice.status,

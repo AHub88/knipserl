@@ -8,9 +8,16 @@ export default async function QuotesPage() {
   try {
     quotes = await prisma.quote.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
-        company: { select: { name: true } },
+      select: {
+        id: true,
+        quoteNumber: true,
+        totalAmount: true,
+        status: true,
+        createdAt: true,
+        validUntil: true,
+        orderId: true,
         order: { select: { customerName: true, orderNumber: true } },
+        company: { select: { name: true } },
       },
     });
   } catch (e) {
@@ -25,7 +32,7 @@ export default async function QuotesPage() {
   const serialized = quotes.map((quote) => ({
     id: quote.id,
     quoteNumber: quote.quoteNumber,
-    customerName: quote.order?.customerName ?? quote.recipientName ?? "–",
+    customerName: quote.order?.customerName ?? "–",
     companyName: quote.company.name,
     totalAmount: quote.totalAmount,
     status: quote.status,
