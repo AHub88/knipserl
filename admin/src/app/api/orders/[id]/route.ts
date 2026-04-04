@@ -132,3 +132,25 @@ export async function PATCH(
 
   return NextResponse.json(order);
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session?.user || session.user.role === "DRIVER") {
+    return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  // Reset linked inquiry back to NEW if exists
+  await prisma.inquiry.updateMany({
+    where: { order: { id } },
+    data: { status: "NEW" },
+  });
+
+  await prisma.order.delete({ where: { id } });
+
+  return NextResponse.json({ ok: true });
+}

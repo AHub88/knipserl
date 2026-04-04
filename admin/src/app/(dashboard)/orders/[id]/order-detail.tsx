@@ -21,6 +21,7 @@ import {
   IconPhone,
   IconEdit,
   IconX,
+  IconTrash,
   IconMail,
   IconPhoneCall,
   IconCalendar,
@@ -448,6 +449,21 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
     }
   }
 
+  async function handleDelete() {
+    if (!confirm(`Auftrag #${order.orderNumber} wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) return;
+    try {
+      const res = await fetch(`/api/orders/${order.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Fehler beim Löschen");
+      }
+      toast.success("Auftrag gelöscht");
+      router.push("/orders");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Fehler beim Löschen");
+    }
+  }
+
   const inputClass =
     "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
   const labelClass =
@@ -724,6 +740,13 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleDelete}
+              className="flex items-center justify-center size-9 rounded-lg border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+              title="Auftrag löschen"
+            >
+              <IconTrash className="size-4" />
+            </button>
             <button
               onClick={handleCancel}
               className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
