@@ -286,12 +286,12 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Adresse</label>
-            <input className={inputClass} value={locationAddress} onChange={(e) => setLocationAddress(e.target.value)} disabled={!isPrivateLocation && locationAddress !== ""} />
+            <input className={inputClass} value={locationAddress} onChange={(e) => setLocationAddress(e.target.value)} disabled={!!selectedLocationId && !isPrivateLocation} />
           </div>
           <div>
             <label className={labelClass}>Entfernung</label>
             <div className="relative">
-              <input className={inputClass + " pr-10"} type="number" step="0.1" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} disabled={!isPrivateLocation && distanceKm !== ""} placeholder="–" />
+              <input className={inputClass + " pr-10"} type="number" step="0.1" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} disabled={!!selectedLocationId && !isPrivateLocation} placeholder="–" />
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">km</span>
             </div>
           </div>
