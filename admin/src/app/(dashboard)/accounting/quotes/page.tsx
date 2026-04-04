@@ -4,10 +4,23 @@ import Link from "next/link";
 import { QuotesTable } from "./quotes-table";
 
 export default async function QuotesPage() {
-  const quotes = await prisma.quote.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { order: true, company: true },
-  });
+  let quotes: Awaited<ReturnType<typeof prisma.quote.findMany>>;
+  try {
+    quotes = await prisma.quote.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        company: { select: { name: true } },
+        order: { select: { customerName: true, orderNumber: true } },
+      },
+    });
+  } catch (e) {
+    return (
+      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6">
+        <p className="text-red-400 font-medium">Datenbankfehler beim Laden der Angebote</p>
+        <p className="text-xs text-red-400/70 mt-2 break-all">{e instanceof Error ? e.message : String(e)}</p>
+      </div>
+    );
+  }
 
   const serialized = quotes.map((quote) => ({
     id: quote.id,

@@ -10,19 +10,29 @@ export default async function InvoicesPage() {
     return null;
   }
 
-  const invoices = await prisma.invoice.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      order: {
-        select: {
-          customerName: true,
-          orderNumber: true,
-          paymentMethod: true,
-        },
+  let invoices: Awaited<ReturnType<typeof prisma.invoice.findMany>>;
+  try {
+    invoices = await prisma.invoice.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        order: {
+          select: {
+            customerName: true,
+            orderNumber: true,
+            paymentMethod: true,
+          },
       },
       company: { select: { name: true } },
     },
   });
+  } catch (e) {
+    return (
+      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6">
+        <p className="text-red-400 font-medium">Datenbankfehler beim Laden der Rechnungen</p>
+        <p className="text-xs text-red-400/70 mt-2 break-all">{e instanceof Error ? e.message : String(e)}</p>
+      </div>
+    );
+  }
 
   const now = new Date();
 

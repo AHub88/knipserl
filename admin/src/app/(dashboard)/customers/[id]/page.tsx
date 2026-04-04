@@ -26,18 +26,30 @@ export default async function CustomerDetailPage({
         orderBy: { eventDate: "desc" },
         include: { company: { select: { name: true } }, driver: { select: { name: true, initials: true } } },
       },
-      quotes: {
-        orderBy: { createdAt: "desc" },
-        include: { company: { select: { name: true } } },
-      },
-      invoices: {
-        orderBy: { createdAt: "desc" },
-        include: { company: { select: { name: true } } },
-      },
     },
   });
 
   if (!customer) notFound();
+
+  // Fetch quotes and invoices separately (FK constraints may not exist yet)
+  let quotes: { id: string; quoteNumber: string; totalAmount: number; status: string; createdAt: Date; company: { name: string } }[] = [];
+  let invoices: { id: string; invoiceNumber: string; totalAmount: number; status: string; createdAt: Date; company: { name: string } }[] = [];
+
+  try {
+    quotes = await prisma.quote.findMany({
+      where: { customerId: customer.id },
+      orderBy: { createdAt: "desc" },
+      include: { company: { select: { name: true } } },
+    });
+  } catch { /* customerId column or FK may not exist */ }
+
+  try {
+    invoices = await prisma.invoice.findMany({
+      where: { customerId: customer.id },
+      orderBy: { createdAt: "desc" },
+      include: { company: { select: { name: true } } },
+    });
+  } catch { /* customerId column or FK may not exist */ }
 
   const fmtDate = (d: Date) => d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
   const fmtAmt = (v: number) => v.toLocaleString("de-DE", { minimumFractionDigits: 2 }) + " €";
