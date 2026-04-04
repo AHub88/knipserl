@@ -23,7 +23,6 @@ const COLUMNS = [
   { key: "NEW", label: "Offen", color: "amber" },
   { key: "CONTACTED", label: "Kontaktiert", color: "blue" },
   { key: "WAITING", label: "Warte auf Zusage", color: "purple" },
-  { key: "ACCEPTED", label: "Zugesagt", color: "emerald" },
 ] as const;
 
 type ColumnKey = (typeof COLUMNS)[number]["key"];
@@ -167,8 +166,8 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
     }
   }
 
-  // Filter out REJECTED from kanban (they're done)
-  const activeItems = items.filter((i) => i.status !== "REJECTED");
+  // Filter out ACCEPTED and REJECTED from kanban (they become orders / are done)
+  const activeItems = items.filter((i) => i.status !== "REJECTED" && i.status !== "ACCEPTED");
 
   return (
     <div>
