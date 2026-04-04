@@ -52,7 +52,7 @@ export async function GET(
   const { id } = await params;
   const order = await prisma.order.findUnique({
     where: { id },
-    include: { driver: true, secondDriver: true, company: true, inquiry: true },
+    include: { driver: true, secondDriver: true, company: { select: { id: true, name: true } }, inquiry: { select: { id: true, distanceKm: true } } },
   });
 
   if (!order) {

@@ -15,10 +15,10 @@ export default async function OrderDetailPage({
   const order = await prisma.order.findUnique({
     where: { id },
     include: {
-      driver: true,
-      secondDriver: true,
-      company: true,
-      inquiry: true,
+      driver: { select: { id: true, name: true, initials: true } },
+      secondDriver: { select: { id: true, name: true, initials: true } },
+      company: { select: { id: true, name: true } },
+      inquiry: { select: { distanceKm: true } },
     },
   });
 

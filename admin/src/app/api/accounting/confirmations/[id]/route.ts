@@ -15,8 +15,8 @@ export async function GET(
   const confirmation = await prisma.orderConfirmation.findUnique({
     where: { id },
     include: {
-      order: true,
-      company: true,
+      order: { select: { id: true, orderNumber: true } },
+      company: { select: { id: true, name: true } },
     },
   });
 

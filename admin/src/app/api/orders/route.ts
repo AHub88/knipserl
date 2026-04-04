@@ -164,7 +164,7 @@ export async function GET() {
     orderBy: { eventDate: "desc" },
     include: {
       driver: true,
-      company: true,
+      company: { select: { id: true, name: true } },
     },
   });
 

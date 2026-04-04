@@ -12,7 +12,7 @@ import { InquiriesView } from "./inquiries-view";
 export default async function InquiriesPage() {
   const inquiries = await prisma.inquiry.findMany({
     orderBy: { createdAt: "desc" },
-    include: { order: true },
+    include: { order: { select: { id: true } } },
   });
 
   const countByStatus = {

@@ -15,7 +15,7 @@ export async function GET(
   const { id } = await params;
   const inquiry = await prisma.inquiry.findUnique({
     where: { id },
-    include: { order: { include: { driver: true, company: true } } },
+    include: { order: { include: { driver: true, company: { select: { id: true, name: true } } } } },
   });
 
   if (!inquiry) {

@@ -14,7 +14,7 @@ export async function GET(
   const { id } = await params;
   const invoice = await prisma.invoice.findUnique({
     where: { id },
-    include: { order: true, company: true },
+    include: { order: { select: { id: true, orderNumber: true } }, company: { select: { id: true, name: true, isKleinunternehmer: true, bankName: true, bankIban: true, bankBic: true } } },
   });
 
   if (!invoice) {

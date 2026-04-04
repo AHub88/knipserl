@@ -18,7 +18,12 @@ export default async function OrdersPage() {
   const orders = await prisma.order.findMany({
     where: { ...paymentFilter, ...dateFilter },
     orderBy: { eventDate: "desc" },
-    include: { driver: true, secondDriver: true, company: true, inquiry: true },
+    include: {
+      driver: { select: { name: true, initials: true } },
+      secondDriver: { select: { name: true, initials: true } },
+      company: { select: { name: true } },
+      inquiry: { select: { distanceKm: true } },
+    },
   });
 
   const serialized = orders.map((order) => ({

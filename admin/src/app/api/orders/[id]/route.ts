@@ -18,8 +18,8 @@ export async function GET(
     include: {
       driver: true,
       secondDriver: true,
-      company: true,
-      inquiry: true,
+      company: { select: { id: true, name: true } },
+      inquiry: { select: { id: true, distanceKm: true } },
       quotes: true,
       invoices: true,
     },

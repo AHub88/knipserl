@@ -19,7 +19,7 @@ export async function POST(
 
   const quote = await prisma.quote.findUnique({
     where: { id },
-    include: { company: true },
+    include: { company: { select: { id: true, name: true } } },
   });
 
   if (!quote) {

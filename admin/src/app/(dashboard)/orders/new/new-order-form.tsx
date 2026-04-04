@@ -211,6 +211,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
   const [paid, setPaid] = useState(false);
   const [extras, setExtras] = useState<string[]>(["Drucker"]);
 
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const isPrivateLocation = locationName.toLowerCase() === "privat";
 
   function toggleExtra(key: string) {
@@ -237,6 +238,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
   async function handleLocationSelect(loc: LocationOption) {
     setLocationName(loc.name);
+    setSelectedLocationId(loc.id);
     const addr = [loc.street, [loc.zip, loc.city].filter(Boolean).join(" ")]
       .filter(Boolean).join(", ");
     setLocationAddress(addr);
@@ -312,7 +314,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors [&::-webkit-calendar-picker-indicator]:invert";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
@@ -412,67 +414,92 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
             </div>
             <div className="sm:col-span-2">
               <label className={labelClass}>Location</label>
-              <LocationAutocomplete value={locationName} onChange={setLocationName} onSelect={handleLocationSelect} locations={locations} inputClass={inputClass} />
+              <LocationAutocomplete value={locationName} onChange={(v) => { setLocationName(v); setSelectedLocationId(null); }} onSelect={handleLocationSelect} locations={locations} inputClass={inputClass} />
             </div>
             <div>
               <label className={labelClass}>Adresse</label>
-              <input className={inputClass} value={locationAddress} onChange={(e) => setLocationAddress(e.target.value)} disabled={!isPrivateLocation && locationAddress !== ""} />
+              <input className={inputClass} value={locationAddress} onChange={(e) => setLocationAddress(e.target.value)} disabled={!!selectedLocationId && !isPrivateLocation} />
             </div>
             <div>
               <label className={labelClass}>Entfernung (KM)</label>
-              <input className={inputClass} type="number" step="0.1" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} disabled={!isPrivateLocation && distanceKm !== ""} placeholder="–" />
+              <input className={inputClass} type="number" step="0.1" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} disabled={!!selectedLocationId && !isPrivateLocation} placeholder="–" />
             </div>
           </div>
         </div>
 
-        {/* Preiskalkulation Kunde - dynamisch */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation Kunde</h2>
-          <div className="space-y-0.5">
-            <PriceRow label="Fotobox" value={boxPrice} />
-            <PriceRow label="Fahrtkosten" value={travelCostNum || null} />
-            {activeExtrasWithPrices.map((e) => (
-              <PriceRow key={e.key} label={e.label} value={e.price} />
-            ))}
-            {discountAmount > 0 && (
-              <>
-                <div className="border-t border-white/[0.10] mt-2 pt-2">
-                  <PriceRow label="Zwischensumme" value={customerSubtotal} />
-                </div>
-                <div className="flex items-center justify-between py-0.5">
-                  <span className="text-sm text-red-400">
-                    Rabatt {discountType === "PERCENT" ? `(${discountNum}%)` : ""}
-                  </span>
-                  <span className="text-sm font-mono tabular-nums text-red-400">
-                    &minus;{discountAmount.toFixed(2)} &euro;
-                  </span>
-                </div>
-              </>
-            )}
-            <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
-              <span className="text-sm font-semibold text-zinc-200">Kundenpreis</span>
-              <span className="text-base font-bold font-mono tabular-nums text-[#F6A11C]">
-                {customerTotal.toFixed(2)} &euro;
-              </span>
+        {/* Preiskalkulation */}
+        <div className="rounded-xl border border-[#F6A11C]/20 bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation</h2>
+
+          {/* Inputs */}
+          <div className="grid gap-3 grid-cols-3">
+            <div>
+              <label className={labelClass}>Fotobox</label>
+              <div className="relative">
+                <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>{boxPrice.toFixed(2)}</div>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Fahrt</label>
+              <div className="relative">
+                <input className={inputClass + " pr-10"} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Extras</label>
+              <div className="relative">
+                <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>{extrasTotal.toFixed(2)}</div>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              </div>
             </div>
           </div>
 
-          {/* Editable fields */}
-          <div className="border-t border-white/[0.10] pt-4 grid gap-3 sm:grid-cols-3">
-            <div>
-              <label className={labelClass}>Fahrtkosten</label>
-              <input className={inputClass} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
-            </div>
-            <div>
+          <div className="grid gap-3 grid-cols-3">
+            <div className="col-span-2">
               <label className={labelClass}>Rabatt</label>
-              <input className={inputClass} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="–" />
+              <div className="relative">
+                <input className={inputClass + " pr-10"} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              </div>
             </div>
             <div>
-              <label className={labelClass}>Rabatt-Typ</label>
+              <label className={labelClass}>Typ</label>
               <select className={selectClass} value={discountType} onChange={(e) => setDiscountType(e.target.value)}>
-                <option value="AMOUNT" className="bg-card">Betrag (&euro;)</option>
-                <option value="PERCENT" className="bg-card">Prozent (%)</option>
+                <option value="AMOUNT" className="bg-card">&euro;</option>
+                <option value="PERCENT" className="bg-card">%</option>
               </select>
+            </div>
+          </div>
+
+          {/* Live calculation */}
+          <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
+            <div className="flex justify-between text-xs text-zinc-400">
+              <span>Fotobox</span>
+              <span className="tabular-nums">{boxPrice.toFixed(2)} &euro;</span>
+            </div>
+            {travelCostNum > 0 && (
+              <div className="flex justify-between text-xs text-zinc-400">
+                <span>Fahrt{distanceKm ? ` (${distanceKm} km)` : ""}</span>
+                <span className="tabular-nums">{travelCostNum.toFixed(2)} &euro;</span>
+              </div>
+            )}
+            {activeExtrasWithPrices.map((e) => (
+              <div key={e.key} className="flex justify-between text-xs text-zinc-400">
+                <span>{e.label}</span>
+                <span className="tabular-nums">{e.price.toFixed(2)} &euro;</span>
+              </div>
+            ))}
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-xs text-red-400">
+                <span>Rabatt{discountType === "PERCENT" ? ` (${discountNum}%)` : ""}</span>
+                <span className="tabular-nums">-{discountAmount.toFixed(2)} &euro;</span>
+              </div>
+            )}
+            <div className="border-t border-white/[0.10] pt-1.5 flex justify-between items-center">
+              <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
+              <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{customerTotal.toFixed(2)} &euro;</span>
             </div>
           </div>
         </div>

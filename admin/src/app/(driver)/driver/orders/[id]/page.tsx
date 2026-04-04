@@ -22,7 +22,7 @@ export default async function DriverOrderDetailPage({
 
   const order = await prisma.order.findUnique({
     where: { id },
-    include: { company: true },
+    include: { company: { select: { id: true, name: true } } },
   });
 
   if (!order) notFound();
