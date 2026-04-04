@@ -1,41 +1,56 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconX, IconLoader2, IconSearch } from "@tabler/icons-react";
 
-type OrderOption = {
-  id: string;
-  orderNumber: number;
-  customerName: string;
-  eventType: string;
-  eventDate: string;
-  price: number;
-  companyId: string;
-  companyName: string;
-  hasInvoice: boolean;
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type Props = {
+  companies: { id: string; name: string }[];
+  orders: {
+    id: string;
+    orderNumber: number;
+    customerName: string;
+    price: number;
+    companyId: string;
+    hasInvoice: boolean;
+  }[];
 };
 
-type CompanyOption = {
+type CustomerResult = {
   id: string;
   name: string;
-  isKleinunternehmer: boolean;
+  email: string;
+  company?: string;
+};
+
+type StandardLineItem = {
+  id: string;
+  title: string;
+  description?: string;
+  unitPrice: number;
 };
 
 type LineItem = {
+  title: string;
   description: string;
   quantity: number;
   unitPrice: number;
 };
 
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("de-DE", {
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function formatEUR(amount: number) {
+  return amount.toLocaleString("de-DE", {
     style: "currency",
     currency: "EUR",
-  }).format(amount);
+  });
 }
 
 function defaultDueDate() {
@@ -44,56 +59,145 @@ function defaultDueDate() {
   return d.toISOString().split("T")[0];
 }
 
-export function InvoiceForm({
-  orders,
-  companies,
-}: {
-  orders: OrderOption[];
-  companies: CompanyOption[];
-}) {
+// ---------------------------------------------------------------------------
+// Shared classes
+// ---------------------------------------------------------------------------
+
+const inputClass =
+  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+
+const labelClass =
+  "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
+
+const selectClass =
+  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors appearance-none";
+
+const cardClass =
+  "rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3";
+
+const sectionTitle =
+  "text-xs font-semibold uppercase tracking-wider text-muted-foreground";
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+export function InvoiceForm({ companies, orders }: Props) {
   const router = useRouter();
+
+  // Company
+  const [companyId, setCompanyId] = useState(companies[0]?.id ?? "");
+
+  // Customer search
+  const [customerQuery, setCustomerQuery] = useState("");
+  const [customerResults, setCustomerResults] = useState<CustomerResult[]>([]);
+  const [customerLoading, setCustomerLoading] = useState(false);
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const customerRef = useRef<HTMLDivElement>(null);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Recipient
+  const [recipientName, setRecipientName] = useState("");
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
+
+  // Order link
   const [selectedOrderId, setSelectedOrderId] = useState("");
+
+  // Dates
   const [dueDate, setDueDate] = useState(defaultDueDate());
+  const [deliveryDate, setDeliveryDate] = useState("");
+
+  // Line items
   const [items, setItems] = useState<LineItem[]>([
-    { description: "", quantity: 1, unitPrice: 0 },
+    { title: "", description: "", quantity: 1, unitPrice: 0 },
   ]);
+
+  // Standard line items
+  const [standardItems, setStandardItems] = useState<StandardLineItem[]>([]);
+  const [showStandardDropdown, setShowStandardDropdown] = useState(false);
+  const [standardLoading, setStandardLoading] = useState(false);
+  const standardRef = useRef<HTMLDivElement>(null);
+
+  // Notes
+  const [notes, setNotes] = useState("");
+
+  // Submit
   const [submitting, setSubmitting] = useState(false);
 
-  const selectedOrder = orders.find((o) => o.id === selectedOrderId);
-  const selectedCompany = companies.find(
-    (c) => c.id === selectedOrder?.companyId
-  );
+  // ---------------------------------------------------------------------------
+  // Customer search
+  // ---------------------------------------------------------------------------
 
-  const total = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0),
-    [items]
-  );
+  const searchCustomers = useCallback(async (q: string) => {
+    if (q.trim().length < 2) {
+      setCustomerResults([]);
+      setShowCustomerDropdown(false);
+      return;
+    }
+    setCustomerLoading(true);
+    try {
+      const res = await fetch(`/api/customers/search?q=${encodeURIComponent(q)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setCustomerResults(data);
+        setShowCustomerDropdown(true);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setCustomerLoading(false);
+    }
+  }, []);
 
-  function updateItem(index: number, field: keyof LineItem, value: string | number) {
-    setItems((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item
-      )
-    );
+  function handleCustomerInput(value: string) {
+    setCustomerQuery(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => searchCustomers(value), 300);
   }
 
-  function addItem() {
-    setItems((prev) => [...prev, { description: "", quantity: 1, unitPrice: 0 }]);
+  function selectCustomer(c: CustomerResult) {
+    setRecipientName(c.name);
+    setRecipientEmail(c.email ?? "");
+    setCustomerQuery(c.name);
+    setShowCustomerDropdown(false);
   }
 
-  function removeItem(index: number) {
-    if (items.length <= 1) return;
-    setItems((prev) => prev.filter((_, i) => i !== index));
-  }
+  // Close customer dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (customerRef.current && !customerRef.current.contains(e.target as Node)) {
+        setShowCustomerDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
-  // When an order is selected, auto-populate the first line item with order price
+  // Close standard dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (standardRef.current && !standardRef.current.contains(e.target as Node)) {
+        setShowStandardDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // Order selection
+  // ---------------------------------------------------------------------------
+
   function handleOrderChange(orderId: string) {
     setSelectedOrderId(orderId);
     const order = orders.find((o) => o.id === orderId);
     if (order) {
+      setCompanyId(order.companyId);
       setItems([
         {
-          description: `${order.eventType} \u2013 ${order.customerName}`,
+          title: `Fotografie – ${order.customerName}`,
+          description: "",
           quantity: 1,
           unitPrice: order.price,
         },
@@ -101,230 +205,503 @@ export function InvoiceForm({
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Standard line items
+  // ---------------------------------------------------------------------------
+
+  async function loadStandardItems() {
+    if (standardItems.length > 0) {
+      setShowStandardDropdown(true);
+      return;
+    }
+    setStandardLoading(true);
+    try {
+      const res = await fetch("/api/standard-line-items");
+      if (res.ok) {
+        const data = await res.json();
+        setStandardItems(data);
+        setShowStandardDropdown(true);
+      }
+    } catch {
+      toast.error("Standard-Positionen konnten nicht geladen werden");
+    } finally {
+      setStandardLoading(false);
+    }
+  }
+
+  function addStandardItem(si: StandardLineItem) {
+    setItems((prev) => [
+      ...prev,
+      {
+        title: si.title,
+        description: si.description ?? "",
+        quantity: 1,
+        unitPrice: si.unitPrice,
+      },
+    ]);
+    setShowStandardDropdown(false);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Line item helpers
+  // ---------------------------------------------------------------------------
+
+  function addItem() {
+    setItems((prev) => [
+      ...prev,
+      { title: "", description: "", quantity: 1, unitPrice: 0 },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function updateItem(index: number, field: keyof LineItem, value: string | number) {
+    setItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Totals
+  // ---------------------------------------------------------------------------
+
+  const total = useMemo(
+    () => items.reduce((sum, i) => sum + i.quantity * i.unitPrice, 0),
+    [items]
+  );
+
+  // ---------------------------------------------------------------------------
+  // Submit
+  // ---------------------------------------------------------------------------
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!selectedOrderId) {
-      toast.error("Bitte einen Auftrag ausw\u00e4hlen");
+    if (!companyId) {
+      toast.error("Bitte eine Firma auswählen");
       return;
     }
-
-    if (!selectedOrder) return;
-
-    const hasEmptyDesc = items.some((item) => !item.description.trim());
-    if (hasEmptyDesc) {
-      toast.error("Alle Positionen m\u00fcssen eine Beschreibung haben");
+    if (!recipientName.trim()) {
+      toast.error("Bitte einen Empfängernamen angeben");
+      return;
+    }
+    if (!dueDate) {
+      toast.error("Bitte ein Fälligkeitsdatum angeben");
+      return;
+    }
+    if (items.length === 0 || items.some((i) => !i.title.trim())) {
+      toast.error("Alle Positionen müssen einen Titel haben");
       return;
     }
 
     setSubmitting(true);
+
     try {
       const res = await fetch("/api/accounting/invoices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          orderId: selectedOrderId,
-          companyId: selectedOrder.companyId,
+          companyId,
+          orderId: selectedOrderId || undefined,
+          recipientName: recipientName.trim(),
+          recipientAddress: recipientAddress.trim() || undefined,
+          recipientEmail: recipientEmail.trim() || undefined,
+          dueDate,
+          deliveryDate: deliveryDate || undefined,
+          notes: notes.trim() || undefined,
           items: items.map((item) => ({
-            description: item.description,
+            title: item.title,
+            description: item.description || undefined,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
           })),
-          dueDate,
         }),
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        toast.error(data.error ?? "Fehler beim Erstellen");
-        return;
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error ?? "Fehler beim Erstellen der Rechnung");
       }
 
-      toast.success("Rechnung erstellt");
+      toast.success("Rechnung erfolgreich erstellt");
       router.push("/accounting/invoices");
       router.refresh();
-    } catch {
-      toast.error("Netzwerkfehler");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Unbekannter Fehler");
     } finally {
       setSubmitting(false);
     }
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Order selection */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label className="text-zinc-300">Auftrag</Label>
-          <select
-            value={selectedOrderId}
-            onChange={(e) => handleOrderChange(e.target.value)}
-            className="flex h-8 w-full items-center rounded-lg border border-white/[0.1] bg-card px-2.5 py-1 text-sm text-zinc-200 outline-none transition-colors focus:border-[#F6A11C]/50 focus:ring-2 focus:ring-[#F6A11C]/20"
-          >
-            <option value="" className="bg-card text-zinc-400">
-              Auftrag ausw&auml;hlen...
-            </option>
-            {orders.map((order) => (
-              <option
-                key={order.id}
-                value={order.id}
-                className="bg-card text-zinc-200"
-                disabled={order.hasInvoice}
-              >
-                #{order.orderNumber} &ndash; {order.customerName} &ndash;{" "}
-                {order.eventType} ({formatCurrency(order.price)})
-                {order.hasInvoice ? " [bereits erstellt]" : ""}
-              </option>
-            ))}
-          </select>
-        </div>
+  // ---------------------------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------------------------
 
-        <div className="space-y-2">
-          <Label className="text-zinc-300">Firma</Label>
-          <div className="flex h-8 items-center rounded-lg border border-white/[0.1] bg-card px-2.5 text-sm text-zinc-400">
-            {selectedCompany ? (
-              <span className="text-zinc-200">{selectedCompany.name}</span>
-            ) : (
-              <span className="text-muted-foreground italic">
-                Wird vom Auftrag \u00fcbernommen
-              </span>
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6 pb-24 sm:pb-8">
+      {/* ------------------------------------------------------------------ */}
+      {/* Company & Order */}
+      {/* ------------------------------------------------------------------ */}
+      <div className={cardClass}>
+        <h2 className={sectionTitle}>Firma &amp; Auftrag</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Company */}
+          <div>
+            <label className={labelClass}>Firma *</label>
+            <select
+              value={companyId}
+              onChange={(e) => setCompanyId(e.target.value)}
+              className={selectClass}
+              required
+            >
+              <option value="" className="bg-[#1c1d20] text-zinc-400">
+                Firma auswählen...
+              </option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id} className="bg-[#1c1d20] text-zinc-200">
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Order link */}
+          <div>
+            <label className={labelClass}>Verknüpfter Auftrag</label>
+            <select
+              value={selectedOrderId}
+              onChange={(e) => handleOrderChange(e.target.value)}
+              className={selectClass}
+            >
+              <option value="" className="bg-[#1c1d20] text-zinc-400">
+                Kein Auftrag (eigenständig)
+              </option>
+              {orders.map((order) => (
+                <option
+                  key={order.id}
+                  value={order.id}
+                  className="bg-[#1c1d20] text-zinc-200"
+                  disabled={order.hasInvoice}
+                >
+                  #{order.orderNumber} &ndash; {order.customerName} ({formatEUR(order.price)})
+                  {order.hasInvoice ? " [bereits erstellt]" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Customer search & Recipient */}
+      {/* ------------------------------------------------------------------ */}
+      <div className={cardClass}>
+        <h2 className={sectionTitle}>Empfänger</h2>
+
+        {/* Customer search */}
+        <div ref={customerRef} className="relative">
+          <label className={labelClass}>Kundensuche</label>
+          <div className="relative">
+            <IconSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+            <input
+              type="text"
+              value={customerQuery}
+              onChange={(e) => handleCustomerInput(e.target.value)}
+              onFocus={() => {
+                if (customerResults.length > 0) setShowCustomerDropdown(true);
+              }}
+              placeholder="Kunde suchen..."
+              className={inputClass + " pl-9"}
+            />
+            {customerLoading && (
+              <IconLoader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-zinc-500" />
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Due date */}
-      <div className="max-w-xs space-y-2">
-        <Label className="text-zinc-300">F&auml;llig am</Label>
-        <Input
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          className="bg-card border-white/[0.1] text-zinc-200 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20"
-        />
-      </div>
-
-      {/* Line items */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Label className="text-zinc-300">Positionen</Label>
-          <button
-            type="button"
-            onClick={addItem}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-card border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-[#222326]"
-          >
-            <IconPlus className="size-3.5" />
-            Position hinzuf&uuml;gen
-          </button>
+          {showCustomerDropdown && customerResults.length > 0 && (
+            <div className="absolute z-50 mt-1 w-full rounded-lg border border-white/[0.10] bg-[#1c1d20] shadow-xl overflow-hidden">
+              {customerResults.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => selectCustomer(c)}
+                  className="flex w-full flex-col gap-0.5 px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                >
+                  <span className="text-sm text-zinc-200">{c.name}</span>
+                  <span className="text-xs text-zinc-500">
+                    {c.email}
+                    {c.company ? ` · ${c.company}` : ""}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="rounded-lg border border-white/[0.10] overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 px-4 py-2.5 bg-card border-b border-white/[0.10]">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Beschreibung
-            </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
-              Menge
-            </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
-              Einzelpreis
-            </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
-              Gesamt
-            </span>
-            <span />
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Recipient name */}
+          <div>
+            <label className={labelClass}>Name *</label>
+            <input
+              type="text"
+              value={recipientName}
+              onChange={(e) => setRecipientName(e.target.value)}
+              placeholder="Max Mustermann"
+              className={inputClass}
+              required
+            />
           </div>
 
-          {/* Items */}
+          {/* Recipient email */}
+          <div>
+            <label className={labelClass}>E-Mail</label>
+            <input
+              type="email"
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
+              placeholder="max@example.com"
+              className={inputClass}
+            />
+          </div>
+        </div>
+
+        {/* Recipient address */}
+        <div>
+          <label className={labelClass}>Adresse</label>
+          <textarea
+            value={recipientAddress}
+            onChange={(e) => setRecipientAddress(e.target.value)}
+            rows={2}
+            placeholder="Straße, PLZ Ort"
+            className={inputClass + " h-auto py-2 resize-none"}
+          />
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Dates */}
+      {/* ------------------------------------------------------------------ */}
+      <div className={cardClass}>
+        <h2 className={sectionTitle}>Datum</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>Fällig am *</label>
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className={inputClass + " [color-scheme:dark]"}
+              required
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Lieferdatum</label>
+            <input
+              type="date"
+              value={deliveryDate}
+              onChange={(e) => setDeliveryDate(e.target.value)}
+              className={inputClass + " [color-scheme:dark]"}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Line Items */}
+      {/* ------------------------------------------------------------------ */}
+      <div className={cardClass}>
+        <div className="flex items-center justify-between">
+          <h2 className={sectionTitle}>Positionen</h2>
+          <div className="flex items-center gap-2">
+            {/* Standard item button */}
+            <div ref={standardRef} className="relative">
+              <button
+                type="button"
+                onClick={loadStandardItems}
+                disabled={standardLoading}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-200 hover:border-white/[0.15]"
+              >
+                {standardLoading ? (
+                  <IconLoader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <IconPlus className="size-3.5" />
+                )}
+                Standard-Position
+              </button>
+              {showStandardDropdown && standardItems.length > 0 && (
+                <div className="absolute right-0 z-50 mt-1 w-72 rounded-lg border border-white/[0.10] bg-[#1c1d20] shadow-xl overflow-hidden">
+                  {standardItems.map((si) => (
+                    <button
+                      key={si.id}
+                      type="button"
+                      onClick={() => addStandardItem(si)}
+                      className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate text-sm text-zinc-200">{si.title}</div>
+                        {si.description && (
+                          <div className="truncate text-xs text-zinc-500">{si.description}</div>
+                        )}
+                      </div>
+                      <span className="shrink-0 text-xs tabular-nums text-zinc-400">
+                        {formatEUR(si.unitPrice)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add item button */}
+            <button
+              type="button"
+              onClick={addItem}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-200 hover:border-white/[0.15]"
+            >
+              <IconPlus className="size-3.5" />
+              Position hinzufügen
+            </button>
+          </div>
+        </div>
+
+        {/* Item list */}
+        <div className="space-y-3">
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-[1fr_100px_130px_130px_40px] gap-3 items-center px-4 py-2 border-b border-white/[0.10] last:border-b-0"
+              className="relative rounded-lg border border-white/[0.08] bg-[#1c1d20]/50 p-3 sm:p-4 space-y-3 transition-colors"
             >
-              <Input
-                value={item.description}
-                onChange={(e) =>
-                  updateItem(index, "description", e.target.value)
-                }
-                placeholder="Beschreibung..."
-                className="bg-transparent border-white/[0.08] text-zinc-200 text-sm h-7"
-              />
-              <Input
-                type="number"
-                min={1}
-                value={item.quantity}
-                onChange={(e) =>
-                  updateItem(index, "quantity", parseInt(e.target.value) || 1)
-                }
-                className="bg-transparent border-white/[0.08] text-zinc-200 text-sm h-7 text-center"
-              />
-              <Input
-                type="number"
-                min={0}
-                step={0.01}
-                value={item.unitPrice}
-                onChange={(e) =>
-                  updateItem(
-                    index,
-                    "unitPrice",
-                    parseFloat(e.target.value) || 0
-                  )
-                }
-                className="bg-transparent border-white/[0.08] text-zinc-200 text-sm h-7 text-right"
-              />
-              <div className="text-sm font-mono text-zinc-300 text-right tabular-nums">
-                {formatCurrency(item.quantity * item.unitPrice)}
-              </div>
+              {/* Remove button */}
               <button
                 type="button"
                 onClick={() => removeItem(index)}
-                disabled={items.length <= 1}
-                className="flex items-center justify-center size-7 rounded-md text-muted-foreground transition-colors hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="absolute right-2 top-2 flex items-center justify-center size-7 rounded-md text-zinc-500 transition-colors hover:text-red-400 hover:bg-red-500/10"
               >
-                <IconTrash className="size-3.5" />
+                <IconX className="size-4" />
               </button>
+
+              {/* Row 1: Title + quantity + unit price + total */}
+              <div className="grid gap-3 sm:grid-cols-[1fr_80px_120px_100px] pr-8">
+                <div>
+                  <label className={labelClass}>Titel *</label>
+                  <input
+                    type="text"
+                    value={item.title}
+                    onChange={(e) => updateItem(index, "title", e.target.value)}
+                    placeholder="Positionsbezeichnung"
+                    className={inputClass}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Menge</label>
+                  <input
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={item.quantity}
+                    onChange={(e) =>
+                      updateItem(index, "quantity", parseInt(e.target.value) || 1)
+                    }
+                    className={inputClass + " tabular-nums text-center"}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Einzelpreis</label>
+                  <input
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    value={item.unitPrice || ""}
+                    onChange={(e) =>
+                      updateItem(index, "unitPrice", parseFloat(e.target.value) || 0)
+                    }
+                    placeholder="0,00"
+                    className={inputClass + " tabular-nums text-right"}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Gesamt</label>
+                  <div className="flex h-9 items-center justify-end rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 text-sm font-medium tabular-nums text-zinc-300">
+                    {formatEUR(item.quantity * item.unitPrice)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: Description */}
+              <div>
+                <label className={labelClass}>Beschreibung</label>
+                <input
+                  type="text"
+                  value={item.description}
+                  onChange={(e) => updateItem(index, "description", e.target.value)}
+                  placeholder="Optionale Beschreibung..."
+                  className={inputClass}
+                />
+              </div>
             </div>
           ))}
         </div>
+      </div>
 
-        {/* Total */}
-        <div className="flex justify-end">
-          <div className="flex items-center gap-6 rounded-lg bg-[#1c1d20] border border-white/[0.10] px-5 py-3">
-            <span className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
-              Gesamtbetrag
-            </span>
-            <span className="text-xl font-bold text-zinc-100 tabular-nums font-mono">
-              {formatCurrency(total)}
-            </span>
-          </div>
+      {/* ------------------------------------------------------------------ */}
+      {/* Totals */}
+      {/* ------------------------------------------------------------------ */}
+      <div className={cardClass}>
+        <h2 className={sectionTitle}>Zusammenfassung</h2>
+        <div className="flex items-center justify-between border-t border-white/[0.10] pt-3">
+          <span className="text-sm font-semibold text-zinc-300">Gesamtbetrag</span>
+          <span className="text-xl font-bold tabular-nums text-zinc-100">
+            {formatEUR(total)}
+          </span>
         </div>
       </div>
 
-      {/* Kleinunternehmer notice */}
-      {selectedCompany?.isKleinunternehmer !== false && (
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3">
-          <p className="text-sm text-amber-300/80">
-            Gem&auml;&szlig; &sect;19 UStG wird keine Umsatzsteuer berechnet.
-          </p>
-        </div>
-      )}
+      {/* ------------------------------------------------------------------ */}
+      {/* Notes */}
+      {/* ------------------------------------------------------------------ */}
+      <div className={cardClass}>
+        <h2 className={sectionTitle}>Anmerkungen</h2>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={3}
+          placeholder="Interne oder externe Anmerkungen zur Rechnung..."
+          className={inputClass + " h-auto py-2 resize-none"}
+        />
+      </div>
 
-      {/* Submit */}
-      <div className="flex items-center gap-4 pt-2">
-        <button
-          type="submit"
-          disabled={submitting || !selectedOrderId}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#F6A11C] px-5 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-[#F6A11C]/80 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {submitting ? "Wird erstellt..." : "Rechnung erstellen"}
-        </button>
+      {/* ------------------------------------------------------------------ */}
+      {/* Desktop Save */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="hidden sm:flex items-center justify-end gap-3 pt-4 border-t border-white/[0.10]">
         <button
           type="button"
           onClick={() => router.push("/accounting/invoices")}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-card px-5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#222326] hover:text-zinc-200"
+          className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1c1d20] hover:text-zinc-200"
         >
           Abbrechen
+        </button>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="inline-flex items-center gap-2 rounded-lg bg-[#F6A11C] px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#F6A11C]/90 disabled:opacity-50 disabled:pointer-events-none"
+        >
+          {submitting ? "Wird erstellt..." : "Rechnung erstellen"}
+        </button>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Mobile floating save button */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-white/[0.10] bg-card/95 backdrop-blur-sm p-4 sm:hidden">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full rounded-lg bg-[#F6A11C] py-2.5 text-sm font-semibold text-black transition-colors hover:bg-[#F6A11C]/90 disabled:opacity-50 disabled:pointer-events-none"
+        >
+          {submitting ? "Wird erstellt..." : "Rechnung erstellen"}
         </button>
       </div>
     </form>

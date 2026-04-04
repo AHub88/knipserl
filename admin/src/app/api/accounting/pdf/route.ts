@@ -9,12 +9,12 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = request.nextUrl;
-  const type = searchParams.get("type"); // "invoice" | "quote"
+  const type = searchParams.get("type"); // "invoice" | "quote" | "confirmation"
   const id = searchParams.get("id");
 
-  if (!type || !id || !["invoice", "quote"].includes(type)) {
+  if (!type || !id || !["invoice", "quote", "confirmation"].includes(type)) {
     return NextResponse.json(
-      { error: "Parameter 'type' (invoice|quote) und 'id' erforderlich" },
+      { error: "Parameter 'type' (invoice|quote|confirmation) und 'id' erforderlich" },
       { status: 400 }
     );
   }
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
         notes: invoice.notes,
         company: invoice.company,
       };
-    } else {
+    } else if (type === "quote") {
       const quote = await prisma.quote.findUnique({
         where: { id },
         include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
@@ -90,11 +90,33 @@ export async function GET(request: NextRequest) {
         notes: quote.notes,
         company: quote.company,
       };
+    } else {
+      const confirmation = await prisma.orderConfirmation.findUnique({
+        where: { id },
+        include: { company: true, order: { select: { customerName: true, customerEmail: true } } },
+      });
+      if (!confirmation) {
+        return NextResponse.json({ error: "Auftragsbestätigung nicht gefunden" }, { status: 404 });
+      }
+      doc = {
+        number: confirmation.confirmationNumber,
+        items: confirmation.items as DocItem[],
+        totalAmount: confirmation.totalAmount,
+        date: confirmation.createdAt,
+        dueOrValid: confirmation.createdAt,
+        deliveryDate: confirmation.deliveryDate,
+        recipientName: confirmation.recipientName || confirmation.order?.customerName || "",
+        recipientAddress: confirmation.recipientAddress,
+        recipientEmail: confirmation.recipientEmail || confirmation.order?.customerEmail || null,
+        notes: confirmation.notes,
+        company: confirmation.company,
+      };
     }
 
     const isInvoice = type === "invoice";
-    const title = isInvoice ? "Rechnung" : "Angebot";
-    const dueLabel = isInvoice ? "F\u00e4llig am" : "G\u00fcltig bis";
+    const isConfirmation = type === "confirmation";
+    const title = isInvoice ? "Rechnung" : isConfirmation ? "Auftragsbestätigung" : "Angebot";
+    const dueLabel = isInvoice ? "Fällig am" : isConfirmation ? null : "Gültig bis";
 
     const formatDate = (d: Date) =>
       d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -128,7 +150,7 @@ export async function GET(request: NextRequest) {
       : "";
 
     const bankInfo =
-      isInvoice && doc.company.bankIban
+      (isInvoice || isConfirmation) && doc.company.bankIban
         ? `<div style="margin-top:20px;padding:14px;background:#f9f9f9;border-radius:6px;font-size:11px;line-height:1.6;">
             <strong>Bankverbindung</strong><br/>
             ${doc.company.bankName ? `${escapeHtml(doc.company.bankName)}<br/>` : ""}
@@ -223,7 +245,7 @@ export async function GET(request: NextRequest) {
           <div style="display:flex;justify-content:space-between;margin-bottom:28px;">
             <div>
               <p style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:4px;">
-                ${isInvoice ? "Rechnungsempf\u00e4nger" : "Angebotsempf\u00e4nger"}
+                ${isInvoice ? "Rechnungsempfänger" : isConfirmation ? "Auftragsbestätigung für" : "Angebotsempfänger"}
               </p>
               <p style="font-size:13px;font-weight:600;">${escapeHtml(doc.recipientName)}</p>
               ${doc.recipientAddress ? `<p style="font-size:11px;color:#666;white-space:pre-line;">${escapeHtml(doc.recipientAddress)}</p>` : ""}
@@ -239,10 +261,10 @@ export async function GET(request: NextRequest) {
                   <td style="padding:2px 10px 2px 0;color:#666;">Datum:</td>
                   <td>${formatDate(doc.date)}</td>
                 </tr>
-                <tr>
+                ${dueLabel ? `<tr>
                   <td style="padding:2px 10px 2px 0;color:#666;">${dueLabel}:</td>
                   <td>${formatDate(doc.dueOrValid)}</td>
-                </tr>
+                </tr>` : ""}
                 ${doc.deliveryDate ? `<tr>
                   <td style="padding:2px 10px 2px 0;color:#666;">Lieferdatum:</td>
                   <td>${formatDate(doc.deliveryDate)}</td>
