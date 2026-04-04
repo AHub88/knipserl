@@ -95,7 +95,7 @@ export default async function CustomerDetailPage({
             <p className="text-[11px] text-zinc-500">Umsatz</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-zinc-100 tabular-nums">{customer.quotes.length + customer.invoices.length}</p>
+            <p className="text-2xl font-bold text-zinc-100 tabular-nums">{quotes.length + invoices.length}</p>
             <p className="text-[11px] text-zinc-500">Dokumente</p>
           </div>
         </div>
@@ -127,13 +127,13 @@ export default async function CustomerDetailPage({
       )}
 
       {/* Quotes */}
-      {customer.quotes.length > 0 && (
+      {quotes.length > 0 && (
         <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-            <IconFileInvoice className="size-4" /> Angebote ({customer.quotes.length})
+            <IconFileInvoice className="size-4" /> Angebote ({quotes.length})
           </h2>
           <div className="space-y-2">
-            {customer.quotes.map((q) => (
+            {quotes.map((q) => (
               <Link key={q.id} href={`/accounting/quotes/${q.id}`} className="flex items-center justify-between rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-xs font-mono text-zinc-500">{q.quoteNumber}</span>
@@ -151,13 +151,13 @@ export default async function CustomerDetailPage({
       )}
 
       {/* Invoices */}
-      {customer.invoices.length > 0 && (
+      {invoices.length > 0 && (
         <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-            <IconReceipt className="size-4" /> Rechnungen ({customer.invoices.length})
+            <IconReceipt className="size-4" /> Rechnungen ({invoices.length})
           </h2>
           <div className="space-y-2">
-            {customer.invoices.map((inv) => (
+            {invoices.map((inv) => (
               <Link key={inv.id} href={`/accounting/invoices/${inv.id}`} className="flex items-center justify-between rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-xs font-mono text-zinc-500">{inv.invoiceNumber}</span>
