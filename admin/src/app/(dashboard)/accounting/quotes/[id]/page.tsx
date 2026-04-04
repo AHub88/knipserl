@@ -194,14 +194,7 @@ export default async function QuoteDetailPage({
                 {formatDate(q.validUntil)}
               </span>
             </div>
-            {false && (
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Lieferdatum</span>
-                <span className="text-zinc-200 tabular-nums">
-                  {formatDate(q.deliveryDate)}
-                </span>
-              </div>
-            )}
+            {/* Lieferdatum - disabled until DB column exists */}
             {q.order && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Auftrag</span>
@@ -316,19 +309,7 @@ export default async function QuoteDetailPage({
         </div>
       </div>
 
-      {/* Notes */}
-      {q.notes && (
-        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/[0.10]">
-            <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
-          </div>
-          <div className="px-6 py-4">
-            <p className="text-sm text-zinc-400 whitespace-pre-line">
-              {q.notes}
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Notes - disabled until DB column exists */}
 
       {/* Convert to Invoice Section */}
       {(q.status === "ACCEPTED" || q.status === "SENT") && (

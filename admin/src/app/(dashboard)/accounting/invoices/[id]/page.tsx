@@ -186,14 +186,6 @@ export default async function InvoiceDetailPage({
                 {formatDate(inv.dueDate)}
               </span>
             </div>
-            {false && (
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Lieferdatum</span>
-                <span className="text-zinc-200 tabular-nums">
-                  {formatDate(inv.deliveryDate)}
-                </span>
-              </div>
-            )}
             {inv.paidAt && (
               <div className="flex justify-between">
                 <span className="text-zinc-400">Bezahlt am</span>
@@ -210,17 +202,6 @@ export default async function InvoiceDetailPage({
                   className="text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors"
                 >
                   #{inv.order.orderNumber}
-                </Link>
-              </div>
-            )}
-            {false && (
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Angebot</span>
-                <Link
-                  href={`/accounting/quotes/${inv.quoteId}`}
-                  className="text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors"
-                >
-                  Angebot ansehen
                 </Link>
               </div>
             )}
@@ -315,19 +296,7 @@ export default async function InvoiceDetailPage({
         </div>
       </div>
 
-      {/* Notes */}
-      {false && (
-        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/[0.10]">
-            <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
-          </div>
-          <div className="px-6 py-4">
-            <p className="text-sm text-zinc-400 whitespace-pre-line">
-              {inv.notes}
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Notes - disabled until DB columns exist */}
 
       {/* Kleinunternehmer notice */}
       {inv.company.isKleinunternehmer && (
