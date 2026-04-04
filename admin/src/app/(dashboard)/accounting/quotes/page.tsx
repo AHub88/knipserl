@@ -12,7 +12,7 @@ export default async function QuotesPage() {
   const serialized = quotes.map((quote) => ({
     id: quote.id,
     quoteNumber: quote.quoteNumber,
-    customerName: quote.order.customerName,
+    customerName: quote.order?.customerName ?? quote.recipientName ?? "–",
     companyName: quote.company.name,
     totalAmount: quote.totalAmount,
     status: quote.status,

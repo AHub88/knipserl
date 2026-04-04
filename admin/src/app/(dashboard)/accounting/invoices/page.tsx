@@ -36,7 +36,7 @@ export default async function InvoicesPage() {
     return {
       id: invoice.id,
       invoiceNumber: invoice.invoiceNumber,
-      customerName: invoice.order.customerName,
+      customerName: invoice.order?.customerName ?? invoice.recipientName ?? "–",
       companyName: invoice.company.name,
       totalAmount: invoice.totalAmount,
       status: invoice.status,
