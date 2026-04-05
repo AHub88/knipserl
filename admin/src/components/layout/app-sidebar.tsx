@@ -59,6 +59,7 @@ const accountingNav = [
     href: "/accounting/incoming",
     icon: IconFileText,
   },
+  { title: "Fahrervergütung", href: "/accounting/driver-report", icon: IconTruck },
   { title: "Bankabgleich", href: "/accounting/bank", icon: IconBuildingBank },
 ];
 
