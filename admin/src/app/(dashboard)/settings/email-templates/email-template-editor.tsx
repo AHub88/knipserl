@@ -1,0 +1,138 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { IconDeviceFloppy, IconCheck, IconX } from "@tabler/icons-react";
+
+const TEMPLATE_CONFIG = [
+  {
+    key: "email_template_inquiry_accepted",
+    label: "Anfrage zugesagt",
+    description: "Wird automatisch gesendet wenn eine Anfrage angenommen wird",
+    color: "emerald",
+  },
+  {
+    key: "email_template_inquiry_rejected",
+    label: "Anfrage abgesagt",
+    description: "Wird automatisch gesendet wenn eine Anfrage abgelehnt wird",
+    color: "red",
+  },
+];
+
+type Templates = Record<string, { subject: string; body: string }>;
+
+export function EmailTemplateEditor({
+  templates: initial,
+  variables,
+}: {
+  templates: Templates;
+  variables: string[];
+}) {
+  const [templates, setTemplates] = useState<Templates>(initial);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  async function handleSave(key: string) {
+    setSaving(key);
+    try {
+      const t = templates[key];
+      const res = await fetch("/api/settings/email-templates", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, subject: t.subject, body: t.body }),
+      });
+      if (!res.ok) throw new Error("Fehler beim Speichern");
+      toast.success("Template gespeichert");
+      setSaved(key);
+      setTimeout(() => setSaved(null), 2000);
+    } catch {
+      toast.error("Fehler beim Speichern");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  function updateTemplate(key: string, field: "subject" | "body", value: string) {
+    setTemplates((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], [field]: value },
+    }));
+  }
+
+  const inputClass =
+    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+
+  return (
+    <div className="space-y-6">
+      {/* Variables hint */}
+      <div className="rounded-xl border border-white/[0.10] bg-card p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Verfügbare Platzhalter</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {variables.map((v) => (
+            <code key={v} className="text-xs bg-[#1c1d20] text-[#F6A11C] px-2 py-0.5 rounded font-mono">
+              {`{{${v}}}`}
+            </code>
+          ))}
+        </div>
+      </div>
+
+      {/* Templates */}
+      {TEMPLATE_CONFIG.map((config) => {
+        const t = templates[config.key];
+        if (!t) return null;
+        const colorClasses = config.color === "emerald"
+          ? "border-emerald-500/20 bg-emerald-500/5"
+          : "border-red-500/20 bg-red-500/5";
+        const dotColor = config.color === "emerald" ? "bg-emerald-400" : "bg-red-400";
+
+        return (
+          <div key={config.key} className={`rounded-xl border ${colorClasses} p-4 sm:p-5 space-y-4`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className={`size-2 rounded-full ${dotColor}`} />
+                <h3 className="text-sm font-semibold text-zinc-200">{config.label}</h3>
+              </div>
+              <button
+                onClick={() => handleSave(config.key)}
+                disabled={saving === config.key}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+              >
+                {saved === config.key ? (
+                  <><IconCheck className="size-3.5" /> Gespeichert</>
+                ) : saving === config.key ? (
+                  "Speichern..."
+                ) : (
+                  <><IconDeviceFloppy className="size-3.5" /> Speichern</>
+                )}
+              </button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">{config.description}</p>
+
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Betreff
+              </label>
+              <input
+                className={inputClass}
+                value={t.subject}
+                onChange={(e) => updateTemplate(config.key, "subject", e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Nachricht
+              </label>
+              <textarea
+                className={inputClass + " h-48 py-2 resize-y font-mono text-xs leading-relaxed"}
+                value={t.body}
+                onChange={(e) => updateTemplate(config.key, "body", e.target.value)}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

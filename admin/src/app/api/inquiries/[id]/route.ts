@@ -1,6 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { sendEmail, isEmailConfigured } from "@/lib/email";
+
+async function getTemplate(key: string): Promise<{ subject: string; body: string } | null> {
+  try {
+    const setting = await prisma.appSetting.findUnique({ where: { key } });
+    return setting ? JSON.parse(setting.value) : null;
+  } catch { return null; }
+}
+
+function replaceVars(text: string, vars: Record<string, string>): string {
+  let result = text;
+  for (const [key, val] of Object.entries(vars)) {
+    result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, "g"), val);
+  }
+  return result;
+}
+
+async function sendInquiryEmail(
+  templateKey: string,
+  inquiry: { customerName: string; customerEmail: string; eventType: string; eventDate: Date; locationName: string },
+  companyName: string
+) {
+  if (!isEmailConfigured() || !inquiry.customerEmail) return;
+
+  const template = await getTemplate(templateKey);
+  if (!template) return;
+
+  const vars: Record<string, string> = {
+    customerName: inquiry.customerName,
+    customerEmail: inquiry.customerEmail,
+    eventType: inquiry.eventType,
+    eventDate: inquiry.eventDate.toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }),
+    locationName: inquiry.locationName,
+    companyName,
+  };
+
+  const subject = replaceVars(template.subject, vars);
+  const bodyText = replaceVars(template.body, vars);
+  const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;padding:30px;">
+    <p style="white-space:pre-line;color:#333;font-size:15px;line-height:1.6;">${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+  </div>`;
+
+  try {
+    await sendEmail({ to: inquiry.customerEmail, subject, html });
+  } catch (e) {
+    console.error("[inquiry-email]", e);
+  }
+}
 
 // GET /api/inquiries/:id
 export async function GET(
@@ -120,7 +168,9 @@ export async function PATCH(
       return { inquiry: updatedInquiry, order };
     });
 
-    // TODO: Send confirmation email to customer
+    // Send confirmation email
+    const companyName = company?.name ?? "Knipserl Fotobox";
+    sendInquiryEmail("email_template_inquiry_accepted", inquiry, companyName);
 
     return NextResponse.json(result);
   }
@@ -131,7 +181,8 @@ export async function PATCH(
       data: { status: "REJECTED" },
     });
 
-    // TODO: Send rejection email to customer
+    // Send rejection email
+    sendInquiryEmail("email_template_inquiry_rejected", inquiry, "Knipserl Fotobox");
 
     return NextResponse.json(updatedInquiry);
   }

@@ -37,6 +37,10 @@ services:
       AUTH_TRUST_HOST: "true"
       PORT: "3001"
       HOSTNAME: "127.0.0.1"
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+      MAIL_FROM: ${MAIL_FROM:-info@knipserl.de}
 
   # === ADMIN DASHBOARD (Dev/Staging) ===
   knipserl-admin-dev:
@@ -54,6 +58,10 @@ services:
       AUTH_TRUST_HOST: "true"
       PORT: "3002"
       HOSTNAME: "127.0.0.1"
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+      MAIL_FROM: ${MAIL_FROM:-info@knipserl.de}
 
   # === WEBSITE (Dev/Staging) ===
   knipserl-web-dev:
