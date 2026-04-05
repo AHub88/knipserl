@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
   }
 
-  if (!isEmailConfigured()) {
+  if (!(await isEmailConfigured())) {
     return NextResponse.json(
       { error: "E-Mail nicht konfiguriert. Bitte AZURE_TENANT_ID, AZURE_CLIENT_ID und AZURE_CLIENT_SECRET setzen." },
       { status: 500 }

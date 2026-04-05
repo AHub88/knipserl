@@ -21,7 +21,7 @@ export default async function EmailTemplatesPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") return null;
 
-  const emailConfigured = isEmailConfigured();
+  const emailConfigured = await isEmailConfigured();
 
   const templates: Record<string, { subject: string; body: string }> = {};
   for (const key of Object.keys(DEFAULT_TEMPLATES)) {

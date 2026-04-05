@@ -23,7 +23,7 @@ async function sendInquiryEmail(
   inquiry: { customerName: string; customerEmail: string; eventType: string; eventDate: Date; locationName: string },
   companyName: string
 ) {
-  if (!isEmailConfigured() || !inquiry.customerEmail) return;
+  if (!(await isEmailConfigured()) || !inquiry.customerEmail) return;
 
   const template = await getTemplate(templateKey);
   if (!template) return;

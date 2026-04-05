@@ -1,21 +1,33 @@
 /**
  * Email sending via Microsoft Graph API.
- * Uses the same Azure credentials as the webseite project.
- *
- * Required env vars:
- * - AZURE_TENANT_ID
- * - AZURE_CLIENT_ID
- * - AZURE_CLIENT_SECRET
- * - MAIL_FROM (default: info@knipserl.de)
+ * Credentials loaded from DB (AppSetting) with env var fallback.
  */
 
-async function getAccessToken(): Promise<string> {
-  const tenantId = process.env.AZURE_TENANT_ID;
-  const clientId = process.env.AZURE_CLIENT_ID;
-  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+import { prisma } from "@/lib/db";
+
+async function getCredential(key: string, envKey: string): Promise<string> {
+  try {
+    const setting = await prisma.appSetting.findUnique({ where: { key } });
+    if (setting?.value) return setting.value;
+  } catch { /* DB not available, fall through to env */ }
+  return process.env[envKey] || "";
+}
+
+async function getCredentials() {
+  const [tenantId, clientId, clientSecret, mailFrom] = await Promise.all([
+    getCredential("azure_tenant_id", "AZURE_TENANT_ID"),
+    getCredential("azure_client_id", "AZURE_CLIENT_ID"),
+    getCredential("azure_client_secret", "AZURE_CLIENT_SECRET"),
+    getCredential("mail_from", "MAIL_FROM"),
+  ]);
+  return { tenantId, clientId, clientSecret, mailFrom: mailFrom || "info@knipserl.de" };
+}
+
+async function getAccessToken(): Promise<{ token: string; mailFrom: string }> {
+  const { tenantId, clientId, clientSecret, mailFrom } = await getCredentials();
 
   if (!tenantId || !clientId || !clientSecret) {
-    throw new Error("Azure credentials not configured (AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)");
+    throw new Error("Azure credentials not configured. Bitte in Einstellungen → E-Mail Zugangsdaten eintragen.");
   }
 
   const res = await fetch(
@@ -37,7 +49,7 @@ async function getAccessToken(): Promise<string> {
   }
 
   const data = await res.json();
-  return data.access_token;
+  return { token: data.access_token, mailFrom };
 }
 
 export async function sendEmail({
@@ -51,8 +63,7 @@ export async function sendEmail({
   html: string;
   cc?: string;
 }): Promise<void> {
-  const senderEmail = process.env.MAIL_FROM || "info@knipserl.de";
-  const accessToken = await getAccessToken();
+  const { token, mailFrom } = await getAccessToken();
 
   const message: Record<string, unknown> = {
     subject,
@@ -65,11 +76,11 @@ export async function sendEmail({
   }
 
   const res = await fetch(
-    `https://graph.microsoft.com/v1.0/users/${senderEmail}/sendMail`,
+    `https://graph.microsoft.com/v1.0/users/${mailFrom}/sendMail`,
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ message }),
@@ -82,6 +93,7 @@ export async function sendEmail({
   }
 }
 
-export function isEmailConfigured(): boolean {
-  return !!(process.env.AZURE_TENANT_ID && process.env.AZURE_CLIENT_ID && process.env.AZURE_CLIENT_SECRET);
+export async function isEmailConfigured(): Promise<boolean> {
+  const { tenantId, clientId, clientSecret } = await getCredentials();
+  return !!(tenantId && clientId && clientSecret);
 }
