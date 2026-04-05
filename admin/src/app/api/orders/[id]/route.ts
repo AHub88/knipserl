@@ -7,34 +7,40 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        driver: true,
+        secondDriver: true,
+        company: { select: { id: true, name: true } },
+        inquiry: { select: { id: true, distanceKm: true } },
+        quotes: true,
+        invoices: true,
+      },
+    });
+
+    if (!order) {
+      return NextResponse.json({ error: "Auftrag nicht gefunden" }, { status: 404 });
+    }
+
+    const hideCash = await shouldHideCashOrders(session.user.role ?? "");
+    if (hideCash && order.paymentMethod === "CASH") {
+      return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
+    }
+
+    return NextResponse.json(order);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
+    return NextResponse.json({ error: message, stack }, { status: 500 });
   }
-
-  const { id } = await params;
-  const order = await prisma.order.findUnique({
-    where: { id },
-    include: {
-      driver: true,
-      secondDriver: true,
-      company: { select: { id: true, name: true } },
-      inquiry: { select: { id: true, distanceKm: true } },
-      quotes: true,
-      invoices: true,
-    },
-  });
-
-  if (!order) {
-    return NextResponse.json({ error: "Auftrag nicht gefunden" }, { status: 404 });
-  }
-
-  const hideCash = await shouldHideCashOrders(session.user.role ?? "");
-  if (hideCash && order.paymentMethod === "CASH") {
-    return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
-  }
-
-  return NextResponse.json(order);
 }
 
 export async function PATCH(
