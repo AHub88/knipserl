@@ -431,12 +431,16 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
                   <span className="tabular-nums">{calcTravel.toFixed(2)} &euro;</span>
                 </div>
               )}
-              {calcExtras > 0 && (
-                <div className="flex justify-between text-xs text-zinc-400">
-                  <span>Extras ({extras.length})</span>
-                  <span className="tabular-nums">{calcExtras.toFixed(2)} &euro;</span>
-                </div>
-              )}
+              {extras.map((key) => {
+                const cfg = EXTRAS_CONFIG.find((e) => e.key === key);
+                const price = EXTRAS_PRICES[key] ?? 0;
+                return price > 0 ? (
+                  <div key={key} className="flex justify-between text-xs text-zinc-400">
+                    <span>{cfg?.label ?? key}</span>
+                    <span className="tabular-nums">{price.toFixed(2)} &euro;</span>
+                  </div>
+                ) : null;
+              })}
               {calcDiscAmt > 0 && (
                 <div className="flex justify-between text-xs text-red-400">
                   <span>Rabatt{discountType === "PERCENT" ? ` (${calcDisc}%)` : ""}</span>
