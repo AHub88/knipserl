@@ -9,31 +9,27 @@ export default async function NewOrderPage() {
     redirect("/orders");
   }
 
-  const drivers = await prisma.user.findMany({
-    where: { role: { in: ["DRIVER", "ADMIN"] }, active: true },
-    orderBy: { name: "asc" },
-  });
-
-  const companies = await prisma.company.findMany({
-    orderBy: { name: "asc" },
-  });
-
-  const locations = await prisma.location.findMany({
-    orderBy: { usageCount: "desc" },
-  });
+  const [drivers, companies, locations] = await Promise.all([
+    prisma.user.findMany({
+      where: { role: { in: ["DRIVER", "ADMIN"] }, active: true },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, initials: true },
+    }),
+    prisma.company.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.location.findMany({
+      orderBy: { usageCount: "desc" },
+      select: { id: true, name: true, street: true, zip: true, city: true, distanceKm: true },
+    }),
+  ]);
 
   return (
     <NewOrderForm
-      drivers={drivers.map((d) => ({ id: d.id, name: d.name, initials: d.initials }))}
-      companies={companies.map((c) => ({ id: c.id, name: c.name }))}
-      locations={locations.map((l) => ({
-        id: l.id,
-        name: l.name,
-        street: l.street,
-        zip: l.zip,
-        city: l.city,
-        distanceKm: l.distanceKm,
-      }))}
+      drivers={drivers}
+      companies={companies}
+      locations={locations}
     />
   );
 }
