@@ -5,11 +5,12 @@ import path from "path";
 
 type RouteContext = { params: Promise<{ token: string }> };
 
-async function getLayoutDesignByToken(token: string) {
-  return prisma.layoutDesign.findUnique({
-    where: { token },
-    include: { order: true },
-  });
+async function getDesignAndOrder(token: string) {
+  const ld = await prisma.layoutDesign.findUnique({ where: { token } });
+  if (!ld) return null;
+  const order = await prisma.order.findUnique({ where: { id: ld.orderId } });
+  if (!order) return null;
+  return { layoutDesign: ld, order };
 }
 
 export async function GET(
@@ -18,12 +19,12 @@ export async function GET(
 ) {
   const { token } = await params;
 
-  const layoutDesign = await getLayoutDesignByToken(token);
-  if (!layoutDesign) {
+  const result = await getDesignAndOrder(token);
+  if (!result) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
 
-  const order = layoutDesign.order;
+  const { order, layoutDesign } = result;
 
   const templates = await prisma.layoutTemplate.findMany({
     where: { active: true },
@@ -58,8 +59,8 @@ export async function PATCH(
 ) {
   const { token } = await params;
 
-  const layoutDesign = await getLayoutDesignByToken(token);
-  if (!layoutDesign) {
+  const ld = await prisma.layoutDesign.findUnique({ where: { token } });
+  if (!ld) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
 
@@ -74,7 +75,7 @@ export async function PATCH(
   }
 
   const design = await prisma.layoutDesign.update({
-    where: { id: layoutDesign.id },
+    where: { id: ld.id },
     data: { canvasJson },
   });
 
@@ -87,12 +88,12 @@ export async function POST(
 ) {
   const { token } = await params;
 
-  const layoutDesign = await getLayoutDesignByToken(token);
-  if (!layoutDesign) {
+  const result = await getDesignAndOrder(token);
+  if (!result) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
 
-  const order = layoutDesign.order;
+  const { order, layoutDesign } = result;
 
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
@@ -104,7 +105,6 @@ export async function POST(
     );
   }
 
-  // Save PNG to public/uploads/{orderId}/layout-final.png
   const uploadDir = path.join(process.cwd(), "public", "uploads", order.id);
   await mkdir(uploadDir, { recursive: true });
 
@@ -114,23 +114,14 @@ export async function POST(
 
   const graphicUrl = `/uploads/${order.id}/layout-final.png`;
 
-  // Update order
   await prisma.order.update({
     where: { id: order.id },
-    data: {
-      graphicUrl,
-      designReady: true,
-    },
+    data: { graphicUrl, designReady: true },
   });
 
-  // Update LayoutDesign
   const design = await prisma.layoutDesign.update({
     where: { id: layoutDesign.id },
-    data: {
-      exportUrl: graphicUrl,
-      submitted: true,
-      submittedAt: new Date(),
-    },
+    data: { exportUrl: graphicUrl, submitted: true, submittedAt: new Date() },
   });
 
   return NextResponse.json({ design, graphicUrl }, { status: 201 });

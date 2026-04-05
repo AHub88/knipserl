@@ -248,8 +248,7 @@ async function main() {
             "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT "layout_designs_pkey" PRIMARY KEY ("id"),
-            CONSTRAINT "layout_designs_orderId_key" UNIQUE ("orderId"),
-            CONSTRAINT "layout_designs_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+            CONSTRAINT "layout_designs_orderId_key" UNIQUE ("orderId")
           );
         `);
       }

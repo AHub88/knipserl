@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { notFound } from "next/navigation";
 import { LayoutEditorLoader as LayoutEditor } from "@/components/design-editor/layout-editor-loader";
 
 type Props = {
@@ -9,30 +8,29 @@ type Props = {
 export default async function DesignPage({ params }: Props) {
   const { token } = await params;
 
-  let layoutDesign;
+  let layoutDesign: any = null;
+  let order: any = null;
+
   try {
-    layoutDesign = await prisma.layoutDesign.findUnique({
-      where: { token },
-      include: {
-        order: {
-          select: {
-            id: true,
-            orderNumber: true,
-            customerName: true,
-            eventType: true,
-            eventDate: true,
-            locationName: true,
-            designReady: true,
-            graphicUrl: true,
-          },
+    layoutDesign = await prisma.layoutDesign.findUnique({ where: { token } });
+    if (layoutDesign) {
+      order = await prisma.order.findUnique({
+        where: { id: layoutDesign.orderId },
+        select: {
+          id: true,
+          orderNumber: true,
+          customerName: true,
+          eventType: true,
+          eventDate: true,
+          locationName: true,
+          designReady: true,
+          graphicUrl: true,
         },
-      },
-    });
+      });
+    }
   } catch {
     // DB error - treat as not found
   }
-
-  const order = layoutDesign?.order;
 
   if (!order) {
     return (
@@ -79,7 +77,7 @@ export default async function DesignPage({ params }: Props) {
           : "",
         locationName: order.locationName,
       }}
-      existingDesign={{ canvasJson: layoutDesign!.canvasJson, submitted: layoutDesign!.submitted }}
+      existingDesign={{ canvasJson: layoutDesign.canvasJson, submitted: layoutDesign.submitted }}
     />
   );
 }
