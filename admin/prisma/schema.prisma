@@ -204,8 +204,6 @@ model Order {
   graphicUrl      String?
   images          String[]      @default([])
   confirmationToken String?     @unique @default(cuid())
-  designToken       String?     @unique @default(cuid())
-  designSubmittedAt DateTime?
   confirmedByCustomerAt DateTime?
   completedAt     DateTime?
   createdAt       DateTime      @default(now())
@@ -442,15 +440,17 @@ model LayoutTemplate {
 }
 
 model LayoutDesign {
-  id         String   @id @default(cuid())
-  orderId    String   @unique
-  templateId String?
-  format     String   @default("2x6")
-  canvasJson Json
-  exportUrl  String?
-  submitted  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  token       String   @unique @default(cuid())
+  templateId  String?
+  format      String   @default("2x6")
+  canvasJson  Json
+  exportUrl   String?
+  submitted   Boolean  @default(false)
+  submittedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   order    Order           @relation(fields: [orderId], references: [id])
   template LayoutTemplate? @relation(fields: [templateId], references: [id])

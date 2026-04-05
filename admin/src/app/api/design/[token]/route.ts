@@ -5,10 +5,10 @@ import path from "path";
 
 type RouteContext = { params: Promise<{ token: string }> };
 
-async function getOrderByToken(token: string) {
-  return prisma.order.findUnique({
-    where: { designToken: token },
-    include: { layoutDesign: true },
+async function getLayoutDesignByToken(token: string) {
+  return prisma.layoutDesign.findUnique({
+    where: { token },
+    include: { order: true },
   });
 }
 
@@ -18,10 +18,12 @@ export async function GET(
 ) {
   const { token } = await params;
 
-  const order = await getOrderByToken(token);
-  if (!order) {
+  const layoutDesign = await getLayoutDesignByToken(token);
+  if (!layoutDesign) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
+
+  const order = layoutDesign.order;
 
   const templates = await prisma.layoutTemplate.findMany({
     where: { active: true },
@@ -45,7 +47,7 @@ export async function GET(
       eventDate: order.eventDate,
       locationName: order.locationName,
     },
-    design: order.layoutDesign ?? null,
+    design: layoutDesign,
     templates,
   });
 }
@@ -56,8 +58,8 @@ export async function PATCH(
 ) {
   const { token } = await params;
 
-  const order = await getOrderByToken(token);
-  if (!order) {
+  const layoutDesign = await getLayoutDesignByToken(token);
+  if (!layoutDesign) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
 
@@ -71,15 +73,9 @@ export async function PATCH(
     );
   }
 
-  const design = await prisma.layoutDesign.upsert({
-    where: { orderId: order.id },
-    create: {
-      orderId: order.id,
-      canvasJson,
-    },
-    update: {
-      canvasJson,
-    },
+  const design = await prisma.layoutDesign.update({
+    where: { id: layoutDesign.id },
+    data: { canvasJson },
   });
 
   return NextResponse.json({ design });
@@ -91,10 +87,12 @@ export async function POST(
 ) {
   const { token } = await params;
 
-  const order = await getOrderByToken(token);
-  if (!order) {
+  const layoutDesign = await getLayoutDesignByToken(token);
+  if (!layoutDesign) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
+
+  const order = layoutDesign.order;
 
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
@@ -122,22 +120,16 @@ export async function POST(
     data: {
       graphicUrl,
       designReady: true,
-      designSubmittedAt: new Date(),
     },
   });
 
-  // Update or create LayoutDesign
-  const design = await prisma.layoutDesign.upsert({
-    where: { orderId: order.id },
-    create: {
-      orderId: order.id,
-      canvasJson: {},
+  // Update LayoutDesign
+  const design = await prisma.layoutDesign.update({
+    where: { id: layoutDesign.id },
+    data: {
       exportUrl: graphicUrl,
       submitted: true,
-    },
-    update: {
-      exportUrl: graphicUrl,
-      submitted: true,
+      submittedAt: new Date(),
     },
   });
 

@@ -243,6 +243,8 @@ async function main() {
             "canvasJson" JSONB NOT NULL DEFAULT '{}',
             "exportUrl" TEXT,
             "submitted" BOOLEAN NOT NULL DEFAULT false,
+            "token" TEXT,
+            "submittedAt" TIMESTAMP(3),
             "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT "layout_designs_pkey" PRIMARY KEY ("id"),
@@ -253,23 +255,16 @@ async function main() {
       }
     } catch (e) { console.log("[ensure-tables] layout_designs:", e.message); }
 
-    // orders: design token (MUST succeed for app to work)
+    // layout_designs: token and submittedAt columns
     try {
-      await addColumnIfMissing("orders", "designToken", "TEXT");
-      await addColumnIfMissing("orders", "designSubmittedAt", "TIMESTAMP(3)");
-    } catch (e) { console.log("[ensure-tables] orders design columns:", e.message); }
+      await addColumnIfMissing("layout_designs", "token", "TEXT");
+      await addColumnIfMissing("layout_designs", "submittedAt", "TIMESTAMP(3)");
+    } catch (e) { console.log("[ensure-tables] layout_designs token columns:", e.message); }
 
-    // Unique index + default values for designToken
+    // Unique index on layout_designs.token
     try {
-      await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS "orders_designToken_key" ON "orders"("designToken")`);
+      await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS "layout_designs_token_key" ON "layout_designs"("token")`);
     } catch (_) { /* already exists */ }
-    // Populate missing designToken values with unique cuid-like values
-    try {
-      await client.query(`
-        UPDATE "orders" SET "designToken" = 'dt_' || gen_random_uuid()::text
-        WHERE "designToken" IS NULL
-      `);
-    } catch (_) { /* ok */ }
 
     console.log("[ensure-tables] Done.");
   } catch (err) {

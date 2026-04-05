@@ -9,23 +9,21 @@ type Props = {
 export default async function DesignPage({ params }: Props) {
   const { token } = await params;
 
-  let order;
+  let layoutDesign;
   try {
-    order = await prisma.order.findFirst({
-      where: { designToken: token },
-      select: {
-        id: true,
-        orderNumber: true,
-        customerName: true,
-        eventType: true,
-        eventDate: true,
-        locationName: true,
-        designReady: true,
-        graphicUrl: true,
-        layoutDesign: {
+    layoutDesign = await prisma.layoutDesign.findUnique({
+      where: { token },
+      include: {
+        order: {
           select: {
-            canvasJson: true,
-            submitted: true,
+            id: true,
+            orderNumber: true,
+            customerName: true,
+            eventType: true,
+            eventDate: true,
+            locationName: true,
+            designReady: true,
+            graphicUrl: true,
           },
         },
       },
@@ -33,6 +31,8 @@ export default async function DesignPage({ params }: Props) {
   } catch {
     // DB error - treat as not found
   }
+
+  const order = layoutDesign?.order;
 
   if (!order) {
     return (
@@ -79,7 +79,7 @@ export default async function DesignPage({ params }: Props) {
           : "",
         locationName: order.locationName,
       }}
-      existingDesign={order.layoutDesign}
+      existingDesign={{ canvasJson: layoutDesign!.canvasJson, submitted: layoutDesign!.submitted }}
     />
   );
 }

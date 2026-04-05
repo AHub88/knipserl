@@ -12,12 +12,14 @@ export async function POST(
 ) {
   const { token } = await params;
 
-  const order = await prisma.order.findUnique({
-    where: { designToken: token },
+  const layoutDesign = await prisma.layoutDesign.findUnique({
+    where: { token },
+    select: { orderId: true, order: { select: { id: true } } },
   });
-  if (!order) {
+  if (!layoutDesign) {
     return NextResponse.json({ error: "Ungültiger Token" }, { status: 404 });
   }
+  const order = layoutDesign.order;
 
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
