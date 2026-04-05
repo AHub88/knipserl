@@ -11,6 +11,7 @@ import {
   IconTrash,
   IconToggleLeft,
   IconToggleRight,
+  IconEdit,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 
@@ -137,12 +138,19 @@ export function DesignTemplatesManager({
                 : `${inactiveItems.length} inaktive`}
             </button>
           )}
-          <button
-            onClick={() => setShowAdd(true)}
+          <Link
+            href="/settings/design-templates/editor"
             className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors"
           >
             <IconPlus className="size-4" />
-            Neue Vorlage
+            Neue Vorlage erstellen
+          </Link>
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+          >
+            <IconPlus className="size-4" />
+            Schnell-Upload
           </button>
         </div>
       </div>
@@ -263,6 +271,13 @@ export function DesignTemplatesManager({
                   </span>
                 )}
                 <div className="flex items-center gap-1 pt-1">
+                  <Link
+                    href={`/settings/design-templates/editor?id=${template.id}`}
+                    className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
+                    title="Bearbeiten"
+                  >
+                    <IconEdit className="size-3.5" />
+                  </Link>
                   <button
                     onClick={() =>
                       handleToggleActive(template.id, template.active)

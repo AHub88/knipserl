@@ -22,6 +22,8 @@ type Props = {
     locationName: string;
   };
   existingDesign?: { canvasJson: any; submitted?: boolean } | null;
+  mode?: "customer" | "admin";
+  onSaveTemplate?: (canvasJson: any) => void;
 };
 
 type Template = {
@@ -62,13 +64,14 @@ type DesignElementItem = {
   category: string | null;
 };
 
+type UploadMode = "background" | "element";
 type Panel = "templates" | "text" | "upload" | "elements" | null;
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
-export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign }: Props) {
+export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign, mode = "customer", onSaveTemplate }: Props) {
   const { width: CANVAS_W, height: CANVAS_H } = getCanvasDimensions(format);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
@@ -89,9 +92,11 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [zoom, setZoom] = useState(1.0);
 
   const dirtyRef = useRef(false);
   const lastSavedJsonRef = useRef<string>("");
+  const formatRef = useRef(format);
 
   // ---- Canvas init --------------------------------------------------------
 
@@ -116,7 +121,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       fabricRef.current = canvas;
 
       // Scale canvas to fit viewport
-      fitCanvas(canvas);
+      fitCanvas(canvas, 1);
 
       // Load existing design
       if (existingDesign?.canvasJson) {
@@ -136,7 +141,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       canvas.on("object:removed", markDirty);
 
       // Handle resize
-      const onResize = () => fitCanvas(canvas);
+      const onResize = () => fitCanvas(canvas, 1);
       window.addEventListener("resize", onResize);
 
       // Track selection for text editing
@@ -189,6 +194,13 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  // ---- Zoom effect --------------------------------------------------------
+
+  useEffect(() => {
+    if (fabricRef.current) fitCanvas(fabricRef.current, zoom);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoom]);
+
   const autoSave = useCallback(async () => {
     const canvas = fabricRef.current;
     if (!canvas) return;
@@ -215,12 +227,13 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   // ---- Helpers ------------------------------------------------------------
 
-  function fitCanvas(canvas: Canvas) {
+  function fitCanvas(canvas: Canvas, zoomLevel: number = 1) {
     if (!wrapperRef.current) return;
     const wrapper = wrapperRef.current;
     const maxW = wrapper.clientWidth - 32;
     const maxH = wrapper.clientHeight - 32;
-    const scale = Math.min(maxW / CANVAS_W, maxH / CANVAS_H, 1);
+    const baseScale = Math.min(maxW / CANVAS_W, maxH / CANVAS_H, 0.6);
+    const scale = baseScale * zoomLevel;
 
     const el = canvas.getElement().parentElement;
     if (el) {
@@ -429,7 +442,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     dirtyRef.current = true;
   }
 
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>, uploadMode: UploadMode = "element") {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -450,14 +463,37 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       const fabric = fabricModRef.current;
       if (!fabric) return;
       const img = await fabric.FabricImage.fromURL(data.url, { crossOrigin: "anonymous" });
-      // Scale to fit canvas width
-      const maxW = CANVAS_W * 0.8;
-      if (img.width && img.width > maxW) {
-        img.scaleToWidth(maxW);
+
+      const { width: canvasW, height: canvasH } = getCanvasDimensions(formatRef.current);
+
+      if (uploadMode === "background") {
+        // Scale to fill the entire canvas
+        if (img.width && img.height) {
+          const scaleX = canvasW / img.width;
+          const scaleY = canvasH / img.height;
+          const fillScale = Math.max(scaleX, scaleY);
+          img.set({
+            scaleX: fillScale,
+            scaleY: fillScale,
+            left: 0,
+            top: 0,
+            selectable: false,
+            evented: false,
+          });
+        }
+        canvas.add(img);
+        canvas.sendObjectToBack(img);
+      } else {
+        // Scale to fit canvas width at 80%
+        const maxW = canvasW * 0.8;
+        if (img.width && img.width > maxW) {
+          img.scaleToWidth(maxW);
+        }
+        img.set({ left: 50, top: 100 });
+        canvas.add(img);
+        canvas.setActiveObject(img);
       }
-      img.set({ left: 50, top: 100 });
-      canvas.add(img);
-      canvas.setActiveObject(img);
+
       canvas.renderAll();
       dirtyRef.current = true;
     } catch {
@@ -623,7 +659,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             {saveStatus === "error" && (
               <span className="text-xs text-red-400">Fehler beim Speichern</span>
             )}
-            <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>
+            <div className="flex items-center gap-1 border border-white/10 rounded-lg px-1">
+              <ToolbarButton onClick={() => setZoom(z => Math.max(0.25, z * 0.8))}>&minus;</ToolbarButton>
+              <span className="text-xs text-white/50 w-10 text-center">{Math.round(zoom * 100)}%</span>
+              <ToolbarButton onClick={() => setZoom(z => Math.min(3, z * 1.25))}>+</ToolbarButton>
+            </div>
+            {mode === "customer" && <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>}
             <ToolbarButton onClick={() => {
               const canvas = fabricRef.current;
               const active = canvas?.getActiveObject();
@@ -634,6 +675,24 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               const active = canvas?.getActiveObject();
               if (active) { canvas.sendObjectToBack(active); canvas.renderAll(); dirtyRef.current = true; }
             }}>&#8595; Hinten</ToolbarButton>
+            <ToolbarButton onClick={() => {
+              const canvas = fabricRef.current;
+              const fabric = fabricModRef.current;
+              const active = canvas?.getActiveObject();
+              if (!active || !fabric) return;
+              if (active.shadow) {
+                active.set("shadow", null);
+              } else {
+                active.set("shadow", new fabric.Shadow({
+                  color: "rgba(0,0,0,0.4)",
+                  blur: 15,
+                  offsetX: 5,
+                  offsetY: 5,
+                }));
+              }
+              canvas.renderAll();
+              dirtyRef.current = true;
+            }}>Schatten</ToolbarButton>
             <ToolbarButton onClick={deleteSelected}>Entfernen</ToolbarButton>
           </div>
         </div>
@@ -660,7 +719,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                 />
               )}
               {activePanel === "upload" && (
-                <UploadPanel onUpload={handleImageUpload} />
+                <UploadPanel onUpload={(e, uploadMode) => handleImageUpload(e, uploadMode)} />
               )}
               {activePanel === "elements" && (
                 <ElementsPanel elements={designElements} onSelect={addDesignElement} />
@@ -682,16 +741,30 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         {/* Bottom bar */}
         <div className="h-16 border-t border-white/10 bg-[#222326] flex items-center justify-between px-6 shrink-0">
           <div className="text-sm text-white/50">
-            {orderInfo.customerName} &middot; {orderInfo.eventType} &middot;{" "}
-            {orderInfo.eventDate} &middot; {orderInfo.locationName}
+            {mode === "admin"
+              ? `Admin-Modus · Format: ${format}`
+              : `${orderInfo.customerName} · ${orderInfo.eventType} · ${orderInfo.eventDate} · ${orderInfo.locationName}`}
           </div>
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="px-6 py-2 bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold rounded-lg transition-colors disabled:opacity-50"
-          >
-            {submitting ? "Wird gesendet..." : "Design absenden"}
-          </button>
+          {mode === "admin" ? (
+            <button
+              onClick={() => {
+                const canvas = fabricRef.current;
+                if (!canvas || !onSaveTemplate) return;
+                onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]));
+              }}
+              className="px-6 py-2 bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold rounded-lg transition-colors"
+            >
+              Vorlage speichern
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="px-6 py-2 bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold rounded-lg transition-colors disabled:opacity-50"
+            >
+              {submitting ? "Wird gesendet..." : "Design absenden"}
+            </button>
+          )}
         </div>
       </div>
     </>
@@ -1025,7 +1098,7 @@ function ElementsPanel({
 function UploadPanel({
   onUpload,
 }: {
-  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onUpload: (e: React.ChangeEvent<HTMLInputElement>, mode: UploadMode) => void;
 }) {
   return (
     <div className="space-y-4">
@@ -1033,15 +1106,26 @@ function UploadPanel({
       <p className="text-xs text-white/40">
         PNG, JPG oder WebP, max. 5 MB.
       </p>
-      <label className="block w-full py-8 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
-        <span className="text-sm text-white/60">Klicke hier oder ziehe eine Datei</span>
-        <input
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          onChange={onUpload}
-          className="hidden"
-        />
-      </label>
+      <div className="space-y-2">
+        <label className="block w-full py-4 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
+          <span className="text-sm text-white/60">Als Hintergrund (f&uuml;llt Canvas)</span>
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(e) => onUpload(e, "background")}
+            className="hidden"
+          />
+        </label>
+        <label className="block w-full py-4 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
+          <span className="text-sm text-white/60">Als Element (frei platzierbar)</span>
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(e) => onUpload(e, "element")}
+            className="hidden"
+          />
+        </label>
+      </div>
     </div>
   );
 }

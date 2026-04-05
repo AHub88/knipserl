@@ -39,3 +39,30 @@ export async function PATCH(
 
   return NextResponse.json(template);
 }
+
+// PUT /api/design/templates/[id] — update template (name, format, category, canvasJson)
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session?.user || session.user.role === "DRIVER") {
+    return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const body = await request.json();
+
+  const data: Record<string, unknown> = {};
+  if (body.name !== undefined) data.name = body.name;
+  if (body.format !== undefined) data.format = body.format;
+  if (body.category !== undefined) data.category = body.category || null;
+  if (body.canvasJson !== undefined) data.canvasJson = body.canvasJson;
+
+  const template = await prisma.layoutTemplate.update({
+    where: { id },
+    data,
+  });
+
+  return NextResponse.json(template);
+}

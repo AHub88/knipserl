@@ -22,13 +22,39 @@ export async function GET() {
   return NextResponse.json({ templates });
 }
 
-// POST /api/design/templates — create template (admin only, multipart)
+// POST /api/design/templates — create template (admin only)
+// Supports both multipart (file upload) and JSON (canvasJson) body
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user || session.user.role === "DRIVER") {
     return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
   }
 
+  const contentType = request.headers.get("content-type") ?? "";
+
+  // JSON body path (admin editor sends canvasJson directly)
+  if (contentType.includes("application/json")) {
+    const body = await request.json();
+    const { name, format, category, canvasJson } = body;
+
+    if (!name) {
+      return NextResponse.json({ error: "Name ist Pflichtfeld" }, { status: 400 });
+    }
+
+    const template = await prisma.layoutTemplate.create({
+      data: {
+        name,
+        format: format || "2x6",
+        category: category || null,
+        thumbnail: null,
+        canvasJson: canvasJson ?? { version: "6.6.1", objects: [] },
+      },
+    });
+
+    return NextResponse.json(template, { status: 201 });
+  }
+
+  // Multipart/form-data path (file upload)
   const formData = await request.formData();
   const name = formData.get("name") as string;
   const format = (formData.get("format") as string) || "2x6";
