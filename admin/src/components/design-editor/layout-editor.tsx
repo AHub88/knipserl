@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Canvas, Rect, Textbox, Group, FabricImage } from "fabric";
+import type { Canvas as CanvasType, Textbox, Group } from "fabric";
+type Canvas = CanvasType;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -56,7 +57,8 @@ type Panel = "templates" | "text" | "upload" | null;
 
 export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricRef = useRef<Canvas | null>(null);
+  const fabricRef = useRef<CanvasType | null>(null);
+  const fabricModRef = useRef<typeof import("fabric") | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [activePanel, setActivePanel] = useState<Panel>(null);
@@ -81,46 +83,58 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvas = new Canvas(canvasRef.current, {
-      width: CANVAS_W,
-      height: CANVAS_H,
-      backgroundColor: "#ffffff",
-      selection: true,
-    });
+    let canvas: CanvasType;
+    let cancelled = false;
 
-    fabricRef.current = canvas;
+    (async () => {
+      const fabric = await import("fabric");
+      fabricModRef.current = fabric;
+      if (cancelled || !canvasRef.current) return;
 
-    // Scale canvas to fit viewport
-    fitCanvas(canvas);
-
-    // Load existing design
-    if (existingDesign?.canvasJson) {
-      canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(() => {
-        canvas.renderAll();
-        countPlaceholders(canvas);
-        lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder"]));
+      canvas = new fabric.Canvas(canvasRef.current, {
+        width: CANVAS_W,
+        height: CANVAS_H,
+        backgroundColor: "#ffffff",
+        selection: true,
       });
-    }
 
-    // Track changes
-    const markDirty = () => {
-      dirtyRef.current = true;
-    };
-    canvas.on("object:modified", markDirty);
-    canvas.on("object:added", markDirty);
-    canvas.on("object:removed", markDirty);
+      fabricRef.current = canvas;
 
-    // Handle resize
-    const onResize = () => fitCanvas(canvas);
-    window.addEventListener("resize", onResize);
+      // Scale canvas to fit viewport
+      fitCanvas(canvas);
 
-    // Track selection for text editing
-    canvas.on("selection:created", handleSelection);
-    canvas.on("selection:updated", handleSelection);
+      // Load existing design
+      if (existingDesign?.canvasJson) {
+        canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(() => {
+          canvas.renderAll();
+          countPlaceholders(canvas);
+          lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder"]));
+        });
+      }
+
+      // Track changes
+      const markDirty = () => {
+        dirtyRef.current = true;
+      };
+      canvas.on("object:modified", markDirty);
+      canvas.on("object:added", markDirty);
+      canvas.on("object:removed", markDirty);
+
+      // Handle resize
+      const onResize = () => fitCanvas(canvas);
+      window.addEventListener("resize", onResize);
+
+      // Track selection for text editing
+      canvas.on("selection:created", handleSelection);
+      canvas.on("selection:updated", handleSelection);
+    })();
 
     return () => {
-      window.removeEventListener("resize", onResize);
-      canvas.dispose();
+      cancelled = true;
+      if (canvas) {
+        window.removeEventListener("resize", () => fitCanvas(canvas));
+        canvas.dispose();
+      }
       fabricRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -251,7 +265,10 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
     const canvas = fabricRef.current;
     if (!canvas || placeholderCount >= 3) return;
 
-    const rect = new Rect({
+    const fabric = fabricModRef.current;
+    if (!fabric) return;
+
+    const rect = new fabric.Rect({
       width: 500,
       height: 400,
       fill: "#e5e7eb",
@@ -262,7 +279,7 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
       ry: 8,
     });
 
-    const label = new Textbox("Foto", {
+    const label = new fabric.Textbox("Foto", {
       width: 500,
       fontSize: 36,
       fill: "#9ca3af",
@@ -272,7 +289,7 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
       top: 170,
     });
 
-    const group = new Group([rect, label], {
+    const group = new fabric.Group([rect, label], {
       left: (CANVAS_W - 500) / 2,
       top: 100 + placeholderCount * 450,
     });
@@ -292,7 +309,10 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
 
     await loadFont(selectedFont);
 
-    const text = new Textbox("Text hier eingeben", {
+    const fabric = fabricModRef.current;
+    if (!fabric) return;
+
+    const text = new fabric.Textbox("Text hier eingeben", {
       left: 50,
       top: 200,
       width: 500,
@@ -375,7 +395,9 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
       const canvas = fabricRef.current;
       if (!canvas) return;
 
-      const img = await FabricImage.fromURL(data.url, { crossOrigin: "anonymous" });
+      const fabric = fabricModRef.current;
+      if (!fabric) return;
+      const img = await fabric.FabricImage.fromURL(data.url, { crossOrigin: "anonymous" });
       // Scale to fit canvas width
       const maxW = CANVAS_W * 0.8;
       if (img.width && img.width > maxW) {

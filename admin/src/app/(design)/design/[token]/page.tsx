@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { LayoutEditor } from "@/components/design-editor/layout-editor";
+import dynamic from "next/dynamic";
+
+const LayoutEditor = dynamic(
+  () => import("@/components/design-editor/layout-editor").then((m) => m.LayoutEditor),
+  { ssr: false, loading: () => <div className="flex items-center justify-center min-h-[60vh] text-white/60">Editor wird geladen…</div> }
+);
 
 type Props = {
   params: Promise<{ token: string }>;
