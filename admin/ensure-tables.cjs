@@ -210,48 +210,54 @@ async function main() {
     } catch (_) { /* already nullable */ }
 
     // 7. Layout templates + designs tables
-    if (!tables.includes("layout_templates")) {
-      console.log("[ensure-tables] Creating layout_templates table...");
-      await client.query(`
-        CREATE TABLE "layout_templates" (
-          "id" TEXT NOT NULL,
-          "name" TEXT NOT NULL,
-          "format" TEXT NOT NULL DEFAULT '2x6',
-          "thumbnail" TEXT,
-          "canvasJson" JSONB NOT NULL DEFAULT '{}',
-          "category" TEXT,
-          "active" BOOLEAN NOT NULL DEFAULT true,
-          "sortOrder" INTEGER NOT NULL DEFAULT 0,
-          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          CONSTRAINT "layout_templates_pkey" PRIMARY KEY ("id")
-        );
-      `);
-    }
+    try {
+      if (!tables.includes("layout_templates")) {
+        console.log("[ensure-tables] Creating layout_templates table...");
+        await client.query(`
+          CREATE TABLE IF NOT EXISTS "layout_templates" (
+            "id" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "format" TEXT NOT NULL DEFAULT '2x6',
+            "thumbnail" TEXT,
+            "canvasJson" JSONB NOT NULL DEFAULT '{}',
+            "category" TEXT,
+            "active" BOOLEAN NOT NULL DEFAULT true,
+            "sortOrder" INTEGER NOT NULL DEFAULT 0,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "layout_templates_pkey" PRIMARY KEY ("id")
+          );
+        `);
+      }
+    } catch (e) { console.log("[ensure-tables] layout_templates:", e.message); }
 
-    if (!tables.includes("layout_designs")) {
-      console.log("[ensure-tables] Creating layout_designs table...");
-      await client.query(`
-        CREATE TABLE "layout_designs" (
-          "id" TEXT NOT NULL,
-          "orderId" TEXT NOT NULL,
-          "templateId" TEXT,
-          "format" TEXT NOT NULL DEFAULT '2x6',
-          "canvasJson" JSONB NOT NULL DEFAULT '{}',
-          "exportUrl" TEXT,
-          "submitted" BOOLEAN NOT NULL DEFAULT false,
-          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          CONSTRAINT "layout_designs_pkey" PRIMARY KEY ("id"),
-          CONSTRAINT "layout_designs_orderId_key" UNIQUE ("orderId"),
-          CONSTRAINT "layout_designs_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE
-        );
-      `);
-    }
+    try {
+      if (!tables.includes("layout_designs")) {
+        console.log("[ensure-tables] Creating layout_designs table...");
+        await client.query(`
+          CREATE TABLE IF NOT EXISTS "layout_designs" (
+            "id" TEXT NOT NULL,
+            "orderId" TEXT NOT NULL,
+            "templateId" TEXT,
+            "format" TEXT NOT NULL DEFAULT '2x6',
+            "canvasJson" JSONB NOT NULL DEFAULT '{}',
+            "exportUrl" TEXT,
+            "submitted" BOOLEAN NOT NULL DEFAULT false,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "layout_designs_pkey" PRIMARY KEY ("id"),
+            CONSTRAINT "layout_designs_orderId_key" UNIQUE ("orderId"),
+            CONSTRAINT "layout_designs_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+          );
+        `);
+      }
+    } catch (e) { console.log("[ensure-tables] layout_designs:", e.message); }
 
-    // orders: design token
-    await addColumnIfMissing("orders", "designToken", "TEXT");
-    await addColumnIfMissing("orders", "designSubmittedAt", "TIMESTAMP(3)");
+    // orders: design token (MUST succeed for app to work)
+    try {
+      await addColumnIfMissing("orders", "designToken", "TEXT");
+      await addColumnIfMissing("orders", "designSubmittedAt", "TIMESTAMP(3)");
+    } catch (e) { console.log("[ensure-tables] orders design columns:", e.message); }
 
     // Unique index + default values for designToken
     try {
