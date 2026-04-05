@@ -55,7 +55,14 @@ const PRESET_COLORS = [
   { label: "Grau", value: "#6b7280" },
 ];
 
-type Panel = "templates" | "text" | "upload" | null;
+type DesignElementItem = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  category: string | null;
+};
+
+type Panel = "templates" | "text" | "upload" | "elements" | null;
 
 // ---------------------------------------------------------------------------
 // Component
@@ -70,6 +77,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [designElements, setDesignElements] = useState<DesignElementItem[]>([]);
   const [fonts, setFonts] = useState<FontDef[]>([]);
   const [fontCategories, setFontCategories] = useState<{ key: string; label: string }[]>([]);
 
@@ -153,6 +161,11 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     fetch("/api/design/templates")
       .then((r) => r.json())
       .then((d) => setTemplates(d.templates ?? []))
+      .catch(() => {});
+
+    fetch("/api/design/elements")
+      .then((r) => r.json())
+      .then((d) => setDesignElements(d.elements ?? []))
       .catch(() => {});
 
     fetch("/api/design/fonts")
@@ -262,8 +275,36 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   async function loadTemplate(template: Template) {
     const canvas = fabricRef.current;
     if (!canvas) return;
-    await canvas.loadFromJSON(template.canvasJson as Record<string, any>);
-    canvas.renderAll();
+    const fabric = fabricModRef.current;
+    if (!fabric) return;
+
+    const json = template.canvasJson as Record<string, any>;
+
+    // If canvasJson has a backgroundImage, load the template normally
+    if (json && json.backgroundImage) {
+      await canvas.loadFromJSON(json);
+      canvas.renderAll();
+    } else if (json && json.objects && json.objects.length > 0) {
+      // Has objects but no background - load as normal
+      await canvas.loadFromJSON(json);
+      canvas.renderAll();
+    } else if (template.thumbnail) {
+      // Empty/minimal canvasJson but has a thumbnail - use as background
+      canvas.clear();
+      canvas.backgroundColor = "#ffffff";
+      const bgImg = await fabric.FabricImage.fromURL(template.thumbnail, { crossOrigin: "anonymous" });
+      if (bgImg.width && bgImg.height) {
+        bgImg.scaleX = CANVAS_W / bgImg.width;
+        bgImg.scaleY = CANVAS_H / bgImg.height;
+      }
+      canvas.backgroundImage = bgImg;
+      canvas.renderAll();
+    } else {
+      // Fallback - just load the JSON
+      await canvas.loadFromJSON(json);
+      canvas.renderAll();
+    }
+
     countPlaceholders(canvas);
     dirtyRef.current = true;
   }
@@ -423,6 +464,29 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     e.target.value = "";
   }
 
+  async function addDesignElement(element: DesignElementItem) {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+
+    const fabric = fabricModRef.current;
+    if (!fabric) return;
+
+    try {
+      const img = await fabric.FabricImage.fromURL(element.imageUrl, { crossOrigin: "anonymous" });
+      const maxW = CANVAS_W * 0.6;
+      if (img.width && img.width > maxW) {
+        img.scaleToWidth(maxW);
+      }
+      img.set({ left: 50, top: 100 });
+      canvas.add(img);
+      canvas.setActiveObject(img);
+      canvas.renderAll();
+      dirtyRef.current = true;
+    } catch {
+      alert("Fehler beim Laden des Elements.");
+    }
+  }
+
   async function handleSaveNow() {
     dirtyRef.current = true;
     await autoSave();
@@ -538,6 +602,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           >
             Bild hochladen
           </ToolbarButton>
+          <ToolbarButton
+            active={activePanel === "elements"}
+            onClick={() => setActivePanel(activePanel === "elements" ? null : "elements")}
+          >
+            Elemente
+          </ToolbarButton>
 
           <div className="ml-auto flex items-center gap-3">
             {saveStatus === "saving" && (
@@ -577,6 +647,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               )}
               {activePanel === "upload" && (
                 <UploadPanel onUpload={handleImageUpload} />
+              )}
+              {activePanel === "elements" && (
+                <ElementsPanel elements={designElements} onSelect={addDesignElement} />
               )}
             </div>
           )}
@@ -811,6 +884,74 @@ function FilterChip({
     >
       {children}
     </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Elements Panel
+// ---------------------------------------------------------------------------
+
+function ElementsPanel({
+  elements,
+  onSelect,
+}: {
+  elements: DesignElementItem[];
+  onSelect: (e: DesignElementItem) => void;
+}) {
+  const [filterCat, setFilterCat] = useState<string | null>(null);
+
+  const categories = Array.from(
+    new Set(elements.map((e) => e.category).filter(Boolean))
+  ) as string[];
+
+  const filtered = filterCat
+    ? elements.filter((e) => e.category === filterCat)
+    : elements;
+
+  if (elements.length === 0) {
+    return <p className="text-white/40 text-sm">Keine Elemente verfügbar.</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-white/80">Elemente</h3>
+      {categories.length > 0 && (
+        <div className="flex gap-1 flex-wrap">
+          <FilterChip active={filterCat === null} onClick={() => setFilterCat(null)}>
+            Alle
+          </FilterChip>
+          {categories.map((c) => (
+            <FilterChip
+              key={c}
+              active={filterCat === c}
+              onClick={() => setFilterCat(c)}
+            >
+              {c}
+            </FilterChip>
+          ))}
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-2">
+        {filtered.map((el) => (
+          <button
+            key={el.id}
+            onClick={() => onSelect(el)}
+            className="rounded-lg border border-white/10 hover:border-[#F6A11C] transition-colors overflow-hidden text-left"
+          >
+            <div className="aspect-square bg-white/5 flex items-center justify-center p-2">
+              <img
+                src={el.imageUrl}
+                alt={el.name}
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+            <div className="p-1.5">
+              <span className="text-xs text-white/60 truncate block">{el.name}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 

@@ -313,6 +313,15 @@ async function syncSchema() {
     ["layout_designs", "submittedAt", "TIMESTAMPTZ", true, null],
     ["layout_designs", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["layout_designs", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // design_elements
+    ["design_elements", "id", "TEXT", false, null],
+    ["design_elements", "name", "TEXT", false, null],
+    ["design_elements", "imageUrl", "TEXT", false, "''"],
+    ["design_elements", "category", "TEXT", true, null],
+    ["design_elements", "sortOrder", "INTEGER", false, "0"],
+    ["design_elements", "active", "BOOLEAN", false, "true"],
+    ["design_elements", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table

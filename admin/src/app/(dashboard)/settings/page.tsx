@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { IconSettings, IconMapPin, IconCar, IconCurrencyEuro, IconMail, IconLock, IconList } from "@tabler/icons-react";
+import { IconSettings, IconMapPin, IconCar, IconCurrencyEuro, IconMail, IconLock, IconList, IconTemplate, IconPalette } from "@tabler/icons-react";
 import { StartAddressForm } from "./start-address-form";
 
 export default async function SettingsPage() {
@@ -105,6 +105,38 @@ export default async function SettingsPage() {
           </div>
           <p className="text-xs text-muted-foreground">
             Vorlagen f&uuml;r Bestätigungs- und Absagemails
+          </p>
+        </Link>
+
+        {/* Link zu Design-Vorlagen */}
+        <Link
+          href="/settings/design-templates"
+          className="rounded-xl border border-white/[0.10] bg-card p-5 hover:bg-card transition-colors group"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <IconTemplate className="size-5 text-[#F6A11C]" />
+            <h2 className="text-sm font-semibold text-zinc-300 group-hover:text-zinc-100">
+              Design-Vorlagen
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Hintergrund-Vorlagen f&uuml;r den Layout-Editor verwalten
+          </p>
+        </Link>
+
+        {/* Link zu Design-Elemente */}
+        <Link
+          href="/settings/design-elements"
+          className="rounded-xl border border-white/[0.10] bg-card p-5 hover:bg-card transition-colors group"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <IconPalette className="size-5 text-[#F6A11C]" />
+            <h2 className="text-sm font-semibold text-zinc-300 group-hover:text-zinc-100">
+              Design-Elemente
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Logos, Rahmen, Deko und Sticker f&uuml;r den Layout-Editor
           </p>
         </Link>
       </div>

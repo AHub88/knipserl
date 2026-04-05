@@ -19,6 +19,8 @@ import {
   IconMapPin,
   IconClipboardList,
   IconBeach,
+  IconTemplate,
+  IconPalette,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -61,6 +63,11 @@ const accountingNav = [
   },
   { title: "Fahrervergütung", href: "/accounting/driver-report", icon: IconTruck },
   { title: "Bankabgleich", href: "/accounting/bank", icon: IconBuildingBank },
+];
+
+const designNav = [
+  { title: "Design-Vorlagen", href: "/settings/design-templates", icon: IconTemplate },
+  { title: "Design-Elemente", href: "/settings/design-elements", icon: IconPalette },
 ];
 
 const systemNav = [
@@ -167,6 +174,7 @@ export function AppSidebar() {
           <>
             <NavGroup label="Hauptmenü" items={mainNav} isActive={isActive} />
             <NavGroup label="Buchhaltung" items={accountingNav} isActive={isActive} />
+            <NavGroup label="Design" items={designNav} isActive={isActive} />
             <NavGroup label="System" items={systemNav} isActive={isActive} />
           </>
         )}

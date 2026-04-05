@@ -451,3 +451,15 @@ model LayoutDesign {
 
   @@map("layout_designs")
 }
+
+model DesignElement {
+  id        String   @id @default(cuid())
+  name      String
+  imageUrl  String
+  category  String?
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("design_elements")
+}

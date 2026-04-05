@@ -1,0 +1,294 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  IconArrowLeft,
+  IconPlus,
+  IconCheck,
+  IconX,
+  IconTrash,
+  IconToggleLeft,
+  IconToggleRight,
+} from "@tabler/icons-react";
+import { toast } from "sonner";
+
+type Template = {
+  id: string;
+  name: string;
+  format: string;
+  thumbnail: string | null;
+  category: string | null;
+  active: boolean;
+  sortOrder: number;
+};
+
+const inputClass =
+  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+
+export function DesignTemplatesManager({
+  initialTemplates,
+}: {
+  initialTemplates: Template[];
+}) {
+  const router = useRouter();
+  const [templates, setTemplates] = useState(initialTemplates);
+  const [showAdd, setShowAdd] = useState(false);
+  const [addForm, setAddForm] = useState({
+    name: "",
+    format: "2x6",
+    category: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const activeItems = templates.filter((t) => t.active);
+  const inactiveItems = templates.filter((t) => !t.active);
+  const displayItems = showInactive ? templates : activeItems;
+
+  async function handleAdd() {
+    if (!addForm.name) {
+      toast.error("Name ist ein Pflichtfeld");
+      return;
+    }
+
+    const file = fileInputRef.current?.files?.[0];
+
+    setSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", addForm.name);
+      formData.append("format", addForm.format);
+      if (addForm.category) formData.append("category", addForm.category);
+      if (file) formData.append("file", file);
+
+      const res = await fetch("/api/design/templates", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) throw new Error();
+      const created = await res.json();
+      setTemplates((prev) => [...prev, created]);
+      setAddForm({ name: "", format: "2x6", category: "" });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setShowAdd(false);
+      toast.success("Vorlage erstellt");
+      router.refresh();
+    } catch {
+      toast.error("Fehler beim Erstellen");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Vorlage wirklich löschen?")) return;
+    try {
+      const res = await fetch(`/api/design/templates/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
+      setTemplates((prev) => prev.filter((t) => t.id !== id));
+      toast.success("Vorlage gelöscht");
+      router.refresh();
+    } catch {
+      toast.error("Fehler beim Löschen");
+    }
+  }
+
+  async function handleToggleActive(id: string, currentActive: boolean) {
+    try {
+      const res = await fetch(`/api/design/templates/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: !currentActive }),
+      });
+      if (!res.ok) throw new Error();
+      setTemplates((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, active: !currentActive } : t))
+      );
+      toast.success(currentActive ? "Vorlage deaktiviert" : "Vorlage aktiviert");
+      router.refresh();
+    } catch {
+      toast.error("Fehler beim Aktualisieren");
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Link
+          href="/settings"
+          className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+        >
+          <IconArrowLeft className="size-4" />
+          Einstellungen
+        </Link>
+        <div className="flex items-center gap-2">
+          {inactiveItems.length > 0 && (
+            <button
+              onClick={() => setShowInactive((v) => !v)}
+              className="h-9 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              {showInactive
+                ? "Inaktive ausblenden"
+                : `${inactiveItems.length} inaktive`}
+            </button>
+          )}
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors"
+          >
+            <IconPlus className="size-4" />
+            Neue Vorlage
+          </button>
+        </div>
+      </div>
+
+      {showAdd && (
+        <div className="rounded-xl border border-[#F6A11C]/30 bg-card p-4 sm:p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-zinc-200">
+            Neue Vorlage erstellen
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+              <input
+                className={inputClass}
+                value={addForm.name}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, name: e.target.value }))
+                }
+                placeholder="z.B. Hochzeit Elegant"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Format</label>
+              <select
+                className={inputClass}
+                value={addForm.format}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, format: e.target.value }))
+                }
+              >
+                <option value="2x6">2x6</option>
+                <option value="4x6">4x6</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Kategorie</label>
+              <input
+                className={inputClass}
+                value={addForm.category}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, category: e.target.value }))
+                }
+                placeholder="z.B. Hochzeit, Geburtstag"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">
+                Hintergrund-Bild (PNG)
+              </label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="h-9 w-full text-sm text-zinc-400 file:mr-3 file:h-9 file:rounded-lg file:border-0 file:bg-white/[0.06] file:px-3 file:text-sm file:text-zinc-300 hover:file:bg-white/[0.10] transition-colors"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            <button
+              onClick={handleAdd}
+              disabled={saving}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+            >
+              <IconCheck className="size-3.5" />
+              Erstellen
+            </button>
+            <button
+              onClick={() => setShowAdd(false)}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              <IconX className="size-3.5" />
+              Abbrechen
+            </button>
+          </div>
+        </div>
+      )}
+
+      {displayItems.length === 0 ? (
+        <div className="rounded-xl border border-white/[0.10] bg-card p-8 text-center">
+          <p className="text-sm text-zinc-400">
+            Noch keine Design-Vorlagen vorhanden.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {displayItems.map((template) => (
+            <div
+              key={template.id}
+              className={`rounded-xl border bg-card overflow-hidden ${
+                !template.active
+                  ? "border-white/[0.05] opacity-50"
+                  : "border-white/[0.10]"
+              }`}
+            >
+              {template.thumbnail ? (
+                <img
+                  src={template.thumbnail}
+                  alt={template.name}
+                  className="w-full aspect-[1/3] object-cover bg-white"
+                />
+              ) : (
+                <div className="w-full aspect-[1/3] bg-white/[0.03] flex items-center justify-center">
+                  <span className="text-xs text-zinc-500">Kein Bild</span>
+                </div>
+              )}
+              <div className="p-3 space-y-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-zinc-200 truncate flex-1">
+                    {template.name}
+                  </h3>
+                  <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-zinc-400">
+                    {template.format}
+                  </span>
+                </div>
+                {template.category && (
+                  <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400">
+                    {template.category}
+                  </span>
+                )}
+                <div className="flex items-center gap-1 pt-1">
+                  <button
+                    onClick={() =>
+                      handleToggleActive(template.id, template.active)
+                    }
+                    className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
+                    title={template.active ? "Deaktivieren" : "Aktivieren"}
+                  >
+                    {template.active ? (
+                      <IconToggleRight className="size-4 text-green-400" />
+                    ) : (
+                      <IconToggleLeft className="size-4" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(template.id)}
+                    className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-400/[0.06] transition-colors"
+                    title="Löschen"
+                  >
+                    <IconTrash className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
