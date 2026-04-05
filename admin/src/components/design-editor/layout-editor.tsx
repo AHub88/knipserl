@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import type { Canvas as CanvasType, Textbox, Group } from "fabric";
-type Canvas = CanvasType;
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type Canvas = any;
+type Textbox = any;
+type Group = any;
 
 // ---------------------------------------------------------------------------
 // Types
