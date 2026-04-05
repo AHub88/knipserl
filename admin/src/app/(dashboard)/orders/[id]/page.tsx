@@ -9,6 +9,7 @@ export default async function OrderDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  try {
   const session = await auth();
   const { id } = await params;
 
@@ -114,4 +115,8 @@ export default async function OrderDetailPage({
       isAdmin={isAdmin}
     />
   );
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return <pre style={{ color: "red", padding: 20 }}>ORDER PAGE ERROR: {msg}</pre>;
+  }
 }
