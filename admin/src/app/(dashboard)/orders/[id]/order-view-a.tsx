@@ -254,24 +254,38 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 <span className="hidden sm:inline sm:ml-1.5">{order.confirmedByCustomerAt ? "Bestätigt" : "Link kopieren"}</span>
               </button>
             )}
-            {order.designToken && (
-              <button
-                onClick={() => {
+            <button
+              onClick={async () => {
+                if (order.designToken) {
                   const url = `${window.location.origin}/design/${order.designToken}`;
-                  navigator.clipboard.writeText(url);
+                  await navigator.clipboard.writeText(url);
                   toast.success("Design-Link kopiert");
-                }}
-                className={
-                  "flex items-center gap-1.5 size-8 sm:h-8 sm:w-auto sm:px-3 justify-center rounded-lg border text-xs font-medium transition-colors " +
-                  (order.designReady
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-purple-500/30 bg-purple-500/10 text-purple-400")
+                } else {
+                  try {
+                    const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
+                    if (!res.ok) throw new Error();
+                    const { token } = await res.json();
+                    const url = `${window.location.origin}/design/${token}`;
+                    await navigator.clipboard.writeText(url);
+                    toast.success("Design erstellt & Link kopiert");
+                    router.refresh();
+                  } catch {
+                    toast.error("Design konnte nicht erstellt werden");
+                  }
                 }
-              >
-                <IconPalette className="size-3.5" />
-                <span className="hidden sm:inline">{order.designReady ? "Design fertig" : "Design-Link"}</span>
-              </button>
-            )}
+              }}
+              className={
+                "flex items-center gap-1.5 size-8 sm:h-8 sm:w-auto sm:px-3 justify-center rounded-lg border text-xs font-medium transition-colors " +
+                (order.designReady
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : order.designToken
+                    ? "border-purple-500/30 bg-purple-500/10 text-purple-400"
+                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
+              }
+            >
+              <IconPalette className="size-3.5" />
+              <span className="hidden sm:inline">{order.designReady ? "Design fertig" : order.designToken ? "Design-Link" : "Design"}</span>
+            </button>
             <a
               href={`/api/orders/${order.id}/pdf`}
               target="_blank"
