@@ -77,6 +77,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const fabricRef = useRef<Canvas | null>(null);
   const fabricModRef = useRef<typeof import("fabric") | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const canvasWrapRef = useRef<HTMLDivElement>(null);
 
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -93,6 +94,11 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [zoom, setZoom] = useState(1.0);
+  const [showShadowPanel, setShowShadowPanel] = useState(false);
+  const [shadowBlur, setShadowBlur] = useState(15);
+  const [shadowOffsetX, setShadowOffsetX] = useState(5);
+  const [shadowOffsetY, setShadowOffsetY] = useState(5);
+  const [shadowColor] = useState("rgba(0,0,0,0.4)");
 
   const dirtyRef = useRef(false);
   const lastSavedJsonRef = useRef<string>("");
@@ -185,6 +191,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   // ---- Auto-save ----------------------------------------------------------
 
   useEffect(() => {
+    if (mode === "admin") return; // No auto-save in admin mode
     const interval = setInterval(() => {
       if (!dirtyRef.current || !fabricRef.current) return;
       dirtyRef.current = false;
@@ -192,7 +199,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     }, 5000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, mode]);
 
   // ---- Zoom effect --------------------------------------------------------
 
@@ -235,22 +242,15 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const baseScale = Math.min(maxW / CANVAS_W, maxH / CANVAS_H, 0.6);
     const scale = baseScale * zoomLevel;
 
-    const el = canvas.getElement().parentElement;
-    if (el) {
-      el.style.transform = `scale(${scale})`;
-      el.style.transformOrigin = "top center";
+    if (canvasWrapRef.current) {
+      canvasWrapRef.current.style.transform = `scale(${scale})`;
     }
   }
 
   function countPlaceholders(canvas: Canvas) {
     let count = 0;
     canvas.getObjects().forEach((obj: any) => {
-      if (obj.isPhotoPlaceholder) count++;
-      if (obj.type === "group") {
-        (obj as Group).getObjects().forEach((child: any) => {
-          if (child.isPhotoPlaceholder) count++;
-        });
-      }
+      if (obj.isPhotoPlaceholder && obj.type === "rect") count++;
     });
     setPlaceholderCount(count);
   }
@@ -331,9 +331,14 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const fabric = fabricModRef.current;
     if (!fabric) return;
 
+    const placeholderW = Math.min(500, CANVAS_W - 100);
+    const placeholderH = Math.round(placeholderW * 0.75);
+
     const rect = new fabric.Rect({
-      width: 500,
-      height: 400,
+      left: (CANVAS_W - placeholderW) / 2,
+      top: 100 + placeholderCount * (placeholderH + 50),
+      width: placeholderW,
+      height: placeholderH,
       fill: "#e5e7eb",
       stroke: "#9ca3af",
       strokeDashArray: [8, 4],
@@ -341,26 +346,26 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       rx: 8,
       ry: 8,
     });
+    (rect as any).isPhotoPlaceholder = true;
 
-    const label = new fabric.Textbox("Foto", {
-      width: 500,
-      fontSize: 36,
+    canvas.add(rect);
+
+    const label = new fabric.Textbox("FOTO " + (placeholderCount + 1), {
+      left: (CANVAS_W - placeholderW) / 2,
+      top: 100 + placeholderCount * (placeholderH + 50) + placeholderH / 2 - 20,
+      width: placeholderW,
+      fontSize: 32,
       fill: "#9ca3af",
       textAlign: "center",
       fontFamily: "sans-serif",
       editable: false,
-      top: 170,
+      selectable: false,
+      evented: false,
     });
+    (label as any).isPhotoPlaceholder = true;
 
-    const group = new fabric.Group([rect, label], {
-      left: (CANVAS_W - 500) / 2,
-      top: 100 + placeholderCount * 450,
-    });
-
-    (group as any).isPhotoPlaceholder = true;
-
-    canvas.add(group);
-    canvas.setActiveObject(group);
+    canvas.add(label);
+    canvas.setActiveObject(rect);
     canvas.renderAll();
     setPlaceholderCount((c) => c + 1);
     dirtyRef.current = true;
@@ -435,10 +440,11 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     if (!canvas) return;
     const active = canvas.getActiveObject();
     if (!active) return;
-    // Don't delete photo placeholders
-    if ((active as any).isPhotoPlaceholder) return;
+    // In customer mode, don't delete photo placeholders
+    if (mode !== "admin" && (active as any).isPhotoPlaceholder) return;
     canvas.remove(active);
     canvas.renderAll();
+    countPlaceholders(canvas);
     dirtyRef.current = true;
   }
 
@@ -450,7 +456,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     form.append("file", file);
 
     try {
-      const res = await fetch(`/api/design/${token}/upload`, {
+      const uploadUrl = mode === "admin" ? "/api/uploads/design" : `/api/design/${token}/upload`;
+      const res = await fetch(uploadUrl, {
         method: "POST",
         body: form,
       });
@@ -528,6 +535,10 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   }
 
   async function handleSaveNow() {
+    if (mode === "admin" && onSaveTemplate && fabricRef.current) {
+      onSaveTemplate(fabricRef.current.toObject(["isPhotoPlaceholder"]));
+      return;
+    }
     dirtyRef.current = true;
     await autoSave();
   }
@@ -664,7 +675,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               <span className="text-xs text-white/50 w-10 text-center">{Math.round(zoom * 100)}%</span>
               <ToolbarButton onClick={() => setZoom(z => Math.min(3, z * 1.25))}>+</ToolbarButton>
             </div>
-            {mode === "customer" && <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>}
+            <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>
             <ToolbarButton onClick={() => {
               const canvas = fabricRef.current;
               const active = canvas?.getActiveObject();
@@ -675,24 +686,51 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               const active = canvas?.getActiveObject();
               if (active) { canvas.sendObjectToBack(active); canvas.renderAll(); dirtyRef.current = true; }
             }}>&#8595; Hinten</ToolbarButton>
-            <ToolbarButton onClick={() => {
-              const canvas = fabricRef.current;
-              const fabric = fabricModRef.current;
-              const active = canvas?.getActiveObject();
-              if (!active || !fabric) return;
-              if (active.shadow) {
-                active.set("shadow", null);
-              } else {
-                active.set("shadow", new fabric.Shadow({
-                  color: "rgba(0,0,0,0.4)",
-                  blur: 15,
-                  offsetX: 5,
-                  offsetY: 5,
-                }));
-              }
-              canvas.renderAll();
-              dirtyRef.current = true;
-            }}>Schatten</ToolbarButton>
+            <div className="relative">
+              <ToolbarButton
+                active={showShadowPanel}
+                onClick={() => setShowShadowPanel(!showShadowPanel)}
+              >Schatten</ToolbarButton>
+              {showShadowPanel && (
+                <div className="absolute top-full right-0 mt-2 w-56 p-3 rounded-lg border border-white/10 bg-[#222326] shadow-xl z-50 space-y-3">
+                  <div>
+                    <label className="text-[10px] text-white/50">Weichzeichnung: {shadowBlur}px</label>
+                    <input type="range" min={0} max={50} value={shadowBlur} onChange={(e) => setShadowBlur(Number(e.target.value))} className="w-full accent-[#F6A11C]" />
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <label className="text-[10px] text-white/50">X: {shadowOffsetX}</label>
+                      <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C]" />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-[10px] text-white/50">Y: {shadowOffsetY}</label>
+                      <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C]" />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => {
+                      const canvas = fabricRef.current;
+                      const fabric = fabricModRef.current;
+                      const active = canvas?.getActiveObject();
+                      if (!active || !fabric) return;
+                      active.set("shadow", new fabric.Shadow({ color: shadowColor, blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }));
+                      canvas.renderAll();
+                      dirtyRef.current = true;
+                      setShowShadowPanel(false);
+                    }} className="flex-1 py-1.5 text-xs font-semibold rounded bg-[#F6A11C] text-black">Anwenden</button>
+                    <button onClick={() => {
+                      const canvas = fabricRef.current;
+                      const active = canvas?.getActiveObject();
+                      if (!active) return;
+                      active.set("shadow", null);
+                      canvas?.renderAll();
+                      dirtyRef.current = true;
+                      setShowShadowPanel(false);
+                    }} className="flex-1 py-1.5 text-xs font-semibold rounded border border-white/10 text-white/60">Entfernen</button>
+                  </div>
+                </div>
+              )}
+            </div>
             <ToolbarButton onClick={deleteSelected}>Entfernen</ToolbarButton>
           </div>
         </div>
@@ -732,7 +770,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             ref={wrapperRef}
             className="flex-1 flex items-start justify-center overflow-auto bg-[#1a1b1e] p-4"
           >
-            <div className="shadow-2xl shadow-black/50 border border-white/20">
+            <div ref={canvasWrapRef} className="shadow-2xl shadow-black/50 border border-white/20" style={{ transformOrigin: "top center" }}>
               <canvas ref={canvasRef} />
             </div>
           </div>
