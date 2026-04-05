@@ -60,7 +60,7 @@ type Panel = "templates" | "text" | "upload" | null;
 
 export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricRef = useRef<CanvasType | null>(null);
+  const fabricRef = useRef<Canvas | null>(null);
   const fabricModRef = useRef<typeof import("fabric") | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -86,7 +86,7 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    let canvas: CanvasType;
+    let canvas: Canvas;
     let cancelled = false;
 
     (async () => {

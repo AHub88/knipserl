@@ -36,19 +36,21 @@ export default async function CustomerDetailPage({
   let invoices: { id: string; invoiceNumber: string; totalAmount: number; status: string; createdAt: Date; company: { name: string } }[] = [];
 
   try {
-    quotes = await prisma.quote.findMany({
+    const q = await prisma.quote.findMany({
       where: { customerId: customer.id },
       orderBy: { createdAt: "desc" },
       include: { company: { select: { name: true } } },
     });
+    quotes = q as unknown as typeof quotes;
   } catch { /* customerId column or FK may not exist */ }
 
   try {
-    invoices = await prisma.invoice.findMany({
+    const inv = await prisma.invoice.findMany({
       where: { customerId: customer.id },
       orderBy: { createdAt: "desc" },
       include: { company: { select: { name: true } } },
     });
+    invoices = inv as unknown as typeof invoices;
   } catch { /* customerId column or FK may not exist */ }
 
   const fmtDate = (d: Date) => d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
