@@ -65,18 +65,22 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { canvasJson } = body;
+  const { canvasJson, format } = body;
 
-  if (!canvasJson || typeof canvasJson !== "object") {
+  if (!canvasJson && !format) {
     return NextResponse.json(
-      { error: "canvasJson ist erforderlich" },
+      { error: "canvasJson oder format ist erforderlich" },
       { status: 400 }
     );
   }
 
+  const data: Record<string, unknown> = {};
+  if (canvasJson && typeof canvasJson === "object") data.canvasJson = canvasJson;
+  if (format && (format === "2x6" || format === "4x6")) data.format = format;
+
   const design = await prisma.layoutDesign.update({
     where: { id: ld.id },
-    data: { canvasJson },
+    data,
   });
 
   return NextResponse.json({ design });
@@ -105,14 +109,14 @@ export async function POST(
     );
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads", order.id);
+  const uploadDir = path.join(process.cwd(), "uploads", order.id);
   await mkdir(uploadDir, { recursive: true });
 
   const filepath = path.join(uploadDir, "layout-final.png");
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(filepath, buffer);
 
-  const graphicUrl = `/uploads/${order.id}/layout-final.png`;
+  const graphicUrl = `/api/uploads/${order.id}/layout-final.png`;
 
   await prisma.order.update({
     where: { id: order.id },

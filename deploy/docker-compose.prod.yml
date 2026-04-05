@@ -30,6 +30,8 @@ services:
     depends_on:
       knipserl-db:
         condition: service_healthy
+    volumes:
+      - uploads-prod:/app/uploads
     environment:
       DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@127.0.0.1:5433/knipserl?schema=public"
       AUTH_SECRET: ${AUTH_SECRET}
@@ -51,6 +53,8 @@ services:
     depends_on:
       knipserl-db:
         condition: service_healthy
+    volumes:
+      - uploads-dev:/app/uploads
     environment:
       DATABASE_URL: "postgresql://knipserl:${DB_PASSWORD}@127.0.0.1:5433/knipserl_dev?schema=public"
       AUTH_SECRET: ${AUTH_SECRET_DEV}
@@ -88,3 +92,5 @@ services:
 
 volumes:
   pgdata:
+  uploads-prod:
+  uploads-dev:

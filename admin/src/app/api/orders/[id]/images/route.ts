@@ -28,7 +28,7 @@ export async function POST(
   }
 
   // Ensure upload directory exists
-  const uploadDir = path.join(process.cwd(), "public", "uploads", id);
+  const uploadDir = path.join(process.cwd(), "uploads", id);
   await mkdir(uploadDir, { recursive: true });
 
   const newImages: string[] = [];
@@ -43,7 +43,7 @@ export async function POST(
     const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(filepath, buffer);
 
-    const url = `/uploads/${id}/${filename}`;
+    const url = `/api/uploads/${id}/${filename}`;
     newImages.push(url);
   }
 

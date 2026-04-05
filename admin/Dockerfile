@@ -43,6 +43,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY entrypoint.sh ./entrypoint.sh
 COPY sync-schema.cjs ./sync-schema.cjs
 
+RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads
+
 USER nextjs
 
 EXPOSE 3000

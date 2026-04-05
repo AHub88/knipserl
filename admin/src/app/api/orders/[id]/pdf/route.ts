@@ -238,7 +238,7 @@ ${order.graphicUrl ? `
     <div style="color:#999;font-size:12px;margin-top:4px;font-style:italic;">Bitte genau prüfen – bei Änderungswünschen bitte melden</div>
   </div>
   <div style="flex:1;display:flex;align-items:flex-start;justify-content:center;">
-    <img src="/${order.graphicUrl}" style="max-width:100%;max-height:800px;" />
+    <img src="${order.graphicUrl}" style="max-width:100%;max-height:800px;" />
   </div>
   <div class="footer">
     <span class="brand">Knipserl Fotobox</span>

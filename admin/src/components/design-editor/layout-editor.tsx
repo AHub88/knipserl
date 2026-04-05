@@ -14,6 +14,7 @@ type Group = any;
 type Props = {
   orderId: string;
   token: string;
+  format: string;
   orderInfo: {
     customerName: string;
     eventType: string;
@@ -38,8 +39,10 @@ type FontDef = {
   weights: number[];
 };
 
-const CANVAS_W = 600;
-const CANVAS_H = 1800;
+function getCanvasDimensions(format: string) {
+  if (format === "4x6") return { width: 1200, height: 1800 };
+  return { width: 600, height: 1800 }; // 2x6 default
+}
 
 const PRESET_COLORS = [
   { label: "Schwarz", value: "#000000" },
@@ -58,7 +61,8 @@ type Panel = "templates" | "text" | "upload" | null;
 // Component
 // ---------------------------------------------------------------------------
 
-export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Props) {
+export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign }: Props) {
+  const { width: CANVAS_W, height: CANVAS_H } = getCanvasDimensions(format);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
   const fabricModRef = useRef<typeof import("fabric") | null>(null);

@@ -44,7 +44,6 @@ export async function POST(
 
   const uploadDir = path.join(
     process.cwd(),
-    "public",
     "uploads",
     order.id,
     "design"
@@ -58,7 +57,7 @@ export async function POST(
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(filepath, buffer);
 
-  const url = `/uploads/${order.id}/design/${filename}`;
+  const url = `/api/uploads/${order.id}/design/${filename}`;
 
   return NextResponse.json({ url }, { status: 201 });
 }

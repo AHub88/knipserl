@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { LayoutEditorLoader as LayoutEditor } from "@/components/design-editor/layout-editor-loader";
+import { DesignPageClient } from "./design-page-client";
 
 type Props = {
   params: Promise<{ token: string }>;
@@ -66,18 +66,14 @@ export default async function DesignPage({ params }: Props) {
   }
 
   return (
-    <LayoutEditor
-      orderId={order.id}
+    <DesignPageClient
       token={token}
-      orderInfo={{
-        customerName: order.customerName,
-        eventType: order.eventType,
-        eventDate: order.eventDate
-          ? new Date(order.eventDate).toLocaleDateString("de-AT")
-          : "",
-        locationName: order.locationName,
+      order={order}
+      layoutDesign={{
+        canvasJson: layoutDesign.canvasJson,
+        submitted: layoutDesign.submitted,
+        format: layoutDesign.format,
       }}
-      existingDesign={{ canvasJson: layoutDesign.canvasJson, submitted: layoutDesign.submitted }}
     />
   );
 }
