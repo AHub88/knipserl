@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { sendEmail, isEmailConfigured } from "@/lib/email";
 
 type RouteContext = { params: Promise<{ token: string }> };
 
@@ -127,6 +128,31 @@ export async function POST(
     where: { id: layoutDesign.id },
     data: { exportUrl: graphicUrl, submitted: true, submittedAt: new Date() },
   });
+
+  // Notify admin about submitted design
+  try {
+    if (await isEmailConfigured()) {
+      const adminEmail = process.env.ADMIN_EMAIL || "info@knipserl.de";
+      await sendEmail({
+        to: adminEmail,
+        subject: `Design eingereicht: #${order.orderNumber} – ${order.customerName}`,
+        html: `
+          <p>Ein Kunde hat sein Layout-Design eingereicht.</p>
+          <ul>
+            <li><strong>Auftrag:</strong> #${order.orderNumber}</li>
+            <li><strong>Kunde:</strong> ${order.customerName}</li>
+            <li><strong>Event:</strong> ${order.eventType} am ${new Date(order.eventDate).toLocaleDateString("de-DE")}</li>
+          </ul>
+          <p>Das Design kann im Admin-Bereich eingesehen werden.</p>
+        `,
+      });
+    } else {
+      console.log(`[Design] Design eingereicht für Auftrag #${order.orderNumber} (${order.customerName}) – E-Mail nicht konfiguriert`);
+    }
+  } catch (emailErr) {
+    // Don't fail the submission if email fails
+    console.error("[Design] E-Mail-Benachrichtigung fehlgeschlagen:", emailErr);
+  }
 
   return NextResponse.json({ design, graphicUrl }, { status: 201 });
 }

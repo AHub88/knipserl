@@ -40,8 +40,8 @@ type FontDef = {
 };
 
 function getCanvasDimensions(format: string) {
-  if (format === "4x6") return { width: 1200, height: 1800 };
-  return { width: 600, height: 1800 }; // 2x6 default
+  if (format === "4x6") return { width: 1800, height: 1200 }; // 10x15cm landscape
+  return { width: 600, height: 1800 }; // 2x6 (5x15cm Fotostreifen portrait)
 }
 
 const PRESET_COLORS = [
@@ -258,15 +258,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   async function loadFont(family: string) {
     const id = `gfont-${family.replace(/\s+/g, "-")}`;
-    if (document.getElementById(id)) {
-      await document.fonts.ready;
-      return;
+    if (!document.getElementById(id)) {
+      const link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@400;700&display=swap`;
+      document.head.appendChild(link);
     }
-    const link = document.createElement("link");
-    link.id = id;
-    link.rel = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@400;700&display=swap`;
-    document.head.appendChild(link);
+    // Wait for the specific font to be loaded
+    try {
+      await document.fonts.load(`16px "${family}"`);
+    } catch { /* ignore */ }
     await document.fonts.ready;
   }
 
@@ -383,7 +385,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     if (!canvas) return;
     const active = canvas.getActiveObject();
     if (active && active.type === "textbox") {
-      (active as Textbox).set("fontFamily", family);
+      const tb = active as Textbox;
+      tb.set("fontFamily", family);
+      tb.set("dirty", true);
       canvas.renderAll();
       dirtyRef.current = true;
     }
@@ -620,6 +624,16 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               <span className="text-xs text-red-400">Fehler beim Speichern</span>
             )}
             <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>
+            <ToolbarButton onClick={() => {
+              const canvas = fabricRef.current;
+              const active = canvas?.getActiveObject();
+              if (active) { canvas.bringObjectToFront(active); canvas.renderAll(); dirtyRef.current = true; }
+            }}>&#8593; Vorne</ToolbarButton>
+            <ToolbarButton onClick={() => {
+              const canvas = fabricRef.current;
+              const active = canvas?.getActiveObject();
+              if (active) { canvas.sendObjectToBack(active); canvas.renderAll(); dirtyRef.current = true; }
+            }}>&#8595; Hinten</ToolbarButton>
             <ToolbarButton onClick={deleteSelected}>Entfernen</ToolbarButton>
           </div>
         </div>
@@ -659,7 +673,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             ref={wrapperRef}
             className="flex-1 flex items-start justify-center overflow-auto bg-[#1a1b1e] p-4"
           >
-            <canvas ref={canvasRef} />
+            <div className="shadow-2xl shadow-black/50 border border-white/20">
+              <canvas ref={canvasRef} />
+            </div>
           </div>
         </div>
 
@@ -787,6 +803,20 @@ function TextPanel({
 
   const filtered = filterCat ? fonts.filter((f) => f.category === filterCat) : fonts;
 
+  // Load all fonts for current filter via a single <link> in <head>
+  useEffect(() => {
+    if (filtered.length === 0) return;
+    const id = "gfonts-preview";
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }
+    link.href = `https://fonts.googleapis.com/css2?${filtered.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join("&")}&display=swap`;
+  }, [filtered]);
+
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold text-white/80">Text</h3>
@@ -816,23 +846,20 @@ function TextPanel({
           ))}
         </div>
         <div className="max-h-48 overflow-y-auto rounded-lg border border-white/10 bg-[#1a1b1e]">
-          {filtered.map((f) => {
-            const gfUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f.family)}:wght@400;700&display=swap`;
-            return (
-              <button
-                key={f.family}
-                onClick={() => onFontChange(f.family)}
-                className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-white/5 last:border-0 ${
-                  selectedFont === f.family
-                    ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <link rel="stylesheet" href={gfUrl} />
-                <span style={{ fontFamily: `"${f.family}", sans-serif` }}>{f.family}</span>
-              </button>
-            );
-          })}
+          {filtered.map((f) => (
+            <button
+              key={f.family}
+              onClick={() => onFontChange(f.family)}
+              className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-white/5 last:border-0 ${
+                selectedFont === f.family
+                  ? "bg-[#F6A11C]/15 text-[#F6A11C]"
+                  : "text-white/70 hover:bg-white/5 hover:text-white"
+              }`}
+              style={{ fontFamily: `"${f.family}", sans-serif` }}
+            >
+              {f.family}
+            </button>
+          ))}
         </div>
       </div>
 

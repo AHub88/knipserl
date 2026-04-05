@@ -90,6 +90,7 @@ type Order = {
   teardownDate: string | null;
   teardownTime: string | null;
   images: string[];
+  graphicUrl?: string | null;
   confirmationToken?: string | null;
   confirmedByCustomerAt?: string | null;
   designToken?: string | null;
@@ -672,6 +673,24 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Drucklayouts</h3>
             <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
           </div>
+
+          {/* Kunden-Layout */}
+          {order.graphicUrl && (
+            <div className="rounded-xl border border-white/[0.10] bg-card p-4 space-y-3">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
+              <a href={order.graphicUrl} target="_blank" className="block">
+                <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-white/10 max-h-64 mx-auto" />
+              </a>
+              <a
+                href={order.graphicUrl}
+                download={`layout-${order.orderNumber}.png`}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
+              >
+                <IconFileDownload className="size-4" />
+                Layout herunterladen
+              </a>
+            </div>
+          )}
 
           {/* Kundenpreis */}
           <div className="rounded-xl border border-white/[0.10] bg-card p-5">
