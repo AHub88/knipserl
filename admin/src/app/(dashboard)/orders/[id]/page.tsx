@@ -88,6 +88,7 @@ export default async function OrderDetailPage({
     graphicUrl: order.graphicUrl,
     confirmationToken: order.confirmationToken,
     confirmedByCustomerAt: order.confirmedByCustomerAt?.toISOString() ?? null,
+    designToken: order.designToken,
     locationId: null as string | null,
   };
 

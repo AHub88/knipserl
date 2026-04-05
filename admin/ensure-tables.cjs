@@ -253,6 +253,18 @@ async function main() {
     await addColumnIfMissing("orders", "designToken", "TEXT");
     await addColumnIfMissing("orders", "designSubmittedAt", "TIMESTAMP(3)");
 
+    // Unique index + default values for designToken
+    try {
+      await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS "orders_designToken_key" ON "orders"("designToken")`);
+    } catch (_) { /* already exists */ }
+    // Populate missing designToken values with unique cuid-like values
+    try {
+      await client.query(`
+        UPDATE "orders" SET "designToken" = 'dt_' || gen_random_uuid()::text
+        WHERE "designToken" IS NULL
+      `);
+    } catch (_) { /* ok */ }
+
     console.log("[ensure-tables] Done.");
   } catch (err) {
     console.log("[ensure-tables] Error:", err.message);
