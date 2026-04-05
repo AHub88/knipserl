@@ -95,10 +95,10 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
 
     // Load existing design
     if (existingDesign?.canvasJson) {
-      canvas.loadFromJSON(existingDesign.canvasJson).then(() => {
+      canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(() => {
         canvas.renderAll();
         countPlaceholders(canvas);
-        lastSavedJsonRef.current = JSON.stringify(canvas.toJSON(["isPhotoPlaceholder"]));
+        lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder"]));
       });
     }
 
@@ -159,7 +159,7 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
     const canvas = fabricRef.current;
     if (!canvas) return;
 
-    const json = canvas.toJSON(["isPhotoPlaceholder"]);
+    const json = canvas.toObject(["isPhotoPlaceholder"]);
     const jsonStr = JSON.stringify(json);
     if (jsonStr === lastSavedJsonRef.current) return;
 
@@ -241,7 +241,7 @@ export function LayoutEditor({ orderId, token, orderInfo, existingDesign }: Prop
   async function loadTemplate(template: Template) {
     const canvas = fabricRef.current;
     if (!canvas) return;
-    await canvas.loadFromJSON(template.canvasJson);
+    await canvas.loadFromJSON(template.canvasJson as Record<string, any>);
     canvas.renderAll();
     countPlaceholders(canvas);
     dirtyRef.current = true;
