@@ -433,8 +433,6 @@ model LayoutTemplate {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  designs LayoutDesign[]
-
   @@map("layout_templates")
 }
 
@@ -450,8 +448,6 @@ model LayoutDesign {
   submittedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  template LayoutTemplate? @relation(fields: [templateId], references: [id])
 
   @@map("layout_designs")
 }

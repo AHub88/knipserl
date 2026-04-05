@@ -24,18 +24,6 @@ export default async function OrderDetailPage({
 
   if (!order) notFound();
 
-  // Separate query for layoutDesign token (table may not exist yet)
-  let designToken: string | null = null;
-  try {
-    const ld = await prisma.layoutDesign.findUnique({
-      where: { orderId: id },
-      select: { token: true },
-    });
-    designToken = ld?.token ?? null;
-  } catch {
-    // layout_designs table may not exist yet
-  }
-
   const hideCash = await shouldHideCashOrders(session?.user?.role ?? "");
   if (hideCash && order.paymentMethod === "CASH") {
     notFound();
@@ -100,7 +88,6 @@ export default async function OrderDetailPage({
     graphicUrl: order.graphicUrl,
     confirmationToken: order.confirmationToken,
     confirmedByCustomerAt: order.confirmedByCustomerAt?.toISOString() ?? null,
-    designToken,
     locationId: null as string | null,
   };
 
