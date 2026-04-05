@@ -29,7 +29,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const isLoggedIn = !!auth?.user;
       const { pathname } = request.nextUrl;
       const isOnLogin = pathname === "/login";
-      const isPublic = pathname.startsWith("/confirm") || pathname.startsWith("/api/confirm");
+      const isPublic = pathname.startsWith("/confirm") || pathname.startsWith("/api/confirm")
+        || pathname.startsWith("/design") || pathname.startsWith("/api/design");
 
       if (isPublic) return true;
 
