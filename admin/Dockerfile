@@ -41,7 +41,7 @@ COPY --from=builder /app/package.json ./package.json
 
 # Scripts
 COPY entrypoint.sh ./entrypoint.sh
-COPY ensure-tables.cjs ./ensure-tables.cjs
+COPY sync-schema.cjs ./sync-schema.cjs
 
 USER nextjs
 
