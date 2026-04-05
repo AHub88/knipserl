@@ -798,7 +798,7 @@ function TextPanel({
         Text hinzufügen
       </button>
 
-      {/* Font picker */}
+      {/* Font picker with live preview */}
       <div>
         <label className="text-xs text-white/50 block mb-1">Schriftart</label>
         <div className="flex gap-1 flex-wrap mb-2">
@@ -815,17 +815,25 @@ function TextPanel({
             </FilterChip>
           ))}
         </div>
-        <select
-          value={selectedFont}
-          onChange={(e) => onFontChange(e.target.value)}
-          className="w-full rounded-lg bg-[#1a1b1e] border border-white/10 text-white text-sm px-3 py-2"
-        >
-          {filtered.map((f) => (
-            <option key={f.family} value={f.family}>
-              {f.family}
-            </option>
-          ))}
-        </select>
+        <div className="max-h-48 overflow-y-auto rounded-lg border border-white/10 bg-[#1a1b1e]">
+          {filtered.map((f) => {
+            const gfUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f.family)}:wght@400;700&display=swap`;
+            return (
+              <button
+                key={f.family}
+                onClick={() => onFontChange(f.family)}
+                className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-white/5 last:border-0 ${
+                  selectedFont === f.family
+                    ? "bg-[#F6A11C]/15 text-[#F6A11C]"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                <link rel="stylesheet" href={gfUrl} />
+                <span style={{ fontFamily: `"${f.family}", sans-serif` }}>{f.family}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Font size */}
@@ -833,20 +841,30 @@ function TextPanel({
         <label className="text-xs text-white/50 block mb-1">
           Schriftgröße: {fontSize}px
         </label>
-        <input
-          type="range"
-          min={12}
-          max={120}
-          value={fontSize}
-          onChange={(e) => onSizeChange(Number(e.target.value))}
-          className="w-full accent-[#F6A11C]"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            type="range"
+            min={12}
+            max={120}
+            value={fontSize}
+            onChange={(e) => onSizeChange(Number(e.target.value))}
+            className="flex-1 accent-[#F6A11C]"
+          />
+          <input
+            type="number"
+            min={8}
+            max={200}
+            value={fontSize}
+            onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
+            className="w-14 rounded bg-[#1a1b1e] border border-white/10 text-white text-xs text-center px-1 py-1"
+          />
+        </div>
       </div>
 
-      {/* Colors */}
+      {/* Colors with picker + hex input */}
       <div>
         <label className="text-xs text-white/50 block mb-1">Farbe</label>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-2">
           {PRESET_COLORS.map((c) => (
             <button
               key={c.value}
@@ -858,6 +876,24 @@ function TextPanel({
               style={{ backgroundColor: c.value }}
             />
           ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            value={textColor}
+            onChange={(e) => onColorChange(e.target.value)}
+            className="w-8 h-8 rounded cursor-pointer border border-white/10 bg-transparent"
+          />
+          <input
+            type="text"
+            value={textColor}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (/^#[0-9a-fA-F]{0,6}$/.test(v)) onColorChange(v);
+            }}
+            placeholder="#000000"
+            className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-xs px-2 py-1.5 font-mono"
+          />
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ type Props = {
 
 export function DesignPageClient({ token, order, layoutDesign }: Props) {
   const [format, setFormat] = useState<string | null>(
-    layoutDesign.format && layoutDesign.format !== "2x6" ? layoutDesign.format : null
+    layoutDesign.format && layoutDesign.format.length > 0 ? layoutDesign.format : null
   );
   const [saving, setSaving] = useState(false);
 

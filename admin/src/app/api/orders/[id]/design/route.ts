@@ -32,10 +32,11 @@ export async function POST(
     return NextResponse.json({ token: existing.token });
   }
 
-  // Create new design
+  // Create new design (format empty = picker will be shown)
   const design = await prisma.layoutDesign.create({
     data: {
       orderId: id,
+      format: "",
       canvasJson: {},
     },
     select: { token: true },
