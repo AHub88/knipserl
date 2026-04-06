@@ -784,6 +784,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               <canvas ref={canvasRef} />
             </div>
           </div>
+
+          {/* Layers panel (right sidebar) */}
+          <LayersPanel
+            fabricRef={fabricRef}
+            onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; }}
+          />
         </div>
 
         {/* Bottom bar */}
@@ -1174,6 +1180,152 @@ function UploadPanel({
             className="hidden"
           />
         </label>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Layers Panel (right sidebar, Photoshop-style)
+// ---------------------------------------------------------------------------
+
+function LayersPanel({
+  fabricRef,
+  onUpdate,
+}: {
+  fabricRef: React.RefObject<Canvas | null>;
+  onUpdate: () => void;
+}) {
+  const [, forceUpdate] = useState(0);
+  const refresh = () => forceUpdate((n) => n + 1);
+
+  useEffect(() => {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    const handler = () => setTimeout(refresh, 50);
+    canvas.on("object:added", handler);
+    canvas.on("object:removed", handler);
+    canvas.on("object:modified", handler);
+    canvas.on("selection:created", handler);
+    canvas.on("selection:updated", handler);
+    canvas.on("selection:cleared", handler);
+    return () => {
+      canvas.off("object:added", handler);
+      canvas.off("object:removed", handler);
+      canvas.off("object:modified", handler);
+      canvas.off("selection:created", handler);
+      canvas.off("selection:updated", handler);
+      canvas.off("selection:cleared", handler);
+    };
+  }, [fabricRef]);
+
+  const canvas = fabricRef.current;
+  if (!canvas) return null;
+
+  const objects = canvas.getObjects();
+  const activeObj = canvas.getActiveObject();
+
+  function getLayerName(obj: any): string {
+    if (obj.isPhotoPlaceholder) return "Foto-Platzhalter";
+    if (obj.isBackground) return "Hintergrund";
+    if (obj.type === "textbox" || obj.type === "text") {
+      const txt = (obj.text || "").substring(0, 18);
+      return txt ? `T: ${txt}` : "Text";
+    }
+    if (obj.type === "image") return "Bild";
+    if (obj.type === "group") return obj.isPhotoPlaceholder ? "Foto-Platzhalter" : "Gruppe";
+    if (obj.type === "rect") return "Rechteck";
+    return "Ebene";
+  }
+
+  function getLayerColor(obj: any): string {
+    if (obj.isPhotoPlaceholder) return "#3b82f6";
+    if (obj.isBackground) return "#8b5cf6";
+    if (obj.type === "textbox" || obj.type === "text") return "#f59e0b";
+    if (obj.type === "image") return "#10b981";
+    return "#6b7280";
+  }
+
+  const reversed = [...objects].reverse();
+
+  return (
+    <div className="w-[200px] shrink-0 border-l border-white/10 bg-[#222326] flex flex-col">
+      <div className="px-3 py-2 border-b border-white/10">
+        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider">Ebenen</h3>
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        {reversed.map((obj: any, revIdx: number) => {
+          const realIdx = objects.length - 1 - revIdx;
+          const isActive = obj === activeObj;
+          const isVisible = obj.visible !== false;
+          const color = getLayerColor(obj);
+          return (
+            <div
+              key={revIdx}
+              className={`flex items-center gap-1.5 px-2 py-1.5 text-[11px] cursor-pointer border-b border-white/5 transition-colors ${
+                isActive ? "bg-white/10" : "hover:bg-white/5"
+              } ${!isVisible ? "opacity-30" : ""}`}
+              onClick={() => {
+                canvas.setActiveObject(obj);
+                canvas.renderAll();
+                refresh();
+              }}
+            >
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{ backgroundColor: color }}
+              />
+              <span className={`flex-1 truncate ${isActive ? "text-white font-medium" : "text-white/60"}`}>
+                {getLayerName(obj)}
+              </span>
+              <div className="flex items-center gap-px shrink-0">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    obj.set("visible", !isVisible);
+                    onUpdate();
+                    refresh();
+                  }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10 text-[9px]"
+                  title={isVisible ? "Ausblenden" : "Einblenden"}
+                >
+                  {isVisible ? "👁" : "–"}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (realIdx < objects.length - 1) {
+                      canvas.moveObjectTo(obj, realIdx + 1);
+                      onUpdate();
+                      refresh();
+                    }
+                  }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10 text-[9px]"
+                  title="Nach oben"
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (realIdx > 0) {
+                      canvas.moveObjectTo(obj, realIdx - 1);
+                      onUpdate();
+                      refresh();
+                    }
+                  }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10 text-[9px]"
+                  title="Nach unten"
+                >
+                  ▼
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {objects.length === 0 && (
+          <p className="text-[10px] text-white/30 p-3 text-center">Keine Ebenen</p>
+        )}
       </div>
     </div>
   );
