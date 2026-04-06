@@ -767,6 +767,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   onSizeChange={updateSelectedFontSize}
                   onColorChange={updateSelectedColor}
                   onAdd={addText}
+                  fabricRef={fabricRef}
+                  onCanvasUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; }}
                 />
               )}
               {activePanel === "upload" && (
@@ -926,6 +928,8 @@ function TextPanel({
   onSizeChange,
   onColorChange,
   onAdd,
+  fabricRef,
+  onCanvasUpdate,
 }: {
   fonts: FontDef[];
   fontCategories: { key: string; label: string }[];
@@ -936,6 +940,8 @@ function TextPanel({
   onSizeChange: (s: number) => void;
   onColorChange: (c: string) => void;
   onAdd: () => void;
+  fabricRef: React.RefObject<Canvas | null>;
+  onCanvasUpdate: () => void;
 }) {
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
@@ -1060,6 +1066,53 @@ function TextPanel({
             className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-xs px-2 py-1.5 font-mono"
           />
         </div>
+      </div>
+
+      {/* Letter spacing + Line height */}
+      <div>
+        <label className="text-xs text-white/50 block mb-1">Zeichenabstand</label>
+        <input
+          type="range"
+          min={-200}
+          max={1000}
+          value={(() => {
+            const active = fabricRef.current?.getActiveObject();
+            return (active && active.type === "textbox") ? (active as any).charSpacing ?? 0 : 0;
+          })()}
+          onChange={(e) => {
+            const canvas = fabricRef.current;
+            if (!canvas) return;
+            const active = canvas.getActiveObject();
+            if (active && active.type === "textbox") {
+              (active as any).set("charSpacing", Number(e.target.value));
+              onCanvasUpdate();
+            }
+          }}
+          className="w-full accent-[#F6A11C]"
+        />
+      </div>
+
+      <div>
+        <label className="text-xs text-white/50 block mb-1">Zeilenabstand</label>
+        <input
+          type="range"
+          min={50}
+          max={300}
+          value={(() => {
+            const active = fabricRef.current?.getActiveObject();
+            return (active && active.type === "textbox") ? Math.round(((active as any).lineHeight ?? 1.16) * 100) : 116;
+          })()}
+          onChange={(e) => {
+            const canvas = fabricRef.current;
+            if (!canvas) return;
+            const active = canvas.getActiveObject();
+            if (active && active.type === "textbox") {
+              (active as any).set("lineHeight", Number(e.target.value) / 100);
+              onCanvasUpdate();
+            }
+          }}
+          className="w-full accent-[#F6A11C]"
+        />
       </div>
     </div>
   );
