@@ -250,7 +250,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   function countPlaceholders(canvas: Canvas) {
     let count = 0;
     canvas.getObjects().forEach((obj: any) => {
-      if (obj.isPhotoPlaceholder && obj.type === "rect") count++;
+      if (obj.isPhotoPlaceholder) count++;
     });
     setPlaceholderCount(count);
   }
@@ -331,41 +331,43 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const fabric = fabricModRef.current;
     if (!fabric) return;
 
+    const colors = ["#3b82f6", "#f59e0b", "#10b981"]; // blue, amber, green
+    const color = colors[placeholderCount % colors.length];
+    const num = placeholderCount + 1;
     const placeholderW = Math.min(500, CANVAS_W - 100);
     const placeholderH = Math.round(placeholderW * 0.75);
 
     const rect = new fabric.Rect({
-      left: (CANVAS_W - placeholderW) / 2,
-      top: 100 + placeholderCount * (placeholderH + 50),
       width: placeholderW,
       height: placeholderH,
-      fill: "#e5e7eb",
-      stroke: "#9ca3af",
-      strokeDashArray: [8, 4],
-      strokeWidth: 2,
-      rx: 8,
-      ry: 8,
+      fill: color + "25",
+      stroke: color,
+      strokeWidth: 3,
+      rx: 12,
+      ry: 12,
+      originX: "center",
+      originY: "center",
     });
-    (rect as any).isPhotoPlaceholder = true;
 
-    canvas.add(rect);
-
-    const label = new fabric.Textbox("FOTO " + (placeholderCount + 1), {
-      left: (CANVAS_W - placeholderW) / 2,
-      top: 100 + placeholderCount * (placeholderH + 50) + placeholderH / 2 - 20,
-      width: placeholderW,
-      fontSize: 32,
-      fill: "#9ca3af",
-      textAlign: "center",
+    const label = new fabric.Text(`FOTO ${num}`, {
+      fontSize: 48,
+      fontWeight: "bold",
+      fill: color,
       fontFamily: "sans-serif",
-      editable: false,
+      originX: "center",
+      originY: "center",
       selectable: false,
       evented: false,
     });
-    (label as any).isPhotoPlaceholder = true;
 
-    canvas.add(label);
-    canvas.setActiveObject(rect);
+    const group = new fabric.Group([rect, label], {
+      left: (CANVAS_W - placeholderW) / 2,
+      top: 100 + placeholderCount * (placeholderH + 50),
+    });
+    (group as any).isPhotoPlaceholder = true;
+
+    canvas.add(group);
+    canvas.setActiveObject(group);
     canvas.renderAll();
     setPlaceholderCount((c) => c + 1);
     dirtyRef.current = true;
@@ -486,9 +488,14 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             scaleY: fillScale,
             left: 0,
             top: 0,
-            selectable: false,
-            evented: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockRotation: true,
+            hasControls: false,
           });
+          (img as any).isBackground = true;
         }
         canvas.add(img);
         canvas.sendObjectToBack(img);
