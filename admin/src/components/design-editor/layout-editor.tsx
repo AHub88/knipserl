@@ -1199,11 +1199,16 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    canvas.bringObjectForward(obj);
-                    canvas.setActiveObject(obj);
-                    canvas.requestRenderAll();
-                    onUpdate();
-                    refresh();
+                    const objs = canvas._objects;
+                    const idx = objs.indexOf(obj);
+                    if (idx >= 0 && idx < objs.length - 1) {
+                      objs.splice(idx, 1);
+                      objs.splice(idx + 1, 0, obj);
+                      canvas.setActiveObject(obj);
+                      canvas.renderAll();
+                      onUpdate();
+                      refresh();
+                    }
                   }}
                   className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
                   title="Nach oben"
@@ -1213,11 +1218,16 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    canvas.sendObjectBackwards(obj);
-                    canvas.setActiveObject(obj);
-                    canvas.requestRenderAll();
-                    onUpdate();
-                    refresh();
+                    const objs = canvas._objects;
+                    const idx = objs.indexOf(obj);
+                    if (idx > 0) {
+                      objs.splice(idx, 1);
+                      objs.splice(idx - 1, 0, obj);
+                      canvas.setActiveObject(obj);
+                      canvas.renderAll();
+                      onUpdate();
+                      refresh();
+                    }
                   }}
                   className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
                   title="Nach unten"
