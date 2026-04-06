@@ -805,10 +805,10 @@ function TemplatesPanel({
               <img
                 src={t.thumbnail}
                 alt={t.name}
-                className="w-full aspect-[1/3] object-cover bg-white"
+                className="w-full h-28 object-contain bg-white/5"
               />
             ) : (
-              <div className="w-full aspect-[1/3] bg-white/5 flex items-center justify-center">
+              <div className="w-full h-28 bg-white/5 flex items-center justify-center">
                 <span className="text-xs text-white/30">Vorschau</span>
               </div>
             )}
