@@ -1123,42 +1123,11 @@ function LayersPanel({
   const [shadowBlur, setShadowBlur] = useState(15);
   const [shadowOffsetX, setShadowOffsetX] = useState(5);
   const [shadowOffsetY, setShadowOffsetY] = useState(5);
-  const lastCountRef = useRef(0);
-
-  // Poll canvas for changes every 300ms (event-based was unreliable)
+  // Poll canvas every 500ms to always stay in sync
   useEffect(() => {
-    const interval = setInterval(() => {
-      const canvas = fabricRef.current;
-      if (!canvas) return;
-      const count = canvas.getObjects().length;
-      const active = canvas.getActiveObject();
-      const key = `${count}-${active?.type || "none"}`;
-      if (key !== lastCountRef.current.toString()) {
-        lastCountRef.current = count;
-        refresh();
-      }
-    }, 300);
+    const interval = setInterval(refresh, 500);
     return () => clearInterval(interval);
-  }, [fabricRef]);
-
-  // Also refresh on canvas events for immediate feedback
-  useEffect(() => {
-    const canvas = fabricRef.current;
-    if (!canvas) return;
-    const handler = () => refresh();
-    canvas.on("object:added", handler);
-    canvas.on("object:removed", handler);
-    canvas.on("selection:created", handler);
-    canvas.on("selection:updated", handler);
-    canvas.on("selection:cleared", handler);
-    return () => {
-      canvas.off("object:added", handler);
-      canvas.off("object:removed", handler);
-      canvas.off("selection:created", handler);
-      canvas.off("selection:updated", handler);
-      canvas.off("selection:cleared", handler);
-    };
-  }, [fabricRef, tick]);
+  }, []);
 
   const canvas = fabricRef.current;
   if (!canvas) return null;
