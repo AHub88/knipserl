@@ -94,11 +94,6 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [zoom, setZoom] = useState(1.0);
-  const [showShadowPanel, setShowShadowPanel] = useState(false);
-  const [shadowBlur, setShadowBlur] = useState(15);
-  const [shadowOffsetX, setShadowOffsetX] = useState(5);
-  const [shadowOffsetY, setShadowOffsetY] = useState(5);
-  const [shadowColor] = useState("rgba(0,0,0,0.4)");
 
   const dirtyRef = useRef(false);
   const lastSavedJsonRef = useRef<string>("");
@@ -641,107 +636,31 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       {/* Editor (hidden on mobile) */}
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
-        <div className="h-12 border-b border-white/10 bg-[#222326] flex items-center gap-2 px-4 shrink-0">
-          <ToolbarButton
-            active={activePanel === "templates"}
-            onClick={() => setActivePanel(activePanel === "templates" ? null : "templates")}
-          >
-            Vorlagen
-          </ToolbarButton>
-          <ToolbarButton onClick={addPhotoPlaceholder} disabled={placeholderCount >= 3}>
-            Foto-Platzhalter ({placeholderCount}/3)
-          </ToolbarButton>
-          <ToolbarButton
-            active={activePanel === "text"}
-            onClick={() => setActivePanel(activePanel === "text" ? null : "text")}
-          >
-            Text
-          </ToolbarButton>
-          <ToolbarButton
-            active={activePanel === "upload"}
-            onClick={() => setActivePanel(activePanel === "upload" ? null : "upload")}
-          >
-            Bild hochladen
-          </ToolbarButton>
-          <ToolbarButton
-            active={activePanel === "elements"}
-            onClick={() => setActivePanel(activePanel === "elements" ? null : "elements")}
-          >
-            Elemente
-          </ToolbarButton>
+        <div className="h-11 border-b border-white/10 bg-[#222326] flex items-center px-3 shrink-0">
+          {/* Left: Add tools */}
+          <div className="flex items-center gap-1.5">
+            <ToolbarButton active={activePanel === "templates"} onClick={() => setActivePanel(activePanel === "templates" ? null : "templates")}>Vorlagen</ToolbarButton>
+            <ToolbarButton onClick={addPhotoPlaceholder} disabled={placeholderCount >= 3}>Foto ({placeholderCount}/3)</ToolbarButton>
+            <ToolbarButton active={activePanel === "text"} onClick={() => setActivePanel(activePanel === "text" ? null : "text")}>Text</ToolbarButton>
+            <ToolbarButton active={activePanel === "upload"} onClick={() => setActivePanel(activePanel === "upload" ? null : "upload")}>Bild</ToolbarButton>
+            <ToolbarButton active={activePanel === "elements"} onClick={() => setActivePanel(activePanel === "elements" ? null : "elements")}>Elemente</ToolbarButton>
+          </div>
 
-          <div className="ml-auto flex items-center gap-3">
-            {saveStatus === "saving" && (
-              <span className="text-xs text-white/40">Speichert...</span>
-            )}
-            {saveStatus === "saved" && (
-              <span className="text-xs text-green-400">Gespeichert</span>
-            )}
-            {saveStatus === "error" && (
-              <span className="text-xs text-red-400">Fehler beim Speichern</span>
-            )}
+          {/* Center: Zoom */}
+          <div className="flex-1 flex justify-center">
             <div className="flex items-center gap-1 border border-white/10 rounded-lg px-1">
               <ToolbarButton onClick={() => setZoom(z => Math.max(0.25, z * 0.8))}>&minus;</ToolbarButton>
               <span className="text-xs text-white/50 w-10 text-center">{Math.round(zoom * 100)}%</span>
               <ToolbarButton onClick={() => setZoom(z => Math.min(3, z * 1.25))}>+</ToolbarButton>
             </div>
+          </div>
+
+          {/* Right: Save + Status */}
+          <div className="flex items-center gap-2">
+            {saveStatus === "saving" && <span className="text-xs text-white/40">Speichert...</span>}
+            {saveStatus === "saved" && <span className="text-xs text-green-400">Gespeichert</span>}
+            {saveStatus === "error" && <span className="text-xs text-red-400">Fehler</span>}
             <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>
-            <ToolbarButton onClick={() => {
-              const canvas = fabricRef.current;
-              const active = canvas?.getActiveObject();
-              if (active) { canvas.bringObjectToFront(active); canvas.renderAll(); dirtyRef.current = true; }
-            }}>&#8593; Vorne</ToolbarButton>
-            <ToolbarButton onClick={() => {
-              const canvas = fabricRef.current;
-              const active = canvas?.getActiveObject();
-              if (active) { canvas.sendObjectToBack(active); canvas.renderAll(); dirtyRef.current = true; }
-            }}>&#8595; Hinten</ToolbarButton>
-            <div className="relative">
-              <ToolbarButton
-                active={showShadowPanel}
-                onClick={() => setShowShadowPanel(!showShadowPanel)}
-              >Schatten</ToolbarButton>
-              {showShadowPanel && (
-                <div className="absolute top-full right-0 mt-2 w-56 p-3 rounded-lg border border-white/10 bg-[#222326] shadow-xl z-50 space-y-3">
-                  <div>
-                    <label className="text-[10px] text-white/50">Weichzeichnung: {shadowBlur}px</label>
-                    <input type="range" min={0} max={50} value={shadowBlur} onChange={(e) => setShadowBlur(Number(e.target.value))} className="w-full accent-[#F6A11C]" />
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <label className="text-[10px] text-white/50">X: {shadowOffsetX}</label>
-                      <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C]" />
-                    </div>
-                    <div className="flex-1">
-                      <label className="text-[10px] text-white/50">Y: {shadowOffsetY}</label>
-                      <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C]" />
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => {
-                      const canvas = fabricRef.current;
-                      const fabric = fabricModRef.current;
-                      const active = canvas?.getActiveObject();
-                      if (!active || !fabric) return;
-                      active.set("shadow", new fabric.Shadow({ color: shadowColor, blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }));
-                      canvas.renderAll();
-                      dirtyRef.current = true;
-                      setShowShadowPanel(false);
-                    }} className="flex-1 py-1.5 text-xs font-semibold rounded bg-[#F6A11C] text-black">Anwenden</button>
-                    <button onClick={() => {
-                      const canvas = fabricRef.current;
-                      const active = canvas?.getActiveObject();
-                      if (!active) return;
-                      active.set("shadow", null);
-                      canvas?.renderAll();
-                      dirtyRef.current = true;
-                      setShowShadowPanel(false);
-                    }} className="flex-1 py-1.5 text-xs font-semibold rounded border border-white/10 text-white/60">Entfernen</button>
-                  </div>
-                </div>
-              )}
-            </div>
-            <ToolbarButton onClick={deleteSelected}>Entfernen</ToolbarButton>
           </div>
         </div>
 
@@ -788,6 +707,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           {/* Layers panel (right sidebar) */}
           <LayersPanel
             fabricRef={fabricRef}
+            fabricModRef={fabricModRef}
             onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; }}
           />
         </div>
@@ -1191,13 +1111,18 @@ function UploadPanel({
 
 function LayersPanel({
   fabricRef,
+  fabricModRef,
   onUpdate,
 }: {
   fabricRef: React.RefObject<Canvas | null>;
+  fabricModRef: React.RefObject<typeof import("fabric") | null>;
   onUpdate: () => void;
 }) {
   const [, forceUpdate] = useState(0);
   const refresh = () => forceUpdate((n) => n + 1);
+  const [shadowBlur, setShadowBlur] = useState(15);
+  const [shadowOffsetX, setShadowOffsetX] = useState(5);
+  const [shadowOffsetY, setShadowOffsetY] = useState(5);
 
   useEffect(() => {
     const canvas = fabricRef.current;
@@ -1347,6 +1272,42 @@ function LayersPanel({
           <p className="text-[10px] text-white/30 p-3 text-center">Keine Ebenen</p>
         )}
       </div>
+
+      {/* Actions for selected layer */}
+      {activeObj && (
+        <div className="shrink-0 border-t border-white/10 p-2 space-y-2">
+          <h4 className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">Auswahl</h4>
+          {/* Shadow controls */}
+          <div className="space-y-1.5">
+            <div>
+              <label className="text-[10px] text-white/50">Schatten: {shadowBlur}px</label>
+              <input type="range" min={0} max={50} value={shadowBlur} onChange={(e) => setShadowBlur(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+            </div>
+            <div className="flex gap-1.5">
+              <div className="flex-1">
+                <label className="text-[10px] text-white/50">X:{shadowOffsetX}</label>
+                <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] text-white/50">Y:{shadowOffsetY}</label>
+                <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+              </div>
+            </div>
+            <div className="flex gap-1">
+              <button onClick={() => {
+                const fabric = fabricModRef.current;
+                if (!fabric) return;
+                activeObj.set("shadow", new fabric.Shadow({ color: "rgba(0,0,0,0.4)", blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }));
+                onUpdate(); refresh();
+              }} className="flex-1 py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Schatten</button>
+              <button onClick={() => {
+                activeObj.set("shadow", null);
+                onUpdate(); refresh();
+              }} className="flex-1 py-1 text-[10px] font-semibold rounded border border-white/10 text-white/50">Kein Schatten</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
