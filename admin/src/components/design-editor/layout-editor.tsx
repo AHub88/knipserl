@@ -117,6 +117,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         height: CANVAS_H,
         backgroundColor: "#ffffff",
         selection: true,
+        preserveObjectStacking: true,
       });
 
       fabricRef.current = canvas;
@@ -901,7 +902,7 @@ function TextPanel({
           <input
             type="range"
             min={12}
-            max={120}
+            max={400}
             value={fontSize}
             onChange={(e) => onSizeChange(Number(e.target.value))}
             className="flex-1 accent-[#F6A11C]"
@@ -909,7 +910,7 @@ function TextPanel({
           <input
             type="number"
             min={8}
-            max={200}
+            max={400}
             value={fontSize}
             onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
             className="w-14 rounded bg-[#1a1b1e] border border-white/10 text-white text-xs text-center px-1 py-1"
