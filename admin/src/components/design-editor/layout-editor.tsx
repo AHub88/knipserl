@@ -1150,39 +1150,46 @@ function LayersPanel({
   const objects = canvas.getObjects();
   const activeObj = canvas.getActiveObject();
 
-  function isImageType(obj: any): boolean {
-    const t = (obj.type || "").toLowerCase();
-    return t === "image" || t === "fabricimage" || obj.getSrc != null;
-  }
-
-  function isTextType(obj: any): boolean {
-    const t = (obj.type || "").toLowerCase();
-    return t === "textbox" || t === "text" || t === "i-text";
+  function detectKind(obj: any): "placeholder" | "background" | "text" | "image" | "group" | "rect" | "unknown" {
+    if (obj.isPhotoPlaceholder) return "placeholder";
+    if (obj.isBackground) return "background";
+    // Check text by property existence (works regardless of type string)
+    if (obj.text !== undefined && obj.fontFamily !== undefined) return "text";
+    // Check image by src property or _element (fabric v6 internals)
+    if (obj._src || obj._element || obj.getSrc || obj.src) return "image";
+    if (typeof obj.getObjects === "function") return "group";
+    if (obj.type === "rect" || (obj.width && obj.height && obj.fill && !obj.text)) return "rect";
+    return "unknown";
   }
 
   function getLayerName(obj: any): string {
-    if (obj.isPhotoPlaceholder && obj.type === "group") {
-      const textChild = obj.getObjects?.().find?.((c: any) => isTextType(c));
-      return textChild?.text || "Foto-Platzhalter";
+    const kind = detectKind(obj);
+    switch (kind) {
+      case "placeholder": {
+        if (typeof obj.getObjects === "function") {
+          const textChild = obj.getObjects().find((c: any) => c.text !== undefined);
+          if (textChild?.text) return textChild.text;
+        }
+        return "Foto-Platzhalter";
+      }
+      case "background": return "Hintergrund";
+      case "text": return `T: ${(obj.text || "").substring(0, 18) || "Text"}`;
+      case "image": return obj.isBackground ? "Hintergrund" : "Bild";
+      case "group": return "Gruppe";
+      case "rect": return "Rechteck";
+      default: return `Ebene (${obj.type || obj.constructor?.name || "?"})`;
     }
-    if (obj.isPhotoPlaceholder) return "Foto-Platzhalter";
-    if (obj.isBackground) return "Hintergrund";
-    if (isTextType(obj)) {
-      const txt = (obj.text || "").substring(0, 18);
-      return txt ? `T: ${txt}` : "Text";
-    }
-    if (isImageType(obj)) return obj.isBackground ? "Hintergrund" : "Bild";
-    if (obj.type === "group") return "Gruppe";
-    if (obj.type === "rect") return "Rechteck";
-    return `Ebene (${obj.type || "?"})`;
   }
 
   function getLayerColor(obj: any): string {
-    if (obj.isPhotoPlaceholder) return "#3b82f6";
-    if (obj.isBackground) return "#8b5cf6";
-    if (isTextType(obj)) return "#f59e0b";
-    if (isImageType(obj)) return "#10b981";
-    return "#6b7280";
+    const kind = detectKind(obj);
+    switch (kind) {
+      case "placeholder": return "#3b82f6";
+      case "background": return "#8b5cf6";
+      case "text": return "#f59e0b";
+      case "image": return "#10b981";
+      default: return "#6b7280";
+    }
   }
 
   const reversed = [...objects].reverse();
