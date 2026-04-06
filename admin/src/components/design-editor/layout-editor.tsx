@@ -1230,9 +1230,16 @@ function LayersPanel({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (realIdx < objects.length - 1) {
-                      canvas.bringObjectForward(obj);
-                      onUpdate();
-                      refresh();
+                      // Direct array swap - most reliable across fabric versions
+                      const arr = canvas.getObjects();
+                      const idx = arr.indexOf(obj);
+                      if (idx >= 0 && idx < arr.length - 1) {
+                        arr.splice(idx, 1);
+                        arr.splice(idx + 1, 0, obj);
+                        canvas.renderAll();
+                        onUpdate();
+                        refresh();
+                      }
                     }
                   }}
                   className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
@@ -1244,9 +1251,15 @@ function LayersPanel({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (realIdx > 0) {
-                      canvas.sendObjectBackwards(obj);
-                      onUpdate();
-                      refresh();
+                      const arr = canvas.getObjects();
+                      const idx = arr.indexOf(obj);
+                      if (idx > 0) {
+                        arr.splice(idx, 1);
+                        arr.splice(idx - 1, 0, obj);
+                        canvas.renderAll();
+                        onUpdate();
+                        refresh();
+                      }
                     }
                   }}
                   className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
