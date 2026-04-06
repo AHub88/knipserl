@@ -1229,12 +1229,17 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Move up in z-order (higher index = more in front)
-                    const idx = canvas._objects.indexOf(obj);
-                    if (idx >= 0 && idx < canvas._objects.length - 1) {
-                      canvas._objects.splice(idx, 1);
-                      canvas._objects.splice(idx + 1, 0, obj);
-                      canvas.renderAll();
+                    // Move up: remove and re-insert one position higher
+                    const objs = canvas._objects;
+                    const idx = objs.indexOf(obj);
+                    if (idx >= 0 && idx < objs.length - 1) {
+                      // Remove without firing events
+                      objs.splice(idx, 1);
+                      objs.splice(idx + 1, 0, obj);
+                      // Force full re-render with cache invalidation
+                      obj.setCoords();
+                      canvas.clearContext(canvas.contextTop);
+                      canvas.requestRenderAll();
                       onUpdate();
                       refresh();
                     }
@@ -1247,12 +1252,14 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Move down in z-order (lower index = more behind)
-                    const idx = canvas._objects.indexOf(obj);
+                    const objs = canvas._objects;
+                    const idx = objs.indexOf(obj);
                     if (idx > 0) {
-                      canvas._objects.splice(idx, 1);
-                      canvas._objects.splice(idx - 1, 0, obj);
-                      canvas.renderAll();
+                      objs.splice(idx, 1);
+                      objs.splice(idx - 1, 0, obj);
+                      obj.setCoords();
+                      canvas.clearContext(canvas.contextTop);
+                      canvas.requestRenderAll();
                       onUpdate();
                       refresh();
                     }
