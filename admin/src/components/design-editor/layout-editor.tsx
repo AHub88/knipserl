@@ -474,6 +474,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       const { width: canvasW, height: canvasH } = getCanvasDimensions(formatRef.current);
 
       if (uploadMode === "background") {
+        // Make canvas background transparent so PNG transparency shows through
+        canvas.backgroundColor = "transparent";
         // Scale to fill the entire canvas
         if (img.width && img.height) {
           const scaleX = canvasW / img.width;
@@ -770,7 +772,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             ref={wrapperRef}
             className="flex-1 flex items-start justify-center overflow-auto bg-[#1a1b1e] p-4"
           >
-            <div ref={canvasWrapRef} className="shadow-2xl shadow-black/50 border border-white/20" style={{ transformOrigin: "top center" }}>
+            <div ref={canvasWrapRef} className="shadow-2xl shadow-black/50 border border-white/20" style={{ transformOrigin: "top center", backgroundImage: "repeating-conic-gradient(#808080 0% 25%, #fff 0% 50%)", backgroundSize: "16px 16px" }}>
               <canvas ref={canvasRef} />
             </div>
           </div>
