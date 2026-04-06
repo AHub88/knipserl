@@ -17,6 +17,11 @@ RUN npx prisma generate
 # Build Next.js (standalone output)
 RUN npm run build
 
+# ── Stage 2b: Minimal pg-only node_modules for sync-schema.cjs ──
+FROM node:20-alpine AS pg-deps
+WORKDIR /app
+RUN npm init -y && npm install pg@latest --ignore-scripts 2>/dev/null
+
 # ── Stage 3: Production runner ──
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -32,12 +37,14 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Copy Prisma + full node_modules for runtime migrations
-COPY --from=builder /app/node_modules ./node_modules
+# Copy Prisma runtime files
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 COPY --from=builder /app/package.json ./package.json
+
+# Copy only pg module for sync-schema.cjs (not full node_modules ~300MB)
+COPY --from=pg-deps /app/node_modules ./node_modules
 
 # Scripts
 COPY entrypoint.sh ./entrypoint.sh
