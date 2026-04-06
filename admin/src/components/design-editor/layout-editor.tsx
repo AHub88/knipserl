@@ -335,16 +335,16 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const color = colors[placeholderCount % colors.length];
     const num = placeholderCount + 1;
     const placeholderW = Math.min(500, CANVAS_W - 100);
-    const placeholderH = Math.round(placeholderW * 0.75);
+    const placeholderH = Math.round(placeholderW * (2 / 3)); // 3:2 Seitenverhältnis
 
     const rect = new fabric.Rect({
       width: placeholderW,
       height: placeholderH,
-      fill: color + "25",
-      stroke: color,
+      fill: color,
+      stroke: "#ffffff",
       strokeWidth: 3,
-      rx: 12,
-      ry: 12,
+      rx: 0,
+      ry: 0,
       originX: "center",
       originY: "center",
     });
@@ -352,7 +352,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const label = new fabric.Text(`FOTO ${num}`, {
       fontSize: 48,
       fontWeight: "bold",
-      fill: color,
+      fill: "#ffffff",
       fontFamily: "sans-serif",
       originX: "center",
       originY: "center",
@@ -1226,6 +1226,10 @@ function LayersPanel({
   const activeObj = canvas.getActiveObject();
 
   function getLayerName(obj: any): string {
+    if (obj.isPhotoPlaceholder && obj.type === "group") {
+      const textChild = obj.getObjects?.().find?.((c: any) => c.type === "text");
+      return textChild?.text || "Foto-Platzhalter";
+    }
     if (obj.isPhotoPlaceholder) return "Foto-Platzhalter";
     if (obj.isBackground) return "Hintergrund";
     if (obj.type === "textbox" || obj.type === "text") {
@@ -1233,7 +1237,7 @@ function LayersPanel({
       return txt ? `T: ${txt}` : "Text";
     }
     if (obj.type === "image") return "Bild";
-    if (obj.type === "group") return obj.isPhotoPlaceholder ? "Foto-Platzhalter" : "Gruppe";
+    if (obj.type === "group") return "Gruppe";
     if (obj.type === "rect") return "Rechteck";
     return "Ebene";
   }
