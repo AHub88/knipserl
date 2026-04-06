@@ -1229,17 +1229,14 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (realIdx < objects.length - 1) {
-                      // Direct array swap - most reliable across fabric versions
-                      const arr = canvas.getObjects();
-                      const idx = arr.indexOf(obj);
-                      if (idx >= 0 && idx < arr.length - 1) {
-                        arr.splice(idx, 1);
-                        arr.splice(idx + 1, 0, obj);
-                        canvas.renderAll();
-                        onUpdate();
-                        refresh();
-                      }
+                    // Move up in z-order (higher index = more in front)
+                    const idx = canvas._objects.indexOf(obj);
+                    if (idx >= 0 && idx < canvas._objects.length - 1) {
+                      canvas._objects.splice(idx, 1);
+                      canvas._objects.splice(idx + 1, 0, obj);
+                      canvas.renderAll();
+                      onUpdate();
+                      refresh();
                     }
                   }}
                   className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
@@ -1250,16 +1247,14 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (realIdx > 0) {
-                      const arr = canvas.getObjects();
-                      const idx = arr.indexOf(obj);
-                      if (idx > 0) {
-                        arr.splice(idx, 1);
-                        arr.splice(idx - 1, 0, obj);
-                        canvas.renderAll();
-                        onUpdate();
-                        refresh();
-                      }
+                    // Move down in z-order (lower index = more behind)
+                    const idx = canvas._objects.indexOf(obj);
+                    if (idx > 0) {
+                      canvas._objects.splice(idx, 1);
+                      canvas._objects.splice(idx - 1, 0, obj);
+                      canvas.renderAll();
+                      onUpdate();
+                      refresh();
                     }
                   }}
                   className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
