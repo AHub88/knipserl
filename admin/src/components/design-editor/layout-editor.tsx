@@ -445,7 +445,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     dirtyRef.current = true;
   }
 
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>, uploadMode: UploadMode = "element") {
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -470,40 +470,21 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
       const { width: canvasW, height: canvasH } = getCanvasDimensions(formatRef.current);
 
-      if (uploadMode === "background") {
-        // Make canvas background transparent so PNG transparency shows through
-        canvas.backgroundColor = "transparent";
-        // Scale to fill the entire canvas
-        if (img.width && img.height) {
-          const scaleX = canvasW / img.width;
-          const scaleY = canvasH / img.height;
-          const fillScale = Math.max(scaleX, scaleY);
-          img.set({
-            scaleX: fillScale,
-            scaleY: fillScale,
-            left: 0,
-            top: 0,
-            lockMovementX: true,
-            lockMovementY: true,
-            lockScalingX: true,
-            lockScalingY: true,
-            lockRotation: true,
-            hasControls: false,
-          });
-          (img as any).isBackground = true;
-        }
-        canvas.add(img);
-        canvas.sendObjectToBack(img);
-      } else {
-        // Scale to fit canvas width at 80%
-        const maxW = canvasW * 0.8;
-        if (img.width && img.width > maxW) {
-          img.scaleToWidth(maxW);
-        }
-        img.set({ left: 50, top: 100 });
-        canvas.add(img);
-        canvas.setActiveObject(img);
+      // Scale image to fit canvas (maintain aspect ratio)
+      if (img.width && img.height) {
+        const scaleX = canvasW / img.width;
+        const scaleY = canvasH / img.height;
+        const fitScale = Math.min(scaleX, scaleY);
+        img.set({
+          scaleX: fitScale,
+          scaleY: fitScale,
+          left: (canvasW - img.width * fitScale) / 2,
+          top: (canvasH - img.height * fitScale) / 2,
+        });
       }
+      canvas.backgroundColor = "transparent";
+      canvas.add(img);
+      canvas.setActiveObject(img);
 
       canvas.renderAll();
       dirtyRef.current = true;
@@ -686,7 +667,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                 />
               )}
               {activePanel === "upload" && (
-                <UploadPanel onUpload={(e, uploadMode) => handleImageUpload(e, uploadMode)} />
+                <UploadPanel onUpload={(e) => handleImageUpload(e)} />
               )}
               {activePanel === "elements" && (
                 <ElementsPanel elements={designElements} onSelect={addDesignElement} />
@@ -1073,34 +1054,23 @@ function ElementsPanel({
 function UploadPanel({
   onUpload,
 }: {
-  onUpload: (e: React.ChangeEvent<HTMLInputElement>, mode: UploadMode) => void;
+  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold text-white/80">Bild hochladen</h3>
       <p className="text-xs text-white/40">
-        PNG, JPG oder WebP, max. 5 MB.
+        PNG, JPG oder WebP, max. 10 MB. Bild wird maßstabsgetreu eingefügt.
       </p>
-      <div className="space-y-2">
-        <label className="block w-full py-4 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
-          <span className="text-sm text-white/60">Als Hintergrund (f&uuml;llt Canvas)</span>
-          <input
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(e) => onUpload(e, "background")}
-            className="hidden"
-          />
-        </label>
-        <label className="block w-full py-4 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
-          <span className="text-sm text-white/60">Als Element (frei platzierbar)</span>
-          <input
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(e) => onUpload(e, "element")}
-            className="hidden"
-          />
-        </label>
-      </div>
+      <label className="block w-full py-8 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
+        <span className="text-sm text-white/60">Klicke hier oder ziehe eine Datei</span>
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          onChange={onUpload}
+          className="hidden"
+        />
+      </label>
     </div>
   );
 }
@@ -1229,13 +1199,13 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Move up in z-order using official API
                     const idx = canvas.getObjects().indexOf(obj);
                     if (idx >= 0 && idx < canvas.getObjects().length - 1) {
+                      canvas.discardActiveObject();
                       canvas.remove(obj);
                       canvas.insertAt(idx + 1, obj);
                       canvas.setActiveObject(obj);
-                      canvas.requestRenderAll();
+                      canvas.renderAll();
                       onUpdate();
                       refresh();
                     }
@@ -1250,10 +1220,11 @@ function LayersPanel({
                     e.stopPropagation();
                     const idx = canvas.getObjects().indexOf(obj);
                     if (idx > 0) {
+                      canvas.discardActiveObject();
                       canvas.remove(obj);
                       canvas.insertAt(idx - 1, obj);
                       canvas.setActiveObject(obj);
-                      canvas.requestRenderAll();
+                      canvas.renderAll();
                       onUpdate();
                       refresh();
                     }
