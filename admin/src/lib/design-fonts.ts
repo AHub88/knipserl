@@ -8,6 +8,7 @@ export const DESIGN_FONTS = [
   { family: "Caveat", category: "handwriting", weights: [400, 700] },
   { family: "Bad Script", category: "handwriting", weights: [400] },
   { family: "Satisfy", category: "handwriting", weights: [400] },
+  { family: "Style Script", category: "handwriting", weights: [400] },
 
   // Serif / Elegant
   { family: "Playfair Display", category: "serif", weights: [400, 700] },

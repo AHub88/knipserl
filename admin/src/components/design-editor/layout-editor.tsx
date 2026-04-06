@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Canvas = any;
@@ -964,9 +964,15 @@ function TextPanel({
 
   const filtered = filterCat ? fonts.filter((f) => f.category === filterCat) : fonts;
 
+  // Build the Google Fonts URL only when the actual font families change
+  const fontsHref = useMemo(() => {
+    if (filtered.length === 0) return "";
+    return `https://fonts.googleapis.com/css2?${filtered.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join("&")}&display=swap`;
+  }, [filtered.map((f) => f.family).join(",")]);
+
   // Load all fonts for current filter via a single <link> in <head>
   useEffect(() => {
-    if (filtered.length === 0) return;
+    if (!fontsHref) return;
     const id = "gfonts-preview";
     let link = document.getElementById(id) as HTMLLinkElement | null;
     if (!link) {
@@ -975,8 +981,10 @@ function TextPanel({
       link.rel = "stylesheet";
       document.head.appendChild(link);
     }
-    link.href = `https://fonts.googleapis.com/css2?${filtered.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join("&")}&display=swap`;
-  }, [filtered]);
+    if (link.href !== fontsHref) {
+      link.href = fontsHref;
+    }
+  }, [fontsHref]);
 
   return (
     <div className="space-y-4">
