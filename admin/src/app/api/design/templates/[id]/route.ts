@@ -58,6 +58,7 @@ export async function PUT(
   if (body.format !== undefined) data.format = body.format;
   if (body.category !== undefined) data.category = body.category || null;
   if (body.canvasJson !== undefined) data.canvasJson = body.canvasJson;
+  if (body.thumbnail !== undefined) data.thumbnail = body.thumbnail || null;
 
   const template = await prisma.layoutTemplate.update({
     where: { id },

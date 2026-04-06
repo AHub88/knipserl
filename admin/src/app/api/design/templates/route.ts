@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   // JSON body path (admin editor sends canvasJson directly)
   if (contentType.includes("application/json")) {
     const body = await request.json();
-    const { name, format, category, canvasJson } = body;
+    const { name, format, category, canvasJson, thumbnail } = body;
 
     if (!name) {
       return NextResponse.json({ error: "Name ist Pflichtfeld" }, { status: 400 });
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         name,
         format: format || "2x6",
         category: category || null,
-        thumbnail: null,
+        thumbnail: thumbnail || null,
         canvasJson: canvasJson ?? { version: "6.6.1", objects: [] },
       },
     });

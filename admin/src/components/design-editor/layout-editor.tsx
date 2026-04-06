@@ -23,7 +23,7 @@ type Props = {
   };
   existingDesign?: { canvasJson: any; submitted?: boolean } | null;
   mode?: "customer" | "admin";
-  onSaveTemplate?: (canvasJson: any) => void;
+  onSaveTemplate?: (canvasJson: any, thumbnailDataUrl: string | null) => void;
 };
 
 type Template = {
@@ -538,7 +538,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   async function handleSaveNow() {
     if (mode === "admin" && onSaveTemplate && fabricRef.current) {
-      onSaveTemplate(fabricRef.current.toObject(["isPhotoPlaceholder"]));
+      const thumb = fabricRef.current.toDataURL({ format: "png", multiplier: 0.25 });
+      onSaveTemplate(fabricRef.current.toObject(["isPhotoPlaceholder"]), thumb);
       return;
     }
     dirtyRef.current = true;
@@ -790,7 +791,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               onClick={() => {
                 const canvas = fabricRef.current;
                 if (!canvas || !onSaveTemplate) return;
-                onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]));
+                const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
+                onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]), thumb);
               }}
               className="px-6 py-2 bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold rounded-lg transition-colors"
             >

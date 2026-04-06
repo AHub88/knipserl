@@ -249,10 +249,10 @@ export function DesignTemplatesManager({
                 <img
                   src={template.thumbnail}
                   alt={template.name}
-                  className="w-full aspect-[1/3] object-cover bg-white"
+                  className="w-full h-48 object-contain bg-white/[0.03]"
                 />
               ) : (
-                <div className="w-full aspect-[1/3] bg-white/[0.03] flex items-center justify-center">
+                <div className="w-full h-48 bg-white/[0.03] flex items-center justify-center">
                   <span className="text-xs text-zinc-500">Kein Bild</span>
                 </div>
               )}

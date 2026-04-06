@@ -26,29 +26,43 @@ export function TemplateEditorClient({
   const [category, setCategory] = useState(existingTemplate?.category ?? "");
   const [saving, setSaving] = useState(false);
 
-  async function handleSaveTemplate(canvasJson: unknown) {
+  async function handleSaveTemplate(canvasJson: unknown, thumbnailDataUrl: string | null) {
     if (!name.trim()) {
       toast.error("Bitte einen Namen eingeben");
       return;
     }
 
+    // Upload thumbnail if available
+    let thumbnail: string | null = null;
+    if (thumbnailDataUrl) {
+      try {
+        const resp = await fetch(thumbnailDataUrl);
+        const blob = await resp.blob();
+        const form = new FormData();
+        form.append("file", blob, "thumbnail.png");
+        const upRes = await fetch("/api/uploads/design", { method: "POST", body: form });
+        if (upRes.ok) {
+          const upData = await upRes.json();
+          thumbnail = upData.url;
+        }
+      } catch { /* thumbnail upload failed, continue without */ }
+    }
+
     setSaving(true);
     try {
       if (existingTemplate) {
-        // Update existing
         const res = await fetch(`/api/design/templates/${existingTemplate.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, format, category: category || null, canvasJson }),
+          body: JSON.stringify({ name, format, category: category || null, canvasJson, thumbnail }),
         });
         if (!res.ok) throw new Error();
         toast.success("Vorlage aktualisiert");
       } else {
-        // Create new
         const res = await fetch("/api/design/templates", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, format, category: category || null, canvasJson }),
+          body: JSON.stringify({ name, format, category: category || null, canvasJson, thumbnail }),
         });
         if (!res.ok) throw new Error();
         toast.success("Vorlage erstellt");
