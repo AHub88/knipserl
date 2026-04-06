@@ -99,6 +99,50 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const lastSavedJsonRef = useRef<string>("");
   const formatRef = useRef(format);
 
+  // Undo/Redo history
+  const historyRef = useRef<string[]>([]);
+  const historyIndexRef = useRef(-1);
+  const isUndoRedoRef = useRef(false);
+  const MAX_HISTORY = 50;
+
+  function pushHistory() {
+    const canvas = fabricRef.current;
+    if (!canvas || isUndoRedoRef.current) return;
+    const json = JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "isBackground"]));
+    const idx = historyIndexRef.current;
+    // Discard any future states
+    historyRef.current = historyRef.current.slice(0, idx + 1);
+    historyRef.current.push(json);
+    if (historyRef.current.length > MAX_HISTORY) historyRef.current.shift();
+    historyIndexRef.current = historyRef.current.length - 1;
+  }
+
+  function undo() {
+    const canvas = fabricRef.current;
+    if (!canvas || historyIndexRef.current <= 0) return;
+    isUndoRedoRef.current = true;
+    historyIndexRef.current -= 1;
+    canvas.loadFromJSON(JSON.parse(historyRef.current[historyIndexRef.current])).then(() => {
+      canvas.renderAll();
+      countPlaceholders(canvas);
+      isUndoRedoRef.current = false;
+      dirtyRef.current = true;
+    });
+  }
+
+  function redo() {
+    const canvas = fabricRef.current;
+    if (!canvas || historyIndexRef.current >= historyRef.current.length - 1) return;
+    isUndoRedoRef.current = true;
+    historyIndexRef.current += 1;
+    canvas.loadFromJSON(JSON.parse(historyRef.current[historyIndexRef.current])).then(() => {
+      canvas.renderAll();
+      countPlaceholders(canvas);
+      isUndoRedoRef.current = false;
+      dirtyRef.current = true;
+    });
+  }
+
   // ---- Canvas init --------------------------------------------------------
 
   useEffect(() => {
@@ -134,13 +178,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         });
       }
 
-      // Track changes
+      // Track changes + push undo history
       const markDirty = () => {
         dirtyRef.current = true;
+        pushHistory();
       };
       canvas.on("object:modified", markDirty);
       canvas.on("object:added", markDirty);
       canvas.on("object:removed", markDirty);
+
+      // Initial history state
+      pushHistory();
 
       // Handle resize
       const onResize = () => fitCanvas(canvas, 1);
@@ -572,10 +620,27 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Delete" || e.key === "Backspace") {
-        // Only delete if not editing text
+      const isEditing = (() => {
         const active = fabricRef.current?.getActiveObject();
-        if (active && active.type === "textbox" && (active as Textbox).isEditing) return;
+        return active && active.type === "textbox" && (active as Textbox).isEditing;
+      })();
+
+      // Undo: Ctrl+Z / Cmd+Z
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+        return;
+      }
+      // Redo: Ctrl+Shift+Z / Cmd+Shift+Z or Ctrl+Y
+      if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "z") || ((e.ctrlKey || e.metaKey) && e.key === "y")) {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (isEditing) return;
+        const active = fabricRef.current?.getActiveObject();
         if (active && active.type !== "textbox") {
           deleteSelected();
         }
@@ -619,13 +684,18 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
         <div className="h-11 border-b border-white/10 bg-[#222326] flex items-center px-3 shrink-0">
-          {/* Left: Add tools */}
-          <div className="flex items-center gap-1.5">
-            <ToolbarButton active={activePanel === "templates"} onClick={() => setActivePanel(activePanel === "templates" ? null : "templates")}>Vorlagen</ToolbarButton>
-            <ToolbarButton onClick={addPhotoPlaceholder} disabled={placeholderCount >= 3}>Foto ({placeholderCount}/3)</ToolbarButton>
-            <ToolbarButton active={activePanel === "text"} onClick={() => setActivePanel(activePanel === "text" ? null : "text")}>Text</ToolbarButton>
-            <ToolbarButton active={activePanel === "upload"} onClick={() => setActivePanel(activePanel === "upload" ? null : "upload")}>Bild</ToolbarButton>
-            <ToolbarButton active={activePanel === "elements"} onClick={() => setActivePanel(activePanel === "elements" ? null : "elements")}>Elemente</ToolbarButton>
+          {/* Left: Undo/Redo */}
+          <div className="flex items-center gap-1">
+            <ToolbarButton onClick={undo} title="Rückgängig (Strg+Z)">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
+            </ToolbarButton>
+            <ToolbarButton onClick={redo} title="Wiederherstellen (Strg+Shift+Z)">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
+            </ToolbarButton>
+            <div className="w-px h-5 bg-white/10 mx-1" />
+            <ToolbarButton onClick={deleteSelected}>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </ToolbarButton>
           </div>
 
           {/* Center: Zoom */}
@@ -646,11 +716,43 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           </div>
         </div>
 
-        {/* Main area */}
+        {/* Main area: Left tools | Canvas | Right layers+props */}
         <div className="flex flex-1 min-h-0">
-          {/* Side panel */}
-          {activePanel && (
-            <div className="w-[280px] shrink-0 border-r border-white/10 bg-[#222326] overflow-y-auto p-4">
+          {/* LEFT SIDEBAR: Tools */}
+          <div className="w-[260px] shrink-0 border-r border-white/10 bg-[#222326] flex flex-col overflow-hidden">
+            {/* Tab buttons */}
+            <div className="flex border-b border-white/10 shrink-0">
+              {([
+                { key: "elements" as const, label: "Elemente" },
+                { key: "templates" as const, label: "Vorlagen" },
+                { key: "text" as const, label: "Text" },
+                { key: "upload" as const, label: "Bilder" },
+              ] as const).map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setActivePanel(activePanel === key ? null : key)}
+                  className={`flex-1 py-2 text-[11px] font-medium transition-colors ${
+                    activePanel === key ? "text-[#F6A11C] border-b-2 border-[#F6A11C]" : "text-white/50 hover:text-white/80"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Quick actions */}
+            <div className="px-3 py-2 flex gap-1.5 border-b border-white/10 shrink-0">
+              <button
+                onClick={addPhotoPlaceholder}
+                disabled={placeholderCount >= 3}
+                className="flex-1 py-1.5 text-[11px] font-medium rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 disabled:opacity-30 transition-colors"
+              >
+                + Foto ({placeholderCount}/3)
+              </button>
+            </div>
+
+            {/* Panel content */}
+            <div className="flex-1 overflow-y-auto p-3">
               {activePanel === "templates" && (
                 <TemplatesPanel templates={templates} onSelect={loadTemplate} />
               )}
@@ -673,10 +775,13 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               {activePanel === "elements" && (
                 <ElementsPanel elements={designElements} onSelect={addDesignElement} />
               )}
+              {!activePanel && (
+                <p className="text-white/30 text-xs text-center mt-8">Wähle oben eine Kategorie</p>
+              )}
             </div>
-          )}
+          </div>
 
-          {/* Canvas area */}
+          {/* CANVAS AREA */}
           <div
             ref={wrapperRef}
             className="flex-1 flex items-start justify-center overflow-auto bg-[#1a1b1e] p-4"
@@ -686,16 +791,16 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             </div>
           </div>
 
-          {/* Layers panel (right sidebar) */}
-          <LayersPanel
+          {/* RIGHT SIDEBAR: Layers + Object Properties */}
+          <RightPanel
             fabricRef={fabricRef}
             fabricModRef={fabricModRef}
-            onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; }}
+            onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; pushHistory(); }}
           />
         </div>
 
         {/* Bottom bar */}
-        <div className="h-16 border-t border-white/10 bg-[#222326] flex items-center justify-between px-6 shrink-0">
+        <div className="h-14 border-t border-white/10 bg-[#222326] flex items-center justify-between px-6 shrink-0">
           <div className="text-sm text-white/50">
             {mode === "admin"
               ? `Admin-Modus · Format: ${format}`
@@ -737,18 +842,21 @@ function ToolbarButton({
   active,
   onClick,
   disabled,
+  title,
 }: {
   children: React.ReactNode;
   active?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  title?: string;
 }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
+      title={title}
       className={`
-        px-3 py-1.5 text-sm rounded-lg border transition-colors
+        px-2 py-1.5 text-sm rounded-lg border transition-colors
         ${active ? "border-[#F6A11C] text-[#F6A11C]" : "border-white/10 text-white/70 hover:text-white hover:border-white/20"}
         ${disabled ? "opacity-40 cursor-not-allowed" : ""}
       `}
@@ -1077,10 +1185,10 @@ function UploadPanel({
 }
 
 // ---------------------------------------------------------------------------
-// Layers Panel (right sidebar, Photoshop-style)
+// Right Panel: Layers + Object Properties
 // ---------------------------------------------------------------------------
 
-function LayersPanel({
+function RightPanel({
   fabricRef,
   fabricModRef,
   onUpdate,
@@ -1091,10 +1199,11 @@ function LayersPanel({
 }) {
   const [tick, setTick] = useState(0);
   const refresh = () => setTick((n) => n + 1);
+  const [lockRatio, setLockRatio] = useState(false);
   const [shadowBlur, setShadowBlur] = useState(15);
   const [shadowOffsetX, setShadowOffsetX] = useState(5);
   const [shadowOffsetY, setShadowOffsetY] = useState(5);
-  // Poll canvas every 500ms to always stay in sync
+
   useEffect(() => {
     const interval = setInterval(refresh, 500);
     return () => clearInterval(interval);
@@ -1109,9 +1218,7 @@ function LayersPanel({
   function detectKind(obj: any): "placeholder" | "background" | "text" | "image" | "group" | "rect" | "unknown" {
     if (obj.isPhotoPlaceholder) return "placeholder";
     if (obj.isBackground) return "background";
-    // Check text by property existence (works regardless of type string)
     if (obj.text !== undefined && obj.fontFamily !== undefined) return "text";
-    // Check image by src property or _element (fabric v6 internals)
     if (obj._src || obj._element || obj.getSrc || obj.src) return "image";
     if (typeof obj.getObjects === "function") return "group";
     if (obj.type === "rect" || (obj.width && obj.height && obj.fill && !obj.text)) return "rect";
@@ -1129,11 +1236,11 @@ function LayersPanel({
         return "Foto-Platzhalter";
       }
       case "background": return "Hintergrund";
-      case "text": return `T: ${(obj.text || "").substring(0, 18) || "Text"}`;
+      case "text": return `${(obj.text || "").substring(0, 16) || "Text"}`;
       case "image": return obj.isBackground ? "Hintergrund" : "Bild";
       case "group": return "Gruppe";
       case "rect": return "Rechteck";
-      default: return `Ebene (${obj.type || obj.constructor?.name || "?"})`;
+      default: return `Ebene`;
     }
   }
 
@@ -1148,149 +1255,199 @@ function LayersPanel({
     }
   }
 
+  // Object property helpers
+  function getObjProp(prop: string): number {
+    if (!activeObj) return 0;
+    if (prop === "w") return Math.round((activeObj.width ?? 0) * (activeObj.scaleX ?? 1));
+    if (prop === "h") return Math.round((activeObj.height ?? 0) * (activeObj.scaleY ?? 1));
+    if (prop === "x") return Math.round(activeObj.left ?? 0);
+    if (prop === "y") return Math.round(activeObj.top ?? 0);
+    if (prop === "angle") return Math.round(activeObj.angle ?? 0);
+    return 0;
+  }
+
+  function setObjProp(prop: string, val: number) {
+    if (!activeObj) return;
+    if (prop === "x") { activeObj.set("left", val); }
+    else if (prop === "y") { activeObj.set("top", val); }
+    else if (prop === "angle") { activeObj.set("angle", val); }
+    else if (prop === "w") {
+      const origW = activeObj.width ?? 1;
+      const newScaleX = val / origW;
+      activeObj.set("scaleX", newScaleX);
+      if (lockRatio) {
+        activeObj.set("scaleY", newScaleX);
+      }
+    } else if (prop === "h") {
+      const origH = activeObj.height ?? 1;
+      const newScaleY = val / origH;
+      activeObj.set("scaleY", newScaleY);
+      if (lockRatio) {
+        activeObj.set("scaleX", newScaleY);
+      }
+    }
+    activeObj.setCoords();
+    onUpdate();
+    refresh();
+  }
+
   const reversed = [...objects].reverse();
+  const lbl = "text-[10px] text-white/40";
+  const inp = "w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5";
 
   return (
-    <div className="w-[200px] shrink-0 border-l border-white/10 bg-[#222326] flex flex-col">
-      <div className="px-3 py-2 border-b border-white/10">
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider">Ebenen</h3>
+    <div className="w-[220px] shrink-0 border-l border-white/10 bg-[#222326] flex flex-col">
+      {/* Layers list */}
+      <div className="px-3 py-1.5 border-b border-white/10 shrink-0">
+        <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Ebenen</h3>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <div className="max-h-[40%] overflow-y-auto shrink-0 border-b border-white/10">
         {reversed.map((obj: any, revIdx: number) => {
-          const realIdx = objects.length - 1 - revIdx;
           const isActive = obj === activeObj;
           const isVisible = obj.visible !== false;
           const color = getLayerColor(obj);
           return (
             <div
               key={revIdx}
-              className={`flex items-center gap-1.5 px-2 py-2 text-[11px] cursor-pointer border-b border-white/5 transition-colors ${
+              className={`flex items-center gap-1.5 px-2 py-1.5 text-[11px] cursor-pointer border-b border-white/5 transition-colors ${
                 isActive ? "bg-white/10" : "hover:bg-white/5"
               } ${!isVisible ? "opacity-30" : ""}`}
-              onClick={() => {
-                canvas.setActiveObject(obj);
-                canvas.renderAll();
-                refresh();
-              }}
+              onClick={() => { canvas.setActiveObject(obj); canvas.renderAll(); refresh(); }}
             >
-              <span
-                className="w-2.5 h-2.5 rounded-full shrink-0"
-                style={{ backgroundColor: color }}
-              />
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
               <span className={`flex-1 truncate ${isActive ? "text-white font-medium" : "text-white/60"}`}>
                 {getLayerName(obj)}
               </span>
-              <div className="flex items-center gap-0.5 shrink-0">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    obj.set("visible", !isVisible);
-                    onUpdate();
-                    refresh();
-                  }}
-                  className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
-                  title={isVisible ? "Ausblenden" : "Einblenden"}
-                >
-                  {isVisible ? (
-                    <svg className="w-3.5 h-3.5 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  ) : (
-                    <svg className="w-3.5 h-3.5 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                  )}
+              <div className="flex items-center gap-px shrink-0">
+                <button onClick={(e) => { e.stopPropagation(); obj.set("visible", !isVisible); onUpdate(); refresh(); }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title={isVisible ? "Ausblenden" : "Einblenden"}>
+                  <svg className={`w-3 h-3 ${isVisible ? "text-white/40" : "text-white/20"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    {isVisible ? <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></> : <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><line x1="1" y1="1" x2="23" y2="23"/></>}
+                  </svg>
                 </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const objs = canvas._objects;
-                    const idx = objs.indexOf(obj);
-                    if (idx >= 0 && idx < objs.length - 1) {
-                      objs.splice(idx, 1);
-                      objs.splice(idx + 1, 0, obj);
-                      canvas.setActiveObject(obj);
-                      canvas.renderAll();
-                      onUpdate();
-                      refresh();
-                    }
-                  }}
-                  className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
-                  title="Nach oben"
-                >
-                  <svg className="w-3.5 h-3.5 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+                <button onClick={(e) => { e.stopPropagation(); const objs = canvas._objects; const idx = objs.indexOf(obj); if (idx >= 0 && idx < objs.length - 1) { objs.splice(idx, 1); objs.splice(idx + 1, 0, obj); canvas.setActiveObject(obj); canvas.renderAll(); onUpdate(); refresh(); } }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title="Nach oben">
+                  <svg className="w-3 h-3 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 15l-6-6-6 6"/></svg>
                 </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const objs = canvas._objects;
-                    const idx = objs.indexOf(obj);
-                    if (idx > 0) {
-                      objs.splice(idx, 1);
-                      objs.splice(idx - 1, 0, obj);
-                      canvas.setActiveObject(obj);
-                      canvas.renderAll();
-                      onUpdate();
-                      refresh();
-                    }
-                  }}
-                  className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10"
-                  title="Nach unten"
-                >
-                  <svg className="w-3.5 h-3.5 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                <button onClick={(e) => { e.stopPropagation(); const objs = canvas._objects; const idx = objs.indexOf(obj); if (idx > 0) { objs.splice(idx, 1); objs.splice(idx - 1, 0, obj); canvas.setActiveObject(obj); canvas.renderAll(); onUpdate(); refresh(); } }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title="Nach unten">
+                  <svg className="w-3 h-3 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    canvas.remove(obj);
-                    onUpdate();
-                    refresh();
-                  }}
-                  className="w-6 h-6 flex items-center justify-center rounded hover:bg-red-500/20"
-                  title="Löschen"
-                >
-                  <svg className="w-3.5 h-3.5 text-white/30 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <button onClick={(e) => { e.stopPropagation(); canvas.remove(obj); onUpdate(); refresh(); }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-red-500/20" title="Löschen">
+                  <svg className="w-3 h-3 text-white/30 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 </button>
               </div>
             </div>
           );
         })}
-        {objects.length === 0 && (
-          <p className="text-[10px] text-white/30 p-3 text-center">Keine Ebenen</p>
-        )}
+        {objects.length === 0 && <p className="text-[10px] text-white/30 p-3 text-center">Keine Ebenen</p>}
       </div>
 
-      {/* Actions for selected layer */}
-      {activeObj && (
-        <div className="shrink-0 border-t border-white/10 p-2 space-y-2">
-          <h4 className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">Auswahl</h4>
-          {/* Shadow controls */}
-          <div className="space-y-1.5">
+      {/* Object Properties */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+        {activeObj ? (
+          <>
+            <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Eigenschaften</h4>
+
+            {/* Position */}
+            <div className="grid grid-cols-2 gap-1.5">
+              <div>
+                <label className={lbl}>X</label>
+                <input type="number" className={inp} value={getObjProp("x")}
+                  onChange={(e) => setObjProp("x", Number(e.target.value) || 0)} />
+              </div>
+              <div>
+                <label className={lbl}>Y</label>
+                <input type="number" className={inp} value={getObjProp("y")}
+                  onChange={(e) => setObjProp("y", Number(e.target.value) || 0)} />
+              </div>
+            </div>
+
+            {/* Size */}
+            <div className="grid grid-cols-2 gap-1.5">
+              <div>
+                <label className={lbl}>Breite</label>
+                <input type="number" className={inp} value={getObjProp("w")}
+                  onChange={(e) => setObjProp("w", Number(e.target.value) || 1)} />
+              </div>
+              <div>
+                <label className={lbl}>Höhe</label>
+                <input type="number" className={inp} value={getObjProp("h")}
+                  onChange={(e) => setObjProp("h", Number(e.target.value) || 1)} />
+              </div>
+            </div>
+
+            {/* Lock ratio + Rotation */}
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={lockRatio}
+                  onChange={() => setLockRatio(!lockRatio)}
+                  className="accent-[#F6A11C] w-3 h-3"
+                />
+                <span className="text-[10px] text-white/50">Seitenverhältnis</span>
+              </label>
+            </div>
+
             <div>
-              <label className="text-[10px] text-white/50">Schatten: {shadowBlur}px</label>
-              <input type="range" min={0} max={50} value={shadowBlur} onChange={(e) => setShadowBlur(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
-            </div>
-            <div className="flex gap-1.5">
-              <div className="flex-1">
-                <label className="text-[10px] text-white/50">X:{shadowOffsetX}</label>
-                <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
-              </div>
-              <div className="flex-1">
-                <label className="text-[10px] text-white/50">Y:{shadowOffsetY}</label>
-                <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+              <label className={lbl}>Drehung</label>
+              <div className="flex items-center gap-1.5">
+                <input type="range" min={0} max={360} value={getObjProp("angle")}
+                  onChange={(e) => setObjProp("angle", Number(e.target.value))} className="flex-1 accent-[#F6A11C] h-1" />
+                <input type="number" className={`${inp} w-12`} value={getObjProp("angle")}
+                  onChange={(e) => setObjProp("angle", Number(e.target.value) || 0)} />
+                <span className="text-[10px] text-white/30">°</span>
               </div>
             </div>
-            <div className="flex gap-1">
-              <button onClick={() => {
-                const fabric = fabricModRef.current;
-                if (!fabric) return;
-                activeObj.set("shadow", new fabric.Shadow({ color: "rgba(0,0,0,0.4)", blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }));
-                onUpdate(); refresh();
-              }} className="flex-1 py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Schatten</button>
-              <button onClick={() => {
-                activeObj.set("shadow", null);
-                onUpdate(); refresh();
-              }} className="flex-1 py-1 text-[10px] font-semibold rounded border border-white/10 text-white/50">Kein Schatten</button>
+
+            {/* Opacity */}
+            <div>
+              <label className={lbl}>Deckkraft</label>
+              <div className="flex items-center gap-1.5">
+                <input type="range" min={0} max={100} value={Math.round((activeObj.opacity ?? 1) * 100)}
+                  onChange={(e) => { activeObj.set("opacity", Number(e.target.value) / 100); onUpdate(); refresh(); }}
+                  className="flex-1 accent-[#F6A11C] h-1" />
+                <span className="text-[10px] text-white/40 w-8 text-right">{Math.round((activeObj.opacity ?? 1) * 100)}%</span>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* Shadow */}
+            <div className="space-y-1.5 pt-1 border-t border-white/10">
+              <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Schatten</h4>
+              <div>
+                <label className={lbl}>Weichheit: {shadowBlur}px</label>
+                <input type="range" min={0} max={50} value={shadowBlur} onChange={(e) => setShadowBlur(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+              </div>
+              <div className="flex gap-1.5">
+                <div className="flex-1">
+                  <label className={lbl}>X:{shadowOffsetX}</label>
+                  <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+                </div>
+                <div className="flex-1">
+                  <label className={lbl}>Y:{shadowOffsetY}</label>
+                  <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+                </div>
+              </div>
+              <div className="flex gap-1">
+                <button onClick={() => {
+                  const fabric = fabricModRef.current;
+                  if (!fabric) return;
+                  activeObj.set("shadow", new fabric.Shadow({ color: "rgba(0,0,0,0.4)", blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }));
+                  onUpdate(); refresh();
+                }} className="flex-1 py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Anwenden</button>
+                <button onClick={() => {
+                  activeObj.set("shadow", null);
+                  onUpdate(); refresh();
+                }} className="flex-1 py-1 text-[10px] font-semibold rounded border border-white/10 text-white/50">Entfernen</button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <p className="text-[10px] text-white/30 text-center mt-4">Wähle ein Element aus</p>
+        )}
+      </div>
     </div>
   );
 }
