@@ -1229,16 +1229,12 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Move up: remove and re-insert one position higher
-                    const objs = canvas._objects;
-                    const idx = objs.indexOf(obj);
-                    if (idx >= 0 && idx < objs.length - 1) {
-                      // Remove without firing events
-                      objs.splice(idx, 1);
-                      objs.splice(idx + 1, 0, obj);
-                      // Force full re-render with cache invalidation
-                      obj.setCoords();
-                      canvas.clearContext(canvas.contextTop);
+                    // Move up in z-order using official API
+                    const idx = canvas.getObjects().indexOf(obj);
+                    if (idx >= 0 && idx < canvas.getObjects().length - 1) {
+                      canvas.remove(obj);
+                      canvas.insertAt(idx + 1, obj);
+                      canvas.setActiveObject(obj);
                       canvas.requestRenderAll();
                       onUpdate();
                       refresh();
@@ -1252,13 +1248,11 @@ function LayersPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const objs = canvas._objects;
-                    const idx = objs.indexOf(obj);
+                    const idx = canvas.getObjects().indexOf(obj);
                     if (idx > 0) {
-                      objs.splice(idx, 1);
-                      objs.splice(idx - 1, 0, obj);
-                      obj.setCoords();
-                      canvas.clearContext(canvas.contextTop);
+                      canvas.remove(obj);
+                      canvas.insertAt(idx - 1, obj);
+                      canvas.setActiveObject(obj);
                       canvas.requestRenderAll();
                       onUpdate();
                       refresh();
