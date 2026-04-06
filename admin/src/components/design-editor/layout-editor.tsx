@@ -66,6 +66,8 @@ type DesignElementItem = {
 
 type UploadMode = "background" | "element";
 type Panel = "templates" | "text" | "upload" | "elements" | null;
+type Modal = "elements" | "templates" | null;
+type AddMenu = boolean;
 
 // ---------------------------------------------------------------------------
 // Component
@@ -80,6 +82,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const canvasWrapRef = useRef<HTMLDivElement>(null);
 
   const [activePanel, setActivePanel] = useState<Panel>(null);
+  const [openModal, setOpenModal] = useState<Modal>(null);
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const addMenuRef = useRef<HTMLDivElement>(null);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [designElements, setDesignElements] = useState<DesignElementItem[]>([]);
   const [fonts, setFonts] = useState<FontDef[]>([]);
@@ -650,6 +655,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  // ---- Close add menu on outside click ------------------------------------
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (showAddMenu && addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) {
+        setShowAddMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showAddMenu]);
+
   // ---- Submitted state ----------------------------------------------------
 
   if (submitted) {
@@ -684,8 +700,34 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
         <div className="h-11 border-b border-white/10 bg-[#222326] flex items-center px-3 shrink-0">
-          {/* Left: Undo/Redo */}
+          {/* Left: Add menu + Elemente + Vorlagen + Undo/Redo */}
           <div className="flex items-center gap-1">
+            {/* ADD dropdown */}
+            <div className="relative" ref={addMenuRef}>
+              <ToolbarButton onClick={() => setShowAddMenu(!showAddMenu)} active={showAddMenu}>
+                <span className="flex items-center gap-1">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span className="text-xs">Hinzufügen</span>
+                </span>
+              </ToolbarButton>
+              {showAddMenu && (
+                <div className="absolute top-full left-0 mt-1 w-56 bg-[#2a2b2e] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+                  <div className="px-3 py-1.5 text-[10px] font-semibold text-white/40 uppercase tracking-wider">Hinzufügen</div>
+                  <AddMenuItem icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 4-6 5 7"/></svg>} label="Bild hochladen" onClick={() => { setShowAddMenu(false); document.getElementById("img-upload-hidden")?.click(); }} />
+                  <AddMenuItem icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M17 8h.01"/></svg>} label={`Foto-Platzhalter (${placeholderCount}/3)`} onClick={() => { setShowAddMenu(false); addPhotoPlaceholder(); }} disabled={placeholderCount >= 3} />
+                  <AddMenuItem icon={<span className="w-5 h-5 flex items-center justify-center text-lg font-bold">T</span>} label="Text" onClick={() => { setShowAddMenu(false); addText(); }} />
+                </div>
+              )}
+            </div>
+
+            <ToolbarButton onClick={() => setOpenModal("elements")}>
+              <span className="text-xs">Elemente</span>
+            </ToolbarButton>
+            <ToolbarButton onClick={() => setOpenModal("templates")}>
+              <span className="text-xs">Vorlagen</span>
+            </ToolbarButton>
+
+            <div className="w-px h-5 bg-white/10 mx-1" />
             <ToolbarButton onClick={undo} title="Rückgängig (Strg+Z)">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
             </ToolbarButton>
@@ -693,7 +735,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
             </ToolbarButton>
             <div className="w-px h-5 bg-white/10 mx-1" />
-            <ToolbarButton onClick={deleteSelected}>
+            <ToolbarButton onClick={deleteSelected} title="Löschen">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </ToolbarButton>
           </div>
@@ -716,73 +758,11 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           </div>
         </div>
 
-        {/* Main area: Left tools | Canvas | Right layers+props */}
+        {/* Hidden file input for image upload */}
+        <input id="img-upload-hidden" type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e)} />
+
+        {/* Main area: Canvas + Right sidebar */}
         <div className="flex flex-1 min-h-0">
-          {/* LEFT SIDEBAR: Tools */}
-          <div className="w-[260px] shrink-0 border-r border-white/10 bg-[#222326] flex flex-col overflow-hidden">
-            {/* Tab buttons */}
-            <div className="flex border-b border-white/10 shrink-0">
-              {([
-                { key: "elements" as const, label: "Elemente" },
-                { key: "templates" as const, label: "Vorlagen" },
-                { key: "text" as const, label: "Text" },
-                { key: "upload" as const, label: "Bilder" },
-              ] as const).map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => setActivePanel(activePanel === key ? null : key)}
-                  className={`flex-1 py-2 text-[11px] font-medium transition-colors ${
-                    activePanel === key ? "text-[#F6A11C] border-b-2 border-[#F6A11C]" : "text-white/50 hover:text-white/80"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Quick actions */}
-            <div className="px-3 py-2 flex gap-1.5 border-b border-white/10 shrink-0">
-              <button
-                onClick={addPhotoPlaceholder}
-                disabled={placeholderCount >= 3}
-                className="flex-1 py-1.5 text-[11px] font-medium rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 disabled:opacity-30 transition-colors"
-              >
-                + Foto ({placeholderCount}/3)
-              </button>
-            </div>
-
-            {/* Panel content */}
-            <div className="flex-1 overflow-y-auto p-3">
-              {activePanel === "templates" && (
-                <TemplatesPanel templates={templates} onSelect={loadTemplate} />
-              )}
-              {activePanel === "text" && (
-                <TextPanel
-                  fonts={fonts}
-                  fontCategories={fontCategories}
-                  selectedFont={selectedFont}
-                  fontSize={fontSize}
-                  textColor={textColor}
-                  onFontChange={updateSelectedFont}
-                  onSizeChange={updateSelectedFontSize}
-                  onColorChange={updateSelectedColor}
-                  onAdd={addText}
-                  fabricRef={fabricRef}
-                  onCanvasUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; }}
-                />
-              )}
-              {activePanel === "upload" && (
-                <UploadPanel onUpload={(e) => handleImageUpload(e)} />
-              )}
-              {activePanel === "elements" && (
-                <ElementsPanel elements={designElements} onSelect={addDesignElement} />
-              )}
-              {!activePanel && (
-                <p className="text-white/30 text-xs text-center mt-8">Wähle oben eine Kategorie</p>
-              )}
-            </div>
-          </div>
-
           {/* CANVAS AREA */}
           <div
             ref={wrapperRef}
@@ -793,13 +773,37 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR: Layers + Object Properties */}
+          {/* RIGHT SIDEBAR: Layers + Text + Object Properties */}
           <RightPanel
             fabricRef={fabricRef}
             fabricModRef={fabricModRef}
+            fonts={fonts}
+            fontCategories={fontCategories}
+            selectedFont={selectedFont}
+            fontSize={fontSize}
+            textColor={textColor}
+            onFontChange={updateSelectedFont}
+            onSizeChange={updateSelectedFontSize}
+            onColorChange={updateSelectedColor}
             onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; pushHistory(); }}
           />
         </div>
+
+        {/* Modals for Elements + Templates */}
+        {openModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setOpenModal(null)}>
+            <div className="bg-[#222326] border border-white/10 rounded-xl shadow-2xl w-[600px] max-h-[70vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
+                <h2 className="text-sm font-semibold text-white">{openModal === "elements" ? "Elemente" : "Vorlagen"}</h2>
+                <button onClick={() => setOpenModal(null)} className="text-white/40 hover:text-white"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-5">
+                {openModal === "elements" && <ElementsPanel elements={designElements} onSelect={(el) => { addDesignElement(el); setOpenModal(null); }} />}
+                {openModal === "templates" && <TemplatesPanel templates={templates} onSelect={(t) => { loadTemplate(t); setOpenModal(null); }} />}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bottom bar */}
         <div className="h-14 border-t border-white/10 bg-[#222326] flex items-center justify-between px-6 shrink-0">
@@ -864,6 +868,19 @@ function ToolbarButton({
       `}
     >
       {children}
+    </button>
+  );
+}
+
+function AddMenuItem({ icon, label, onClick, disabled }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-white/80 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
+    >
+      <span className="text-white/50">{icon}</span>
+      {label}
     </button>
   );
 }
@@ -1244,10 +1261,26 @@ function UploadPanel({
 function RightPanel({
   fabricRef,
   fabricModRef,
+  fonts,
+  fontCategories,
+  selectedFont,
+  fontSize,
+  textColor,
+  onFontChange,
+  onSizeChange,
+  onColorChange,
   onUpdate,
 }: {
   fabricRef: React.RefObject<Canvas | null>;
   fabricModRef: React.RefObject<typeof import("fabric") | null>;
+  fonts: FontDef[];
+  fontCategories: { key: string; label: string }[];
+  selectedFont: string;
+  fontSize: number;
+  textColor: string;
+  onFontChange: (f: string) => void;
+  onSizeChange: (s: number) => void;
+  onColorChange: (c: string) => void;
   onUpdate: () => void;
 }) {
   const [tick, setTick] = useState(0);
@@ -1402,6 +1435,48 @@ function RightPanel({
         {activeObj ? (
           <>
             <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Eigenschaften</h4>
+
+            {/* Text properties (only for textbox) */}
+            {activeObj.type === "textbox" && (
+              <div className="space-y-2 pb-2 border-b border-white/10">
+                <label className={lbl}>Schriftart</label>
+                <select
+                  value={(activeObj as any).fontFamily ?? selectedFont}
+                  onChange={(e) => onFontChange(e.target.value)}
+                  className="w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-1"
+                >
+                  {fonts.map((f) => <option key={f.family} value={f.family} style={{ fontFamily: f.family }}>{f.family}</option>)}
+                </select>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div>
+                    <label className={lbl}>Größe</label>
+                    <input type="number" min={8} max={400} className={inp}
+                      value={Math.round((activeObj as any).fontSize ?? fontSize)}
+                      onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
+                  </div>
+                  <div>
+                    <label className={lbl}>Farbe</label>
+                    <input type="color" value={(activeObj as any).fill ?? textColor}
+                      onChange={(e) => onColorChange(e.target.value)}
+                      className="w-full h-7 rounded cursor-pointer border border-white/10 bg-transparent" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div>
+                    <label className={lbl}>Zeichenabstand</label>
+                    <input type="range" min={-200} max={1000} value={(activeObj as any).charSpacing ?? 0}
+                      onChange={(e) => { (activeObj as any).set("charSpacing", Number(e.target.value)); onUpdate(); }}
+                      className="w-full accent-[#F6A11C] h-1" />
+                  </div>
+                  <div>
+                    <label className={lbl}>Zeilenabstand</label>
+                    <input type="range" min={50} max={300} value={Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}
+                      onChange={(e) => { (activeObj as any).set("lineHeight", Number(e.target.value) / 100); onUpdate(); }}
+                      className="w-full accent-[#F6A11C] h-1" />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Position */}
             <div className="grid grid-cols-2 gap-1.5">
