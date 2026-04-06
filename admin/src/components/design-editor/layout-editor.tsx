@@ -1150,28 +1150,38 @@ function LayersPanel({
   const objects = canvas.getObjects();
   const activeObj = canvas.getActiveObject();
 
+  function isImageType(obj: any): boolean {
+    const t = (obj.type || "").toLowerCase();
+    return t === "image" || t === "fabricimage" || obj.getSrc != null;
+  }
+
+  function isTextType(obj: any): boolean {
+    const t = (obj.type || "").toLowerCase();
+    return t === "textbox" || t === "text" || t === "i-text";
+  }
+
   function getLayerName(obj: any): string {
     if (obj.isPhotoPlaceholder && obj.type === "group") {
-      const textChild = obj.getObjects?.().find?.((c: any) => c.type === "text");
+      const textChild = obj.getObjects?.().find?.((c: any) => isTextType(c));
       return textChild?.text || "Foto-Platzhalter";
     }
     if (obj.isPhotoPlaceholder) return "Foto-Platzhalter";
     if (obj.isBackground) return "Hintergrund";
-    if (obj.type === "textbox" || obj.type === "text") {
+    if (isTextType(obj)) {
       const txt = (obj.text || "").substring(0, 18);
       return txt ? `T: ${txt}` : "Text";
     }
-    if (obj.type === "image") return "Bild";
+    if (isImageType(obj)) return obj.isBackground ? "Hintergrund" : "Bild";
     if (obj.type === "group") return "Gruppe";
     if (obj.type === "rect") return "Rechteck";
-    return "Ebene";
+    return `Ebene (${obj.type || "?"})`;
   }
 
   function getLayerColor(obj: any): string {
     if (obj.isPhotoPlaceholder) return "#3b82f6";
     if (obj.isBackground) return "#8b5cf6";
-    if (obj.type === "textbox" || obj.type === "text") return "#f59e0b";
-    if (obj.type === "image") return "#10b981";
+    if (isTextType(obj)) return "#f59e0b";
+    if (isImageType(obj)) return "#10b981";
     return "#6b7280";
   }
 
