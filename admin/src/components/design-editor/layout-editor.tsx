@@ -1529,6 +1529,11 @@ function RightPanel({
 
   const objects = canvas.getObjects();
   const activeObj = canvas.getActiveObject();
+  const activeObjects: any[] = activeObj?.type === "activeselection" ? (activeObj as any).getObjects() : activeObj ? [activeObj] : [];
+  const isMultiSelect = activeObjects.length > 1;
+  const textObjects = activeObjects.filter((o: any) => o.type === "textbox");
+  const allAreText = textObjects.length === activeObjects.length && activeObjects.length > 0;
+  const hasTextInSelection = textObjects.length > 0;
 
   // Helper: get stroke color (works for groups by checking first child)
   function getStrokeColor(obj: any): string {
@@ -1682,7 +1687,7 @@ function RightPanel({
       </div>
       <div className="max-h-[40%] overflow-y-auto shrink-0 border-b border-white/10">
         {reversed.map((obj: any, revIdx: number) => {
-          const isActive = obj === activeObj;
+          const isActive = activeObjects.includes(obj);
           const isVisible = obj.visible !== false;
           const color = getLayerColor(obj);
           return (
@@ -1691,7 +1696,31 @@ function RightPanel({
               className={`flex items-center gap-1.5 px-2 py-1.5 text-[11px] cursor-pointer border-b border-white/5 transition-colors ${
                 isActive ? "bg-white/10" : "hover:bg-white/5"
               } ${!isVisible ? "opacity-30" : ""}`}
-              onClick={() => { canvas.setActiveObject(obj); canvas.renderAll(); refresh(); }}
+              onClick={(e) => {
+                const fabric = fabricModRef.current;
+                if ((e.ctrlKey || e.metaKey) && fabric) {
+                  if (isActive && isMultiSelect) {
+                    // Remove from selection
+                    const remaining = activeObjects.filter((o: any) => o !== obj);
+                    if (remaining.length === 1) {
+                      canvas.setActiveObject(remaining[0]);
+                    } else if (remaining.length > 1) {
+                      canvas.discardActiveObject();
+                      const sel = new fabric.ActiveSelection(remaining, { canvas });
+                      canvas.setActiveObject(sel);
+                    }
+                  } else if (!isActive) {
+                    // Add to selection
+                    const newSelection = [...activeObjects, obj];
+                    canvas.discardActiveObject();
+                    const sel = new fabric.ActiveSelection(newSelection, { canvas });
+                    canvas.setActiveObject(sel);
+                  }
+                } else {
+                  canvas.setActiveObject(obj);
+                }
+                canvas.renderAll(); refresh();
+              }}
             >
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
               <span className={`flex-1 truncate ${isActive ? "text-white font-medium" : "text-white/60"}`}>
@@ -1741,7 +1770,201 @@ function RightPanel({
 
       {/* Object Properties */}
       <div className="flex-1 overflow-y-auto p-3 space-y-1">
-        {activeObj ? (
+        {isMultiSelect ? (
+          <>
+            <p className="text-[10px] text-white/50 mb-2">{activeObjects.length} Elemente ausgewählt {hasTextInSelection && `(${textObjects.length} Text)`}</p>
+
+            {/* ── BULK TEXT ── */}
+            {hasTextInSelection && (
+              <PropSection title="Text (Bulk)">
+                <label className={lbl}>Schriftgröße</label>
+                <div className="flex items-center gap-1.5">
+                  <input type="range" min={8} max={400} value={Math.round((textObjects[0] as any).fontSize ?? 40)}
+                    onChange={(e) => {
+                      const size = Number(e.target.value) || 40;
+                      textObjects.forEach((o: any) => { o.set("fontSize", size); o.set("dirty", true); });
+                      canvas.renderAll(); onUpdate(); refresh();
+                    }}
+                    className="flex-1 accent-[#F6A11C] h-1" />
+                  <input type="number" min={8} max={400}
+                    className="w-14 shrink-0 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5"
+                    value={Math.round((textObjects[0] as any).fontSize ?? 40)}
+                    onChange={(e) => {
+                      const size = Number(e.target.value) || 40;
+                      textObjects.forEach((o: any) => { o.set("fontSize", size); o.set("dirty", true); });
+                      canvas.renderAll(); onUpdate(); refresh();
+                    }} />
+                </div>
+
+                <label className={lbl}>Farbe</label>
+                <div className="flex flex-wrap gap-1">
+                  {PRESET_COLORS.map((c) => (
+                    <button
+                      key={c.value}
+                      onClick={() => {
+                        textObjects.forEach((o: any) => { o.set("fill", c.value); o.set("dirty", true); });
+                        canvas.renderAll(); onUpdate(); refresh();
+                      }}
+                      title={c.label}
+                      className="w-6 h-6 rounded-full border-2 border-white/10 hover:border-white/30 transition-all"
+                      style={{ backgroundColor: c.value }}
+                    />
+                  ))}
+                  <label className="w-6 h-6 rounded-full border-2 border-white/10 hover:border-white/30 cursor-pointer overflow-hidden relative" title="Eigene Farbe">
+                    <input type="color" value={(textObjects[0] as any).fill ?? "#000000"}
+                      onChange={(e) => {
+                        textObjects.forEach((o: any) => { o.set("fill", e.target.value); o.set("dirty", true); });
+                        canvas.renderAll(); onUpdate(); refresh();
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                    <span className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(#ef4444, #eab308, #22c55e, #3b82f6, #ef4444)" }} />
+                  </label>
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[10px] text-white/40">#</span>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-0.5 font-mono uppercase"
+                    value={hexFocused ? hexInput : ((textObjects[0] as any).fill ?? "#000000").replace("#", "").toUpperCase()}
+                    onFocus={() => {
+                      setHexInput(((textObjects[0] as any).fill ?? "#000000").replace("#", "").toUpperCase());
+                      setHexFocused(true);
+                    }}
+                    onChange={(e) => setHexInput(e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6))}
+                    onBlur={() => {
+                      const v = hexInput.replace(/[^0-9a-fA-F]/g, "");
+                      let color = "";
+                      if (v.length === 6) color = `#${v}`;
+                      else if (v.length === 3) color = `#${v[0]}${v[0]}${v[1]}${v[1]}${v[2]}${v[2]}`;
+                      if (color) {
+                        textObjects.forEach((o: any) => { o.set("fill", color); o.set("dirty", true); });
+                        canvas.renderAll(); onUpdate(); refresh();
+                      }
+                      setHexFocused(false);
+                    }}
+                    onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+                  />
+                </div>
+
+                <label className={lbl}>Schriftart</label>
+                <select
+                  value={(textObjects[0] as any).fontFamily ?? selectedFont}
+                  onChange={async (e) => {
+                    const family = e.target.value;
+                    await loadFont(family);
+                    textObjects.forEach((o: any) => { o.set("fontFamily", family); o.set("dirty", true); o.initDimensions?.(); });
+                    canvas.renderAll(); onUpdate(); refresh();
+                  }}
+                  className="w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-1"
+                >
+                  {fonts.map((f) => <option key={f.family} value={f.family} style={{ fontFamily: f.family }}>{f.family}</option>)}
+                </select>
+              </PropSection>
+            )}
+
+            {/* ── BULK RAHMEN ── */}
+            <PropSection title="Rahmen (Bulk)" collapsible>
+              <label className={lbl}>Farbe</label>
+              <input type="color" value={getStrokeColor(activeObjects[0])}
+                onChange={(e) => {
+                  activeObjects.forEach((o: any) => {
+                    applyStroke(o, e.target.value, undefined);
+                    if (!((o as any).strokeWidth > 0)) applyStroke(o, e.target.value, 2);
+                  });
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+
+              <label className={lbl}>Stärke: {getStrokeWidth(activeObjects[0])}px</label>
+              <input type="range" min={0} max={30} value={getStrokeWidth(activeObjects[0])}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  activeObjects.forEach((o: any) => {
+                    applyStroke(o, val > 0 ? (getStrokeColor(o) || "#000000") : getStrokeColor(o), val);
+                  });
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full accent-[#F6A11C] h-1" />
+            </PropSection>
+
+            {/* ── BULK SCHATTEN ── */}
+            <PropSection title="Schatten (Bulk)" collapsible>
+              <label className={lbl}>Farbe</label>
+              <input type="color" value={shadowColor}
+                onChange={(e) => {
+                  setShadowColor(e.target.value);
+                  activeObjects.forEach((o: any) => applyShadowLive(o, e.target.value, shadowBlur, shadowOffsetX, shadowOffsetY));
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+
+              <label className={lbl}>Weichheit: {shadowBlur}px</label>
+              <input type="range" min={0} max={50} value={shadowBlur}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setShadowBlur(v);
+                  activeObjects.forEach((o: any) => applyShadowLive(o, shadowColor, v, shadowOffsetX, shadowOffsetY));
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full accent-[#F6A11C] h-1" />
+
+              <div className="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label className={lbl}>X: {shadowOffsetX}</label>
+                  <input type="range" min={-30} max={30} value={shadowOffsetX}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setShadowOffsetX(v);
+                      activeObjects.forEach((o: any) => applyShadowLive(o, shadowColor, shadowBlur, v, shadowOffsetY));
+                      canvas.renderAll(); onUpdate(); refresh();
+                    }} className="w-full accent-[#F6A11C] h-1" />
+                </div>
+                <div>
+                  <label className={lbl}>Y: {shadowOffsetY}</label>
+                  <input type="range" min={-30} max={30} value={shadowOffsetY}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setShadowOffsetY(v);
+                      activeObjects.forEach((o: any) => applyShadowLive(o, shadowColor, shadowBlur, shadowOffsetX, v));
+                      canvas.renderAll(); onUpdate(); refresh();
+                    }} className="w-full accent-[#F6A11C] h-1" />
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  activeObjects.forEach((o: any) => applyShadow(o, null));
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full py-1 rounded text-[10px] bg-white/5 text-white/50 hover:text-white/70 transition-colors mt-1"
+              >
+                Schatten entfernen
+              </button>
+            </PropSection>
+
+            {/* ── BULK DECKKRAFT ── */}
+            <PropSection title="Deckkraft (Bulk)">
+              <div className="flex items-center gap-1.5">
+                <input type="range" min={0} max={100} value={Math.round((activeObjects[0].opacity ?? 1) * 100)}
+                  onChange={(e) => {
+                    const v = Number(e.target.value) / 100;
+                    activeObjects.forEach((o: any) => o.set("opacity", v));
+                    canvas.renderAll(); onUpdate(); refresh();
+                  }}
+                  className="flex-1 accent-[#F6A11C] h-1" />
+                <input type="number" min={0} max={100} className={`${inp} w-12`}
+                  value={Math.round((activeObjects[0].opacity ?? 1) * 100)}
+                  onChange={(e) => {
+                    const v = Math.min(100, Math.max(0, Number(e.target.value) || 0)) / 100;
+                    activeObjects.forEach((o: any) => o.set("opacity", v));
+                    canvas.renderAll(); onUpdate(); refresh();
+                  }} />
+                <span className="text-[10px] text-white/30">%</span>
+              </div>
+            </PropSection>
+          </>
+        ) : activeObj ? (
           <>
             {/* ── TEXT ── */}
             {activeObj.type === "textbox" && (
