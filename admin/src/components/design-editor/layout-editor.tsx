@@ -113,7 +113,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   function pushHistory() {
     const canvas = fabricRef.current;
     if (!canvas || isUndoRedoRef.current) return;
-    const json = JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "isBackground"]));
+    const json = JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "isBackground", "selectable", "evented", "hasControls"]));
     const idx = historyIndexRef.current;
     // Discard any future states
     historyRef.current = historyRef.current.slice(0, idx + 1);
@@ -180,7 +180,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(async () => {
           await refreshTextDimensions(canvas);
           countPlaceholders(canvas);
-          lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder"]));
+          lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]));
         });
       }
 
@@ -276,7 +276,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const canvas = fabricRef.current;
     if (!canvas) return;
 
-    const json = canvas.toObject(["isPhotoPlaceholder"]);
+    const json = canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]);
     const jsonStr = JSON.stringify(json);
     if (jsonStr === lastSavedJsonRef.current) return;
 
@@ -643,7 +643,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   async function handleSaveNow() {
     if (mode === "admin" && onSaveTemplate && fabricRef.current) {
       const thumb = fabricRef.current.toDataURL({ format: "png", multiplier: 0.25 });
-      onSaveTemplate(fabricRef.current.toObject(["isPhotoPlaceholder"]), thumb);
+      onSaveTemplate(fabricRef.current.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]), thumb);
       return;
     }
     dirtyRef.current = true;
@@ -728,7 +728,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       const form = new FormData();
       form.append("file", finalBlob, "layout.png");
       form.append("preview", previewBlob, "layout-preview.png");
-      form.append("canvasJson", JSON.stringify(canvas.toObject(["isPhotoPlaceholder"])));
+      form.append("canvasJson", JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"])));
 
       const res = await fetch(`/api/design/${token}/update-graphics`, {
         method: "POST",
@@ -892,7 +892,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                     const canvas = fabricRef.current;
                     if (!canvas || !onSaveTemplate) return;
                     const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
-                    onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]), thumb);
+                    onSaveTemplate(canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]), thumb);
                   }}
                   className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
                 >
@@ -944,7 +944,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         <div className="flex flex-1 min-h-0">
 
           {/* LEFT SIDEBAR: Add elements */}
-          <div className="w-[180px] shrink-0 border-r border-white/10 bg-[#222326] flex flex-col overflow-y-auto">
+          <div className="w-[220px] shrink-0 border-r border-white/10 bg-[#222326] flex flex-col overflow-y-auto">
             <div className="px-3 py-2 border-b border-white/10">
               <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Hinzufügen</h3>
             </div>
@@ -1680,7 +1680,7 @@ function RightPanel({
   const inp = "w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5";
 
   return (
-    <div className="w-[220px] shrink-0 border-l border-white/10 bg-[#222326] flex flex-col">
+    <div className="w-[280px] shrink-0 border-l border-white/10 bg-[#222326] flex flex-col">
       {/* Layers list */}
       <div className="px-3 py-1.5 border-b border-white/10 shrink-0">
         <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Ebenen</h3>
