@@ -67,8 +67,6 @@ type DesignElementItem = {
 type UploadMode = "background" | "element";
 type Panel = "templates" | "text" | "upload" | "elements" | null;
 type Modal = "elements" | "templates" | null;
-type AddMenu = boolean;
-
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -83,8 +81,6 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const [openModal, setOpenModal] = useState<Modal>(null);
-  const [showAddMenu, setShowAddMenu] = useState(false);
-  const addMenuRef = useRef<HTMLDivElement>(null);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [designElements, setDesignElements] = useState<DesignElementItem[]>([]);
   const [fonts, setFonts] = useState<FontDef[]>([]);
@@ -655,17 +651,6 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  // ---- Close add menu on outside click ------------------------------------
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (showAddMenu && addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) {
-        setShowAddMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [showAddMenu]);
-
   // ---- Submitted state ----------------------------------------------------
 
   if (submitted) {
@@ -700,34 +685,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
         <div className="h-11 border-b border-white/10 bg-[#222326] flex items-center px-3 shrink-0">
-          {/* Left: Add menu + Elemente + Vorlagen + Undo/Redo */}
           <div className="flex items-center gap-1">
-            {/* ADD dropdown */}
-            <div className="relative" ref={addMenuRef}>
-              <ToolbarButton onClick={() => setShowAddMenu(!showAddMenu)} active={showAddMenu}>
-                <span className="flex items-center gap-1">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  <span className="text-xs">Hinzufügen</span>
-                </span>
-              </ToolbarButton>
-              {showAddMenu && (
-                <div className="absolute top-full left-0 mt-1 w-56 bg-[#2a2b2e] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
-                  <div className="px-3 py-1.5 text-[10px] font-semibold text-white/40 uppercase tracking-wider">Hinzufügen</div>
-                  <AddMenuItem icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 4-6 5 7"/></svg>} label="Bild hochladen" onClick={() => { setShowAddMenu(false); document.getElementById("img-upload-hidden")?.click(); }} />
-                  <AddMenuItem icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M17 8h.01"/></svg>} label={`Foto-Platzhalter (${placeholderCount}/3)`} onClick={() => { setShowAddMenu(false); addPhotoPlaceholder(); }} disabled={placeholderCount >= 3} />
-                  <AddMenuItem icon={<span className="w-5 h-5 flex items-center justify-center text-lg font-bold">T</span>} label="Text" onClick={() => { setShowAddMenu(false); addText(); }} />
-                </div>
-              )}
-            </div>
-
-            <ToolbarButton onClick={() => setOpenModal("elements")}>
-              <span className="text-xs">Elemente</span>
-            </ToolbarButton>
-            <ToolbarButton onClick={() => setOpenModal("templates")}>
-              <span className="text-xs">Vorlagen</span>
-            </ToolbarButton>
-
-            <div className="w-px h-5 bg-white/10 mx-1" />
             <ToolbarButton onClick={undo} title="Rückgängig (Strg+Z)">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
             </ToolbarButton>
@@ -761,8 +719,48 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         {/* Hidden file input for image upload */}
         <input id="img-upload-hidden" type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e)} />
 
-        {/* Main area: Canvas + Right sidebar */}
+        {/* Main area: Left sidebar + Canvas + Right sidebar */}
         <div className="flex flex-1 min-h-0">
+
+          {/* LEFT SIDEBAR: Add elements */}
+          <div className="w-[180px] shrink-0 border-r border-white/10 bg-[#222326] flex flex-col overflow-y-auto">
+            <div className="px-3 py-2 border-b border-white/10">
+              <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Hinzufügen</h3>
+            </div>
+
+            <SidebarButton
+              icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 4-6 5 7"/></svg>}
+              label="Bild"
+              onClick={() => document.getElementById("img-upload-hidden")?.click()}
+            />
+            <SidebarButton
+              icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M17 8h.01"/></svg>}
+              label={`Foto-Platzhalter (${placeholderCount}/3)`}
+              onClick={addPhotoPlaceholder}
+              disabled={placeholderCount >= 3}
+            />
+            <SidebarButton
+              icon={<span className="w-5 h-5 flex items-center justify-center text-lg font-bold">T</span>}
+              label="Text"
+              onClick={addText}
+            />
+
+            <div className="px-3 py-2 border-t border-b border-white/10 mt-1">
+              <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Bibliothek</h3>
+            </div>
+
+            <SidebarButton
+              icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>}
+              label="Elemente"
+              onClick={() => setOpenModal("elements")}
+            />
+            <SidebarButton
+              icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>}
+              label="Vorlagen"
+              onClick={() => setOpenModal("templates")}
+            />
+          </div>
+
           {/* CANVAS AREA */}
           <div
             ref={wrapperRef}
@@ -773,7 +771,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR: Layers + Text + Object Properties */}
+          {/* RIGHT SIDEBAR: Layers + Object Properties */}
           <RightPanel
             fabricRef={fabricRef}
             fabricModRef={fabricModRef}
@@ -872,15 +870,15 @@ function ToolbarButton({
   );
 }
 
-function AddMenuItem({ icon, label, onClick, disabled }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean }) {
+function SidebarButton({ icon, label, onClick, disabled }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-white/80 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
+      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white transition-colors ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
     >
-      <span className="text-white/50">{icon}</span>
-      {label}
+      <span className="text-white/50 shrink-0">{icon}</span>
+      <span className="truncate">{label}</span>
     </button>
   );
 }
