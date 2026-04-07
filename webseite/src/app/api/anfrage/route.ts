@@ -136,6 +136,45 @@ function buildEmailHtml(data: AnfragePayload): string {
   `;
 }
 
+function mapToAdminPayload(data: AnfragePayload) {
+  return {
+    customerName: `${data.vorname} ${data.nachname}`.trim(),
+    customerEmail: data.email,
+    customerPhone: data.telefon,
+    customerType: data.eventType === "Firmenevent" ? "BUSINESS" : "PRIVATE",
+    eventDate: data.datum,
+    eventType: data.eventType || "Sonstiges",
+    locationName: data.location,
+    locationAddress: data.location,
+    distanceKm: data.deliveryDistance ?? null,
+    extras: data.addons ?? [],
+    comments: [
+      data.art ? `Produkt: ${data.art}` : "",
+      data.nachricht ? data.nachricht : "",
+      data.totalPrice ? `Kalkulierter Preis: ${data.totalPrice.toFixed(2)} €` : "",
+    ].filter(Boolean).join("\n"),
+  };
+}
+
+async function forwardToAdmin(data: AnfragePayload): Promise<void> {
+  const adminUrl = process.env.ADMIN_API_URL;
+  if (!adminUrl) {
+    console.warn("ADMIN_API_URL not set, skipping admin forwarding");
+    return;
+  }
+
+  const res = await fetch(`${adminUrl}/api/inquiries`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(mapToAdminPayload(data)),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Admin API error: ${res.status} ${errorText}`);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data: AnfragePayload = await request.json();
@@ -151,10 +190,30 @@ export async function POST(request: NextRequest) {
     const subject = `Neue Anfrage: ${data.art} – ${data.vorname} ${data.nachname} (${data.eventType})`;
     const htmlBody = buildEmailHtml(data);
 
-    await sendMailViaGraph(subject, htmlBody);
+    // Send email and forward to admin console in parallel
+    const results = await Promise.allSettled([
+      sendMailViaGraph(subject, htmlBody),
+      forwardToAdmin(data),
+    ]);
 
-    // TODO: Also save to admin dashboard database when available
-    // await saveToDatabase(data);
+    // Log failures but don't fail the request if at least one succeeded
+    const emailResult = results[0];
+    const adminResult = results[1];
+
+    if (emailResult.status === "rejected") {
+      console.error("Email send failed:", emailResult.reason);
+    }
+    if (adminResult.status === "rejected") {
+      console.error("Admin forwarding failed:", adminResult.reason);
+    }
+
+    // Fail only if both failed
+    if (emailResult.status === "rejected" && adminResult.status === "rejected") {
+      return NextResponse.json(
+        { error: "Interner Fehler beim Senden der Anfrage" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
