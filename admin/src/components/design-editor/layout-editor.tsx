@@ -92,8 +92,6 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const [selectedFont, setSelectedFont] = useState("Montserrat");
   const [fontSize, setFontSize] = useState(40);
   const [textColor, setTextColor] = useState("#000000");
-  const [hexInput, setHexInput] = useState("");
-  const [hexFocused, setHexFocused] = useState(false);
 
   const [placeholderCount, setPlaceholderCount] = useState(0);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -1512,6 +1510,8 @@ function RightPanel({
   loadFont: (family: string, weight?: number, style?: string) => Promise<void>;
 }) {
   const [tick, setTick] = useState(0);
+  const [hexInput, setHexInput] = useState("");
+  const [hexFocused, setHexFocused] = useState(false);
   const refresh = () => setTick((n) => n + 1);
   const [lockRatio, setLockRatio] = useState(false);
   const [shadowColor, setShadowColor] = useState("#000000");
