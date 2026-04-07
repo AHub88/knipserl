@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { LayoutEditorLoader } from "@/components/design-editor/layout-editor-loader";
+import { useSidebar } from "@/components/ui/sidebar";
 
 type ExistingTemplate = {
   id: string;
@@ -21,10 +22,17 @@ export function TemplateEditorClient({
   existingTemplate: ExistingTemplate;
 }) {
   const router = useRouter();
+  const { setOpen } = useSidebar();
   const [name, setName] = useState(existingTemplate?.name ?? "");
   const [format, setFormat] = useState(existingTemplate?.format ?? "2x6");
   const [category, setCategory] = useState(existingTemplate?.category ?? "");
   const [saving, setSaving] = useState(false);
+
+  // Sidebar beim Laden des Editors einklappen
+  useEffect(() => {
+    setOpen(false);
+    return () => setOpen(true);
+  }, [setOpen]);
 
   async function handleSaveTemplate(canvasJson: unknown, thumbnailDataUrl: string | null) {
     if (!name.trim()) {

@@ -148,7 +148,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     });
   }
 
-  // ---- Canvas init --------------------------------------------------------
+  // ---- Canvas init + fetch data ------------------------------------------
+
+  const fontsRef = useRef<FontDef[]>([]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -157,7 +159,42 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     let cancelled = false;
 
     (async () => {
-      const fabric = await import("fabric");
+      // Fetch fonts, templates, elements in parallel with fabric import
+      const [fabric, fontsRes] = await Promise.all([
+        import("fabric"),
+        fetch("/api/design/fonts").then((r) => r.json()).catch(() => null),
+      ]);
+
+      // Fire-and-forget: templates + elements (not needed for canvas init)
+      fetch("/api/design/templates")
+        .then((r) => r.json())
+        .then((d) => setTemplates(d.templates ?? []))
+        .catch(() => {});
+      fetch("/api/design/elements")
+        .then((r) => r.json())
+        .then((d) => setDesignElements(d.elements ?? []))
+        .catch(() => {});
+
+      // Process fonts
+      if (fontsRes) {
+        const googleFonts: FontDef[] = [...(fontsRes.fonts ?? [])];
+        const customFonts: FontDef[] = [...(fontsRes.customFonts ?? [])];
+        for (const cf of customFonts) {
+          if (cf.fileUrls) {
+            for (const fu of cf.fileUrls) {
+              const rule = `@font-face { font-family: "${cf.family}"; src: url("${fu.url}"); font-weight: ${fu.weight}; font-style: ${fu.style}; font-display: swap; }`;
+              const styleEl = document.createElement("style");
+              styleEl.textContent = rule;
+              document.head.appendChild(styleEl);
+            }
+          }
+        }
+        const allFonts = [...customFonts, ...googleFonts].sort((a, b) => a.family.localeCompare(b.family));
+        fontsRef.current = allFonts;
+        setFonts(allFonts);
+        setFontCategories(fontsRes.categories ?? []);
+      }
+
       fabricModRef.current = fabric;
       if (cancelled || !canvasRef.current) return;
 
@@ -175,13 +212,29 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       // Scale canvas to fit viewport
       fitCanvas(canvas, 1);
 
-      // Load existing design
+      // Load existing design — pre-load fonts from canvasJson BEFORE loadFromJSON
       if (existingDesign?.canvasJson) {
-        canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(async () => {
-          await refreshTextDimensions(canvas);
-          countPlaceholders(canvas);
-          lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]));
-        });
+        const json = existingDesign.canvasJson as Record<string, any>;
+        // Extract all fontFamily values from the saved canvas objects
+        const usedFamilies = new Set<string>();
+        for (const obj of json.objects ?? []) {
+          if (obj.fontFamily) usedFamilies.add(obj.fontFamily);
+          // Check grouped objects
+          if (obj.objects) {
+            for (const child of obj.objects) {
+              if (child.fontFamily) usedFamilies.add(child.fontFamily);
+            }
+          }
+        }
+        // Pre-load all used fonts before canvas renders
+        for (const family of usedFamilies) {
+          await preloadFont(family, fontsRef.current);
+        }
+
+        await canvas.loadFromJSON(json);
+        await refreshTextDimensions(canvas);
+        countPlaceholders(canvas);
+        lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]));
       }
 
       // Track changes + push undo history
@@ -214,42 +267,6 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       fabricRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ---- Fetch data ---------------------------------------------------------
-
-  useEffect(() => {
-    fetch("/api/design/templates")
-      .then((r) => r.json())
-      .then((d) => setTemplates(d.templates ?? []))
-      .catch(() => {});
-
-    fetch("/api/design/elements")
-      .then((r) => r.json())
-      .then((d) => setDesignElements(d.elements ?? []))
-      .catch(() => {});
-
-    fetch("/api/design/fonts")
-      .then((r) => r.json())
-      .then((d) => {
-        const googleFonts: FontDef[] = [...(d.fonts ?? [])];
-        const customFonts: FontDef[] = [...(d.customFonts ?? [])];
-        // Inject @font-face rules for custom fonts
-        for (const cf of customFonts) {
-          if (cf.fileUrls) {
-            for (const fu of cf.fileUrls) {
-              const rule = `@font-face { font-family: "${cf.family}"; src: url("${fu.url}"); font-weight: ${fu.weight}; font-style: ${fu.style}; font-display: swap; }`;
-              const style = document.createElement("style");
-              style.textContent = rule;
-              document.head.appendChild(style);
-            }
-          }
-        }
-        const allFonts = [...customFonts, ...googleFonts].sort((a, b) => a.family.localeCompare(b.family));
-        setFonts(allFonts);
-        setFontCategories(d.categories ?? []);
-      })
-      .catch(() => {});
   }, []);
 
   // ---- Auto-save ----------------------------------------------------------
@@ -334,9 +351,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   // ---- Font loading -------------------------------------------------------
 
-  async function loadFont(family: string, weight: number = 400, style: string = "normal") {
-    // Check if this is a custom font (already loaded via @font-face)
-    const isCustom = fonts.some((f) => f.family === family && f.category === "custom");
+  /** Load a font, using the provided fontList to check custom vs Google */
+  async function preloadFont(family: string, fontList: FontDef[], weight: number = 400, style: string = "normal") {
+    const isCustom = fontList.some((f) => f.family === family && f.category === "custom");
     if (!isCustom) {
       const id = `gfont-${family.replace(/\s+/g, "-")}`;
       if (!document.getElementById(id)) {
@@ -347,17 +364,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         document.head.appendChild(link);
       }
     }
-    // Wait for the font to actually be available (with retry for slow network loads)
     const spec = `${style} ${weight} 16px "${family}"`;
-    for (let attempt = 0; attempt < 10; attempt++) {
-      try {
-        await document.fonts.load(spec);
-      } catch { /* ignore */ }
+    for (let attempt = 0; attempt < 15; attempt++) {
+      try { await document.fonts.load(spec); } catch { /* ignore */ }
       await document.fonts.ready;
-      // Check if the font is actually loaded (not just resolved with fallback)
       if (document.fonts.check(spec)) return;
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((r) => setTimeout(r, 200));
     }
+  }
+
+  async function loadFont(family: string, weight: number = 400, style: string = "normal") {
+    return preloadFont(family, fontsRef.current, weight, style);
   }
 
   // ---- Actions ------------------------------------------------------------
