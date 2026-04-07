@@ -899,16 +899,23 @@ function ToolbarButton({
   );
 }
 
-function PropSection({ title, children, action }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void } }) {
+function PropSection({ title, children, action, collapsible, defaultOpen }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void }; collapsible?: boolean; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen ?? !collapsible);
   return (
     <div className="space-y-1.5 py-2 border-b border-white/10">
       <div className="flex items-center justify-between">
-        <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">{title}</h4>
-        {action && (
+        <h4
+          className={`text-[10px] font-semibold text-white/50 uppercase tracking-wider ${collapsible ? "cursor-pointer select-none hover:text-white/70" : ""}`}
+          onClick={collapsible ? () => setOpen(!open) : undefined}
+        >
+          {collapsible && <span className="inline-block w-3 text-[8px]">{open ? "▾" : "▸"}</span>}
+          {title}
+        </h4>
+        {action && open && (
           <button onClick={action.onClick} className="text-[9px] text-red-400 hover:text-red-300">{action.label}</button>
         )}
       </div>
-      {children}
+      {open && children}
     </div>
   );
 }
@@ -1600,6 +1607,41 @@ function RightPanel({
                   ))}
                 </div>
 
+                <label className={lbl}>Stil</label>
+                <div className="flex gap-1">
+                  {([
+                    { key: "bold", prop: "fontWeight", on: "bold", off: "normal", label: "F", style: "font-bold" },
+                    { key: "italic", prop: "fontStyle", on: "italic", off: "normal", label: "K", style: "italic" },
+                  ] as const).map(({ key, prop, on, off, label, style }) => {
+                    const active = (activeObj as any)[prop] === on;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => { (activeObj as any).set(prop, active ? off : on); onUpdate(); refresh(); }}
+                        className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${style} ${
+                          active ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => {
+                      const current = (activeObj as any).text || "";
+                      const isUpper = current === current.toUpperCase() && current !== current.toLowerCase();
+                      (activeObj as any).set("text", isUpper ? current.toLowerCase() : current.toUpperCase());
+                      onUpdate(); refresh();
+                    }}
+                    className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
+                      (() => { const t = (activeObj as any).text || ""; return t === t.toUpperCase() && t !== t.toLowerCase(); })()
+                        ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
+                    }`}
+                  >
+                    AB
+                  </button>
+                </div>
+
                 <div className="flex items-center justify-between">
                   <label className={lbl}>Zeichenabstand</label>
                   {((activeObj as any).charSpacing ?? 0) !== 0 && (
@@ -1698,7 +1740,7 @@ function RightPanel({
             </PropSection>
 
             {/* ── RAHMEN ── */}
-            <PropSection title="Rahmen">
+            <PropSection title="Rahmen" collapsible>
               <label className={lbl}>Farbe</label>
               <input type="color" value={getStrokeColor(activeObj)}
                 onChange={(e) => {
@@ -1719,7 +1761,7 @@ function RightPanel({
             </PropSection>
 
             {/* ── SCHATTEN ── */}
-            <PropSection title="Schatten" action={(() => {
+            <PropSection title="Schatten" collapsible action={(() => {
               // For placeholders, check shadow on rect child
               if ((activeObj as any).isPhotoPlaceholder && typeof (activeObj as any).getObjects === "function") {
                 const rect = (activeObj as any).getObjects().find((c: any) => c.text === undefined);
