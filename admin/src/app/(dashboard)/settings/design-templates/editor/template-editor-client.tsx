@@ -77,7 +77,7 @@ export function TemplateEditorClient({
   }
 
   const fieldClass =
-    "h-7 rounded-md border border-white/[0.08] bg-[#1a1b1e] px-2.5 text-[12px] text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 rounded-lg border border-white/[0.08] bg-[#1a1b1e] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="flex flex-col h-[calc(100vh-56px)]">
@@ -98,35 +98,47 @@ export function TemplateEditorClient({
           mode="admin"
           onSaveTemplate={handleSaveTemplate}
           templateMeta={
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Link
                 href="/settings/design-templates"
-                className="flex items-center gap-1 text-[12px] text-zinc-400 hover:text-zinc-200 transition-colors mr-1"
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-sm text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-colors"
               >
-                <IconArrowLeft className="size-3.5" />
+                <IconArrowLeft className="size-4" />
+                <span>Zurück</span>
               </Link>
-              <div className="w-px h-5 bg-white/10" />
-              <input
-                className={fieldClass + " w-44"}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Vorlagen-Name *"
-              />
-              <select
-                className={fieldClass + " w-20"}
-                value={format}
-                onChange={(e) => setFormat(e.target.value)}
-              >
-                <option value="2x6">2x6</option>
-                <option value="4x6">4x6</option>
-              </select>
-              <input
-                className={fieldClass + " w-28"}
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Kategorie"
-              />
-              {saving && <span className="text-[11px] text-white/40">Speichert...</span>}
+              <div className="w-px h-7 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <div>
+                  <label className="block text-[10px] text-zinc-500 mb-0.5 leading-none">Name</label>
+                  <input
+                    className={fieldClass + " w-48"}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="z.B. Hochzeit Elegant"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-zinc-500 mb-0.5 leading-none">Format</label>
+                  <select
+                    className={fieldClass + " w-24"}
+                    value={format}
+                    onChange={(e) => setFormat(e.target.value)}
+                  >
+                    <option value="2x6">2x6</option>
+                    <option value="4x6">4x6</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] text-zinc-500 mb-0.5 leading-none">Kategorie</label>
+                  <input
+                    className={fieldClass + " w-32"}
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="z.B. Hochzeit"
+                  />
+                </div>
+              </div>
+              {saving && <span className="text-sm text-white/40">Speichert...</span>}
             </div>
           }
         />

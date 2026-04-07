@@ -713,80 +713,89 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       {/* Editor (hidden on mobile) */}
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
-        <div className="h-11 border-b border-white/10 bg-[#18191b] flex items-center px-3 shrink-0">
-          {/* Left: template meta or customer info */}
-          {templateMeta || (
-            <div className="flex items-center gap-2 px-1">
-              {mode === "customer" && (
-                <span className="text-[12px] text-white/60 font-medium">
-                  {orderInfo.customerName} · {orderInfo.eventType}
-                  {orderInfo.eventDate ? ` · ${orderInfo.eventDate}` : ""}
-                </span>
-              )}
-              {mode === "admin" && (
-                <span className="text-[12px] text-white/50">Format: {format}</span>
-              )}
-            </div>
-          )}
-
-          <div className="w-px h-5 bg-white/10 mx-1.5" />
-
-          {/* Undo / Redo / Delete — with labels */}
-          <div className="flex items-center gap-1">
-            <button onClick={undo} title="Rückgängig (Strg+Z)"
-              className="flex items-center gap-1 px-2 py-1 rounded-md text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
-              <span className="text-[11px]">Rückgängig</span>
-            </button>
-            <button onClick={redo} title="Wiederherstellen (Strg+Shift+Z)"
-              className="flex items-center gap-1 px-2 py-1 rounded-md text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
-              <span className="text-[11px]">Wiederherstellen</span>
-            </button>
-            <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
-              className="flex items-center gap-1 px-2 py-1 rounded-md text-white/60 hover:text-red-400 hover:bg-red-500/10 transition-colors">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              <span className="text-[11px]">Löschen</span>
-            </button>
-          </div>
-
-          {/* Center: Zoom */}
-          <div className="flex-1 flex justify-center">
-            <div className="flex items-center gap-0.5 bg-white/5 rounded-md px-1">
-              <ToolbarButton onClick={() => setZoom(z => Math.max(0.25, z * 0.8))} title="Herauszoomen">&minus;</ToolbarButton>
-              <span className="text-[11px] text-white/50 w-10 text-center select-none">{Math.round(zoom * 100)}%</span>
-              <ToolbarButton onClick={() => setZoom(z => Math.min(3, z * 1.25))} title="Hineinzoomen">+</ToolbarButton>
-            </div>
-          </div>
-
-          {/* Right: Status + Save/Submit */}
-          <div className="flex items-center gap-2.5">
-            <span className="text-[11px]">
-              {saveStatus === "saving" && <span className="text-white/40">Speichert...</span>}
-              {saveStatus === "saved" && <span className="text-green-400/80">Gespeichert</span>}
-              {saveStatus === "error" && <span className="text-red-400">Fehler beim Speichern</span>}
-            </span>
-            {mode === "admin" ? (
-              <button
-                onClick={() => {
-                  const canvas = fabricRef.current;
-                  if (!canvas || !onSaveTemplate) return;
-                  const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
-                  onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]), thumb);
-                }}
-                className="px-3.5 py-1.5 text-[12px] font-semibold rounded-md bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
-              >
-                Vorlage speichern
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="px-3.5 py-1.5 text-[12px] font-semibold rounded-md bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
-              >
-                {submitting ? "Wird gesendet..." : "Design absenden"}
-              </button>
+        <div className="shrink-0 border-b border-white/10 bg-[#1c1d20]">
+          <div className="flex items-center h-14 px-4 gap-3">
+            {/* Left: template meta or customer info */}
+            {templateMeta || (
+              <div className="flex items-center gap-2.5 shrink-0">
+                {mode === "customer" && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#F6A11C]/15 flex items-center justify-center text-[#F6A11C] text-xs font-bold">
+                      {orderInfo.customerName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+                    </div>
+                    <div className="leading-tight">
+                      <div className="text-sm font-medium text-white/80">{orderInfo.customerName}</div>
+                      <div className="text-[11px] text-white/40">{orderInfo.eventType}{orderInfo.eventDate ? ` · ${orderInfo.eventDate}` : ""}</div>
+                    </div>
+                  </div>
+                )}
+                {mode === "admin" && (
+                  <span className="text-sm text-white/50 font-medium">Format: {format}</span>
+                )}
+              </div>
             )}
+
+            <div className="w-px h-7 bg-white/10" />
+
+            {/* Undo / Redo / Delete — large, labeled buttons */}
+            <div className="flex items-center gap-1.5">
+              <button onClick={undo} title="Rückgängig (Strg+Z)"
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
+                <span className="text-[13px]">Rückgängig</span>
+              </button>
+              <button onClick={redo} title="Wiederherstellen (Strg+Shift+Z)"
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
+                <span className="text-[13px]">Wiederherstellen</span>
+              </button>
+              <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span className="text-[13px]">Löschen</span>
+              </button>
+            </div>
+
+            {/* Center: Zoom */}
+            <div className="flex-1 flex justify-center">
+              <div className="flex items-center h-9 rounded-lg border border-white/[0.08] bg-white/[0.03] overflow-hidden">
+                <button onClick={() => setZoom(z => Math.max(0.25, z * 0.8))} title="Herauszoomen"
+                  className="w-9 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">&minus;</button>
+                <span className="text-[13px] text-white/60 w-14 text-center select-none font-medium border-x border-white/[0.08]">{Math.round(zoom * 100)}%</span>
+                <button onClick={() => setZoom(z => Math.min(3, z * 1.25))} title="Hineinzoomen"
+                  className="w-9 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">+</button>
+              </div>
+            </div>
+
+            {/* Right: Status + Save/Submit */}
+            <div className="flex items-center gap-3">
+              <span className="text-[13px]">
+                {saveStatus === "saving" && <span className="text-white/40">Speichert...</span>}
+                {saveStatus === "saved" && <span className="text-green-400/80">Gespeichert</span>}
+                {saveStatus === "error" && <span className="text-red-400">Fehler beim Speichern</span>}
+              </span>
+              {mode === "admin" ? (
+                <button
+                  onClick={() => {
+                    const canvas = fabricRef.current;
+                    if (!canvas || !onSaveTemplate) return;
+                    const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
+                    onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]), thumb);
+                  }}
+                  className="h-9 px-5 text-[13px] font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
+                >
+                  Vorlage speichern
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="h-9 px-5 text-[13px] font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                >
+                  {submitting ? "Wird gesendet..." : "Design absenden"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
