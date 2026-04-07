@@ -463,3 +463,16 @@ model DesignElement {
 
   @@map("design_elements")
 }
+
+model CustomFont {
+  id        String   @id @default(cuid())
+  family    String
+  category  String   @default("custom")
+  fileUrl   String
+  weight    Int      @default(400)
+  style     String   @default("normal")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("custom_fonts")
+}

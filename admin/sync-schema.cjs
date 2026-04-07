@@ -322,6 +322,16 @@ async function syncSchema() {
     ["design_elements", "sortOrder", "INTEGER", false, "0"],
     ["design_elements", "active", "BOOLEAN", false, "true"],
     ["design_elements", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // custom_fonts
+    ["custom_fonts", "id", "TEXT", false, null],
+    ["custom_fonts", "family", "TEXT", false, "''"],
+    ["custom_fonts", "category", "TEXT", false, "'custom'"],
+    ["custom_fonts", "fileUrl", "TEXT", false, "''"],
+    ["custom_fonts", "weight", "INTEGER", false, "400"],
+    ["custom_fonts", "style", "TEXT", false, "'normal'"],
+    ["custom_fonts", "active", "BOOLEAN", false, "true"],
+    ["custom_fonts", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table

@@ -40,6 +40,7 @@ type FontDef = {
   family: string;
   category: string;
   weights: number[];
+  fileUrls?: { url: string; weight: number; style: string }[];
 };
 
 function getCanvasDimensions(format: string) {
@@ -229,7 +230,21 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     fetch("/api/design/fonts")
       .then((r) => r.json())
       .then((d) => {
-        setFonts([...(d.fonts ?? [])].sort((a: FontDef, b: FontDef) => a.family.localeCompare(b.family)));
+        const googleFonts: FontDef[] = [...(d.fonts ?? [])];
+        const customFonts: FontDef[] = [...(d.customFonts ?? [])];
+        // Inject @font-face rules for custom fonts
+        for (const cf of customFonts) {
+          if (cf.fileUrls) {
+            for (const fu of cf.fileUrls) {
+              const rule = `@font-face { font-family: "${cf.family}"; src: url("${fu.url}"); font-weight: ${fu.weight}; font-style: ${fu.style}; font-display: swap; }`;
+              const style = document.createElement("style");
+              style.textContent = rule;
+              document.head.appendChild(style);
+            }
+          }
+        }
+        const allFonts = [...customFonts, ...googleFonts].sort((a, b) => a.family.localeCompare(b.family));
+        setFonts(allFonts);
         setFontCategories(d.categories ?? []);
       })
       .catch(() => {});
@@ -317,13 +332,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   // ---- Font loading -------------------------------------------------------
 
   async function loadFont(family: string, weight: number = 400, style: string = "normal") {
-    const id = `gfont-${family.replace(/\s+/g, "-")}`;
-    if (!document.getElementById(id)) {
-      const link = document.createElement("link");
-      link.id = id;
-      link.rel = "stylesheet";
-      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
-      document.head.appendChild(link);
+    // Check if this is a custom font (already loaded via @font-face)
+    const isCustom = fonts.some((f) => f.family === family && f.category === "custom");
+    if (!isCustom) {
+      const id = `gfont-${family.replace(/\s+/g, "-")}`;
+      if (!document.getElementById(id)) {
+        const link = document.createElement("link");
+        link.id = id;
+        link.rel = "stylesheet";
+        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
+        document.head.appendChild(link);
+      }
     }
     // Wait for the specific variant to be loaded
     try {
@@ -1039,11 +1058,12 @@ function TextPanel({
 
   const filtered = filterCat ? fonts.filter((f) => f.category === filterCat) : fonts;
 
-  // Build the Google Fonts URL only when the actual font families change
+  // Build the Google Fonts URL only for non-custom fonts
+  const googleFiltered = filtered.filter((f) => f.category !== "custom");
   const fontsHref = useMemo(() => {
-    if (filtered.length === 0) return "";
-    return `https://fonts.googleapis.com/css2?${filtered.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join("&")}&display=swap`;
-  }, [filtered.map((f) => f.family).join(",")]);
+    if (googleFiltered.length === 0) return "";
+    return `https://fonts.googleapis.com/css2?${googleFiltered.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join("&")}&display=swap`;
+  }, [googleFiltered.map((f) => f.family).join(",")]);
 
   // Load all fonts for current filter via a single <link> in <head>
   useEffect(() => {

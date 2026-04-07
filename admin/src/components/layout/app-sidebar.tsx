@@ -21,6 +21,7 @@ import {
   IconBeach,
   IconTemplate,
   IconPalette,
+  IconTypography,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -68,6 +69,7 @@ const accountingNav = [
 const designNav = [
   { title: "Design-Vorlagen", href: "/settings/design-templates", icon: IconTemplate },
   { title: "Design-Elemente", href: "/settings/design-elements", icon: IconPalette },
+  { title: "Eigene Schriften", href: "/settings/design-fonts", icon: IconTypography },
 ];
 
 const systemNav = [
