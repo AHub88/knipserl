@@ -124,8 +124,8 @@ export function TemplateEditorClient({
                     value={format}
                     onChange={(e) => setFormat(e.target.value)}
                   >
-                    <option value="2x6">2x6</option>
-                    <option value="4x6">4x6</option>
+                    <option value="2x6">5×15 cm</option>
+                    <option value="4x6">10×15 cm</option>
                   </select>
                 </div>
                 <div>

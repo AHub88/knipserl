@@ -609,8 +609,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       dirtyRef.current = true;
       await autoSave();
 
-      // Export preview PNG (with placeholders)
-      const previewDataUrl = canvas.toDataURL({ format: "png", multiplier: 2 });
+      // Export preview PNG (with placeholders) — 1:1 canvas pixels for correct 300dpi output
+      const previewDataUrl = canvas.toDataURL({ format: "png", multiplier: 1 });
       const previewResp = await fetch(previewDataUrl);
       const previewBlob = await previewResp.blob();
 
@@ -619,7 +619,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       placeholders.forEach((o: any) => o.set("visible", false));
       canvas.renderAll();
 
-      const finalDataUrl = canvas.toDataURL({ format: "png", multiplier: 2 });
+      const finalDataUrl = canvas.toDataURL({ format: "png", multiplier: 1 });
       const finalResp = await fetch(finalDataUrl);
       const finalBlob = await finalResp.blob();
 
@@ -730,7 +730,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   </div>
                 )}
                 {mode === "admin" && (
-                  <span className="text-sm text-white/50 font-medium">Format: {format}</span>
+                  <span className="text-sm text-white/50 font-medium">Format: {format === "4x6" ? "10×15 cm" : "5×15 cm"}</span>
                 )}
               </div>
             )}

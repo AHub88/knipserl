@@ -181,8 +181,8 @@ export function DesignTemplatesManager({
                   setAddForm((f) => ({ ...f, format: e.target.value }))
                 }
               >
-                <option value="2x6">2x6</option>
-                <option value="4x6">4x6</option>
+                <option value="2x6">5×15 cm</option>
+                <option value="4x6">10×15 cm</option>
               </select>
             </div>
             <div>
@@ -262,7 +262,7 @@ export function DesignTemplatesManager({
                     {template.name}
                   </h3>
                   <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-zinc-400">
-                    {template.format}
+                    {template.format === "4x6" ? "10×15 cm" : "5×15 cm"}
                   </span>
                 </div>
                 {template.category && (

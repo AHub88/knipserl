@@ -128,6 +128,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [extrasState, setExtrasState] = useState<string[]>(order.extras);
   const [notesState, setNotesState] = useState(order.notes ?? "");
   const [internalState, setInternalState] = useState(order.internalNotes ?? "");
+  const [layoutModalOpen, setLayoutModalOpen] = useState(false);
 
   async function saveField(data: Record<string, unknown>) {
     try {
@@ -676,20 +677,58 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
           {/* Kunden-Layout */}
           {order.graphicUrl && (
-            <div className="rounded-xl border border-white/[0.10] bg-card p-4 space-y-3">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
-              <a href={order.graphicUrl} target="_blank" className="block">
-                <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-white/10 max-h-64 mx-auto" />
-              </a>
-              <a
-                href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
-                download={`layout-${order.orderNumber}.png`}
-                className="flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
-              >
-                <IconFileDownload className="size-4" />
-                Layout herunterladen (ohne Platzhalter)
-              </a>
-            </div>
+            <>
+              <div className="rounded-xl border border-white/[0.10] bg-card p-4 space-y-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
+                <button onClick={() => setLayoutModalOpen(true)} className="block w-full">
+                  <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-white/10 max-h-64 mx-auto hover:opacity-80 transition-opacity cursor-pointer" />
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setLayoutModalOpen(true)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
+                  >
+                    <IconPhoto className="size-4" />
+                    Vorschau
+                  </button>
+                  <a
+                    href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
+                    download={`layout-${order.orderNumber}.png`}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
+                  >
+                    <IconFileDownload className="size-4" />
+                    Herunterladen
+                  </a>
+                </div>
+              </div>
+
+              {/* Layout Modal */}
+              {layoutModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={() => setLayoutModalOpen(false)}>
+                  <div className="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => setLayoutModalOpen(false)}
+                      className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-zinc-800 border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:bg-zinc-700 transition-colors z-10"
+                    >
+                      ✕
+                    </button>
+                    <img
+                      src={order.graphicUrl}
+                      alt="Layout Vorschau"
+                      className="max-w-[85vw] max-h-[80vh] rounded-xl border border-white/10 shadow-2xl object-contain"
+                    />
+                    <a
+                      href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
+                      download={`layout-${order.orderNumber}.png`}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold text-sm transition-colors"
+                    >
+                      <IconFileDownload className="size-4" />
+                      Layout herunterladen (ohne Platzhalter)
+                    </a>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Kundenpreis */}
