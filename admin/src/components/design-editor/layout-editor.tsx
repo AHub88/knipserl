@@ -537,19 +537,18 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     dirtyRef.current = true;
   }
 
-  function duplicateSelected() {
+  async function duplicateSelected() {
     const canvas = fabricRef.current;
     if (!canvas) return;
     const active = canvas.getActiveObject();
     if (!active) return;
-    active.clone((cloned: any) => {
-      cloned.set({ left: (cloned.left || 0) + 30, top: (cloned.top || 0) + 30 });
-      canvas.add(cloned);
-      canvas.setActiveObject(cloned);
-      canvas.renderAll();
-      dirtyRef.current = true;
-      pushHistory();
-    }, ["isPhotoPlaceholder"]);
+    const cloned = await active.clone(["isPhotoPlaceholder"]);
+    cloned.set({ left: (cloned.left || 0) + 30, top: (cloned.top || 0) + 30 });
+    canvas.add(cloned);
+    canvas.setActiveObject(cloned);
+    canvas.renderAll();
+    dirtyRef.current = true;
+    pushHistory();
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
