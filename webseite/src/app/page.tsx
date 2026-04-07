@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
+import LottieIcon from "@/components/LottieIcon";
 import { SEO_CITIES } from "@/lib/constants";
 
 const clientLogos = [
@@ -125,20 +126,22 @@ export default function HomePage() {
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
               Fotobox mit Sofortdruck! Ab 379 EUR
             </h2>
-            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Hochwertige Technik und 24/7 Support garantieren eine sorgenfreie Feier
             </p>
           </div>
 
           {/* Two column: image + text */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            <div className="relative h-[500px]">
+            <div>
               <Image
                 src="/images/hero/fotobox-startseite-teaser.jpg"
                 alt="Knipserl Fotobox im Einsatz bei einer Party"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                width={739}
+                height={900}
+                className="w-full h-auto"
+                sizes="(max-width: 768px) 100vw, 500px"
+                quality={85}
               />
             </div>
             <div className="text-[#1a171b] text-lg leading-relaxed space-y-5">
@@ -166,7 +169,7 @@ export default function HomePage() {
                 <strong>Kufstein</strong>.
               </p>
               <div className="pt-2">
-                <Link href="/termin-reservieren" className="btn-brand">
+                <Link href="/termin-reservieren" className="btn-brand text-[16px] px-[15px] py-[12px] rounded-[3px]">
                   Jetzt reservieren
                 </Link>
               </div>
@@ -189,13 +192,13 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-black/50" />
 
-        <div className="relative z-10 max-w-[1300px] mx-auto px-6">
+        <div className="relative z-10 w-full px-[5%] lg:px-[3%] xl:px-[10%]">
           {/* Heading */}
           <div className="text-center mb-16">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
               Fotobox Features
             </h2>
-            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Perfekt ausgestattet für Deine Party
             </p>
           </div>
@@ -206,39 +209,59 @@ export default function HomePage() {
             {/* Left column */}
             <div className="space-y-6">
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Hochwertige Kamera</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  In unseren Fotoboxen sind professionelle <strong>Spiegelreflexkameras</strong> mit
-                  einer Auflösung von <strong>16 Megapixel</strong> verbaut.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <div className="flex-1 text-center lg:text-right">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Hochwertige Kamera</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      In unseren Fotoboxen sind professionelle <strong>Spiegelreflexkameras</strong> mit
+                      einer Auflösung von <strong>16 Megapixel</strong> verbaut.
+                    </p>
+                  </div>
+                  <LottieIcon src="/icons/camera.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                </div>
               </div>
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Individuelles Drucklayout</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Wir gestalten Euren Ausdruck ganz individuell nach Euren Wünschen.
-                  Ihr könnte Euch zwischen dem Format 10x15cm und 5x15cm entscheiden.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <div className="flex-1 text-center lg:text-right">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Individuelles Drucklayout</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Wir gestalten Euren Ausdruck ganz individuell nach Euren Wünschen.
+                      Ihr könnte Euch zwischen dem Format 10x15cm und 5x15cm entscheiden.
+                    </p>
+                  </div>
+                  <LottieIcon src="/icons/print-layout.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                </div>
               </div>
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Riesiger Touchscreen</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Ihr könnt unsere Fotobox direkt über den großen Full-HD Touchscreen
-                  (22 Zoll!) steuern. Die Bedienung ist kinderleicht!
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <div className="flex-1 text-center lg:text-right">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Riesiger Touchscreen</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Ihr könnt unsere Fotobox direkt über den großen Full-HD Touchscreen
+                      (22 Zoll!) steuern. Die Bedienung ist kinderleicht!
+                    </p>
+                  </div>
+                  <LottieIcon src="/icons/touchscreen.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                </div>
               </div>
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Individualisierung / Startscreen</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Unsere Box kann auch von außen für Euch individualisiert werden. Gegen
-                  Aufpreis erstellen wir einen eigenen Startscreen, auch die Farben der
-                  verbauten LEDs können auf Euer Event abgestimmt werden.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <div className="flex-1 text-center lg:text-right">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Individualisierung / Startscreen</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Unsere Box kann auch von außen für Euch individualisiert werden. Gegen
+                      Aufpreis erstellen wir einen eigenen Startscreen, auch die Farben der
+                      verbauten LEDs können auf Euer Event abgestimmt werden.
+                    </p>
+                  </div>
+                  <LottieIcon src="/icons/startscreen.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                </div>
               </div>
             </div>
 
             {/* Center: Fotobox image + CTA */}
             <div className="flex flex-col items-center justify-center">
-              <div className="relative w-full h-[500px]">
+              <div className="relative w-full h-[650px]">
                 <Image
                   src="/images/hero/fotobox-startseite.png"
                   alt="Knipserl Fotobox"
@@ -254,35 +277,55 @@ export default function HomePage() {
             {/* Right column */}
             <div className="space-y-6">
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Sofortdruck</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Unser professioneller <strong>Fotodrucker</strong> schafft es, Fotos innerhalb{" "}
-                  <strong>7 Sekunden</strong> auszudrucken. Die Kapazität von bis zu{" "}
-                  <strong>800 Fotos</strong> reicht für eine Tagesveranstaltung locker aus.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <LottieIcon src="/icons/sofortdruck.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                  <div className="flex-1 text-center lg:text-left">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Sofortdruck</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Unser professioneller <strong>Fotodrucker</strong> schafft es, Fotos innerhalb{" "}
+                      <strong>7 Sekunden</strong> auszudrucken. Die Kapazität von bis zu{" "}
+                      <strong>800 Fotos</strong> reicht für eine Tagesveranstaltung locker aus.
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Online-Galerie</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Du bekommst von uns eine Online Galerie mit gesichertem Zugang. Deine
-                  Gäste haben so die Möglichkeit alle geschossenen Bilder von zu Hause aus
-                  anzusehen und herunterzuladen.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <LottieIcon src="/icons/online-galerie.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                  <div className="flex-1 text-center lg:text-left">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Online-Galerie</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Du bekommst von uns eine Online Galerie mit gesichertem Zugang. Deine
+                      Gäste haben so die Möglichkeit alle geschossenen Bilder von zu Hause aus
+                      anzusehen und herunterzuladen.
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">GIF Animation</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Unsere Fotobox erstellt automatisch aus den geschossenen Bildern eine
-                  GIF-Animation. Diese können sich die Gäste noch einmal anzeigen lassen
-                  oder über unsere Online-Funktion direkt aufs Handy schicken lassen.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <LottieIcon src="/icons/gif-animation.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                  <div className="flex-1 text-center lg:text-left">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">GIF Animation</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Unsere Fotobox erstellt automatisch aus den geschossenen Bildern eine
+                      GIF-Animation. Diese können sich die Gäste noch einmal anzeigen lassen
+                      oder über unsere Online-Funktion direkt aufs Handy schicken lassen.
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="glass-card p-6">
-                <h3 className="text-xl font-extrabold mb-3 text-center">Fotoeffekte</h3>
-                <p className="text-sm text-gray-200 leading-relaxed text-center">
-                  Direkt nachdem das Foto geschossen wurde, können Deine Gäste zwischen
-                  diversen Fotoeffekten (Wie z.B. auf Instagram) wählen.
-                </p>
+                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                  <LottieIcon src="/icons/fotoeffekte.json" className="flex-shrink-0 w-[100px] h-[100px] lg:w-[80px] lg:h-[80px] xl:w-[120px] xl:h-[120px]" />
+                  <div className="flex-1 text-center lg:text-left">
+                    <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Fotoeffekte</h3>
+                    <p className="text-base text-gray-200 leading-snug">
+                      Direkt nachdem das Foto geschossen wurde, können Deine Gäste zwischen
+                      diversen Fotoeffekten (Wie z.B. auf Instagram) wählen.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -291,18 +334,16 @@ export default function HomePage() {
 
       {/* ===== INQUIRY FORM ===== */}
       <section id="buchen" className="py-20 relative z-10" style={{ marginTop: "80px" }}>
-        <div className="max-w-[900px] mx-auto px-6">
+        <div className="max-w-[1150px] mx-auto px-6">
           <div className="text-center mb-10">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
               Unverbindlich Anfragen
             </h2>
-            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Prüfe jetzt ob eine Fotobox an Deinem Event verfügbar ist
             </p>
           </div>
-          <div className="bg-white p-8 shadow-lg">
-            <InquiryForm />
-          </div>
+          <InquiryForm />
         </div>
       </section>
 
@@ -323,7 +364,7 @@ export default function HomePage() {
             <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
               Impressionen
             </h2>
-            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Unsere Fotobox im Einsatz
             </p>
           </div>
@@ -350,7 +391,7 @@ export default function HomePage() {
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
               Rezensionen
             </h2>
-            <p className="text-xl text-[#F3A300] italic font-medium mt-3">
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Auswahl unserer Kunden
             </p>
           </div>
