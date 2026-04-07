@@ -95,6 +95,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   const [placeholderCount, setPlaceholderCount] = useState(0);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [zoom, setZoom] = useState(1.0);
@@ -288,6 +289,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       });
       if (!res.ok) throw new Error();
       lastSavedJsonRef.current = jsonStr;
+      setLastSavedAt(new Date());
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus("idle"), 2000);
     } catch {
@@ -535,6 +537,21 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     dirtyRef.current = true;
   }
 
+  function duplicateSelected() {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    const active = canvas.getActiveObject();
+    if (!active) return;
+    active.clone((cloned: any) => {
+      cloned.set({ left: (cloned.left || 0) + 30, top: (cloned.top || 0) + 30 });
+      canvas.add(cloned);
+      canvas.setActiveObject(cloned);
+      canvas.renderAll();
+      dirtyRef.current = true;
+      pushHistory();
+    }, ["isPhotoPlaceholder"]);
+  }
+
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -735,6 +752,13 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         return;
       }
 
+      // Duplicate: Ctrl+D / Cmd+D
+      if ((e.ctrlKey || e.metaKey) && e.key === "d") {
+        e.preventDefault();
+        duplicateSelected();
+        return;
+      }
+
       if (e.key === "Delete" || e.key === "Backspace") {
         if (isEditing) return;
         const active = fabricRef.current?.getActiveObject();
@@ -816,6 +840,11 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
                 <span className="text-[10px] leading-none whitespace-nowrap">Wiederherstellen</span>
               </button>
+              <button onClick={duplicateSelected} title="Duplizieren (Strg+D)"
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span className="text-[10px] leading-none whitespace-nowrap">Duplizieren</span>
+              </button>
               <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
                 className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -838,8 +867,10 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             <div className="flex items-center gap-4">
               <span className="text-sm">
                 {saveStatus === "saving" && <span className="text-white/40">Speichert...</span>}
-                {saveStatus === "saved" && <span className="text-green-400/80">Gespeichert</span>}
                 {saveStatus === "error" && <span className="text-red-400">Fehler beim Speichern</span>}
+                {saveStatus !== "saving" && saveStatus !== "error" && lastSavedAt && (
+                  <span className="text-white/40">Zuletzt gespeichert um {lastSavedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr</span>
+                )}
               </span>
               {mode === "admin" ? (
                 <button
@@ -854,21 +885,39 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   Vorlage speichern
                 </button>
               ) : isAdminEdit ? (
-                <button
-                  onClick={handleAdminUpdate}
-                  disabled={submitting}
-                  className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
-                >
-                  {submitting ? "Wird aktualisiert..." : "Design aktualisieren"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleSaveNow}
+                    disabled={submitting}
+                    className="h-12 px-5 text-sm font-semibold rounded-xl border border-white/[0.12] bg-white/[0.06] text-white hover:bg-white/[0.12] transition-colors disabled:opacity-50"
+                  >
+                    Speichern
+                  </button>
+                  <button
+                    onClick={handleAdminUpdate}
+                    disabled={submitting}
+                    className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? "Wird aktualisiert..." : "Fertig"}
+                  </button>
+                </div>
               ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                  className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
-                >
-                  {submitting ? "Wird gesendet..." : "Design absenden"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleSaveNow}
+                    disabled={submitting}
+                    className="h-12 px-5 text-sm font-semibold rounded-xl border border-white/[0.12] bg-white/[0.06] text-white hover:bg-white/[0.12] transition-colors disabled:opacity-50"
+                  >
+                    Speichern
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? "Wird gesendet..." : "Design absenden"}
+                  </button>
+                </div>
               )}
             </div>
           </div>
