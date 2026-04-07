@@ -76,56 +76,11 @@ export function TemplateEditorClient({
     }
   }
 
-  const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  const fieldClass =
+    "h-7 rounded-md border border-white/[0.08] bg-[#1a1b1e] px-2.5 text-[12px] text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="flex flex-col h-[calc(100vh-56px)]">
-      {/* Header */}
-      <div className="shrink-0 border-b border-white/10 bg-[#222326] px-6 py-3">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/settings/design-templates"
-            className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
-          >
-            <IconArrowLeft className="size-4" />
-            Zurück
-          </Link>
-          <div className="flex items-center gap-3 flex-1">
-            <div>
-              <label className="block text-[10px] text-zinc-500 mb-0.5">Name *</label>
-              <input
-                className={inputClass + " w-56"}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="z.B. Hochzeit Elegant"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] text-zinc-500 mb-0.5">Format</label>
-              <select
-                className={inputClass + " w-24"}
-                value={format}
-                onChange={(e) => setFormat(e.target.value)}
-              >
-                <option value="2x6">2x6</option>
-                <option value="4x6">4x6</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] text-zinc-500 mb-0.5">Kategorie</label>
-              <input
-                className={inputClass + " w-40"}
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="z.B. Hochzeit"
-              />
-            </div>
-          </div>
-          {saving && <span className="text-xs text-white/40">Wird gespeichert...</span>}
-        </div>
-      </div>
-
       {/* Editor */}
       <div className="flex-1 min-h-0">
         <LayoutEditorLoader
@@ -142,6 +97,38 @@ export function TemplateEditorClient({
           existingDesign={existingTemplate ? { canvasJson: existingTemplate.canvasJson } : null}
           mode="admin"
           onSaveTemplate={handleSaveTemplate}
+          templateMeta={
+            <div className="flex items-center gap-2">
+              <Link
+                href="/settings/design-templates"
+                className="flex items-center gap-1 text-[12px] text-zinc-400 hover:text-zinc-200 transition-colors mr-1"
+              >
+                <IconArrowLeft className="size-3.5" />
+              </Link>
+              <div className="w-px h-5 bg-white/10" />
+              <input
+                className={fieldClass + " w-44"}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Vorlagen-Name *"
+              />
+              <select
+                className={fieldClass + " w-20"}
+                value={format}
+                onChange={(e) => setFormat(e.target.value)}
+              >
+                <option value="2x6">2x6</option>
+                <option value="4x6">4x6</option>
+              </select>
+              <input
+                className={fieldClass + " w-28"}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Kategorie"
+              />
+              {saving && <span className="text-[11px] text-white/40">Speichert...</span>}
+            </div>
+          }
         />
       </div>
     </div>
