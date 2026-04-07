@@ -347,12 +347,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         document.head.appendChild(link);
       }
     }
-    // Wait for the specific variant to be loaded
-    try {
-      const spec = `${style} ${weight} 16px "${family}"`;
-      await document.fonts.load(spec);
-    } catch { /* ignore */ }
-    await document.fonts.ready;
+    // Wait for the font to actually be available (with retry for slow network loads)
+    const spec = `${style} ${weight} 16px "${family}"`;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      try {
+        await document.fonts.load(spec);
+      } catch { /* ignore */ }
+      await document.fonts.ready;
+      // Check if the font is actually loaded (not just resolved with fallback)
+      if (document.fonts.check(spec)) return;
+      await new Promise((r) => setTimeout(r, 150));
+    }
   }
 
   // ---- Actions ------------------------------------------------------------
