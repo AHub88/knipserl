@@ -229,7 +229,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     fetch("/api/design/fonts")
       .then((r) => r.json())
       .then((d) => {
-        setFonts(d.fonts ?? []);
+        setFonts([...(d.fonts ?? [])].sort((a: FontDef, b: FontDef) => a.family.localeCompare(b.family)));
         setFontCategories(d.categories ?? []);
       })
       .catch(() => {});
