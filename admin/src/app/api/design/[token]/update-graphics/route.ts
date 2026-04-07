@@ -51,5 +51,14 @@ export async function POST(
     });
   }
 
+  // Update graphicUrl with cache-busting timestamp so browser fetches the new version
+  const ts = Date.now();
+  await prisma.order.update({
+    where: { id: order.id },
+    data: {
+      graphicUrl: `/api/uploads/${order.id}/layout-preview.png?v=${ts}`,
+    },
+  });
+
   return NextResponse.json({ ok: true });
 }
