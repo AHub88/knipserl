@@ -76,6 +76,7 @@ services:
     environment:
       NEXT_PUBLIC_SITE_URL: "https://dev.knipserl.de"
       NEXT_PUBLIC_ENV: "staging"
+      ADMIN_API_URL: "http://127.0.0.1:3002"
       PORT: "3004"
       HOSTNAME: "127.0.0.1"
 
@@ -87,6 +88,7 @@ services:
   #   network_mode: host
   #   environment:
   #     NEXT_PUBLIC_SITE_URL: "https://www.knipserl.de"
+  #     ADMIN_API_URL: "http://127.0.0.1:3001"
   #     PORT: "3003"
   #     HOSTNAME: "127.0.0.1"
 
