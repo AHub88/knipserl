@@ -687,14 +687,23 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         <div className="h-11 border-b border-white/10 bg-[#222326] flex items-center px-3 shrink-0">
           <div className="flex items-center gap-1">
             <ToolbarButton onClick={undo} title="Rückgängig (Strg+Z)">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
+                <span className="text-xs">Rückgängig</span>
+              </span>
             </ToolbarButton>
             <ToolbarButton onClick={redo} title="Wiederherstellen (Strg+Shift+Z)">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
+                <span className="text-xs">Wiederherstellen</span>
+              </span>
             </ToolbarButton>
             <div className="w-px h-5 bg-white/10 mx-1" />
             <ToolbarButton onClick={deleteSelected} title="Löschen">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span className="text-xs">Löschen</span>
+              </span>
             </ToolbarButton>
           </div>
 
@@ -712,7 +721,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             {saveStatus === "saving" && <span className="text-xs text-white/40">Speichert...</span>}
             {saveStatus === "saved" && <span className="text-xs text-green-400">Gespeichert</span>}
             {saveStatus === "error" && <span className="text-xs text-red-400">Fehler</span>}
-            <ToolbarButton onClick={handleSaveNow}>Speichern</ToolbarButton>
+            <button onClick={handleSaveNow} className="px-4 py-1.5 text-sm font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors">
+              Speichern
+            </button>
           </div>
         </div>
 
@@ -1292,6 +1303,7 @@ function RightPanel({
   const [tick, setTick] = useState(0);
   const refresh = () => setTick((n) => n + 1);
   const [lockRatio, setLockRatio] = useState(false);
+  const [shadowColor, setShadowColor] = useState("#000000");
   const [shadowBlur, setShadowBlur] = useState(15);
   const [shadowOffsetX, setShadowOffsetX] = useState(5);
   const [shadowOffsetY, setShadowOffsetY] = useState(5);
@@ -1467,6 +1479,25 @@ function RightPanel({
                       className="w-full h-7 rounded cursor-pointer border border-white/10 bg-transparent" />
                   </div>
                 </div>
+                {/* Text alignment */}
+                <div>
+                  <label className={lbl}>Ausrichtung</label>
+                  <div className="flex gap-1 mt-0.5">
+                    {(["left", "center", "right"] as const).map((align) => (
+                      <button
+                        key={align}
+                        onClick={() => { (activeObj as any).set("textAlign", align); onUpdate(); refresh(); }}
+                        className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
+                          (activeObj as any).textAlign === align
+                            ? "bg-[#F6A11C] text-black"
+                            : "bg-white/5 text-white/50 hover:text-white/70"
+                        }`}
+                      >
+                        {align === "left" ? "Links" : align === "center" ? "Mitte" : "Rechts"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-1.5">
                   <div>
                     <label className={lbl}>Zeichenabstand</label>
@@ -1547,35 +1578,72 @@ function RightPanel({
               </div>
             </div>
 
+            {/* Border / Stroke (for images, placeholders, rects) */}
+            {detectKind(activeObj) !== "text" && (
+              <div className="space-y-1.5 pt-1 border-t border-white/10">
+                <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Rahmen</h4>
+                <div className="flex items-center gap-1.5">
+                  <label className={lbl}>Farbe</label>
+                  <input type="color" value={(activeObj as any).stroke ?? "#000000"}
+                    onChange={(e) => { activeObj.set({ stroke: e.target.value, dirty: true } as any); onUpdate(); refresh(); }}
+                    className="w-8 h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+                </div>
+                <div>
+                  <label className={lbl}>Stärke: {Math.round((activeObj as any).strokeWidth ?? 0)}px</label>
+                  <input type="range" min={0} max={30} value={(activeObj as any).strokeWidth ?? 0}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      activeObj.set({ strokeWidth: val, stroke: (activeObj as any).stroke || "#000000", dirty: true } as any);
+                      onUpdate(); refresh();
+                    }}
+                    className="w-full accent-[#F6A11C] h-1" />
+                </div>
+              </div>
+            )}
+
             {/* Shadow */}
             <div className="space-y-1.5 pt-1 border-t border-white/10">
-              <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Schatten</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Schatten</h4>
+                {(activeObj as any).shadow && (
+                  <button onClick={() => {
+                    activeObj.set({ shadow: null, dirty: true } as any);
+                    onUpdate(); refresh();
+                  }} className="text-[9px] text-red-400 hover:text-red-300">Entfernen</button>
+                )}
+              </div>
+              <div>
+                <label className={lbl}>Farbe</label>
+                <input type="color" value={shadowColor}
+                  onChange={(e) => setShadowColor(e.target.value)}
+                  className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+              </div>
               <div>
                 <label className={lbl}>Weichheit: {shadowBlur}px</label>
-                <input type="range" min={0} max={50} value={shadowBlur} onChange={(e) => setShadowBlur(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+                <input type="range" min={0} max={50} value={shadowBlur}
+                  onChange={(e) => setShadowBlur(Number(e.target.value))}
+                  className="w-full accent-[#F6A11C] h-1" />
               </div>
               <div className="flex gap-1.5">
                 <div className="flex-1">
-                  <label className={lbl}>X:{shadowOffsetX}</label>
+                  <label className={lbl}>Abstand X: {shadowOffsetX}</label>
                   <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
                 </div>
                 <div className="flex-1">
-                  <label className={lbl}>Y:{shadowOffsetY}</label>
+                  <label className={lbl}>Abstand Y: {shadowOffsetY}</label>
                   <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
                 </div>
               </div>
-              <div className="flex gap-1">
-                <button onClick={() => {
-                  const fabric = fabricModRef.current;
-                  if (!fabric) return;
-                  activeObj.set("shadow", new fabric.Shadow({ color: "rgba(0,0,0,0.4)", blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }));
-                  onUpdate(); refresh();
-                }} className="flex-1 py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Anwenden</button>
-                <button onClick={() => {
-                  activeObj.set("shadow", null);
-                  onUpdate(); refresh();
-                }} className="flex-1 py-1 text-[10px] font-semibold rounded border border-white/10 text-white/50">Entfernen</button>
-              </div>
+              <button onClick={() => {
+                const fabric = fabricModRef.current;
+                if (!fabric) return;
+                activeObj.set({
+                  shadow: new fabric.Shadow({ color: shadowColor, blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }),
+                  dirty: true,
+                  objectCaching: false,
+                } as any);
+                onUpdate(); refresh();
+              }} className="w-full py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Schatten anwenden</button>
             </div>
           </>
         ) : (
