@@ -177,8 +177,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
       // Load existing design
       if (existingDesign?.canvasJson) {
-        canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(() => {
-          canvas.renderAll();
+        canvas.loadFromJSON(existingDesign.canvasJson as Record<string, any>).then(async () => {
+          await refreshTextDimensions(canvas);
           countPlaceholders(canvas);
           lastSavedJsonRef.current = JSON.stringify(canvas.toObject(["isPhotoPlaceholder"]));
         });
@@ -357,6 +357,23 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   // ---- Actions ------------------------------------------------------------
 
+  async function refreshTextDimensions(canvas: Canvas) {
+    const usedFonts = new Set<string>();
+    canvas.getObjects().forEach((obj: any) => {
+      if (obj.fontFamily) usedFonts.add(obj.fontFamily);
+    });
+    for (const family of usedFonts) {
+      await loadFont(family);
+    }
+    canvas.getObjects().forEach((obj: any) => {
+      if (obj.type === "textbox" && obj.initDimensions) {
+        obj.initDimensions();
+        obj.set("dirty", true);
+      }
+    });
+    canvas.renderAll();
+  }
+
   async function loadTemplate(template: Template) {
     const canvas = fabricRef.current;
     if (!canvas) return;
@@ -368,11 +385,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     // If canvasJson has a backgroundImage, load the template normally
     if (json && json.backgroundImage) {
       await canvas.loadFromJSON(json);
-      canvas.renderAll();
     } else if (json && json.objects && json.objects.length > 0) {
       // Has objects but no background - load as normal
       await canvas.loadFromJSON(json);
-      canvas.renderAll();
     } else if (template.thumbnail) {
       // Empty/minimal canvasJson but has a thumbnail - use as background
       canvas.clear();
@@ -383,13 +398,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         bgImg.scaleY = CANVAS_H / bgImg.height;
       }
       canvas.backgroundImage = bgImg;
-      canvas.renderAll();
     } else {
       // Fallback - just load the JSON
       await canvas.loadFromJSON(json);
-      canvas.renderAll();
     }
 
+    await refreshTextDimensions(canvas);
     countPlaceholders(canvas);
     dirtyRef.current = true;
   }
@@ -495,6 +509,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       const tb = active as Textbox;
       tb.set("fontFamily", family);
       tb.set("dirty", true);
+      tb.initDimensions();
       canvas.renderAll();
       dirtyRef.current = true;
     }
