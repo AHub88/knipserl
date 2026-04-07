@@ -12,6 +12,7 @@ import {
   IconToggleLeft,
   IconToggleRight,
   IconEdit,
+  IconCopy,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 
@@ -96,6 +97,21 @@ export function DesignTemplatesManager({
       router.refresh();
     } catch {
       toast.error("Fehler beim Löschen");
+    }
+  }
+
+  async function handleDuplicate(id: string) {
+    try {
+      const res = await fetch(`/api/design/templates/${id}`, {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error();
+      const copy = await res.json();
+      setTemplates((prev) => [...prev, copy]);
+      toast.success("Vorlage dupliziert");
+      router.refresh();
+    } catch {
+      toast.error("Fehler beim Duplizieren");
     }
   }
 
@@ -266,6 +282,13 @@ export function DesignTemplatesManager({
                     <IconEdit className="size-5" />
                     <span className="text-[10px] font-medium">Bearbeiten</span>
                   </Link>
+                  <button
+                    onClick={() => handleDuplicate(template.id)}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    <IconCopy className="size-5" />
+                    <span className="text-[10px] font-medium">Duplizieren</span>
+                  </button>
                   <button
                     onClick={() =>
                       handleToggleActive(template.id, template.active)

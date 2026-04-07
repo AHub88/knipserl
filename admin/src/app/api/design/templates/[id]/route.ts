@@ -40,6 +40,37 @@ export async function PATCH(
   return NextResponse.json(template);
 }
 
+// POST /api/design/templates/[id] — duplicate template
+export async function POST(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session?.user || session.user.role === "DRIVER") {
+    return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  const original = await prisma.layoutTemplate.findUnique({ where: { id } });
+  if (!original) {
+    return NextResponse.json({ error: "Vorlage nicht gefunden" }, { status: 404 });
+  }
+
+  const copy = await prisma.layoutTemplate.create({
+    data: {
+      name: `${original.name} (Kopie)`,
+      format: original.format,
+      category: original.category,
+      thumbnail: original.thumbnail,
+      canvasJson: original.canvasJson ?? { version: "6.6.1", objects: [] },
+      active: false,
+    },
+  });
+
+  return NextResponse.json(copy, { status: 201 });
+}
+
 // PUT /api/design/templates/[id] — update template (name, format, category, canvasJson)
 export async function PUT(
   request: NextRequest,
