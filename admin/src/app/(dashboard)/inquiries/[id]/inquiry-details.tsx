@@ -54,7 +54,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
   const [saving, setSaving] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<GeocodeSuggestion[]>([]);
   const [geocodeLoading, setGeocodeLoading] = useState(false);
-  const geocodeTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const geocodeTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   const formattedEventDate = new Date(inquiry.eventDate).toLocaleDateString(
