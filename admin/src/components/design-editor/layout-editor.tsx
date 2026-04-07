@@ -92,6 +92,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const [selectedFont, setSelectedFont] = useState("Montserrat");
   const [fontSize, setFontSize] = useState(40);
   const [textColor, setTextColor] = useState("#000000");
+  const [hexInput, setHexInput] = useState("");
+  const [hexFocused, setHexFocused] = useState(false);
 
   const [placeholderCount, setPlaceholderCount] = useState(0);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -1836,16 +1838,26 @@ function RightPanel({
                   <span className="text-[10px] text-white/40">#</span>
                   <input
                     type="text"
-                    maxLength={7}
+                    maxLength={6}
                     className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-0.5 font-mono uppercase"
-                    value={((activeObj as any).fill ?? textColor).replace("#", "")}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
-                      if (v.length === 6) onColorChange(`#${v}`);
+                    value={hexFocused ? hexInput : ((activeObj as any).fill ?? textColor).replace("#", "").toUpperCase()}
+                    onFocus={() => {
+                      setHexInput(((activeObj as any).fill ?? textColor).replace("#", "").toUpperCase());
+                      setHexFocused(true);
                     }}
-                    onBlur={(e) => {
-                      const v = e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
-                      if (v.length === 3) onColorChange(`#${v[0]}${v[0]}${v[1]}${v[1]}${v[2]}${v[2]}`);
+                    onChange={(e) => {
+                      setHexInput(e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6));
+                    }}
+                    onBlur={() => {
+                      const v = hexInput.replace(/[^0-9a-fA-F]/g, "");
+                      if (v.length === 6) onColorChange(`#${v}`);
+                      else if (v.length === 3) onColorChange(`#${v[0]}${v[0]}${v[1]}${v[1]}${v[2]}${v[2]}`);
+                      setHexFocused(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        (e.target as HTMLInputElement).blur();
+                      }
                     }}
                   />
                 </div>
