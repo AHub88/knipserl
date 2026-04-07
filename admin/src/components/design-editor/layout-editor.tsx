@@ -314,18 +314,19 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   // ---- Font loading -------------------------------------------------------
 
-  async function loadFont(family: string) {
+  async function loadFont(family: string, weight: number = 400, style: string = "normal") {
     const id = `gfont-${family.replace(/\s+/g, "-")}`;
     if (!document.getElementById(id)) {
       const link = document.createElement("link");
       link.id = id;
       link.rel = "stylesheet";
-      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@400;700&display=swap`;
+      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
       document.head.appendChild(link);
     }
-    // Wait for the specific font to be loaded
+    // Wait for the specific variant to be loaded
     try {
-      await document.fonts.load(`16px "${family}"`);
+      const spec = `${style} ${weight} 16px "${family}"`;
+      await document.fonts.load(spec);
     } catch { /* ignore */ }
     await document.fonts.ready;
   }
@@ -813,6 +814,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             onColorChange={updateSelectedColor}
             onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; pushHistory(); }}
             onDelete={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; pushHistory(); countPlaceholders(fabricRef.current!); }}
+            loadFont={loadFont}
           />
         </div>
 
@@ -1327,6 +1329,7 @@ function RightPanel({
   onColorChange,
   onUpdate,
   onDelete,
+  loadFont,
 }: {
   fabricRef: React.RefObject<Canvas | null>;
   fabricModRef: React.RefObject<typeof import("fabric") | null>;
@@ -1340,6 +1343,7 @@ function RightPanel({
   onColorChange: (c: string) => void;
   onUpdate: () => void;
   onDelete: () => void;
+  loadFont: (family: string, weight?: number, style?: string) => Promise<void>;
 }) {
   const [tick, setTick] = useState(0);
   const refresh = () => setTick((n) => n + 1);
@@ -1569,6 +1573,50 @@ function RightPanel({
                   {fonts.map((f) => <option key={f.family} value={f.family} style={{ fontFamily: f.family }}>{f.family}</option>)}
                 </select>
 
+                <div className="flex gap-1">
+                  {([
+                    { key: "bold", prop: "fontWeight", on: "bold", off: "normal", label: "F", style: "font-bold", weight: 700, fontStyle: "normal" },
+                    { key: "italic", prop: "fontStyle", on: "italic", off: "normal", label: "K", style: "italic", weight: 400, fontStyle: "italic" },
+                  ] as const).map(({ key, prop, on, off, label, style, weight, fontStyle }) => {
+                    const active = (activeObj as any)[prop] === on;
+                    return (
+                      <button
+                        key={key}
+                        onClick={async () => {
+                          const newVal = active ? off : on;
+                          if (newVal !== off) {
+                            const family = (activeObj as any).fontFamily ?? selectedFont;
+                            const curWeight = key === "bold" ? weight : ((activeObj as any).fontWeight === "bold" ? 700 : 400);
+                            const curStyle = key === "italic" ? fontStyle : ((activeObj as any).fontStyle ?? "normal");
+                            await loadFont(family, curWeight, curStyle);
+                          }
+                          (activeObj as any).set(prop, newVal);
+                          onUpdate(); refresh();
+                        }}
+                        className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${style} ${
+                          active ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => {
+                      const current = (activeObj as any).text || "";
+                      const isUpper = current === current.toUpperCase() && current !== current.toLowerCase();
+                      (activeObj as any).set("text", isUpper ? current.toLowerCase() : current.toUpperCase());
+                      onUpdate(); refresh();
+                    }}
+                    className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
+                      (() => { const t = (activeObj as any).text || ""; return t === t.toUpperCase() && t !== t.toLowerCase(); })()
+                        ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
+                    }`}
+                  >
+                    AB
+                  </button>
+                </div>
+
                 <div className="grid grid-cols-[1fr_auto] gap-1.5 items-end">
                   <div>
                     <label className={lbl}>Größe</label>
@@ -1605,41 +1653,6 @@ function RightPanel({
                       {align === "left" ? "Links" : align === "center" ? "Mitte" : "Rechts"}
                     </button>
                   ))}
-                </div>
-
-                <label className={lbl}>Stil</label>
-                <div className="flex gap-1">
-                  {([
-                    { key: "bold", prop: "fontWeight", on: "bold", off: "normal", label: "F", style: "font-bold" },
-                    { key: "italic", prop: "fontStyle", on: "italic", off: "normal", label: "K", style: "italic" },
-                  ] as const).map(({ key, prop, on, off, label, style }) => {
-                    const active = (activeObj as any)[prop] === on;
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => { (activeObj as any).set(prop, active ? off : on); onUpdate(); refresh(); }}
-                        className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${style} ${
-                          active ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
-                  <button
-                    onClick={() => {
-                      const current = (activeObj as any).text || "";
-                      const isUpper = current === current.toUpperCase() && current !== current.toLowerCase();
-                      (activeObj as any).set("text", isUpper ? current.toLowerCase() : current.toUpperCase());
-                      onUpdate(); refresh();
-                    }}
-                    className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
-                      (() => { const t = (activeObj as any).text || ""; return t === t.toUpperCase() && t !== t.toLowerCase(); })()
-                        ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
-                    }`}
-                  >
-                    AB
-                  </button>
                 </div>
 
                 <div className="flex items-center justify-between">
