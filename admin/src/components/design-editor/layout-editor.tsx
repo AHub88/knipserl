@@ -1797,25 +1797,57 @@ function RightPanel({
                   </button>
                 </div>
 
-                <div className="grid grid-cols-[1fr_auto] gap-1.5 items-end">
-                  <div>
-                    <label className={lbl}>Größe</label>
-                    <div className="flex items-center gap-1.5">
-                      <input type="range" min={8} max={400} value={Math.round((activeObj as any).fontSize ?? fontSize)}
-                        onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
-                        className="flex-1 accent-[#F6A11C] h-1" />
-                      <input type="number" min={8} max={400}
-                        className="w-14 shrink-0 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5"
-                        value={Math.round((activeObj as any).fontSize ?? fontSize)}
-                        onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={lbl}>Farbe</label>
+                <label className={lbl}>Größe</label>
+                <div className="flex items-center gap-1.5">
+                  <input type="range" min={8} max={400} value={Math.round((activeObj as any).fontSize ?? fontSize)}
+                    onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
+                    className="flex-1 accent-[#F6A11C] h-1" />
+                  <input type="number" min={8} max={400}
+                    className="w-14 shrink-0 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5"
+                    value={Math.round((activeObj as any).fontSize ?? fontSize)}
+                    onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
+                </div>
+
+                <label className={lbl}>Farbe</label>
+                <div className="flex flex-wrap gap-1">
+                  {PRESET_COLORS.map((c) => {
+                    const current = ((activeObj as any).fill ?? textColor).toLowerCase();
+                    const isActive = current === c.value.toLowerCase();
+                    return (
+                      <button
+                        key={c.value}
+                        onClick={() => onColorChange(c.value)}
+                        title={c.label}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${
+                          isActive ? "border-[#F6A11C] scale-110" : "border-white/10 hover:border-white/30"
+                        }`}
+                        style={{ backgroundColor: c.value }}
+                      />
+                    );
+                  })}
+                  <label className="w-6 h-6 rounded-full border-2 border-white/10 hover:border-white/30 cursor-pointer overflow-hidden relative" title="Eigene Farbe">
                     <input type="color" value={(activeObj as any).fill ?? textColor}
                       onChange={(e) => onColorChange(e.target.value)}
-                      className="w-8 h-7 rounded cursor-pointer border border-white/10 bg-transparent" />
-                  </div>
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                    <span className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(#ef4444, #eab308, #22c55e, #3b82f6, #ef4444)" }} />
+                  </label>
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[10px] text-white/40">#</span>
+                  <input
+                    type="text"
+                    maxLength={7}
+                    className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-0.5 font-mono uppercase"
+                    value={((activeObj as any).fill ?? textColor).replace("#", "")}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
+                      if (v.length === 6) onColorChange(`#${v}`);
+                    }}
+                    onBlur={(e) => {
+                      const v = e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
+                      if (v.length === 3) onColorChange(`#${v[0]}${v[0]}${v[1]}${v[1]}${v[2]}${v[2]}`);
+                    }}
+                  />
                 </div>
 
                 <label className={lbl}>Ausrichtung</label>
