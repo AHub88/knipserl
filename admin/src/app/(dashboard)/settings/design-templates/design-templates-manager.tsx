@@ -239,24 +239,58 @@ export function DesignTemplatesManager({
           {displayItems.map((template) => (
             <div
               key={template.id}
-              className={`rounded-xl border bg-card overflow-hidden ${
+              className={`group rounded-xl border bg-card overflow-hidden ${
                 !template.active
                   ? "border-white/[0.05] opacity-50"
                   : "border-white/[0.10]"
               }`}
             >
-              {template.thumbnail ? (
-                <img
-                  src={template.thumbnail}
-                  alt={template.name}
-                  className="w-full h-48 object-contain bg-white/[0.03]"
-                />
-              ) : (
-                <div className="w-full h-48 bg-white/[0.03] flex items-center justify-center">
-                  <span className="text-xs text-zinc-500">Kein Bild</span>
+              <div className="relative">
+                {template.thumbnail ? (
+                  <img
+                    src={template.thumbnail}
+                    alt={template.name}
+                    className="w-full h-48 object-contain bg-white/[0.03]"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-white/[0.03] flex items-center justify-center">
+                    <span className="text-xs text-zinc-500">Kein Bild</span>
+                  </div>
+                )}
+                {/* Overlay: mobil immer sichtbar, desktop nur bei hover */}
+                <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/60 backdrop-blur-sm transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
+                  <Link
+                    href={`/settings/design-templates/editor?id=${template.id}`}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    <IconEdit className="size-5" />
+                    <span className="text-[10px] font-medium">Bearbeiten</span>
+                  </Link>
+                  <button
+                    onClick={() =>
+                      handleToggleActive(template.id, template.active)
+                    }
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    {template.active ? (
+                      <IconToggleRight className="size-5 text-green-400" />
+                    ) : (
+                      <IconToggleLeft className="size-5" />
+                    )}
+                    <span className="text-[10px] font-medium">
+                      {template.active ? "Aktiv" : "Inaktiv"}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => handleDelete(template.id)}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                  >
+                    <IconTrash className="size-5" />
+                    <span className="text-[10px] font-medium">Löschen</span>
+                  </button>
                 </div>
-              )}
-              <div className="p-3 space-y-2">
+              </div>
+              <div className="p-3 space-y-1.5">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold text-zinc-200 truncate flex-1">
                     {template.name}
@@ -270,35 +304,6 @@ export function DesignTemplatesManager({
                     {template.category}
                   </span>
                 )}
-                <div className="flex items-center gap-1 pt-1">
-                  <Link
-                    href={`/settings/design-templates/editor?id=${template.id}`}
-                    className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
-                    title="Bearbeiten"
-                  >
-                    <IconEdit className="size-3.5" />
-                  </Link>
-                  <button
-                    onClick={() =>
-                      handleToggleActive(template.id, template.active)
-                    }
-                    className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
-                    title={template.active ? "Deaktivieren" : "Aktivieren"}
-                  >
-                    {template.active ? (
-                      <IconToggleRight className="size-4 text-green-400" />
-                    ) : (
-                      <IconToggleLeft className="size-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(template.id)}
-                    className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-400/[0.06] transition-colors"
-                    title="Löschen"
-                  >
-                    <IconTrash className="size-3.5" />
-                  </button>
-                </div>
               </div>
             </div>
           ))}
