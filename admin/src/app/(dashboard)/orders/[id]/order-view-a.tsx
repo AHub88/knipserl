@@ -682,12 +682,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-white/10 max-h-64 mx-auto" />
               </a>
               <a
-                href={order.graphicUrl}
+                href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
                 download={`layout-${order.orderNumber}.png`}
                 className="flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
               >
                 <IconFileDownload className="size-4" />
-                Layout herunterladen
+                Layout herunterladen (ohne Platzhalter)
               </a>
             </div>
           )}

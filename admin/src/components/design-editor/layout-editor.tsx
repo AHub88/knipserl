@@ -608,18 +608,27 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       dirtyRef.current = true;
       await autoSave();
 
-      // Export to PNG blob
-      const dataUrl = canvas.toDataURL({
-        format: "png",
-        multiplier: 2,
-      });
+      // Export preview PNG (with placeholders)
+      const previewDataUrl = canvas.toDataURL({ format: "png", multiplier: 2 });
+      const previewResp = await fetch(previewDataUrl);
+      const previewBlob = await previewResp.blob();
 
-      // Convert data URL to blob
-      const resp = await fetch(dataUrl);
-      const blob = await resp.blob();
+      // Hide placeholders, export final PNG (without placeholders)
+      const placeholders = canvas.getObjects().filter((o: any) => o.isPhotoPlaceholder);
+      placeholders.forEach((o: any) => o.set("visible", false));
+      canvas.renderAll();
+
+      const finalDataUrl = canvas.toDataURL({ format: "png", multiplier: 2 });
+      const finalResp = await fetch(finalDataUrl);
+      const finalBlob = await finalResp.blob();
+
+      // Restore placeholders
+      placeholders.forEach((o: any) => o.set("visible", true));
+      canvas.renderAll();
 
       const form = new FormData();
-      form.append("file", blob, "layout.png");
+      form.append("file", finalBlob, "layout.png");
+      form.append("preview", previewBlob, "layout-preview.png");
 
       const res = await fetch(`/api/design/${token}`, {
         method: "POST",
@@ -1533,6 +1542,22 @@ function RightPanel({
                 {getLayerName(obj)}
               </span>
               <div className="flex items-center gap-px shrink-0">
+                <button onClick={(e) => {
+                    e.stopPropagation();
+                    const locked = !(obj.selectable === false);
+                    obj.set("selectable", !locked);
+                    obj.set("evented", !locked);
+                    obj.set("hasControls", !locked);
+                    if (locked) canvas.discardActiveObject();
+                    canvas.renderAll(); refresh();
+                  }}
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title={obj.selectable === false ? "Entsperren" : "Sperren"}>
+                  <svg className={`w-3 h-3 ${obj.selectable === false ? "text-[#F6A11C]" : "text-white/40"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    {obj.selectable === false
+                      ? <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>
+                      : <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></>}
+                  </svg>
+                </button>
                 <button onClick={(e) => { e.stopPropagation(); obj.set("visible", !isVisible); onUpdate(); refresh(); }}
                   className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title={isVisible ? "Ausblenden" : "Einblenden"}>
                   <svg className={`w-3 h-3 ${isVisible ? "text-white/40" : "text-white/20"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

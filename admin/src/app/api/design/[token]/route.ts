@@ -102,6 +102,7 @@ export async function POST(
 
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
+  const preview = formData.get("preview") as File | null;
 
   if (!file) {
     return NextResponse.json(
@@ -113,15 +114,28 @@ export async function POST(
   const uploadDir = path.join(process.cwd(), "uploads", order.id);
   await mkdir(uploadDir, { recursive: true });
 
+  // Save final PNG (without placeholders) for download
   const filepath = path.join(uploadDir, "layout-final.png");
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(filepath, buffer);
+
+  // Save preview PNG (with placeholders) for admin preview
+  let previewUrl: string | undefined;
+  if (preview) {
+    const previewPath = path.join(uploadDir, "layout-preview.png");
+    const previewBuffer = Buffer.from(await preview.arrayBuffer());
+    await writeFile(previewPath, previewBuffer);
+    previewUrl = `/api/uploads/${order.id}/layout-preview.png`;
+  }
 
   const graphicUrl = `/api/uploads/${order.id}/layout-final.png`;
 
   await prisma.order.update({
     where: { id: order.id },
-    data: { graphicUrl, designReady: true },
+    data: {
+      graphicUrl: previewUrl || graphicUrl,
+      designReady: true,
+    },
   });
 
   const design = await prisma.layoutDesign.update({
