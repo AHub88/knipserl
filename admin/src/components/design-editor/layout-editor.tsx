@@ -371,16 +371,33 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   async function addPhotoPlaceholder() {
     const canvas = fabricRef.current;
-    if (!canvas || placeholderCount >= 3) return;
+    if (!canvas) return;
+
+    // Count existing placeholders from canvas (not from state)
+    const existing = canvas.getObjects().filter((o: any) => o.isPhotoPlaceholder);
+    if (existing.length >= 3) return;
 
     const fabric = fabricModRef.current;
     if (!fabric) return;
 
+    // Find the next available number (1, 2, or 3)
+    const usedNums = new Set<number>();
+    existing.forEach((obj: any) => {
+      if (typeof obj.getObjects === "function") {
+        const textChild = obj.getObjects().find((c: any) => c.text !== undefined);
+        if (textChild?.text) {
+          const m = textChild.text.match(/(\d+)/);
+          if (m) usedNums.add(Number(m[1]));
+        }
+      }
+    });
+    let num = 1;
+    while (usedNums.has(num) && num <= 3) num++;
+
     const colors = ["#3b82f6", "#f59e0b", "#10b981"]; // blue, amber, green
-    const color = colors[placeholderCount % colors.length];
-    const num = placeholderCount + 1;
+    const color = colors[(num - 1) % colors.length];
     const placeholderW = Math.min(500, CANVAS_W - 100);
-    const placeholderH = Math.round(placeholderW * (2 / 3)); // 3:2 Seitenverhältnis
+    const placeholderH = Math.round(placeholderW * (2 / 3));
 
     const rect = new fabric.Rect({
       width: placeholderW,
@@ -407,14 +424,14 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
     const group = new fabric.Group([rect, label], {
       left: (CANVAS_W - placeholderW) / 2,
-      top: 100 + placeholderCount * (placeholderH + 50),
+      top: 100 + existing.length * (placeholderH + 50),
     });
     (group as any).isPhotoPlaceholder = true;
 
     canvas.add(group);
     canvas.setActiveObject(group);
     canvas.renderAll();
-    setPlaceholderCount((c) => c + 1);
+    countPlaceholders(canvas);
     dirtyRef.current = true;
   }
 
@@ -882,6 +899,20 @@ function ToolbarButton({
   );
 }
 
+function PropSection({ title, children, action }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void } }) {
+  return (
+    <div className="space-y-1.5 py-2 border-b border-white/10">
+      <div className="flex items-center justify-between">
+        <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">{title}</h4>
+        {action && (
+          <button onClick={action.onClick} className="text-[9px] text-red-400 hover:text-red-300">{action.label}</button>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function SidebarButton({ icon, label, onClick, disabled }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean }) {
   return (
     <button
@@ -1322,6 +1353,56 @@ function RightPanel({
   const objects = canvas.getObjects();
   const activeObj = canvas.getActiveObject();
 
+  // Helper: get stroke color (works for groups by checking first child)
+  function getStrokeColor(obj: any): string {
+    if (typeof obj.stroke === "string" && obj.stroke) return obj.stroke;
+    if (typeof obj.getObjects === "function") {
+      const child = obj.getObjects().find((c: any) => typeof c.stroke === "string" && c.stroke);
+      if (child) return child.stroke;
+    }
+    return "#000000";
+  }
+
+  function getStrokeWidth(obj: any): number {
+    if ((obj.strokeWidth ?? 0) > 0) return Math.round(obj.strokeWidth);
+    if (typeof obj.getObjects === "function") {
+      const child = obj.getObjects().find((c: any) => (c.strokeWidth ?? 0) > 0);
+      if (child) return Math.round(child.strokeWidth);
+    }
+    return 0;
+  }
+
+  // Helper: apply stroke to object (handles groups)
+  function applyStroke(obj: any, color: string | undefined, width: number | undefined) {
+    if (typeof obj.getObjects === "function") {
+      obj.getObjects().forEach((c: any) => {
+        if (color !== undefined) c.set("stroke", color);
+        if (width !== undefined) c.set("strokeWidth", width);
+        c.set("dirty", true);
+      });
+    }
+    if (color !== undefined) obj.set("stroke", color);
+    if (width !== undefined) obj.set("strokeWidth", width);
+    obj.set("dirty", true);
+  }
+
+  // Helper: apply shadow to object (handles groups)
+  function applyShadow(obj: any, shadow: any) {
+    obj.shadow = shadow;
+    obj.dirty = true;
+    obj.objectCaching = false;
+    if (typeof obj.getObjects === "function") {
+      obj.getObjects().forEach((c: any) => { c.dirty = true; });
+    }
+  }
+
+  function applyShadowLive(obj: any, color: string, blur: number, offX: number, offY: number) {
+    const fabric = fabricModRef.current;
+    if (!fabric) return;
+    const shadow = new fabric.Shadow({ color, blur, offsetX: offX, offsetY: offY });
+    applyShadow(obj, shadow);
+  }
+
   function detectKind(obj: any): "placeholder" | "background" | "text" | "image" | "group" | "rect" | "unknown" {
     if (obj.isPhotoPlaceholder) return "placeholder";
     if (obj.isBackground) return "background";
@@ -1452,14 +1533,12 @@ function RightPanel({
       </div>
 
       {/* Object Properties */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div className="flex-1 overflow-y-auto p-3 space-y-1">
         {activeObj ? (
           <>
-            <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Eigenschaften</h4>
-
-            {/* Text properties (only for textbox) */}
+            {/* ── TEXT ── */}
             {activeObj.type === "textbox" && (
-              <div className="space-y-2 pb-2 border-b border-white/10">
+              <PropSection title="Text">
                 <label className={lbl}>Schriftart</label>
                 <select
                   value={(activeObj as any).fontFamily ?? selectedFont}
@@ -1468,113 +1547,120 @@ function RightPanel({
                 >
                   {fonts.map((f) => <option key={f.family} value={f.family} style={{ fontFamily: f.family }}>{f.family}</option>)}
                 </select>
-                <div className="grid grid-cols-2 gap-1.5">
+
+                <div className="grid grid-cols-[1fr_auto] gap-1.5 items-end">
                   <div>
-                    <label className={lbl}>Größe: {Math.round((activeObj as any).fontSize ?? fontSize)}px</label>
-                    <input type="range" min={8} max={400} value={Math.round((activeObj as any).fontSize ?? fontSize)}
-                      onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
-                      className="w-full accent-[#F6A11C] h-1" />
-                    <input type="number" min={8} max={400} className={inp}
-                      value={Math.round((activeObj as any).fontSize ?? fontSize)}
-                      onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
+                    <label className={lbl}>Größe</label>
+                    <div className="flex items-center gap-1.5">
+                      <input type="range" min={8} max={400} value={Math.round((activeObj as any).fontSize ?? fontSize)}
+                        onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
+                        className="flex-1 accent-[#F6A11C] h-1" />
+                      <input type="number" min={8} max={400} className={`${inp} w-14`}
+                        value={Math.round((activeObj as any).fontSize ?? fontSize)}
+                        onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
+                    </div>
                   </div>
                   <div>
                     <label className={lbl}>Farbe</label>
                     <input type="color" value={(activeObj as any).fill ?? textColor}
                       onChange={(e) => onColorChange(e.target.value)}
-                      className="w-full h-7 rounded cursor-pointer border border-white/10 bg-transparent" />
+                      className="w-8 h-7 rounded cursor-pointer border border-white/10 bg-transparent" />
                   </div>
                 </div>
-                {/* Text alignment */}
-                <div>
-                  <label className={lbl}>Ausrichtung</label>
-                  <div className="flex gap-1 mt-0.5">
-                    {(["left", "center", "right"] as const).map((align) => (
-                      <button
-                        key={align}
-                        onClick={() => { (activeObj as any).set("textAlign", align); onUpdate(); refresh(); }}
-                        className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
-                          (activeObj as any).textAlign === align
-                            ? "bg-[#F6A11C] text-black"
-                            : "bg-white/5 text-white/50 hover:text-white/70"
-                        }`}
-                      >
-                        {align === "left" ? "Links" : align === "center" ? "Mitte" : "Rechts"}
-                      </button>
-                    ))}
-                  </div>
+
+                <label className={lbl}>Ausrichtung</label>
+                <div className="flex gap-1">
+                  {(["left", "center", "right"] as const).map((align) => (
+                    <button
+                      key={align}
+                      onClick={() => { (activeObj as any).set("textAlign", align); onUpdate(); refresh(); }}
+                      className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
+                        (activeObj as any).textAlign === align
+                          ? "bg-[#F6A11C] text-black"
+                          : "bg-white/5 text-white/50 hover:text-white/70"
+                      }`}
+                    >
+                      {align === "left" ? "Links" : align === "center" ? "Mitte" : "Rechts"}
+                    </button>
+                  ))}
                 </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className={lbl}>Zeichenabstand: {(activeObj as any).charSpacing ?? 0}</label>
-                    {((activeObj as any).charSpacing ?? 0) !== 0 && (
-                      <button onClick={() => { (activeObj as any).set("charSpacing", 0); onUpdate(); refresh(); }}
-                        className="text-[9px] text-white/40 hover:text-white">Reset</button>
-                    )}
-                  </div>
+
+                <div className="flex items-center justify-between">
+                  <label className={lbl}>Zeichenabstand</label>
+                  {((activeObj as any).charSpacing ?? 0) !== 0 && (
+                    <button onClick={() => { (activeObj as any).set("charSpacing", 0); onUpdate(); refresh(); }}
+                      className="text-[9px] text-white/40 hover:text-white">Reset</button>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
                   <input type="range" min={-200} max={1000} value={(activeObj as any).charSpacing ?? 0}
                     onChange={(e) => { (activeObj as any).set("charSpacing", Number(e.target.value)); onUpdate(); refresh(); }}
-                    className="w-full accent-[#F6A11C] h-1" />
+                    className="flex-1 accent-[#F6A11C] h-1" />
+                  <input type="number" min={-200} max={1000} className={`${inp} w-14`}
+                    value={(activeObj as any).charSpacing ?? 0}
+                    onChange={(e) => { (activeObj as any).set("charSpacing", Number(e.target.value)); onUpdate(); refresh(); }} />
                 </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className={lbl}>Zeilenabstand: {Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}%</label>
-                    {Math.round(((activeObj as any).lineHeight ?? 1.16) * 100) !== 116 && (
-                      <button onClick={() => { (activeObj as any).set("lineHeight", 1.16); onUpdate(); refresh(); }}
-                        className="text-[9px] text-white/40 hover:text-white">Reset</button>
-                    )}
-                  </div>
+
+                <div className="flex items-center justify-between">
+                  <label className={lbl}>Zeilenabstand</label>
+                  {Math.round(((activeObj as any).lineHeight ?? 1.16) * 100) !== 116 && (
+                    <button onClick={() => { (activeObj as any).set("lineHeight", 1.16); onUpdate(); refresh(); }}
+                      className="text-[9px] text-white/40 hover:text-white">Reset</button>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
                   <input type="range" min={50} max={300} value={Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}
                     onChange={(e) => { (activeObj as any).set("lineHeight", Number(e.target.value) / 100); onUpdate(); refresh(); }}
-                    className="w-full accent-[#F6A11C] h-1" />
+                    className="flex-1 accent-[#F6A11C] h-1" />
+                  <div className="flex items-center gap-0.5">
+                    <input type="number" min={50} max={300} className={`${inp} w-12`}
+                      value={Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}
+                      onChange={(e) => { (activeObj as any).set("lineHeight", Number(e.target.value) / 100); onUpdate(); refresh(); }} />
+                    <span className="text-[9px] text-white/30">%</span>
+                  </div>
                 </div>
-              </div>
+              </PropSection>
             )}
 
-            {/* Position */}
-            <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Position</h4>
-            <div className="grid grid-cols-2 gap-1.5">
-              <div>
-                <label className={lbl}>X</label>
-                <input type="number" className={inp} value={getObjProp("x")}
-                  onChange={(e) => setObjProp("x", Number(e.target.value) || 0)} />
+            {/* ── POSITION ── */}
+            <PropSection title="Position">
+              <div className="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label className={lbl}>X</label>
+                  <input type="number" className={inp} value={getObjProp("x")}
+                    onChange={(e) => setObjProp("x", Number(e.target.value) || 0)} />
+                </div>
+                <div>
+                  <label className={lbl}>Y</label>
+                  <input type="number" className={inp} value={getObjProp("y")}
+                    onChange={(e) => setObjProp("y", Number(e.target.value) || 0)} />
+                </div>
               </div>
-              <div>
-                <label className={lbl}>Y</label>
-                <input type="number" className={inp} value={getObjProp("y")}
-                  onChange={(e) => setObjProp("y", Number(e.target.value) || 0)} />
-              </div>
-            </div>
+            </PropSection>
 
-            {/* Size */}
-            <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Größe</h4>
-            <div className="grid grid-cols-2 gap-1.5">
-              <div>
-                <label className={lbl}>Breite</label>
-                <input type="number" className={inp} value={getObjProp("w")}
-                  onChange={(e) => setObjProp("w", Number(e.target.value) || 1)} />
+            {/* ── GRÖSSE ── */}
+            <PropSection title="Größe">
+              <div className="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label className={lbl}>Breite</label>
+                  <input type="number" className={inp} value={getObjProp("w")}
+                    onChange={(e) => setObjProp("w", Number(e.target.value) || 1)} />
+                </div>
+                <div>
+                  <label className={lbl}>Höhe</label>
+                  <input type="number" className={inp} value={getObjProp("h")}
+                    onChange={(e) => setObjProp("h", Number(e.target.value) || 1)} />
+                </div>
               </div>
-              <div>
-                <label className={lbl}>Höhe</label>
-                <input type="number" className={inp} value={getObjProp("h")}
-                  onChange={(e) => setObjProp("h", Number(e.target.value) || 1)} />
-              </div>
-            </div>
-
-            {/* Lock ratio + Rotation */}
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={lockRatio}
-                  onChange={() => setLockRatio(!lockRatio)}
-                  className="accent-[#F6A11C] w-3 h-3"
-                />
-                <span className="text-[10px] text-white/50">Seitenverhältnis</span>
+              <label className="flex items-center gap-1.5 cursor-pointer mt-1">
+                <input type="checkbox" checked={lockRatio} onChange={() => setLockRatio(!lockRatio)}
+                  className="accent-[#F6A11C] w-3 h-3" />
+                <span className="text-[10px] text-white/50">Seitenverhältnis beibehalten</span>
               </label>
-            </div>
+            </PropSection>
 
-            <div>
+            {/* ── TRANSFORMATION ── */}
+            <PropSection title="Transformation">
               <label className={lbl}>Drehung</label>
               <div className="flex items-center gap-1.5">
                 <input type="range" min={0} max={360} value={getObjProp("angle")}
@@ -1583,105 +1669,89 @@ function RightPanel({
                   onChange={(e) => setObjProp("angle", Number(e.target.value) || 0)} />
                 <span className="text-[10px] text-white/30">°</span>
               </div>
-            </div>
 
-            {/* Opacity */}
-            <div>
               <label className={lbl}>Deckkraft</label>
               <div className="flex items-center gap-1.5">
                 <input type="range" min={0} max={100} value={Math.round((activeObj.opacity ?? 1) * 100)}
                   onChange={(e) => { activeObj.set("opacity", Number(e.target.value) / 100); onUpdate(); refresh(); }}
                   className="flex-1 accent-[#F6A11C] h-1" />
-                <span className="text-[10px] text-white/40 w-8 text-right">{Math.round((activeObj.opacity ?? 1) * 100)}%</span>
+                <input type="number" min={0} max={100} className={`${inp} w-12`}
+                  value={Math.round((activeObj.opacity ?? 1) * 100)}
+                  onChange={(e) => { activeObj.set("opacity", Math.min(100, Math.max(0, Number(e.target.value) || 0)) / 100); onUpdate(); refresh(); }} />
+                <span className="text-[10px] text-white/30">%</span>
               </div>
-            </div>
+            </PropSection>
 
-            {/* Border / Stroke (for images, placeholders, rects) */}
-            {detectKind(activeObj) !== "text" && (
-              <div className="space-y-1.5 pt-1 border-t border-white/10">
-                <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Rahmen</h4>
-                <div>
-                  <label className={lbl}>Farbe</label>
-                  <input type="color" value={typeof (activeObj as any).stroke === "string" ? (activeObj as any).stroke : "#000000"}
-                    onChange={(e) => {
-                      activeObj.set("stroke", e.target.value);
-                      if (!((activeObj as any).strokeWidth > 0)) activeObj.set("strokeWidth", 2);
-                      activeObj.set("dirty", true);
-                      activeObj.setCoords();
-                      onUpdate(); refresh();
-                    }}
-                    className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
-                </div>
-                <div>
-                  <label className={lbl}>Stärke: {Math.round((activeObj as any).strokeWidth ?? 0)}px</label>
-                  <input type="range" min={0} max={30} value={(activeObj as any).strokeWidth ?? 0}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      if (val > 0 && !(typeof (activeObj as any).stroke === "string" && (activeObj as any).stroke)) {
-                        activeObj.set("stroke", "#000000");
-                      }
-                      activeObj.set("strokeWidth", val);
-                      activeObj.set("dirty", true);
-                      activeObj.setCoords();
-                      onUpdate(); refresh();
-                    }}
-                    className="w-full accent-[#F6A11C] h-1" />
-                </div>
-              </div>
-            )}
+            {/* ── RAHMEN ── */}
+            <PropSection title="Rahmen">
+              <label className={lbl}>Farbe</label>
+              <input type="color" value={getStrokeColor(activeObj)}
+                onChange={(e) => {
+                  applyStroke(activeObj, e.target.value, undefined);
+                  if (!((activeObj as any).strokeWidth > 0)) applyStroke(activeObj, e.target.value, 2);
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
 
-            {/* Shadow */}
-            <div className="space-y-1.5 pt-1 border-t border-white/10">
-              <div className="flex items-center justify-between">
-                <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Schatten</h4>
-                {(activeObj as any).shadow && (
-                  <button onClick={() => {
-                    activeObj.set("shadow", null);
-                    activeObj.set("dirty", true);
-                    activeObj.set("objectCaching", false);
-                    canvas.renderAll();
-                    onUpdate(); refresh();
-                  }} className="text-[9px] text-red-400 hover:text-red-300">Entfernen</button>
-                )}
-              </div>
-              <div>
-                <label className={lbl}>Farbe</label>
-                <input type="color" value={shadowColor}
-                  onChange={(e) => setShadowColor(e.target.value)}
-                  className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
-              </div>
-              <div>
-                <label className={lbl}>Weichheit: {shadowBlur}px</label>
-                <input type="range" min={0} max={50} value={shadowBlur}
-                  onChange={(e) => setShadowBlur(Number(e.target.value))}
-                  className="w-full accent-[#F6A11C] h-1" />
-              </div>
-              <div className="flex gap-1.5">
-                <div className="flex-1">
+              <label className={lbl}>Stärke: {getStrokeWidth(activeObj)}px</label>
+              <input type="range" min={0} max={30} value={getStrokeWidth(activeObj)}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  applyStroke(activeObj, val > 0 ? (getStrokeColor(activeObj) || "#000000") : getStrokeColor(activeObj), val);
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full accent-[#F6A11C] h-1" />
+            </PropSection>
+
+            {/* ── SCHATTEN ── */}
+            <PropSection title="Schatten" action={(activeObj as any).shadow ? {
+              label: "Entfernen", onClick: () => {
+                applyShadow(activeObj, null);
+                canvas.renderAll(); onUpdate(); refresh();
+              }
+            } : undefined}>
+              <label className={lbl}>Farbe</label>
+              <input type="color" value={shadowColor}
+                onChange={(e) => {
+                  setShadowColor(e.target.value);
+                  applyShadowLive(activeObj, e.target.value, shadowBlur, shadowOffsetX, shadowOffsetY);
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+
+              <label className={lbl}>Weichheit: {shadowBlur}px</label>
+              <input type="range" min={0} max={50} value={shadowBlur}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setShadowBlur(v);
+                  applyShadowLive(activeObj, shadowColor, v, shadowOffsetX, shadowOffsetY);
+                  canvas.renderAll(); onUpdate(); refresh();
+                }}
+                className="w-full accent-[#F6A11C] h-1" />
+
+              <div className="grid grid-cols-2 gap-1.5">
+                <div>
                   <label className={lbl}>Abstand X: {shadowOffsetX}</label>
-                  <input type="range" min={-30} max={30} value={shadowOffsetX} onChange={(e) => setShadowOffsetX(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+                  <input type="range" min={-30} max={30} value={shadowOffsetX}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setShadowOffsetX(v);
+                      applyShadowLive(activeObj, shadowColor, shadowBlur, v, shadowOffsetY);
+                      canvas.renderAll(); onUpdate(); refresh();
+                    }} className="w-full accent-[#F6A11C] h-1" />
                 </div>
-                <div className="flex-1">
+                <div>
                   <label className={lbl}>Abstand Y: {shadowOffsetY}</label>
-                  <input type="range" min={-30} max={30} value={shadowOffsetY} onChange={(e) => setShadowOffsetY(Number(e.target.value))} className="w-full accent-[#F6A11C] h-1" />
+                  <input type="range" min={-30} max={30} value={shadowOffsetY}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setShadowOffsetY(v);
+                      applyShadowLive(activeObj, shadowColor, shadowBlur, shadowOffsetX, v);
+                      canvas.renderAll(); onUpdate(); refresh();
+                    }} className="w-full accent-[#F6A11C] h-1" />
                 </div>
               </div>
-              <button onClick={() => {
-                const fabric = fabricModRef.current;
-                if (!fabric) return;
-                const shadow = new fabric.Shadow({
-                  color: shadowColor,
-                  blur: shadowBlur,
-                  offsetX: shadowOffsetX,
-                  offsetY: shadowOffsetY,
-                });
-                activeObj.set("shadow", shadow);
-                activeObj.set("dirty", true);
-                activeObj.set("objectCaching", false);
-                canvas.renderAll();
-                onUpdate(); refresh();
-              }} className="w-full py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Schatten anwenden</button>
-            </div>
+            </PropSection>
           </>
         ) : (
           <p className="text-[10px] text-white/30 text-center mt-4">Wähle ein Element aus</p>
