@@ -221,91 +221,100 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           </Link>
           <span className="text-xs font-mono text-zinc-400">#{order.orderNumber}</span>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto shrink-0">
-            <div className="hidden sm:flex items-center gap-2 mr-1">
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 px-3 py-1.5 text-sm font-medium">
-                <IconSteeringWheel className="size-4" />
-                {driverDisplay ?? <span className="italic opacity-50">–</span>}
-              </span>
-              <span className={
-                "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium " +
-                (order.paymentMethod === "CASH"
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "border-purple-500/30 bg-purple-500/10 text-purple-400")
-              }>
-                <IconCash className="size-4" />
-                {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
-              </span>
-            </div>
-            {/* Confirmation link */}
-            {order.confirmationToken && (
-              <button
-                onClick={() => {
-                  const url = `${window.location.origin}/confirm/${order.confirmationToken}`;
-                  navigator.clipboard.writeText(url);
-                  toast.success("Bestätigungslink kopiert");
-                }}
-                className={
-                  "flex items-center justify-center size-8 sm:h-8 sm:w-auto sm:px-3 rounded-lg border text-xs font-medium transition-colors " +
-                  (order.confirmedByCustomerAt
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
-                }
-              >
-                {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
-                <span className="hidden sm:inline sm:ml-1.5">{order.confirmedByCustomerAt ? "Bestätigt" : "Link kopieren"}</span>
-              </button>
-            )}
-            <button
-              onClick={async () => {
-                if (order.designToken) {
-                  const url = `${window.location.origin}/design/${order.designToken}`;
-                  await navigator.clipboard.writeText(url);
-                  toast.success("Design-Link kopiert");
-                } else {
-                  try {
-                    const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
-                    if (!res.ok) throw new Error();
-                    const { token } = await res.json();
-                    const url = `${window.location.origin}/design/${token}`;
-                    await navigator.clipboard.writeText(url);
-                    toast.success("Design erstellt & Link kopiert");
-                    router.refresh();
-                  } catch {
-                    toast.error("Design konnte nicht erstellt werden");
-                  }
-                }
-              }}
-              className={
-                "flex items-center gap-1.5 size-8 sm:h-8 sm:w-auto sm:px-3 justify-center rounded-lg border text-xs font-medium transition-colors " +
-                (order.designReady
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : order.designToken
-                    ? "border-purple-500/30 bg-purple-500/10 text-purple-400"
-                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
-              }
-            >
-              <IconPalette className="size-3.5" />
-              <span className="hidden sm:inline">{order.designReady ? "Design fertig" : order.designToken ? "Design-Link" : "Design"}</span>
-            </button>
-            <a
-              href={`/api/orders/${order.id}/pdf`}
-              target="_blank"
-              className="flex items-center justify-center size-8 sm:h-8 sm:w-auto sm:px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
-            >
-              <IconFileDownload className="size-3.5" />
-              <span className="hidden sm:inline sm:ml-1.5">PDF</span>
-            </a>
+          {/* Actions - right side */}
+          <div className="flex items-center gap-2 ml-auto shrink-0">
             {isAdmin && (
               <button
                 onClick={onEdit}
-                className="flex items-center justify-center size-8 sm:h-8 sm:w-auto sm:px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
               >
                 <IconEdit className="size-3.5" />
-                <span className="hidden sm:inline sm:ml-1.5">Bearbeiten</span>
+                <span className="hidden sm:inline">Bearbeiten</span>
               </button>
             )}
+            <a
+              href={`/api/orders/${order.id}/pdf`}
+              target="_blank"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
+            >
+              <IconFileDownload className="size-3.5" />
+              <span className="hidden sm:inline">PDF</span>
+            </a>
           </div>
+        </div>
+
+        {/* Info badges row */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {/* Driver */}
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 px-2.5 py-1 text-xs font-medium">
+            <IconSteeringWheel className="size-3.5" />
+            {driverDisplay ?? <span className="italic opacity-50">Kein Fahrer</span>}
+          </span>
+
+          {/* Payment method */}
+          <span className={
+            "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium " +
+            (order.paymentMethod === "CASH"
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              : "border-purple-500/30 bg-purple-500/10 text-purple-400")
+          }>
+            <IconCash className="size-3.5" />
+            {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
+          </span>
+
+          {/* Confirmation link */}
+          {order.confirmationToken && (
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/confirm/${order.confirmationToken}`;
+                navigator.clipboard.writeText(url);
+                toast.success("Bestätigungslink kopiert");
+              }}
+              className={
+                "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors " +
+                (order.confirmedByCustomerAt
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
+              }
+            >
+              {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
+              {order.confirmedByCustomerAt ? "Bestätigt" : "Link kopieren"}
+            </button>
+          )}
+
+          {/* Design */}
+          <button
+            onClick={async () => {
+              if (order.designToken) {
+                const url = `${window.location.origin}/design/${order.designToken}`;
+                await navigator.clipboard.writeText(url);
+                toast.success("Design-Link kopiert");
+              } else {
+                try {
+                  const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
+                  if (!res.ok) throw new Error();
+                  const { token } = await res.json();
+                  const url = `${window.location.origin}/design/${token}`;
+                  await navigator.clipboard.writeText(url);
+                  toast.success("Design erstellt & Link kopiert");
+                  router.refresh();
+                } catch {
+                  toast.error("Design konnte nicht erstellt werden");
+                }
+              }}
+            }
+            className={
+              "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors " +
+              (order.designReady
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                : order.designToken
+                  ? "border-purple-500/30 bg-purple-500/10 text-purple-400"
+                  : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
+            }
+          >
+            <IconPalette className="size-3.5" />
+            {order.designReady ? "Design fertig" : order.designToken ? "Design-Link" : "Design"}
+          </button>
         </div>
 
         {/* Date */}

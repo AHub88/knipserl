@@ -200,5 +200,30 @@ export async function PATCH(
     return NextResponse.json(updatedInquiry);
   }
 
+  if (action === "updateFields") {
+    const allowedFields = [
+      "customerName", "customerEmail", "customerPhone", "customerType",
+      "eventType", "eventDate", "locationName", "locationAddress",
+      "locationLat", "locationLng", "distanceKm", "extras", "comments",
+    ] as const;
+
+    const updateData: Record<string, unknown> = {};
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        updateData[field] = field === "eventDate" ? new Date(body[field]) : body[field];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "Keine Felder zum Aktualisieren" }, { status: 400 });
+    }
+
+    const updatedInquiry = await prisma.inquiry.update({
+      where: { id },
+      data: updateData,
+    });
+    return NextResponse.json(updatedInquiry);
+  }
+
   return NextResponse.json({ error: "Ungültige Aktion" }, { status: 400 });
 }

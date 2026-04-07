@@ -2,20 +2,14 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
 import { InquiryActions } from "./inquiry-actions";
+import { InquiryDetails } from "./inquiry-details";
 import Link from "next/link";
 import {
   IconArrowLeft,
   IconCalendar,
   IconMapPin,
-  IconUser,
-  IconMail,
-  IconPhone,
-  IconBriefcase,
-  IconConfetti,
-  IconClock,
-  IconRuler,
-  IconMessageCircle,
   IconPackage,
+  IconClock,
   IconExternalLink,
 } from "@tabler/icons-react";
 
@@ -38,20 +32,27 @@ export default async function InquiryDetailPage({
   > = {
     NEW: {
       label: "Neu",
-      className:
-        "bg-amber-500/15 text-amber-400 border-amber-500/25",
+      className: "bg-amber-500/15 text-amber-400 border-amber-500/25",
       dotColor: "bg-amber-400",
+    },
+    CONTACTED: {
+      label: "Kontaktiert",
+      className: "bg-blue-500/15 text-blue-400 border-blue-500/25",
+      dotColor: "bg-blue-400",
+    },
+    WAITING: {
+      label: "Warte auf Zusage",
+      className: "bg-purple-500/15 text-purple-400 border-purple-500/25",
+      dotColor: "bg-purple-400",
     },
     ACCEPTED: {
       label: "Angenommen",
-      className:
-        "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
+      className: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
       dotColor: "bg-emerald-400",
     },
     REJECTED: {
       label: "Abgelehnt",
-      className:
-        "bg-red-500/15 text-red-400 border-red-500/25",
+      className: "bg-red-500/15 text-red-400 border-red-500/25",
       dotColor: "bg-red-400",
     },
   };
@@ -81,7 +82,7 @@ export default async function InquiryDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* ── Hero Header ── */}
+      {/* Hero Header */}
       <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-4 sm:p-6">
         {/* Top row: back + status */}
         <div className="flex items-center gap-2 sm:gap-3 mb-4">
@@ -128,12 +129,13 @@ export default async function InquiryDetailPage({
             <span className="text-zinc-300 font-medium">
               {inquiry.locationName}
             </span>
-            {inquiry.locationAddress && (
-              <span className="text-muted-foreground">
-                {" "}
-                &middot; {inquiry.locationAddress}
-              </span>
-            )}
+            {inquiry.locationAddress &&
+              inquiry.locationAddress !== inquiry.locationName && (
+                <span className="text-muted-foreground">
+                  {" "}
+                  &middot; {inquiry.locationAddress}
+                </span>
+              )}
             {inquiry.distanceKm != null && (
               <span className="text-zinc-400">
                 {" "}
@@ -143,24 +145,14 @@ export default async function InquiryDetailPage({
           </span>
         </div>
 
-        {/* Created at - small */}
+        {/* Created at */}
         <div className="flex items-center gap-1.5 mt-3 text-xs text-zinc-500">
           <IconClock className="size-3.5" />
           Eingegangen am {formattedCreatedAt}
         </div>
       </div>
 
-      {/* ── Actions (shown for open inquiries) ── */}
-      {["NEW", "CONTACTED", "WAITING"].includes(inquiry.status) && (
-        <InquiryActions
-          inquiryId={inquiry.id}
-          customerType={inquiry.customerType}
-          inquiryExtras={inquiry.extras}
-          distanceKm={inquiry.distanceKm}
-        />
-      )}
-
-      {/* ── Linked Order Banner ── */}
+      {/* Linked Order Banner */}
       {inquiry.order && (
         <Link
           href={`/orders/${inquiry.order.id}`}
@@ -184,132 +176,35 @@ export default async function InquiryDetailPage({
         </Link>
       )}
 
-      {/* ── Info Cards Grid ── */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* Customer Info */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Kundendaten
-          </h3>
-          <div className="space-y-3">
-            <DetailRow
-              icon={<IconUser className="size-4" />}
-              label="Name"
-              value={inquiry.customerName}
-            />
-            <DetailRow
-              icon={<IconMail className="size-4" />}
-              label="E-Mail"
-              value={inquiry.customerEmail}
-            />
-            <DetailRow
-              icon={<IconPhone className="size-4" />}
-              label="Telefon"
-              value={inquiry.customerPhone ?? "–"}
-            />
-            <DetailRow
-              icon={<IconBriefcase className="size-4" />}
-              label="Kundentyp"
-              value={
-                inquiry.customerType === "BUSINESS"
-                  ? "Firmenkunde"
-                  : "Privatkunde"
-              }
-            />
-          </div>
-        </div>
+      {/* Info Cards (now ABOVE actions) */}
+      <InquiryDetails
+        inquiry={{
+          id: inquiry.id,
+          customerName: inquiry.customerName,
+          customerEmail: inquiry.customerEmail,
+          customerPhone: inquiry.customerPhone,
+          customerType: inquiry.customerType,
+          eventType: inquiry.eventType,
+          eventDate: inquiry.eventDate.toISOString(),
+          locationName: inquiry.locationName,
+          locationAddress: inquiry.locationAddress,
+          locationLat: inquiry.locationLat,
+          locationLng: inquiry.locationLng,
+          distanceKm: inquiry.distanceKm,
+          extras: inquiry.extras,
+          comments: inquiry.comments,
+        }}
+      />
 
-        {/* Event Info */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Event-Details
-          </h3>
-          <div className="space-y-3">
-            <DetailRow
-              icon={<IconConfetti className="size-4" />}
-              label="Eventart"
-              value={inquiry.eventType}
-            />
-            <DetailRow
-              icon={<IconCalendar className="size-4" />}
-              label="Datum"
-              value={formattedEventDate}
-            />
-            <DetailRow
-              icon={<IconMapPin className="size-4" />}
-              label="Location"
-              value={inquiry.locationName}
-            />
-            <DetailRow
-              icon={<IconMapPin className="size-4" />}
-              label="Adresse"
-              value={inquiry.locationAddress}
-            />
-            {inquiry.distanceKm != null && (
-              <DetailRow
-                icon={<IconRuler className="size-4" />}
-                label="Entfernung"
-                value={`${inquiry.distanceKm} km`}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Extras */}
-        {inquiry.extras.length > 0 && (
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-              Gebuchte Extras
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {inquiry.extras.map((extra) => (
-                <Badge
-                  key={extra}
-                  variant="outline"
-                  className="bg-[#F6A11C]/10 text-[#F6A11C] border-[#F6A11C]/25"
-                >
-                  {extra}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Comments */}
-        {inquiry.comments && (
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-              Kommentare
-            </h3>
-            <div className="flex items-start gap-2">
-              <IconMessageCircle className="size-4 text-zinc-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap">
-                {inquiry.comments}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="text-zinc-500 shrink-0">{icon}</span>
-      <span className="text-xs text-zinc-500 w-20 shrink-0">{label}</span>
-      <span className="text-sm font-medium text-zinc-200 truncate">
-        {value}
-      </span>
+      {/* Actions (now BELOW info cards) */}
+      {["NEW", "CONTACTED", "WAITING"].includes(inquiry.status) && (
+        <InquiryActions
+          inquiryId={inquiry.id}
+          customerType={inquiry.customerType}
+          inquiryExtras={inquiry.extras}
+          distanceKm={inquiry.distanceKm}
+        />
+      )}
     </div>
   );
 }

@@ -185,7 +185,7 @@ export function InquiryActions({
       {/* Extras Selection */}
       <div>
         <p className={labelClass}>Extras</p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => {
             const active = extras.includes(ext.key);
             const price = EXTRAS_PRICES[ext.key];
@@ -195,16 +195,16 @@ export function InquiryActions({
                 type="button"
                 onClick={() => toggleExtra(ext.key)}
                 className={
-                  "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors " +
+                  "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-3 min-w-[90px] text-xs font-medium transition-colors " +
                   (active
                     ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
                     : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
                 }
               >
-                <ext.icon className="size-3.5" />
-                {ext.label}
+                <ext.icon className="size-5" />
+                <span>{ext.label}</span>
                 {price != null && price > 0 && (
-                  <span className="text-[10px] opacity-70 tabular-nums">{price}&thinsp;&euro;</span>
+                  <span className="text-[10px] opacity-60 tabular-nums">{price}&thinsp;&euro;</span>
                 )}
               </button>
             );
