@@ -713,32 +713,46 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       {/* Editor (hidden on mobile) */}
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
-        <div className="h-10 border-b border-white/10 bg-[#18191b] flex items-center px-2 shrink-0 gap-1">
-          {/* Left: template meta or info */}
+        <div className="h-11 border-b border-white/10 bg-[#18191b] flex items-center px-3 shrink-0">
+          {/* Left: template meta or customer info */}
           {templateMeta || (
-            <div className="text-[11px] text-white/40 px-1.5 truncate max-w-[200px]">
-              {mode === "admin" ? `Format: ${format}` : `${orderInfo.customerName} · ${orderInfo.eventType}`}
+            <div className="flex items-center gap-2 px-1">
+              {mode === "customer" && (
+                <span className="text-[12px] text-white/60 font-medium">
+                  {orderInfo.customerName} · {orderInfo.eventType}
+                  {orderInfo.eventDate ? ` · ${orderInfo.eventDate}` : ""}
+                </span>
+              )}
+              {mode === "admin" && (
+                <span className="text-[12px] text-white/50">Format: {format}</span>
+              )}
             </div>
           )}
 
-          <div className="w-px h-5 bg-white/10 mx-0.5" />
+          <div className="w-px h-5 bg-white/10 mx-1.5" />
 
-          {/* Undo / Redo / Delete */}
-          <div className="flex items-center gap-px">
-            <ToolbarButton onClick={undo} title="Rückgängig (Strg+Z)">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
-            </ToolbarButton>
-            <ToolbarButton onClick={redo} title="Wiederherstellen (Strg+Shift+Z)">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
-            </ToolbarButton>
-            <ToolbarButton onClick={deleteSelected} title="Löschen">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            </ToolbarButton>
+          {/* Undo / Redo / Delete — with labels */}
+          <div className="flex items-center gap-1">
+            <button onClick={undo} title="Rückgängig (Strg+Z)"
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-white/60 hover:text-white hover:bg-white/10 transition-colors">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
+              <span className="text-[11px]">Rückgängig</span>
+            </button>
+            <button onClick={redo} title="Wiederherstellen (Strg+Shift+Z)"
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-white/60 hover:text-white hover:bg-white/10 transition-colors">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
+              <span className="text-[11px]">Wiederherstellen</span>
+            </button>
+            <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-white/60 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span className="text-[11px]">Löschen</span>
+            </button>
           </div>
 
           {/* Center: Zoom */}
           <div className="flex-1 flex justify-center">
-            <div className="flex items-center gap-px bg-white/5 rounded-md px-0.5">
+            <div className="flex items-center gap-0.5 bg-white/5 rounded-md px-1">
               <ToolbarButton onClick={() => setZoom(z => Math.max(0.25, z * 0.8))} title="Herauszoomen">&minus;</ToolbarButton>
               <span className="text-[11px] text-white/50 w-10 text-center select-none">{Math.round(zoom * 100)}%</span>
               <ToolbarButton onClick={() => setZoom(z => Math.min(3, z * 1.25))} title="Hineinzoomen">+</ToolbarButton>
@@ -746,10 +760,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           </div>
 
           {/* Right: Status + Save/Submit */}
-          <div className="flex items-center gap-2">
-            {saveStatus === "saving" && <span className="text-[11px] text-white/40">Speichert...</span>}
-            {saveStatus === "saved" && <span className="text-[11px] text-green-400/80">Gespeichert</span>}
-            {saveStatus === "error" && <span className="text-[11px] text-red-400">Fehler</span>}
+          <div className="flex items-center gap-2.5">
+            <span className="text-[11px]">
+              {saveStatus === "saving" && <span className="text-white/40">Speichert...</span>}
+              {saveStatus === "saved" && <span className="text-green-400/80">Gespeichert</span>}
+              {saveStatus === "error" && <span className="text-red-400">Fehler beim Speichern</span>}
+            </span>
             {mode === "admin" ? (
               <button
                 onClick={() => {
@@ -758,7 +774,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
                   onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]), thumb);
                 }}
-                className="px-3 py-1 text-[12px] font-semibold rounded-md bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
+                className="px-3.5 py-1.5 text-[12px] font-semibold rounded-md bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
               >
                 Vorlage speichern
               </button>
@@ -766,9 +782,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="px-3 py-1 text-[12px] font-semibold rounded-md bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                className="px-3.5 py-1.5 text-[12px] font-semibold rounded-md bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
               >
-                {submitting ? "Wird gesendet..." : "Absenden"}
+                {submitting ? "Wird gesendet..." : "Design absenden"}
               </button>
             )}
           </div>
