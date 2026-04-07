@@ -163,6 +163,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         backgroundColor: "#ffffff",
         selection: true,
         preserveObjectStacking: true,
+        perPixelTargetFind: true,
       });
 
       fabricRef.current = canvas;
