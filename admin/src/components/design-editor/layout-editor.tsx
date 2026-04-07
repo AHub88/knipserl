@@ -1375,7 +1375,11 @@ function RightPanel({
   // Helper: apply stroke to object (handles groups)
   function applyStroke(obj: any, color: string | undefined, width: number | undefined) {
     if (typeof obj.getObjects === "function") {
-      obj.getObjects().forEach((c: any) => {
+      // For placeholder groups, only apply stroke to the rect, not the text label
+      const children = obj.isPhotoPlaceholder
+        ? obj.getObjects().filter((c: any) => c.text === undefined)
+        : obj.getObjects();
+      children.forEach((c: any) => {
         if (color !== undefined) c.set("stroke", color);
         if (width !== undefined) c.set("strokeWidth", width);
         c.set("dirty", true);
@@ -1388,9 +1392,17 @@ function RightPanel({
 
   // Helper: apply shadow to object (handles groups)
   function applyShadow(obj: any, shadow: any) {
-    obj.shadow = shadow;
+    // For placeholder groups, apply shadow only to the rect child, not the label
+    if (obj.isPhotoPlaceholder && typeof obj.getObjects === "function") {
+      const rect = obj.getObjects().find((c: any) => c.text === undefined);
+      if (rect) {
+        rect.shadow = shadow;
+        rect.dirty = true;
+      }
+    } else {
+      obj.shadow = shadow;
+    }
     obj.dirty = true;
-    obj.objectCaching = false;
     if (typeof obj.getObjects === "function") {
       obj.getObjects().forEach((c: any) => { c.dirty = true; });
     }
@@ -1704,7 +1716,14 @@ function RightPanel({
             </PropSection>
 
             {/* ── SCHATTEN ── */}
-            <PropSection title="Schatten" action={(activeObj as any).shadow ? {
+            <PropSection title="Schatten" action={(() => {
+              // For placeholders, check shadow on rect child
+              if ((activeObj as any).isPhotoPlaceholder && typeof (activeObj as any).getObjects === "function") {
+                const rect = (activeObj as any).getObjects().find((c: any) => c.text === undefined);
+                return rect?.shadow;
+              }
+              return (activeObj as any).shadow;
+            })() ? {
               label: "Entfernen", onClick: () => {
                 applyShadow(activeObj, null);
                 canvas.renderAll(); onUpdate(); refresh();
