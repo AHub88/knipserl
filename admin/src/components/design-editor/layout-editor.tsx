@@ -1382,11 +1382,13 @@ function RightPanel({
       children.forEach((c: any) => {
         if (color !== undefined) c.set("stroke", color);
         if (width !== undefined) c.set("strokeWidth", width);
+        c.set("paintFirst", "stroke");
         c.set("dirty", true);
       });
     }
     if (color !== undefined) obj.set("stroke", color);
     if (width !== undefined) obj.set("strokeWidth", width);
+    obj.set("paintFirst", "stroke");
     obj.set("dirty", true);
   }
 
@@ -1567,7 +1569,8 @@ function RightPanel({
                       <input type="range" min={8} max={400} value={Math.round((activeObj as any).fontSize ?? fontSize)}
                         onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
                         className="flex-1 accent-[#F6A11C] h-1" />
-                      <input type="number" min={8} max={400} className={`${inp} w-14`}
+                      <input type="number" min={8} max={400}
+                        className="w-14 shrink-0 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5"
                         value={Math.round((activeObj as any).fontSize ?? fontSize)}
                         onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
                     </div>
