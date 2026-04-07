@@ -25,6 +25,7 @@ type Props = {
   mode?: "customer" | "admin";
   isAdminEdit?: boolean;
   onSaveTemplate?: (canvasJson: any, thumbnailDataUrl: string | null) => void;
+  onFormatChange?: (newFormat: string) => void;
   templateMeta?: React.ReactNode;
 };
 
@@ -74,7 +75,7 @@ type Modal = "elements" | "templates" | null;
 // Component
 // ---------------------------------------------------------------------------
 
-export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign, mode = "customer", isAdminEdit = false, onSaveTemplate, templateMeta }: Props) {
+export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign, mode = "customer", isAdminEdit = false, onSaveTemplate, onFormatChange, templateMeta }: Props) {
   const { width: CANVAS_W, height: CANVAS_H } = getCanvasDimensions(format);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
@@ -856,7 +857,19 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                     </div>
                   </div>
                 )}
-                {mode === "admin" && (
+                {onFormatChange ? (
+                  <button
+                    onClick={() => {
+                      const newFmt = format === "4x6" ? "2x6" : "4x6";
+                      if (confirm(`Format wechseln zu ${newFmt === "4x6" ? "10×15 cm" : "5×15 cm"}? Das Canvas wird dabei zurückgesetzt.`)) {
+                        onFormatChange(newFmt);
+                      }
+                    }}
+                    className="h-8 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-xs text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-colors"
+                  >
+                    {format === "4x6" ? "10×15 cm" : "5×15 cm"} ✎
+                  </button>
+                ) : (
                   <span className="text-sm text-white/50 font-medium">Format: {format === "4x6" ? "10×15 cm" : "5×15 cm"}</span>
                 )}
               </div>

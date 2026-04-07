@@ -26,6 +26,7 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
     layoutDesign.format && layoutDesign.format.length > 0 ? layoutDesign.format : null
   );
   const [saving, setSaving] = useState(false);
+  const [formatChanged, setFormatChanged] = useState(false);
 
   async function selectFormat(fmt: string) {
     setSaving(true);
@@ -99,6 +100,7 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
   // Render the editor with the chosen format
   return (
     <LayoutEditor
+      key={format}
       orderId={order.id}
       token={token}
       format={format}
@@ -110,9 +112,26 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
           : "",
         locationName: order.locationName,
       }}
-      existingDesign={{
+      existingDesign={formatChanged ? null : {
         canvasJson: layoutDesign.canvasJson,
         submitted: layoutDesign.submitted,
+      }}
+      onFormatChange={async (newFmt) => {
+        setSaving(true);
+        try {
+          const res = await fetch(`/api/design/${token}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ format: newFmt, canvasJson: {} }),
+          });
+          if (!res.ok) throw new Error();
+          setFormatChanged(true);
+          setFormat(newFmt);
+        } catch {
+          alert("Fehler beim Ändern des Formats.");
+        } finally {
+          setSaving(false);
+        }
       }}
       isAdminEdit={isAdminEdit}
     />
