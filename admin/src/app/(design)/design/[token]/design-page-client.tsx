@@ -18,9 +18,10 @@ type Props = {
     submitted: boolean;
     format: string;
   };
+  isAdminEdit?: boolean;
 };
 
-export function DesignPageClient({ token, order, layoutDesign }: Props) {
+export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = false }: Props) {
   const [format, setFormat] = useState<string | null>(
     layoutDesign.format && layoutDesign.format.length > 0 ? layoutDesign.format : null
   );
@@ -113,6 +114,7 @@ export function DesignPageClient({ token, order, layoutDesign }: Props) {
         canvasJson: layoutDesign.canvasJson,
         submitted: layoutDesign.submitted,
       }}
+      isAdminEdit={isAdminEdit}
     />
   );
 }

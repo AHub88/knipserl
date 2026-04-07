@@ -85,6 +85,7 @@ export default async function DesignPage({ params, searchParams }: Props) {
         submitted: layoutDesign.submitted,
         format: layoutDesign.format,
       }}
+      isAdminEdit={isAdmin}
     />
   );
 }

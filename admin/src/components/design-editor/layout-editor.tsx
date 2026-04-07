@@ -23,6 +23,7 @@ type Props = {
   };
   existingDesign?: { canvasJson: any; submitted?: boolean } | null;
   mode?: "customer" | "admin";
+  isAdminEdit?: boolean;
   onSaveTemplate?: (canvasJson: any, thumbnailDataUrl: string | null) => void;
   templateMeta?: React.ReactNode;
 };
@@ -73,7 +74,7 @@ type Modal = "elements" | "templates" | null;
 // Component
 // ---------------------------------------------------------------------------
 
-export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign, mode = "customer", onSaveTemplate, templateMeta }: Props) {
+export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign, mode = "customer", isAdminEdit = false, onSaveTemplate, templateMeta }: Props) {
   const { width: CANVAS_W, height: CANVAS_H } = getCanvasDimensions(format);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
@@ -669,6 +670,49 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     }
   }
 
+  async function handleAdminUpdate() {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+
+    setSubmitting(true);
+    try {
+      const dpr = window.devicePixelRatio || 1;
+      const exportMultiplier = 1 / dpr;
+
+      const previewDataUrl = canvas.toDataURL({ format: "png", multiplier: exportMultiplier });
+      const previewResp = await fetch(previewDataUrl);
+      const previewBlob = await previewResp.blob();
+
+      const placeholders = canvas.getObjects().filter((o: any) => o.isPhotoPlaceholder);
+      placeholders.forEach((o: any) => o.set("visible", false));
+      canvas.renderAll();
+
+      const finalDataUrl = canvas.toDataURL({ format: "png", multiplier: exportMultiplier });
+      const finalResp = await fetch(finalDataUrl);
+      const finalBlob = await finalResp.blob();
+
+      placeholders.forEach((o: any) => o.set("visible", true));
+      canvas.renderAll();
+
+      const form = new FormData();
+      form.append("file", finalBlob, "layout.png");
+      form.append("preview", previewBlob, "layout-preview.png");
+      form.append("canvasJson", JSON.stringify(canvas.toObject(["isPhotoPlaceholder"])));
+
+      const res = await fetch(`/api/design/${token}/update-graphics`, {
+        method: "POST",
+        body: form,
+      });
+
+      if (!res.ok) throw new Error();
+      alert("Design aktualisiert! Vorschau und Download wurden erneuert.");
+    } catch {
+      alert("Fehler beim Aktualisieren.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   // ---- Keyboard shortcuts -------------------------------------------------
 
   useEffect(() => {
@@ -808,6 +852,14 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
                 >
                   Vorlage speichern
+                </button>
+              ) : isAdminEdit ? (
+                <button
+                  onClick={handleAdminUpdate}
+                  disabled={submitting}
+                  className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                >
+                  {submitting ? "Wird aktualisiert..." : "Design aktualisieren"}
                 </button>
               ) : (
                 <button
