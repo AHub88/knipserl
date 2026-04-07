@@ -43,8 +43,8 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 COPY --from=builder /app/package.json ./package.json
 
-# Copy only pg module for sync-schema.cjs (not full node_modules ~300MB)
-COPY --from=pg-deps /app/node_modules ./node_modules
+# Merge pg module into standalone node_modules for sync-schema.cjs
+COPY --from=pg-deps /app/node_modules/ ./node_modules/
 
 # Scripts
 COPY entrypoint.sh ./entrypoint.sh
