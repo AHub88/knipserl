@@ -795,6 +795,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             onSizeChange={updateSelectedFontSize}
             onColorChange={updateSelectedColor}
             onUpdate={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; pushHistory(); }}
+            onDelete={() => { fabricRef.current?.renderAll(); dirtyRef.current = true; pushHistory(); countPlaceholders(fabricRef.current!); }}
           />
         </div>
 
@@ -1287,6 +1288,7 @@ function RightPanel({
   onSizeChange,
   onColorChange,
   onUpdate,
+  onDelete,
 }: {
   fabricRef: React.RefObject<Canvas | null>;
   fabricModRef: React.RefObject<typeof import("fabric") | null>;
@@ -1299,6 +1301,7 @@ function RightPanel({
   onSizeChange: (s: number) => void;
   onColorChange: (c: string) => void;
   onUpdate: () => void;
+  onDelete: () => void;
 }) {
   const [tick, setTick] = useState(0);
   const refresh = () => setTick((n) => n + 1);
@@ -1437,7 +1440,7 @@ function RightPanel({
                   className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title="Nach unten">
                   <svg className="w-3 h-3 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); canvas.remove(obj); onUpdate(); refresh(); }}
+                <button onClick={(e) => { e.stopPropagation(); canvas.remove(obj); onDelete(); refresh(); }}
                   className="w-5 h-5 flex items-center justify-center rounded hover:bg-red-500/20" title="Löschen">
                   <svg className="w-3 h-3 text-white/30 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 </button>
@@ -1467,7 +1470,10 @@ function RightPanel({
                 </select>
                 <div className="grid grid-cols-2 gap-1.5">
                   <div>
-                    <label className={lbl}>Größe</label>
+                    <label className={lbl}>Größe: {Math.round((activeObj as any).fontSize ?? fontSize)}px</label>
+                    <input type="range" min={8} max={400} value={Math.round((activeObj as any).fontSize ?? fontSize)}
+                      onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
+                      className="w-full accent-[#F6A11C] h-1" />
                     <input type="number" min={8} max={400} className={inp}
                       value={Math.round((activeObj as any).fontSize ?? fontSize)}
                       onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
@@ -1498,24 +1504,35 @@ function RightPanel({
                     ))}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <div>
-                    <label className={lbl}>Zeichenabstand</label>
-                    <input type="range" min={-200} max={1000} value={(activeObj as any).charSpacing ?? 0}
-                      onChange={(e) => { (activeObj as any).set("charSpacing", Number(e.target.value)); onUpdate(); }}
-                      className="w-full accent-[#F6A11C] h-1" />
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className={lbl}>Zeichenabstand: {(activeObj as any).charSpacing ?? 0}</label>
+                    {((activeObj as any).charSpacing ?? 0) !== 0 && (
+                      <button onClick={() => { (activeObj as any).set("charSpacing", 0); onUpdate(); refresh(); }}
+                        className="text-[9px] text-white/40 hover:text-white">Reset</button>
+                    )}
                   </div>
-                  <div>
-                    <label className={lbl}>Zeilenabstand</label>
-                    <input type="range" min={50} max={300} value={Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}
-                      onChange={(e) => { (activeObj as any).set("lineHeight", Number(e.target.value) / 100); onUpdate(); }}
-                      className="w-full accent-[#F6A11C] h-1" />
+                  <input type="range" min={-200} max={1000} value={(activeObj as any).charSpacing ?? 0}
+                    onChange={(e) => { (activeObj as any).set("charSpacing", Number(e.target.value)); onUpdate(); refresh(); }}
+                    className="w-full accent-[#F6A11C] h-1" />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className={lbl}>Zeilenabstand: {Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}%</label>
+                    {Math.round(((activeObj as any).lineHeight ?? 1.16) * 100) !== 116 && (
+                      <button onClick={() => { (activeObj as any).set("lineHeight", 1.16); onUpdate(); refresh(); }}
+                        className="text-[9px] text-white/40 hover:text-white">Reset</button>
+                    )}
                   </div>
+                  <input type="range" min={50} max={300} value={Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}
+                    onChange={(e) => { (activeObj as any).set("lineHeight", Number(e.target.value) / 100); onUpdate(); refresh(); }}
+                    className="w-full accent-[#F6A11C] h-1" />
                 </div>
               </div>
             )}
 
             {/* Position */}
+            <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Position</h4>
             <div className="grid grid-cols-2 gap-1.5">
               <div>
                 <label className={lbl}>X</label>
@@ -1530,6 +1547,7 @@ function RightPanel({
             </div>
 
             {/* Size */}
+            <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Größe</h4>
             <div className="grid grid-cols-2 gap-1.5">
               <div>
                 <label className={lbl}>Breite</label>
@@ -1582,18 +1600,29 @@ function RightPanel({
             {detectKind(activeObj) !== "text" && (
               <div className="space-y-1.5 pt-1 border-t border-white/10">
                 <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Rahmen</h4>
-                <div className="flex items-center gap-1.5">
+                <div>
                   <label className={lbl}>Farbe</label>
-                  <input type="color" value={(activeObj as any).stroke ?? "#000000"}
-                    onChange={(e) => { activeObj.set({ stroke: e.target.value, dirty: true } as any); onUpdate(); refresh(); }}
-                    className="w-8 h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+                  <input type="color" value={typeof (activeObj as any).stroke === "string" ? (activeObj as any).stroke : "#000000"}
+                    onChange={(e) => {
+                      activeObj.set("stroke", e.target.value);
+                      if (!((activeObj as any).strokeWidth > 0)) activeObj.set("strokeWidth", 2);
+                      activeObj.set("dirty", true);
+                      activeObj.setCoords();
+                      onUpdate(); refresh();
+                    }}
+                    className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
                 </div>
                 <div>
                   <label className={lbl}>Stärke: {Math.round((activeObj as any).strokeWidth ?? 0)}px</label>
                   <input type="range" min={0} max={30} value={(activeObj as any).strokeWidth ?? 0}
                     onChange={(e) => {
                       const val = Number(e.target.value);
-                      activeObj.set({ strokeWidth: val, stroke: (activeObj as any).stroke || "#000000", dirty: true } as any);
+                      if (val > 0 && !(typeof (activeObj as any).stroke === "string" && (activeObj as any).stroke)) {
+                        activeObj.set("stroke", "#000000");
+                      }
+                      activeObj.set("strokeWidth", val);
+                      activeObj.set("dirty", true);
+                      activeObj.setCoords();
                       onUpdate(); refresh();
                     }}
                     className="w-full accent-[#F6A11C] h-1" />
@@ -1607,7 +1636,10 @@ function RightPanel({
                 <h4 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Schatten</h4>
                 {(activeObj as any).shadow && (
                   <button onClick={() => {
-                    activeObj.set({ shadow: null, dirty: true } as any);
+                    activeObj.set("shadow", null);
+                    activeObj.set("dirty", true);
+                    activeObj.set("objectCaching", false);
+                    canvas.renderAll();
                     onUpdate(); refresh();
                   }} className="text-[9px] text-red-400 hover:text-red-300">Entfernen</button>
                 )}
@@ -1637,11 +1669,16 @@ function RightPanel({
               <button onClick={() => {
                 const fabric = fabricModRef.current;
                 if (!fabric) return;
-                activeObj.set({
-                  shadow: new fabric.Shadow({ color: shadowColor, blur: shadowBlur, offsetX: shadowOffsetX, offsetY: shadowOffsetY }),
-                  dirty: true,
-                  objectCaching: false,
-                } as any);
+                const shadow = new fabric.Shadow({
+                  color: shadowColor,
+                  blur: shadowBlur,
+                  offsetX: shadowOffsetX,
+                  offsetY: shadowOffsetY,
+                });
+                activeObj.set("shadow", shadow);
+                activeObj.set("dirty", true);
+                activeObj.set("objectCaching", false);
+                canvas.renderAll();
                 onUpdate(); refresh();
               }} className="w-full py-1 text-[10px] font-semibold rounded bg-[#F6A11C] text-black">Schatten anwenden</button>
             </div>
