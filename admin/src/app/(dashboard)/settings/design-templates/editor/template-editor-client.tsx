@@ -77,7 +77,7 @@ export function TemplateEditorClient({
   }
 
   const fieldClass =
-    "h-9 rounded-lg border border-white/[0.08] bg-[#1a1b1e] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-11 rounded-lg border border-white/[0.08] bg-[#1a1b1e] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
   return (
     <div className="flex flex-col h-[calc(100vh-56px)]">
@@ -101,7 +101,7 @@ export function TemplateEditorClient({
             <div className="flex items-center gap-3">
               <Link
                 href="/settings/design-templates"
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-sm text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-colors"
+                className="flex items-center gap-1.5 h-11 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-sm text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-colors"
               >
                 <IconArrowLeft className="size-4" />
                 <span>Zurück</span>

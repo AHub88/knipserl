@@ -714,7 +714,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
         <div className="shrink-0 border-b border-white/10 bg-[#1c1d20]">
-          <div className="flex items-center h-14 px-4 gap-3">
+          <div className="flex items-center h-16 px-4 gap-3">
             {/* Left: template meta or customer info */}
             {templateMeta || (
               <div className="flex items-center gap-2.5 shrink-0">
@@ -737,33 +737,33 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
             <div className="w-px h-7 bg-white/10" />
 
-            {/* Undo / Redo / Delete — large, labeled buttons */}
-            <div className="flex items-center gap-1.5">
+            {/* Undo / Redo / Delete — large, labeled buttons for easy usability */}
+            <div className="flex items-center gap-2">
               <button onClick={undo} title="Rückgängig (Strg+Z)"
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
-                <span className="text-[13px]">Rückgängig</span>
+                className="flex flex-col items-center justify-center gap-0.5 h-11 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
+                <span className="text-[11px] leading-none">Rückgängig</span>
               </button>
               <button onClick={redo} title="Wiederherstellen (Strg+Shift+Z)"
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
-                <span className="text-[13px]">Wiederherstellen</span>
+                className="flex flex-col items-center justify-center gap-0.5 h-11 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
+                <span className="text-[11px] leading-none">Wiederherstellen</span>
               </button>
               <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span className="text-[13px]">Löschen</span>
+                className="flex flex-col items-center justify-center gap-0.5 h-11 px-4 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span className="text-[11px] leading-none">Löschen</span>
               </button>
             </div>
 
             {/* Center: Zoom */}
             <div className="flex-1 flex justify-center">
-              <div className="flex items-center h-9 rounded-lg border border-white/[0.08] bg-white/[0.03] overflow-hidden">
+              <div className="flex items-center h-11 rounded-lg border border-white/[0.08] bg-white/[0.03] overflow-hidden">
                 <button onClick={() => setZoom(z => Math.max(0.25, z * 0.8))} title="Herauszoomen"
-                  className="w-9 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">&minus;</button>
-                <span className="text-[13px] text-white/60 w-14 text-center select-none font-medium border-x border-white/[0.08]">{Math.round(zoom * 100)}%</span>
+                  className="w-11 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">&minus;</button>
+                <span className="text-sm text-white/60 w-16 text-center select-none font-medium border-x border-white/[0.08]">{Math.round(zoom * 100)}%</span>
                 <button onClick={() => setZoom(z => Math.min(3, z * 1.25))} title="Hineinzoomen"
-                  className="w-9 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">+</button>
+                  className="w-11 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">+</button>
               </div>
             </div>
 
@@ -782,7 +782,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                     const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
                     onSaveTemplate(canvas.toObject(["isPhotoPlaceholder"]), thumb);
                   }}
-                  className="h-9 px-5 text-[13px] font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
+                  className="h-11 px-6 text-sm font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
                 >
                   Vorlage speichern
                 </button>
@@ -790,7 +790,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="h-9 px-5 text-[13px] font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                  className="h-11 px-6 text-sm font-semibold rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
                 >
                   {submitting ? "Wird gesendet..." : "Design absenden"}
                 </button>
