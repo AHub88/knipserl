@@ -700,6 +700,15 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     Herunterladen
                   </a>
                 </div>
+                {isAdmin && order.designToken && (
+                  <a
+                    href={`/design/${order.designToken}?admin=1`}
+                    className="flex items-center justify-center gap-2 py-2 rounded-lg border border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C] text-sm font-medium hover:bg-[#F6A11C]/20 transition-colors"
+                  >
+                    <IconEdit className="size-4" />
+                    Design nachbearbeiten
+                  </a>
+                )}
               </div>
 
               {/* Layout Modal */}

@@ -628,8 +628,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       dirtyRef.current = true;
       await autoSave();
 
-      // Export preview PNG (with placeholders) — 1:1 canvas pixels for correct 300dpi output
-      const previewDataUrl = canvas.toDataURL({ format: "png", multiplier: 1 });
+      // Export at exact canvas dimensions (1800x1200 for 300dpi at 10x15cm)
+      // Divide by devicePixelRatio to counteract Fabric's retina scaling
+      const dpr = window.devicePixelRatio || 1;
+      const exportMultiplier = 1 / dpr;
+
+      const previewDataUrl = canvas.toDataURL({ format: "png", multiplier: exportMultiplier });
       const previewResp = await fetch(previewDataUrl);
       const previewBlob = await previewResp.blob();
 
@@ -638,7 +642,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       placeholders.forEach((o: any) => o.set("visible", false));
       canvas.renderAll();
 
-      const finalDataUrl = canvas.toDataURL({ format: "png", multiplier: 1 });
+      const finalDataUrl = canvas.toDataURL({ format: "png", multiplier: exportMultiplier });
       const finalResp = await fetch(finalDataUrl);
       const finalBlob = await finalResp.blob();
 
@@ -759,19 +763,19 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
             {/* Undo / Redo / Delete — large icon buttons with labels underneath */}
             <div className="flex items-center gap-2.5">
               <button onClick={undo} title="Rückgängig (Strg+Z)"
-                className="flex flex-col items-center justify-center gap-1 h-14 w-16 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
-                <span className="text-[10px] leading-none">Rückgängig</span>
+                <span className="text-[10px] leading-none whitespace-nowrap">Rückgängig</span>
               </button>
               <button onClick={redo} title="Wiederherstellen (Strg+Shift+Z)"
-                className="flex flex-col items-center justify-center gap-1 h-14 w-[4.5rem] rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
-                <span className="text-[10px] leading-none">Wiederherstellen</span>
+                <span className="text-[10px] leading-none whitespace-nowrap">Wiederherstellen</span>
               </button>
               <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
-                className="flex flex-col items-center justify-center gap-1 h-14 w-16 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span className="text-[10px] leading-none">Löschen</span>
+                <span className="text-[10px] leading-none whitespace-nowrap">Löschen</span>
               </button>
             </div>
 

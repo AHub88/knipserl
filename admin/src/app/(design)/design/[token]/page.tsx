@@ -1,12 +1,23 @@
 import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { DesignPageClient } from "./design-page-client";
 
 type Props = {
   params: Promise<{ token: string }>;
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 };
 
-export default async function DesignPage({ params }: Props) {
+export default async function DesignPage({ params, searchParams }: Props) {
   const { token } = await params;
+  const sp = await searchParams;
+  const adminEdit = sp.admin === "1";
+
+  // Check if user is admin when requesting admin edit
+  let isAdmin = false;
+  if (adminEdit) {
+    const session = await auth();
+    isAdmin = session?.user?.role === "ADMIN";
+  }
 
   let layoutDesign: any = null;
   let order: any = null;
@@ -45,7 +56,7 @@ export default async function DesignPage({ params }: Props) {
     );
   }
 
-  if (order.designReady) {
+  if (order.designReady && !isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
