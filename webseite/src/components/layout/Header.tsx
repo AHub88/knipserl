@@ -128,10 +128,10 @@ export default function Header() {
             className="absolute left-0 w-full pointer-events-none"
             style={{
               top: "30px",
-              height: "80px",
+              height: "50px",
               zIndex: -1,
               background: "url('/images/misc/rough-top-clean.png') repeat-x center top",
-              backgroundSize: "auto 80px",
+              backgroundSize: "auto 50px",
             }}
           />
         )}
