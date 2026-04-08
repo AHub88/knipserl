@@ -88,7 +88,7 @@ export default async function HomePage() {
         />
 
         {/* Fotobox - centered on mobile, left on desktop */}
-        <div className="absolute z-20 left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[10%] bottom-[20px] md:bottom-[30px] w-[250px] h-[420px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
+        <div className="absolute z-20 left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[10%] bottom-[40px] md:bottom-[30px] w-[220px] h-[370px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
           <Image
             src="/images/hero/fotobox-startseite.png"
             alt="Knipserl Fotobox mit Stativ und Blitz"
@@ -133,7 +133,7 @@ export default async function HomePage() {
             alt=""
             width={1920}
             height={217}
-            className="w-full h-auto"
+            className="w-full min-h-[70px] object-cover object-top md:min-h-0 md:h-auto"
             priority
           />
         </div>
