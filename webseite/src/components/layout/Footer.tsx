@@ -64,7 +64,7 @@ export default async function Footer() {
         className="w-full pointer-events-none"
         style={{
           height: "50px",
-          marginBottom: "-1px",
+          marginTop: "-1px",
           position: "relative",
           background: "url('/images/misc/rough-top-footer.png') repeat-x",
           backgroundSize: "auto 50px",
