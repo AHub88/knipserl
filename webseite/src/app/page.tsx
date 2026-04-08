@@ -7,18 +7,22 @@ import { SEO_CITIES } from "@/lib/constants";
 type LogoData = { name: string; src: string };
 
 async function getClientLogos(): Promise<LogoData[]> {
+  // Internal URL for server-side fetch (container-to-container)
   const adminUrl = process.env.ADMIN_API_URL;
+  // Public URL for browser-facing image src
+  const adminPublicUrl = process.env.ADMIN_PUBLIC_URL;
   if (!adminUrl) return [];
 
   try {
     const res = await fetch(`${adminUrl}/api/client-logos`, {
-      next: { revalidate: 60 }, // 1 min cache
+      next: { revalidate: 60 },
     });
     if (!res.ok) return [];
     const data = await res.json();
+    const imageBase = adminPublicUrl || adminUrl;
     return data.logos.map((l: { name: string; filename: string }) => ({
       name: l.name,
-      src: `${adminUrl}/api/uploads/client-logos/${l.filename}`,
+      src: `${imageBase}/api/uploads/client-logos/${l.filename}`,
     }));
   } catch {
     return [];

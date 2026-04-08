@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE_URL;
-const isProduction = siteUrl.includes("www.knipserl.de");
+const isProduction = process.env.SITE_ENV !== "staging" &&
+  process.env.NEXT_PUBLIC_ENV !== "staging";
 
 export default function robots(): MetadataRoute.Robots {
   if (!isProduction) {
