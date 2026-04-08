@@ -122,11 +122,17 @@ export default function Header() {
             </svg>
           </button>
         </div>
-        {/* Torn paper edge when solid header */}
+        {/* Torn paper edge when solid header — z-[-1] so content beneath shows through the transparent rips */}
         {showSolid && (
           <div
-            className="absolute bottom-[-25px] left-0 w-full h-[50px] z-[49] pointer-events-none"
-            style={{ background: "url('/images/misc/rough-bottom-2.png') repeat-x", backgroundSize: "auto 50px" }}
+            className="absolute left-0 w-full pointer-events-none"
+            style={{
+              top: "35px",
+              height: "100px",
+              zIndex: -1,
+              background: "url('/images/misc/rough-top-clean.png') no-repeat",
+              backgroundSize: "100% auto",
+            }}
           />
         )}
       </header>
