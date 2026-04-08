@@ -127,7 +127,7 @@ export default function Header() {
           <div
             className="absolute left-0 w-full pointer-events-none"
             style={{
-              top: "30px",
+              top: "55px",
               height: "50px",
               zIndex: -1,
               background: "url('/images/misc/rough-top-clean.png') repeat-x center top",
