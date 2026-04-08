@@ -18,12 +18,9 @@ const firaCondensed = Fira_Sans_Extra_Condensed({
   weight: ["400", "700", "800"],
 });
 
-// Check multiple signals — any one of these means "not production"
-const isProduction = !(
-  process.env.SITE_ENV === "staging" ||
-  process.env.NEXT_PUBLIC_ENV === "staging" ||
-  (process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes("www.knipserl.de"))
-);
+// SITE_ENV is a runtime variable (no NEXT_PUBLIC_ prefix → works at runtime)
+// Set to "staging" in docker-compose for dev environments
+const isProduction = process.env.SITE_ENV !== "staging";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
