@@ -126,6 +126,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
+        {/* Dark gradient to mask water behind tripod on mobile */}
+        <div className="absolute bottom-0 left-0 right-0 h-[200px] md:h-[150px] bg-gradient-to-t from-[#1a171b] via-[#1a171b]/70 to-transparent z-[5]" />
+
         {/* Holzsteg at bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <Image
