@@ -84,39 +84,40 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
   return (
     <div className="bg-white rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
       {/* Month header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#1a171b]">
-        <button type="button" onClick={prevMonth} className="text-gray-400 hover:text-white text-xl font-bold">&lsaquo;</button>
+      <div className="flex items-center justify-between px-4 py-4 bg-[#1a171b]">
+        <button type="button" onClick={prevMonth} className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&lsaquo;</button>
         <span className="font-bold text-xl uppercase tracking-wide text-white font-[family-name:var(--font-fira-condensed)]">
           {MONTHS[viewMonth]} {viewYear}
         </span>
-        <button type="button" onClick={nextMonth} className="text-gray-400 hover:text-white text-xl font-bold">&rsaquo;</button>
+        <button type="button" onClick={nextMonth} className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&rsaquo;</button>
       </div>
       {/* Weekday header */}
       <div className="grid grid-cols-7 border-b border-gray-200">
-        {WEEKDAYS.map((wd, i) => (
-          <div key={wd} className={`py-3 text-center text-xs font-bold uppercase ${i >= 4 ? "text-[#F3A300]" : "text-[#1a171b]"}`}>
+        {WEEKDAYS.map((wd) => (
+          <div key={wd} className="py-3 text-center text-xs font-bold uppercase text-[#1a171b]">
             {wd}
           </div>
         ))}
       </div>
       {/* Days */}
-      <div className="grid grid-cols-7 bg-white px-2 py-2">
+      <div className="grid grid-cols-7 bg-white">
         {cells.map((day, i) => {
-          const colIndex = i % 7;
-          const isWeekend = colIndex >= 4;
           const disabled = day ? isDisabled(day) : true;
+          const colIndex = i % 7;
+          const borderLeft = colIndex > 0 ? "border-l border-gray-100" : "";
+          const rowStart = Math.floor(i / 7);
+          const borderTop = rowStart > 0 ? "border-t border-gray-100" : "";
           return (
             <button
               key={i}
               type="button"
               disabled={disabled}
               onClick={() => day && handleSelect(day)}
-              className={`py-4 text-center text-[18px] transition-colors ${
+              className={`py-4 text-center text-[18px] transition-colors ${borderLeft} ${borderTop} ${
                 !day ? "" :
                 disabled ? "text-gray-300 cursor-not-allowed" :
                 isSelected(day) ? "bg-[#F3A300] text-white font-bold rounded-full" :
                 isToday(day) ? "border-2 border-[#F3A300] rounded-full font-semibold" :
-                isWeekend ? "text-[#F3A300] hover:bg-gray-50" :
                 "text-[#1a171b] hover:bg-gray-50"
               }`}
             >
