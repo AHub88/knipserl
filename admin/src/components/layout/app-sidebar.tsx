@@ -1,10 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useViewMode } from "@/lib/view-mode-context";
 import {
-  IconCamera,
   IconDashboard,
   IconFileText,
   IconCalendar,
@@ -23,113 +23,244 @@ import {
   IconPalette,
   IconTypography,
   IconPhoto,
+  IconChevronDown,
+  IconWorld,
+  IconCurrencyEuro,
+  IconBrush,
+  IconAdjustments,
 } from "@tabler/icons-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainNav = [
-  { title: "Dashboard", href: "/", icon: IconDashboard },
-  { title: "Anfragen", href: "/inquiries", icon: IconInbox },
-  { title: "Aufträge", href: "/orders", icon: IconFileText },
-  { title: "Kalender", href: "/calendar", icon: IconCalendar },
-  { title: "Fahrer", href: "/drivers", icon: IconTruck },
-  { title: "Locations", href: "/locations", icon: IconMapPin },
-  { title: "Kunden", href: "/customers", icon: IconUsers },
-];
+type NavItem = {
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
 
-const driverNav = [
-  { title: "Meine Aufträge", href: "/my-orders", icon: IconClipboardList },
-  { title: "Aufträge", href: "/orders", icon: IconFileText },
-  { title: "Abwesenheit", href: "/my-vacation", icon: IconBeach },
-  { title: "Kalender", href: "/calendar", icon: IconCalendar },
-];
+type NavGroup = {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href?: string; // Direct link (no children)
+  children?: NavItem[];
+};
 
-const accountingNav = [
-  { title: "Angebote", href: "/accounting/quotes", icon: IconFileInvoice },
-  { title: "Rechnungen", href: "/accounting/invoices", icon: IconReceipt },
+// ── Admin navigation ──
+const adminNav: NavGroup[] = [
   {
-    title: "Eingangsrechnungen",
-    href: "/accounting/incoming",
-    icon: IconFileText,
+    title: "Dashboard",
+    icon: IconDashboard,
+    href: "/",
   },
-  { title: "Fahrervergütung", href: "/accounting/driver-report", icon: IconTruck },
-  { title: "Bankabgleich", href: "/accounting/bank", icon: IconBuildingBank },
+  {
+    title: "Aufträge",
+    icon: IconFileText,
+    children: [
+      { title: "Anfragen", href: "/inquiries", icon: IconInbox },
+      { title: "Aufträge", href: "/orders", icon: IconFileText },
+      { title: "Kalender", href: "/calendar", icon: IconCalendar },
+    ],
+  },
+  {
+    title: "Kunden",
+    icon: IconUsers,
+    children: [
+      { title: "Kundenliste", href: "/customers", icon: IconUsers },
+      { title: "Locations", href: "/locations", icon: IconMapPin },
+    ],
+  },
+  {
+    title: "Fahrer",
+    icon: IconTruck,
+    children: [
+      { title: "Fahrerliste", href: "/drivers", icon: IconTruck },
+    ],
+  },
+  {
+    title: "Buchhaltung",
+    icon: IconCurrencyEuro,
+    children: [
+      { title: "Angebote", href: "/accounting/quotes", icon: IconFileInvoice },
+      { title: "Rechnungen", href: "/accounting/invoices", icon: IconReceipt },
+      { title: "Eingangsrechnungen", href: "/accounting/incoming", icon: IconFileText },
+      { title: "Fahrervergütung", href: "/accounting/driver-report", icon: IconTruck },
+      { title: "Bankabgleich", href: "/accounting/bank", icon: IconBuildingBank },
+    ],
+  },
+  {
+    title: "Design",
+    icon: IconBrush,
+    children: [
+      { title: "Design-Vorlagen", href: "/settings/design-templates", icon: IconTemplate },
+      { title: "Design-Elemente", href: "/settings/design-elements", icon: IconPalette },
+      { title: "Eigene Schriften", href: "/settings/design-fonts", icon: IconTypography },
+    ],
+  },
+  {
+    title: "Webseite",
+    icon: IconWorld,
+    children: [
+      { title: "Referenz-Logos", href: "/settings/logos", icon: IconPhoto },
+    ],
+  },
+  {
+    title: "System",
+    icon: IconAdjustments,
+    children: [
+      { title: "Statistiken", href: "/statistics", icon: IconChartBar },
+      { title: "Einstellungen", href: "/settings", icon: IconSettings },
+    ],
+  },
 ];
 
-const designNav = [
-  { title: "Design-Vorlagen", href: "/settings/design-templates", icon: IconTemplate },
-  { title: "Design-Elemente", href: "/settings/design-elements", icon: IconPalette },
-  { title: "Eigene Schriften", href: "/settings/design-fonts", icon: IconTypography },
+// ── Driver navigation ──
+const driverNavGroups: NavGroup[] = [
+  {
+    title: "Übersicht",
+    icon: IconClipboardList,
+    children: [
+      { title: "Meine Aufträge", href: "/my-orders", icon: IconClipboardList },
+      { title: "Aufträge", href: "/orders", icon: IconFileText },
+      { title: "Abwesenheit", href: "/my-vacation", icon: IconBeach },
+      { title: "Kalender", href: "/calendar", icon: IconCalendar },
+    ],
+  },
 ];
 
-const websiteNav = [
-  { title: "Referenz-Logos", href: "/settings/logos", icon: IconPhoto },
+// ── Accounting navigation ──
+const accountingNavGroups: NavGroup[] = [
+  {
+    title: "Dashboard",
+    icon: IconDashboard,
+    href: "/",
+  },
+  {
+    title: "Aufträge",
+    icon: IconFileText,
+    children: [
+      { title: "Aufträge", href: "/orders", icon: IconFileText },
+      { title: "Kalender", href: "/calendar", icon: IconCalendar },
+    ],
+  },
+  {
+    title: "Buchhaltung",
+    icon: IconCurrencyEuro,
+    children: [
+      { title: "Angebote", href: "/accounting/quotes", icon: IconFileInvoice },
+      { title: "Rechnungen", href: "/accounting/invoices", icon: IconReceipt },
+      { title: "Eingangsrechnungen", href: "/accounting/incoming", icon: IconFileText },
+      { title: "Fahrervergütung", href: "/accounting/driver-report", icon: IconTruck },
+      { title: "Bankabgleich", href: "/accounting/bank", icon: IconBuildingBank },
+    ],
+  },
 ];
 
-const systemNav = [
-  { title: "Statistiken", href: "/statistics", icon: IconChartBar },
-  { title: "Einstellungen", href: "/settings", icon: IconSettings },
-];
+// ── Check if a group contains the active path ──
+function groupContainsPath(group: NavGroup, pathname: string): boolean {
+  if (group.href) {
+    return group.href === "/" ? pathname === "/" : pathname.startsWith(group.href);
+  }
+  return group.children?.some((item) =>
+    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+  ) ?? false;
+}
 
-type NavItem = { title: string; href: string; icon: React.ComponentType<{ className?: string }> };
-
-function NavGroup({
-  label,
-  items,
-  isActive,
+// ── Accordion nav item ──
+function AccordionNavItem({
+  group,
+  pathname,
+  openKey,
+  onToggle,
 }: {
-  label: string;
-  items: NavItem[];
-  isActive: (href: string) => boolean;
+  group: NavGroup;
+  pathname: string;
+  openKey: string | null;
+  onToggle: (key: string) => void;
 }) {
   const { setOpenMobile } = useSidebar();
+  const isOpen = openKey === group.title;
+  const hasActiveChild = groupContainsPath(group, pathname);
 
+  // Direct link (no children)
+  if (group.href) {
+    const active = group.href === "/" ? pathname === "/" : pathname.startsWith(group.href);
+    return (
+      <Link
+        href={group.href}
+        onClick={() => setOpenMobile(false)}
+        className={
+          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
+          (active
+            ? "bg-[#F6A11C]/10 text-[#F6A11C]"
+            : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+        }
+      >
+        <group.icon className={"size-[18px] shrink-0 " + (active ? "text-[#F6A11C]" : "text-zinc-400")} />
+        <span>{group.title}</span>
+      </Link>
+    );
+  }
+
+  // Accordion group
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-400 mb-1">
-        {label}
-      </SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => {
-            const active = isActive(item.href);
+    <div>
+      <button
+        onClick={() => onToggle(group.title)}
+        className={
+          "flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
+          (hasActiveChild
+            ? "bg-[#F6A11C]/10 text-[#F6A11C]"
+            : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+        }
+      >
+        <group.icon
+          className={"size-[18px] shrink-0 " + (hasActiveChild ? "text-[#F6A11C]" : "text-zinc-400")}
+        />
+        <span className="flex-1 text-left">{group.title}</span>
+        <IconChevronDown
+          className={
+            "size-4 shrink-0 transition-transform duration-200 " +
+            (isOpen ? "rotate-180" : "") + " " +
+            (hasActiveChild ? "text-[#F6A11C]/60" : "text-zinc-500")
+          }
+        />
+      </button>
+
+      {/* Children */}
+      <div
+        className={
+          "overflow-hidden transition-all duration-200 " +
+          (isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0")
+        }
+      >
+        <div className="ml-3 border-l border-white/[0.06] pl-3 mt-1 space-y-0.5">
+          {group.children?.map((item) => {
+            const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  render={<Link href={item.href} onClick={() => setOpenMobile(false)} />}
-                  isActive={active}
-                  className={
-                    "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 " +
-                    (active
-                      ? "bg-[#F6A11C]/10 text-[#F6A11C] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-[3px] before:rounded-full before:bg-[#F6A11C]"
-                      : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
-                  }
-                >
-                  <item.icon
-                    className={
-                      "size-[18px] shrink-0 " +
-                      (active ? "text-[#F6A11C]" : "text-zinc-400")
-                    }
-                  />
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpenMobile(false)}
+                className={
+                  "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-150 " +
+                  (active
+                    ? "text-[#F6A11C] bg-[#F6A11C]/5"
+                    : "text-zinc-400 hover:bg-[#222326] hover:text-zinc-200")
+                }
+              >
+                <item.icon className={"size-4 shrink-0 " + (active ? "text-[#F6A11C]" : "text-zinc-500")} />
+                <span>{item.title}</span>
+              </Link>
             );
           })}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -137,13 +268,28 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { viewMode } = useViewMode();
 
-  function isActive(href: string) {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
-  }
+  const groups =
+    viewMode === "driver"
+      ? driverNavGroups
+      : viewMode === "accounting"
+        ? accountingNavGroups
+        : adminNav;
 
-  const viewLabel =
-    viewMode === "driver" ? "Fahrer" : viewMode === "accounting" ? "Buchhaltung" : "Admin";
+  // Auto-open the group that contains the active path
+  const activeGroup = groups.find((g) => groupContainsPath(g, pathname));
+  const [openKey, setOpenKey] = useState<string | null>(activeGroup?.title ?? null);
+
+  // Update open group when pathname changes
+  useEffect(() => {
+    const active = groups.find((g) => groupContainsPath(g, pathname));
+    if (active && active.title !== openKey) {
+      setOpenKey(active.title);
+    }
+  }, [pathname, groups]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleToggle(key: string) {
+    setOpenKey((prev) => (prev === key ? null : key));
+  }
 
   return (
     <Sidebar className="border-r border-white/[0.10] bg-sidebar shadow-xl shadow-black/50">
@@ -159,33 +305,16 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* Navigation */}
-      <SidebarContent className="px-2 py-4 space-y-6">
-        {viewMode === "driver" ? (
-          <NavGroup
-            label="Fahrer"
-            items={driverNav}
-            isActive={isActive}
+      <SidebarContent className="px-2 py-3 space-y-1 overflow-y-auto">
+        {groups.map((group) => (
+          <AccordionNavItem
+            key={group.title}
+            group={group}
+            pathname={pathname}
+            openKey={openKey}
+            onToggle={handleToggle}
           />
-        ) : viewMode === "accounting" ? (
-          <>
-            <NavGroup
-              label="Hauptmenü"
-              items={mainNav.filter((n) =>
-                ["/", "/orders", "/calendar"].includes(n.href)
-              )}
-              isActive={isActive}
-            />
-            <NavGroup label="Buchhaltung" items={accountingNav} isActive={isActive} />
-          </>
-        ) : (
-          <>
-            <NavGroup label="Hauptmenü" items={mainNav} isActive={isActive} />
-            <NavGroup label="Buchhaltung" items={accountingNav} isActive={isActive} />
-            <NavGroup label="Design" items={designNav} isActive={isActive} />
-            <NavGroup label="Webseite" items={websiteNav} isActive={isActive} />
-            <NavGroup label="System" items={systemNav} isActive={isActive} />
-          </>
-        )}
+        ))}
       </SidebarContent>
 
       {/* Footer */}
