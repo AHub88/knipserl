@@ -38,6 +38,8 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
   const cells: (number | null)[] = [];
   for (let i = 0; i < startDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  // Fill remaining cells in last row
+  while (cells.length % 7 !== 0) cells.push(null);
 
   const nextMonth = () => {
     if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); }
