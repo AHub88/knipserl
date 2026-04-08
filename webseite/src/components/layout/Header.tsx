@@ -125,7 +125,7 @@ export default function Header() {
         {/* Torn paper edge when solid header */}
         {showSolid && (
           <div
-            className="absolute bottom-[-25px] left-0 w-full h-[50px] z-[5] pointer-events-none"
+            className="absolute bottom-[-25px] left-0 w-full h-[50px] z-[49] pointer-events-none"
             style={{ background: "url('/images/misc/rough-bottom-2.png') repeat-x", backgroundSize: "auto 50px" }}
           />
         )}
