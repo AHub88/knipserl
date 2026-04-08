@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import {
+  getAccessToken,
+  getAccountId,
+  getLocationName,
+  fetchAllReviews,
+} from "@/lib/google-business";
 
 export async function POST() {
   const session = await auth();
@@ -8,56 +14,69 @@ export async function POST() {
     return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
   }
 
-  // Get API key and Place ID from settings
   const settings = await prisma.appSetting.findMany({
-    where: { key: { in: ["googleApiKey", "googlePlaceId"] } },
+    where: {
+      key: {
+        in: [
+          "googleApiKey",
+          "googlePlaceId",
+          "googleRefreshToken",
+        ],
+      },
+    },
   });
   const map: Record<string, string> = {};
   for (const s of settings) map[s.key] = s.value;
 
-  const apiKey = map.googleApiKey;
+  const hasOAuth = !!map.googleRefreshToken;
   const placeId = map.googlePlaceId;
-
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "Google API Key nicht konfiguriert (Einstellungen → Google API)" },
-      { status: 400 }
-    );
-  }
-  if (!placeId) {
-    return NextResponse.json(
-      { error: "Google Place ID nicht konfiguriert (Einstellungen → Google API)" },
-      { status: 400 }
-    );
-  }
+  const apiKey = map.googleApiKey;
 
   try {
-    // Fetch reviews from Google Places API (New) — server-side only, DSGVO-safe
-    const res = await fetch(
-      `https://places.googleapis.com/v1/places/${placeId}?fields=displayName,rating,userRatingCount,reviews&languageCode=de`,
-      {
-        headers: {
-          "X-Goog-Api-Key": apiKey,
-        },
-      }
-    );
+    let reviews: { authorName: string; rating: number; text: string; time: Date }[];
+    let totalRatings: number;
+    let overallRating: number;
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      const msg = errData.error?.message ?? `HTTP ${res.status}`;
+    if (hasOAuth) {
+      // ── Google Business Profile API (all reviews) ──
+      const accessToken = await getAccessToken();
+      const accountName = await getAccountId(accessToken);
+      const locationName = await getLocationName(accessToken, accountName, placeId);
+      const result = await fetchAllReviews(accessToken, accountName, locationName);
+
+      reviews = result.reviews;
+      totalRatings = result.totalCount;
+      overallRating = result.averageRating;
+    } else if (apiKey && placeId) {
+      // ── Fallback: Places API New (max 5 reviews) ──
+      const res = await fetch(
+        `https://places.googleapis.com/v1/places/${placeId}?fields=rating,userRatingCount,reviews&languageCode=de`,
+        { headers: { "X-Goog-Api-Key": apiKey } }
+      );
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error?.message ?? `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      totalRatings = data.userRatingCount ?? 0;
+      overallRating = data.rating ?? 0;
+
+      reviews = (data.reviews ?? []).map((r: any) => ({
+        authorName: r.authorAttribution?.displayName ?? "Anonym",
+        rating: r.rating ?? 5,
+        text: r.text?.text ?? "",
+        time: new Date(r.publishTime),
+      }));
+    } else {
       return NextResponse.json(
-        { error: `Google API Fehler: ${msg}` },
-        { status: 502 }
+        { error: "Weder OAuth noch API Key + Place ID konfiguriert" },
+        { status: 400 }
       );
     }
 
-    const data = await res.json();
-
-    const googleReviews = data.reviews ?? [];
-    const totalRatings = data.userRatingCount ?? 0;
-    const overallRating = data.rating ?? 0;
-
-    // Store total count and rating in AppSettings for the website
+    // Store aggregate data
     await prisma.appSetting.upsert({
       where: { key: "googleReviewsTotalCount" },
       update: { value: String(totalRatings) },
@@ -69,28 +88,26 @@ export async function POST() {
       create: { key: "googleReviewsAvgRating", value: String(overallRating) },
     });
 
-    // Upsert reviews (match by author name + publish time to avoid duplicates)
+    // Upsert reviews
     let imported = 0;
-    for (const review of googleReviews) {
-      const authorName = review.authorAttribution?.displayName ?? "Anonym";
-      const rating = review.rating ?? 5;
-      const text = review.text?.text ?? "";
-      const time = new Date(review.publishTime);
-
-      // Check if review from same author already exists
+    for (const review of reviews) {
       const existing = await prisma.googleReview.findFirst({
-        where: { authorName },
+        where: { authorName: review.authorName },
       });
 
       if (existing) {
-        // Update text/rating/time if changed
         await prisma.googleReview.update({
           where: { id: existing.id },
-          data: { text, rating, time },
+          data: { text: review.text, rating: review.rating, time: review.time },
         });
       } else {
         await prisma.googleReview.create({
-          data: { authorName, rating, text, time },
+          data: {
+            authorName: review.authorName,
+            rating: review.rating,
+            text: review.text,
+            time: review.time,
+          },
         });
         imported++;
       }
@@ -98,14 +115,16 @@ export async function POST() {
 
     return NextResponse.json({
       ok: true,
+      source: hasOAuth ? "Google Business Profile API" : "Places API (max 5)",
       imported,
-      updated: googleReviews.length - imported,
+      updated: reviews.length - imported,
+      total: reviews.length,
       totalFromGoogle: totalRatings,
       ratingFromGoogle: overallRating,
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: `Sync fehlgeschlagen: ${err.message}` },
+      { error: err.message ?? "Sync fehlgeschlagen" },
       { status: 500 }
     );
   }

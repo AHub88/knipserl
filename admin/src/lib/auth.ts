@@ -30,7 +30,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const { pathname } = request.nextUrl;
       const isOnLogin = pathname === "/login";
       const isPublic = pathname.startsWith("/confirm") || pathname.startsWith("/api/confirm")
-        || pathname.startsWith("/design") || pathname.startsWith("/api/design");
+        || pathname.startsWith("/design") || pathname.startsWith("/api/design")
+        || pathname.startsWith("/api/google-oauth")
+        || pathname === "/api/google-reviews";
 
       if (isPublic) return true;
 

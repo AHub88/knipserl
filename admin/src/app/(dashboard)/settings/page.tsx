@@ -34,6 +34,9 @@ export default async function SettingsPage() {
         <GoogleApiForm
           initialApiKey={map.googleApiKey ?? ""}
           initialPlaceId={map.googlePlaceId ?? ""}
+          initialOAuthClientId={map.googleOAuthClientId ?? ""}
+          initialOAuthClientSecret={map.googleOAuthClientSecret ?? ""}
+          hasRefreshToken={!!map.googleRefreshToken}
         />
 
         {/* Link zu Fahrtkosten */}
