@@ -437,7 +437,7 @@ export default async function HomePage() {
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="text-center mb-14">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
-              Kundenrezensionen
+              Rezensionen
             </h2>
             <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Das sagen unsere Kunden zum Knipserl
