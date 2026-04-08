@@ -59,17 +59,17 @@ export default async function Footer() {
         backgroundSize: "cover",
       }}
     >
-      {/* Papercut torn edge — inside footer so dark wood bg shows through transparent rips */}
+      {/* Papercut torn edge — matches original WP implementation */}
       <div
         className="w-full pointer-events-none"
         style={{
           height: "50px",
-          marginTop: "-25px",
-          marginBottom: "-25px",
           position: "relative",
-          zIndex: 10,
-          background: "url('/images/misc/rough-top-orig.png') repeat-x",
-          backgroundSize: "auto 50px",
+          left: 0,
+          top: 0,
+          background: "url('/images/misc/rough-top-footer.png') no-repeat",
+          backgroundSize: "100% 100%",
+          filter: "drop-shadow(0px 25px 11px rgba(0, 0, 0, .6))",
         }}
       />
       {/* Main footer content */}
