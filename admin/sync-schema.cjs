@@ -338,6 +338,17 @@ async function syncSchema() {
     ["client_logos", "name", "TEXT", false, "''"],
     ["client_logos", "filename", "TEXT", false, "''"],
     ["client_logos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // google_reviews
+    ["google_reviews", "id", "TEXT", false, null],
+    ["google_reviews", "authorName", "TEXT", false, "''"],
+    ["google_reviews", "rating", "INTEGER", false, "5"],
+    ["google_reviews", "text", "TEXT", false, "''"],
+    ["google_reviews", "time", "TIMESTAMPTZ", false, "NOW()"],
+    ["google_reviews", "language", "TEXT", false, "'de'"],
+    ["google_reviews", "active", "BOOLEAN", false, "true"],
+    ["google_reviews", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+    ["google_reviews", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table

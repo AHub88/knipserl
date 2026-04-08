@@ -1,6 +1,19 @@
-function getGoogleKey() {
-  const key = process.env.GOOGLE_MAPS_API_KEY;
-  if (!key) throw new Error("GOOGLE_MAPS_API_KEY nicht konfiguriert");
+import { prisma } from "@/lib/db";
+
+let cachedGoogleKey: string | null = null;
+let cachedAt = 0;
+
+async function getGoogleKey(): Promise<string> {
+  // Cache for 5 minutes
+  if (cachedGoogleKey && Date.now() - cachedAt < 5 * 60 * 1000) {
+    return cachedGoogleKey;
+  }
+  // Try DB first, then env var fallback
+  const setting = await prisma.appSetting.findUnique({ where: { key: "googleApiKey" } });
+  const key = setting?.value || process.env.GOOGLE_MAPS_API_KEY;
+  if (!key) throw new Error("Google API Key nicht konfiguriert (Einstellungen → Google API)");
+  cachedGoogleKey = key;
+  cachedAt = Date.now();
   return key;
 }
 
@@ -23,7 +36,7 @@ export type GeocodeSuggestion = {
 export async function geocodeAutocomplete(
   query: string
 ): Promise<GeocodeSuggestion[]> {
-  const key = getGoogleKey();
+  const key = await getGoogleKey();
 
   // Use Google Places Autocomplete
   const params = new URLSearchParams({
@@ -101,7 +114,7 @@ export async function calculateDrivingDistance(
   toLat: number,
   toLng: number
 ): Promise<number | null> {
-  const key = getGoogleKey();
+  const key = await getGoogleKey();
 
   const params = new URLSearchParams({
     origin: `${fromLat},${fromLng}`,

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import LottieIcon from "@/components/LottieIcon";
+import GoogleReviewsSlider from "@/components/GoogleReviewsSlider";
 import { SEO_CITIES } from "@/lib/constants";
 
 type LogoData = { name: string; src: string };
@@ -411,12 +412,27 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== REZENSIONEN / CLIENT LOGOS ===== */}
-      <section className="py-20 relative z-10 bg-white" style={{ marginTop: "80px" }}>
+      {/* ===== KUNDENREZENSIONEN ===== */}
+      <section className="py-20 relative z-10" style={{ marginTop: "80px" }}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="text-center mb-14">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+              Kundenrezensionen
+            </h2>
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+              Das sagen unsere Kunden zum Knipserl
+            </p>
+          </div>
+          <GoogleReviewsSlider apiBaseUrl={process.env.ADMIN_PUBLIC_URL ?? ""} />
+        </div>
+      </section>
+
+      {/* ===== REFERENZ-LOGOS ===== */}
+      <section className="py-20 relative z-10 bg-white">
         <div className="max-w-[1400px] mx-auto px-[5%] lg:px-[8%]">
           <div className="text-center mb-14">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
-              Rezensionen
+              Referenzen
             </h2>
             <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Auswahl unserer Kunden

@@ -5,6 +5,7 @@ import {
   CONTACT_PHONE_DISPLAY,
   ADDRESS,
 } from "@/lib/constants";
+import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
 
 const footerLinks = [
   { label: "Fotobox mieten Rosenheim", href: "/fotobox/rosenheim" },
@@ -30,20 +31,22 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative rough-top" itemScope itemType="https://schema.org/LocalBusiness">
-      {/* Main footer with wood texture background */}
-      <div
-        className="pt-20 pb-14"
-        style={{
-          background: `url('/images/misc/footer-bg.jpg') repeat`,
-          backgroundSize: "1000px auto",
-        }}
-      >
+    <footer
+      className="relative rough-top"
+      itemScope
+      itemType="https://schema.org/LocalBusiness"
+      style={{
+        background: `url('/images/misc/footer-bg.jpg') no-repeat center top`,
+        backgroundSize: "cover",
+      }}
+    >
+      {/* Main footer content */}
+      <div className="pt-20 pb-14">
         <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-gray-300">
           {/* Anschrift */}
           <div>
             <h3
-              className="text-white text-[22px] font-extrabold mb-5"
+              className="text-white text-[28px] font-extrabold mb-5"
               style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif", textTransform: "uppercase" }}
             >
               Anschrift
@@ -65,7 +68,7 @@ export default function Footer() {
           {/* Kontakt */}
           <div>
             <h3
-              className="text-white text-[22px] font-extrabold mb-5"
+              className="text-white text-[28px] font-extrabold mb-5"
               style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif", textTransform: "uppercase" }}
             >
               Kontakt
@@ -97,7 +100,7 @@ export default function Footer() {
           {/* Mehr Infos */}
           <div>
             <h3
-              className="text-white text-[22px] font-extrabold mb-5"
+              className="text-white text-[28px] font-extrabold mb-5"
               style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif", textTransform: "uppercase" }}
             >
               Mehr Infos
@@ -116,7 +119,7 @@ export default function Footer() {
           {/* Du hast Fragen? */}
           <div>
             <h3
-              className="text-white text-[22px] font-extrabold mb-5"
+              className="text-white text-[28px] font-extrabold mb-5"
               style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif", textTransform: "uppercase" }}
             >
               Du hast Fragen?
@@ -128,17 +131,18 @@ export default function Footer() {
             >
               01579/2495836
             </a>
+            <GoogleReviewsBadge apiBaseUrl={process.env.ADMIN_PUBLIC_URL ?? ""} />
           </div>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="bg-[#111] border-t border-gray-800">
-        <div className="max-w-[1200px] mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[13px] text-gray-500">
+      <div style={{ background: "rgba(0, 0, 0, 0.49)" }}>
+        <div className="max-w-[1200px] mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[13px] text-white/80">
           <p>&copy;{currentYear} Copyright - Knipserl.de</p>
           <nav className="flex gap-5" aria-label="Rechtliches">
             {legalLinks.map((link) => (
-              <Link key={link.href + link.label} href={link.href} className="hover:text-gray-300 transition-colors">
+              <Link key={link.href + link.label} href={link.href} className="hover:text-[#F3A300] transition-colors">
                 {link.label}
               </Link>
             ))}

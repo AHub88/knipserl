@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { IconSettings, IconMapPin, IconCar, IconCurrencyEuro, IconMail, IconLock, IconList, IconTemplate, IconPalette } from "@tabler/icons-react";
 import { StartAddressForm } from "./start-address-form";
+import { GoogleApiForm } from "./google-api-form";
 
 export default async function SettingsPage() {
   const settings = await prisma.appSetting.findMany();
@@ -27,6 +28,12 @@ export default async function SettingsPage() {
           initialAddress={map.startAddress ?? ""}
           initialLat={map.startLat ?? ""}
           initialLng={map.startLng ?? ""}
+        />
+
+        {/* Google API */}
+        <GoogleApiForm
+          initialApiKey={map.googleApiKey ?? ""}
+          initialPlaceId={map.googlePlaceId ?? ""}
         />
 
         {/* Link zu Fahrtkosten */}

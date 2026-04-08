@@ -28,6 +28,7 @@ import {
   IconCurrencyEuro,
   IconBrush,
   IconAdjustments,
+  IconBrandGoogle,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -106,6 +107,7 @@ const adminNav: NavGroup[] = [
     icon: IconWorld,
     children: [
       { title: "Referenz-Logos", href: "/settings/logos", icon: IconPhoto },
+      { title: "Google Bewertungen", href: "/google-reviews", icon: IconBrandGoogle },
     ],
   },
   {
