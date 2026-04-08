@@ -4,39 +4,25 @@ import InquiryForm from "@/components/forms/InquiryForm";
 import LottieIcon from "@/components/LottieIcon";
 import { SEO_CITIES } from "@/lib/constants";
 
-// Fallback logos (used when admin API is not reachable)
-const FALLBACK_LOGOS = [
-  "adelholzener", "aenova", "a-business", "anita", "arri", "arrk",
-  "servtec", "cpari", "dav", "dinzler", "diwa-gruppe", "flemings",
-  "floetzinger", "fronius", "gang", "ibm", "ibeko", "infineon", "kpmg",
-  "malteser", "marco-polo", "medical-park", "metzler-vater", "mondi",
-  "landratsamt-muenchen", "prechtl", "rischart", "romed", "schattdecor",
-  "stadtwerke-rosenheim", "starbulls", "th-rosenheim", "timezone",
-];
-
 type LogoData = { name: string; src: string };
 
 async function getClientLogos(): Promise<LogoData[]> {
   const adminUrl = process.env.ADMIN_API_URL;
-  if (adminUrl) {
-    try {
-      const res = await fetch(`${adminUrl}/api/client-logos`, {
-        next: { revalidate: 300 }, // 5 min cache
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.logos.map((l: { name: string; filename: string }) => ({
-          name: l.name,
-          src: `${adminUrl}/api/uploads/client-logos/${l.filename}`,
-        }));
-      }
-    } catch { /* fall through to fallback */ }
+  if (!adminUrl) return [];
+
+  try {
+    const res = await fetch(`${adminUrl}/api/client-logos`, {
+      next: { revalidate: 60 }, // 1 min cache
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.logos.map((l: { name: string; filename: string }) => ({
+      name: l.name,
+      src: `${adminUrl}/api/uploads/client-logos/${l.filename}`,
+    }));
+  } catch {
+    return [];
   }
-  // Fallback: local files
-  return FALLBACK_LOGOS.map((slug) => ({
-    name: slug,
-    src: `/images/clients/${slug}.png`,
-  }));
 }
 
 const galleryImages = [

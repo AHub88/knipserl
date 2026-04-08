@@ -18,7 +18,8 @@ const firaCondensed = Fira_Sans_Extra_Condensed({
   weight: ["400", "700", "800"],
 });
 
-const isStaging = process.env.NEXT_PUBLIC_ENV === "staging";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE_URL;
+const isProduction = siteUrl.includes("www.knipserl.de");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -50,9 +51,8 @@ export const metadata: Metadata = {
       "Professionelle Fotobox mit Sofortdruck mieten ab 379€. Inklusive Auf- & Abbau, Druckflatrate und 24/7 Support.",
     images: [{ url: "/images/og-default.jpg", width: 1200, height: 630 }],
   },
-  robots: isStaging
-    ? { index: false, follow: false }
-    : {
+  robots: isProduction
+    ? {
         index: true,
         follow: true,
         googleBot: {
@@ -62,7 +62,8 @@ export const metadata: Metadata = {
           "max-image-preview": "large",
           "max-snippet": -1,
         },
-      },
+      }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({
