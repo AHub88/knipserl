@@ -116,9 +116,9 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
               disabled={!day || disabled}
               onClick={() => day && handleSelect(day)}
               className={`py-4 text-center text-[18px] transition-colors ${borderLeft} ${borderTop} ${
-                !day ? "bg-gray-50" :
+                !day ? "bg-[#F1F3F6]" :
                 isSelected(day) ? "bg-[#F3A300] text-white font-bold" :
-                disabled ? "text-gray-400 bg-gray-100 cursor-not-allowed" :
+                disabled ? "text-gray-400 bg-[#F1F3F6] cursor-not-allowed" :
                 "text-[#1a171b] hover:bg-gray-50"
               }`}
             >
