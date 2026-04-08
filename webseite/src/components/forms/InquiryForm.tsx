@@ -84,7 +84,7 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
   };
 
   return (
-    <div className="bg-white rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
+    <div className="bg-[#F1F3F6] rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
       {/* Month header */}
       <div className="flex items-center justify-between px-4 py-4 bg-[#1a171b]">
         <button type="button" onClick={prevMonth} className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&lsaquo;</button>
