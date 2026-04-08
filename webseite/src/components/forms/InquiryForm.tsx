@@ -173,6 +173,10 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.datum) {
+      alert("Bitte wähle ein Datum im Kalender aus.");
+      return;
+    }
     setStatus("loading");
 
     try {
