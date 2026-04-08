@@ -51,7 +51,7 @@ export default async function Footer() {
 
   return (
     <footer
-      className="relative rough-top"
+      className="relative"
       itemScope
       itemType="https://schema.org/LocalBusiness"
       style={{
@@ -59,6 +59,17 @@ export default async function Footer() {
         backgroundSize: "cover",
       }}
     >
+      {/* Papercut torn edge */}
+      <div
+        className="absolute left-0 w-full pointer-events-none"
+        style={{
+          top: "-25px",
+          height: "50px",
+          zIndex: 50,
+          background: "url('/images/misc/rough-top-orig.png') repeat-x",
+          backgroundSize: "auto 50px",
+        }}
+      />
       {/* Main footer content */}
       <div className="pt-20 pb-14">
         <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-white">
