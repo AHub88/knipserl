@@ -36,6 +36,9 @@ async function getClientLogos(): Promise<LogoData[]> {
   return [];
 }
 
+// Force dynamic rendering so runtime env vars (ADMIN_API_URL etc.) are available
+export const dynamic = "force-dynamic";
+
 const galleryImages = [
   { src: "/images/gallery/fotobox-mieten-5.jpg", alt: "Fotobox im Einsatz bei einer Hochzeit in Rosenheim" },
   { src: "/images/gallery/fotobox-mieten-7.jpg", alt: "Gäste haben Spaß mit der Knipserl Fotobox" },
