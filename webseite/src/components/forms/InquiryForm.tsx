@@ -111,13 +111,12 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
             <button
               key={i}
               type="button"
-              disabled={disabled}
+              disabled={!day || disabled}
               onClick={() => day && handleSelect(day)}
               className={`py-4 text-center text-[18px] transition-colors ${borderLeft} ${borderTop} ${
-                !day ? "" :
-                disabled ? "text-gray-300 cursor-not-allowed" :
-                isSelected(day) ? "bg-[#F3A300] text-white font-bold rounded-full" :
-                isToday(day) ? "border-2 border-[#F3A300] rounded-full font-semibold" :
+                !day ? "bg-gray-50" :
+                isSelected(day) ? "bg-[#F3A300] text-white font-bold" :
+                disabled ? "text-gray-300 bg-gray-50 cursor-not-allowed" :
                 "text-[#1a171b] hover:bg-gray-50"
               }`}
             >
