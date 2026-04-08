@@ -55,7 +55,9 @@ export default function Header() {
             : "bg-transparent pt-[15px] lg:pt-[30px]"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-3 md:px-6 flex items-center justify-between h-[70px] md:h-[70px] lg:h-[80px]">
+        <div className={`max-w-[1400px] mx-auto px-3 md:px-6 flex items-center justify-between transition-all duration-300 ${
+          showSolid ? "h-[56px] md:h-[56px] lg:h-[64px]" : "h-[70px] md:h-[70px] lg:h-[80px]"
+        }`}>
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center gap-3">
             <Image
@@ -127,7 +129,7 @@ export default function Header() {
           <div
             className="absolute left-0 w-full pointer-events-none"
             style={{
-              top: "55px",
+              top: "40px",
               height: "50px",
               zIndex: -1,
               background: "url('/images/misc/rough-top-clean.png') repeat-x center top",
