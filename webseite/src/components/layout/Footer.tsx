@@ -5,7 +5,25 @@ import {
   CONTACT_PHONE_DISPLAY,
   ADDRESS,
 } from "@/lib/constants";
-import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
+import GoogleReviewsBadge, { type ReviewSummary } from "@/components/GoogleReviewsBadge";
+
+async function getReviewSummary(): Promise<ReviewSummary | null> {
+  const adminInternal = process.env.ADMIN_API_URL;
+  const adminPublic = process.env.ADMIN_PUBLIC_URL;
+  const fetchUrls = [adminInternal, adminPublic].filter(Boolean) as string[];
+
+  for (const baseUrl of fetchUrls) {
+    try {
+      const res = await fetch(`${baseUrl}/api/google-reviews`, { cache: "no-store" });
+      if (!res.ok) continue;
+      const data = await res.json();
+      return { totalCount: data.totalCount, averageRating: data.averageRating };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
 
 const footerLinks = [
   { label: "Fotobox mieten Rosenheim", href: "/fotobox/rosenheim" },
@@ -27,8 +45,9 @@ const legalLinks = [
   { label: "Kontakt", href: "/kontakt" },
 ];
 
-export default function Footer() {
+export default async function Footer() {
   const currentYear = new Date().getFullYear();
+  const reviewSummary = await getReviewSummary();
 
   return (
     <footer
@@ -131,7 +150,7 @@ export default function Footer() {
             >
               01579/2495836
             </a>
-            <GoogleReviewsBadge apiBaseUrl={process.env.ADMIN_PUBLIC_URL ?? ""} />
+            <GoogleReviewsBadge data={reviewSummary} />
           </div>
         </div>
       </div>

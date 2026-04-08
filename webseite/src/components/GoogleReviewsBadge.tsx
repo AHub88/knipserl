@@ -1,31 +1,13 @@
-"use client";
-
-import { useState, useEffect } from "react";
-
-type ReviewSummary = {
+export type ReviewSummary = {
   totalCount: number;
   averageRating: number;
 };
 
-export default function GoogleReviewsBadge({ apiBaseUrl }: { apiBaseUrl: string }) {
-  const [data, setData] = useState<ReviewSummary | null>(null);
-
-  useEffect(() => {
-    fetch(`${apiBaseUrl}/api/google-reviews`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {});
-  }, [apiBaseUrl]);
-
+export default function GoogleReviewsBadge({ data }: { data: ReviewSummary | null }) {
   if (!data || data.totalCount === 0) return null;
 
   return (
-    <a
-      href="https://www.google.com/maps/place/?q=place_id:knipserl"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-3 mt-4 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2.5 hover:bg-white/15 transition-colors"
-    >
+    <div className="inline-flex items-center gap-3 mt-4 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2.5">
       {/* Google G icon */}
       <svg width="28" height="28" viewBox="0 0 48 48" className="flex-shrink-0">
         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -54,6 +36,6 @@ export default function GoogleReviewsBadge({ apiBaseUrl }: { apiBaseUrl: string 
           </div>
         </div>
       </div>
-    </a>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-type Review = {
+export type Review = {
   id: string;
   authorName: string;
   rating: number;
@@ -10,7 +10,7 @@ type Review = {
   time: string;
 };
 
-type ReviewData = {
+export type ReviewData = {
   reviews: Review[];
   totalCount: number;
   averageRating: number;
@@ -34,7 +34,6 @@ function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   );
 }
 
-// Google "G" logo as inline SVG
 function GoogleLogo({ size = 24 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48">
@@ -83,18 +82,9 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
   );
 }
 
-export default function GoogleReviewsSlider({ apiBaseUrl }: { apiBaseUrl: string }) {
-  const [data, setData] = useState<ReviewData | null>(null);
+export default function GoogleReviewsSlider({ data }: { data: ReviewData }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    fetch(`${apiBaseUrl}/api/google-reviews`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {});
-  }, [apiBaseUrl]);
-
-  // How many cards visible at once
   const [visibleCount, setVisibleCount] = useState(3);
   useEffect(() => {
     function update() {
@@ -107,7 +97,7 @@ export default function GoogleReviewsSlider({ apiBaseUrl }: { apiBaseUrl: string
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const maxIndex = data ? Math.max(0, data.reviews.length - visibleCount) : 0;
+  const maxIndex = Math.max(0, data.reviews.length - visibleCount);
 
   const prev = useCallback(
     () => setCurrentIndex((i) => Math.max(0, i - 1)),
@@ -118,7 +108,7 @@ export default function GoogleReviewsSlider({ apiBaseUrl }: { apiBaseUrl: string
     [maxIndex]
   );
 
-  if (!data || data.reviews.length === 0) return null;
+  if (data.reviews.length === 0) return null;
 
   return (
     <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
@@ -145,7 +135,6 @@ export default function GoogleReviewsSlider({ apiBaseUrl }: { apiBaseUrl: string
       {/* Right: slider */}
       <div className="flex-1 min-w-0 w-full">
         <div className="relative">
-          {/* Arrow left */}
           {currentIndex > 0 && (
             <button
               onClick={prev}
@@ -156,7 +145,6 @@ export default function GoogleReviewsSlider({ apiBaseUrl }: { apiBaseUrl: string
             </button>
           )}
 
-          {/* Cards */}
           <div className="overflow-hidden">
             <div
               className="flex gap-4 transition-transform duration-300"
@@ -176,7 +164,6 @@ export default function GoogleReviewsSlider({ apiBaseUrl }: { apiBaseUrl: string
             </div>
           </div>
 
-          {/* Arrow right */}
           {currentIndex < maxIndex && (
             <button
               onClick={next}

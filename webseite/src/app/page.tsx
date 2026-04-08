@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import LottieIcon from "@/components/LottieIcon";
-import GoogleReviewsSlider from "@/components/GoogleReviewsSlider";
+import GoogleReviewsSlider, { type ReviewData } from "@/components/GoogleReviewsSlider";
 import { SEO_CITIES } from "@/lib/constants";
 
 type LogoData = { name: string; src: string };
@@ -37,6 +37,23 @@ async function getClientLogos(): Promise<LogoData[]> {
   return [];
 }
 
+async function getGoogleReviews(): Promise<ReviewData | null> {
+  const adminInternal = process.env.ADMIN_API_URL;
+  const adminPublic = process.env.ADMIN_PUBLIC_URL;
+  const fetchUrls = [adminInternal, adminPublic].filter(Boolean) as string[];
+
+  for (const baseUrl of fetchUrls) {
+    try {
+      const res = await fetch(`${baseUrl}/api/google-reviews`, { cache: "no-store" });
+      if (!res.ok) continue;
+      return await res.json();
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 // Force dynamic rendering so runtime env vars (ADMIN_API_URL etc.) are available
 export const dynamic = "force-dynamic";
 
@@ -52,7 +69,10 @@ const galleryImages = [
 ];
 
 export default async function HomePage() {
-  const clientLogos = await getClientLogos();
+  const [clientLogos, reviewData] = await Promise.all([
+    getClientLogos(),
+    getGoogleReviews(),
+  ]);
   return (
     <>
       {/* ===== HERO / SLIDER ===== */}
@@ -423,7 +443,7 @@ export default async function HomePage() {
               Das sagen unsere Kunden zum Knipserl
             </p>
           </div>
-          <GoogleReviewsSlider apiBaseUrl={process.env.ADMIN_PUBLIC_URL ?? ""} />
+          {reviewData && <GoogleReviewsSlider data={reviewData} />}
         </div>
       </section>
 
