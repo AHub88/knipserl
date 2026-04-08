@@ -476,3 +476,12 @@ model CustomFont {
 
   @@map("custom_fonts")
 }
+
+model ClientLogo {
+  id        String   @id @default(cuid())
+  name      String
+  filename  String
+  createdAt DateTime @default(now())
+
+  @@map("client_logos")
+}

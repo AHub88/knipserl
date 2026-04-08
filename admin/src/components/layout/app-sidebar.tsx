@@ -22,6 +22,7 @@ import {
   IconTemplate,
   IconPalette,
   IconTypography,
+  IconPhoto,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -70,6 +71,10 @@ const designNav = [
   { title: "Design-Vorlagen", href: "/settings/design-templates", icon: IconTemplate },
   { title: "Design-Elemente", href: "/settings/design-elements", icon: IconPalette },
   { title: "Eigene Schriften", href: "/settings/design-fonts", icon: IconTypography },
+];
+
+const websiteNav = [
+  { title: "Referenz-Logos", href: "/settings/logos", icon: IconPhoto },
 ];
 
 const systemNav = [
@@ -177,6 +182,7 @@ export function AppSidebar() {
             <NavGroup label="Hauptmenü" items={mainNav} isActive={isActive} />
             <NavGroup label="Buchhaltung" items={accountingNav} isActive={isActive} />
             <NavGroup label="Design" items={designNav} isActive={isActive} />
+            <NavGroup label="Webseite" items={websiteNav} isActive={isActive} />
             <NavGroup label="System" items={systemNav} isActive={isActive} />
           </>
         )}

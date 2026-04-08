@@ -4,14 +4,40 @@ import InquiryForm from "@/components/forms/InquiryForm";
 import LottieIcon from "@/components/LottieIcon";
 import { SEO_CITIES } from "@/lib/constants";
 
-const clientLogos = [
-  "adelholzener", "download", "a-business", "anita", "arri", "arrk",
+// Fallback logos (used when admin API is not reachable)
+const FALLBACK_LOGOS = [
+  "adelholzener", "aenova", "a-business", "anita", "arri", "arrk",
   "servtec", "cpari", "dav", "dinzler", "diwa-gruppe", "flemings",
   "floetzinger", "fronius", "gang", "ibm", "ibeko", "infineon", "kpmg",
   "malteser", "marco-polo", "medical-park", "metzler-vater", "mondi",
   "landratsamt-muenchen", "prechtl", "rischart", "romed", "schattdecor",
   "stadtwerke-rosenheim", "starbulls", "th-rosenheim", "timezone",
 ];
+
+type LogoData = { name: string; src: string };
+
+async function getClientLogos(): Promise<LogoData[]> {
+  const adminUrl = process.env.ADMIN_API_URL;
+  if (adminUrl) {
+    try {
+      const res = await fetch(`${adminUrl}/api/client-logos`, {
+        next: { revalidate: 300 }, // 5 min cache
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.logos.map((l: { name: string; filename: string }) => ({
+          name: l.name,
+          src: `${adminUrl}/api/uploads/client-logos/${l.filename}`,
+        }));
+      }
+    } catch { /* fall through to fallback */ }
+  }
+  // Fallback: local files
+  return FALLBACK_LOGOS.map((slug) => ({
+    name: slug,
+    src: `/images/clients/${slug}.png`,
+  }));
+}
 
 const galleryImages = [
   { src: "/images/gallery/fotobox-mieten-5.jpg", alt: "Fotobox im Einsatz bei einer Hochzeit in Rosenheim" },
@@ -24,7 +50,8 @@ const galleryImages = [
   { src: "/images/gallery/fotobox-mieten-5-scaled.jpg", alt: "Fotobox mieten für Events in Oberbayern" },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const clientLogos = await getClientLogos();
   return (
     <>
       {/* ===== HERO / SLIDER ===== */}
@@ -397,13 +424,13 @@ export default function HomePage() {
           </div>
           <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
             {clientLogos.map((logo) => (
-              <div key={logo} className="relative w-[130px] h-[70px]">
-                <Image
-                  src={`/images/clients/${logo}.png`}
-                  alt={`${logo} - Kunde von Knipserl Fotobox`}
-                  fill
-                  className="object-contain"
-                  sizes="130px"
+              <div key={logo.name} className="relative w-[130px] h-[70px]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={logo.src}
+                  alt={`${logo.name} - Kunde von Knipserl Fotobox`}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
                 />
               </div>
             ))}

@@ -332,6 +332,12 @@ async function syncSchema() {
     ["custom_fonts", "style", "TEXT", false, "'normal'"],
     ["custom_fonts", "active", "BOOLEAN", false, "true"],
     ["custom_fonts", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // client_logos
+    ["client_logos", "id", "TEXT", false, null],
+    ["client_logos", "name", "TEXT", false, "''"],
+    ["client_logos", "filename", "TEXT", false, "''"],
+    ["client_logos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table
