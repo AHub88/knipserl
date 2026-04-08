@@ -8,12 +8,12 @@ export async function GET() {
     orderBy: { time: "desc" },
   });
 
-  // Calculate aggregate
-  const count = reviews.length;
-  const avgRating =
-    count > 0
-      ? Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / count) * 10) / 10
-      : 0;
+  // Get Google's total count and average from settings (more accurate than local count)
+  const settings = await prisma.appSetting.findMany({
+    where: { key: { in: ["googleReviewsTotalCount", "googleReviewsAvgRating"] } },
+  });
+  const map: Record<string, string> = {};
+  for (const s of settings) map[s.key] = s.value;
 
   return NextResponse.json({
     reviews: reviews.map((r) => ({
@@ -23,7 +23,7 @@ export async function GET() {
       text: r.text,
       time: r.time.toISOString(),
     })),
-    totalCount: count,
-    averageRating: avgRating,
+    totalCount: Number(map.googleReviewsTotalCount) || reviews.length,
+    averageRating: Number(map.googleReviewsAvgRating) || 5,
   });
 }

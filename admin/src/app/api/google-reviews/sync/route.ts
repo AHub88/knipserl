@@ -32,37 +32,30 @@ export async function POST() {
   }
 
   try {
-    // Fetch reviews from Google Places API (server-side only, no user data sent)
-    const params = new URLSearchParams({
-      place_id: placeId,
-      fields: "reviews,rating,user_ratings_total",
-      language: "de",
-      key: apiKey,
-    });
-
+    // Fetch reviews from Google Places API (New) — server-side only, DSGVO-safe
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/place/details/json?${params}`
+      `https://places.googleapis.com/v1/places/${placeId}?fields=displayName,rating,userRatingCount,reviews&languageCode=de`,
+      {
+        headers: {
+          "X-Goog-Api-Key": apiKey,
+        },
+      }
     );
 
     if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const msg = errData.error?.message ?? `HTTP ${res.status}`;
       return NextResponse.json(
-        { error: `Google API Fehler: ${res.status}` },
+        { error: `Google API Fehler: ${msg}` },
         { status: 502 }
       );
     }
 
     const data = await res.json();
 
-    if (data.status !== "OK") {
-      return NextResponse.json(
-        { error: `Google API Status: ${data.status} — ${data.error_message ?? ""}` },
-        { status: 502 }
-      );
-    }
-
-    const googleReviews = data.result?.reviews ?? [];
-    const totalRatings = data.result?.user_ratings_total ?? 0;
-    const overallRating = data.result?.rating ?? 0;
+    const googleReviews = data.reviews ?? [];
+    const totalRatings = data.userRatingCount ?? 0;
+    const overallRating = data.rating ?? 0;
 
     // Store total count and rating in AppSettings for the website
     await prisma.appSetting.upsert({
@@ -76,24 +69,24 @@ export async function POST() {
       create: { key: "googleReviewsAvgRating", value: String(overallRating) },
     });
 
-    // Upsert reviews (match by author name + approximate time to avoid duplicates)
+    // Upsert reviews (match by author name + publish time to avoid duplicates)
     let imported = 0;
     for (const review of googleReviews) {
-      const authorName = review.author_name ?? "Anonym";
+      const authorName = review.authorAttribution?.displayName ?? "Anonym";
       const rating = review.rating ?? 5;
-      const text = review.text ?? "";
-      const time = new Date(review.time * 1000); // Google returns unix timestamp
+      const text = review.text?.text ?? "";
+      const time = new Date(review.publishTime);
 
-      // Check if review from same author with same rating already exists
+      // Check if review from same author already exists
       const existing = await prisma.googleReview.findFirst({
-        where: { authorName, rating },
+        where: { authorName },
       });
 
       if (existing) {
-        // Update text if changed
+        // Update text/rating/time if changed
         await prisma.googleReview.update({
           where: { id: existing.id },
-          data: { text, time },
+          data: { text, rating, time },
         });
       } else {
         await prisma.googleReview.create({
