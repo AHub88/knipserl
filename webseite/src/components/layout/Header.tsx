@@ -123,7 +123,7 @@ export default function Header() {
           </button>
         </div>
         {/* Torn paper edge when solid header — z-[-1] so content beneath shows through the transparent rips */}
-        {showSolid && (
+        {scrolled && (
           <div
             className="absolute left-0 w-full pointer-events-none"
             style={{
