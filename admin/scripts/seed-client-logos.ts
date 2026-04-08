@@ -4,11 +4,14 @@
  *
  * Run: npx tsx scripts/seed-client-logos.ts
  */
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
+import { PrismaClient } from "../src/generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { readdirSync, copyFileSync, mkdirSync, existsSync } from "fs";
 import path from "path";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 const LOGO_NAMES: Record<string, string> = {
   "adelholzener": "Adelholzener",
