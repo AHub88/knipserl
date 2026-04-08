@@ -18,9 +18,12 @@ const firaCondensed = Fira_Sans_Extra_Condensed({
   weight: ["400", "700", "800"],
 });
 
-// NEXT_PUBLIC_ENV is build-time only, so also check SITE_ENV (runtime)
-const isProduction = process.env.SITE_ENV !== "staging" &&
-  process.env.NEXT_PUBLIC_ENV !== "staging";
+// Check multiple signals — any one of these means "not production"
+const isProduction = !(
+  process.env.SITE_ENV === "staging" ||
+  process.env.NEXT_PUBLIC_ENV === "staging" ||
+  (process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes("www.knipserl.de"))
+);
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
