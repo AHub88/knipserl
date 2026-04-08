@@ -64,11 +64,10 @@ export default async function Footer() {
         className="w-full pointer-events-none"
         style={{
           height: "50px",
+          marginBottom: "-1px",
           position: "relative",
-          left: 0,
-          top: 0,
-          background: "url('/images/misc/rough-top-footer.png') no-repeat",
-          backgroundSize: "100% 100%",
+          background: "url('/images/misc/rough-top-footer.png') repeat-x",
+          backgroundSize: "auto 50px",
           filter: "drop-shadow(0px 25px 11px rgba(0, 0, 0, .6))",
         }}
       />
