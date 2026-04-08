@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface InquiryFormProps {
   preset?: "fotobox" | "gaestetelefon";
@@ -12,8 +12,23 @@ const WEEKDAYS = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
 
 function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (date: string) => void }) {
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [busyDates, setBusyDates] = useState<Set<string>>(new Set());
+
+  // Fetch busy dates when month changes
+  useEffect(() => {
+    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+    if (!adminUrl) return;
+    const month = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
+    fetch(`${adminUrl}/api/busy-dates?month=${month}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.busyDates) setBusyDates(new Set(data.busyDates));
+      })
+      .catch(() => {});
+  }, [viewMonth, viewYear]);
 
   const firstDay = new Date(viewYear, viewMonth, 1);
   let startDay = firstDay.getDay() - 1;
@@ -30,6 +45,9 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
   };
 
   const prevMonth = () => {
+    // Don't go before current month
+    const now = new Date();
+    if (viewYear === now.getFullYear() && viewMonth === now.getMonth()) return;
     if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); }
     else setViewMonth(viewMonth - 1);
   };
@@ -43,7 +61,21 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
     return day === d && viewMonth === m - 1 && viewYear === y;
   };
 
+  const isDisabled = (day: number) => {
+    const date = new Date(viewYear, viewMonth, day);
+    date.setHours(0, 0, 0, 0);
+    // Past days and today+1 are disabled (minimum 2 days in advance)
+    const minDate = new Date(today);
+    minDate.setDate(minDate.getDate() + 2);
+    if (date < minDate) return true;
+    // Busy dates (3+ bookings)
+    const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    if (busyDates.has(key)) return true;
+    return false;
+  };
+
   const handleSelect = (day: number) => {
+    if (isDisabled(day)) return;
     const m = String(viewMonth + 1).padStart(2, "0");
     const d = String(day).padStart(2, "0");
     onSelect(`${viewYear}-${m}-${d}`);
@@ -52,17 +84,17 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
   return (
     <div className="bg-white rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
       {/* Month header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <button type="button" onClick={prevMonth} className="text-gray-400 hover:text-[#1a171b] text-xl font-bold">&lsaquo;</button>
-        <span className="font-bold text-xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]">
+      <div className="flex items-center justify-between px-6 py-4 bg-[#1a171b]">
+        <button type="button" onClick={prevMonth} className="text-gray-400 hover:text-white text-xl font-bold">&lsaquo;</button>
+        <span className="font-bold text-xl uppercase tracking-wide text-white font-[family-name:var(--font-fira-condensed)]">
           {MONTHS[viewMonth]} {viewYear}
         </span>
-        <button type="button" onClick={nextMonth} className="text-gray-400 hover:text-[#1a171b] text-xl font-bold">&rsaquo;</button>
+        <button type="button" onClick={nextMonth} className="text-gray-400 hover:text-white text-xl font-bold">&rsaquo;</button>
       </div>
       {/* Weekday header */}
-      <div className="grid grid-cols-7 bg-[#1a171b]">
+      <div className="grid grid-cols-7 border-b border-gray-200">
         {WEEKDAYS.map((wd, i) => (
-          <div key={wd} className={`py-3 text-center text-xs font-bold uppercase ${i >= 4 ? "text-[#F3A300]" : "text-white"}`}>
+          <div key={wd} className={`py-3 text-center text-xs font-bold uppercase ${i >= 4 ? "text-[#F3A300]" : "text-[#1a171b]"}`}>
             {wd}
           </div>
         ))}
@@ -72,14 +104,16 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
         {cells.map((day, i) => {
           const colIndex = i % 7;
           const isWeekend = colIndex >= 4;
+          const disabled = day ? isDisabled(day) : true;
           return (
             <button
               key={i}
               type="button"
-              disabled={!day}
+              disabled={disabled}
               onClick={() => day && handleSelect(day)}
               className={`py-4 text-center text-[18px] transition-colors ${
                 !day ? "" :
+                disabled ? "text-gray-300 cursor-not-allowed" :
                 isSelected(day) ? "bg-[#F3A300] text-white font-bold rounded-full" :
                 isToday(day) ? "border-2 border-[#F3A300] rounded-full font-semibold" :
                 isWeekend ? "text-[#F3A300] hover:bg-gray-50" :
