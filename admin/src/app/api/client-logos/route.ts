@@ -26,9 +26,9 @@ function slugify(text: string): string {
 
 // GET /api/client-logos — list all logos (public, no auth)
 export async function GET() {
-  const logos = await prisma.clientLogo.findMany({
-    orderBy: { name: "asc" },
-  });
+  const logos = await prisma.$queryRaw<
+    { id: string; name: string; filename: string }[]
+  >`SELECT id, name, filename FROM client_logos ORDER BY LOWER(name) ASC`;
 
   return NextResponse.json({
     logos: logos.map((logo) => ({

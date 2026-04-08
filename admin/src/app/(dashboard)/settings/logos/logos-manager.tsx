@@ -61,7 +61,7 @@ export function LogosManager({
       }
       const created = await res.json();
       setLogos((prev) =>
-        [...prev, created].sort((a, b) => a.name.localeCompare(b.name))
+        [...prev, created].sort((a, b) => a.name.localeCompare(b.name, "de", { sensitivity: "base" }))
       );
       setAddName("");
       if (fileInputRef.current) fileInputRef.current.value = "";

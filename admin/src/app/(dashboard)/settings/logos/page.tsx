@@ -3,9 +3,9 @@ import { IconPhoto } from "@tabler/icons-react";
 import { LogosManager } from "./logos-manager";
 
 export default async function LogosPage() {
-  const logos = await prisma.clientLogo.findMany({
-    orderBy: { name: "asc" },
-  });
+  const logos = await prisma.$queryRaw<
+    { id: string; name: string; filename: string; createdAt: Date }[]
+  >`SELECT * FROM client_logos ORDER BY LOWER(name) ASC`;
 
   return (
     <div className="space-y-6">
