@@ -19,7 +19,7 @@ async function getClientLogos(): Promise<LogoData[]> {
   for (const baseUrl of fetchUrls) {
     try {
       const res = await fetch(`${baseUrl}/api/client-logos`, {
-        next: { revalidate: 60 },
+        cache: "no-store",
       });
       if (!res.ok) continue;
       const data = await res.json();
