@@ -96,30 +96,38 @@ export default function FAQPage() {
 
       {/* FAQ Content */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[800px] mx-auto px-4 space-y-12">
+        <div className="max-w-[1100px] mx-auto px-4 space-y-12">
           {faqSections.map((section) => (
             <div key={section.title}>
-              <h2 className="text-[28px] md:text-[36px] leading-[1] text-[#1a171b] mb-6 pb-3 border-b-2 border-[#F3A300]">
+              <h2 className="text-[28px] md:text-[36px] leading-[1] text-[#1a171b] mb-6 font-[family-name:var(--font-fira-condensed)]">
                 {section.title}
               </h2>
               <div className="space-y-4">
                 {section.items.map((faq) => (
                   <details
                     key={faq.question}
-                    className="group border border-gray-200 overflow-hidden"
+                    className="group overflow-hidden rounded-sm"
                   >
-                    <summary className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors font-bold text-[#1a171b] text-[18px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 600 }}>
+                    <summary
+                      className="flex items-center justify-between px-6 py-5 cursor-pointer text-white font-bold text-[16px] md:text-[18px] uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide"
+                      style={{
+                        background: "#444 url('/images/misc/main_back_gr-2.webp') repeat",
+                        backgroundSize: "1000px 500px",
+                      }}
+                    >
                       {faq.question}
-                      <svg
-                        className="w-5 h-5 text-[#F3A300] group-open:rotate-180 transition-transform flex-shrink-0 ml-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      <span className="text-white text-[24px] font-light flex-shrink-0 ml-4 group-open:hidden">+</span>
+                      <span className="text-white text-[24px] font-light flex-shrink-0 ml-4 hidden group-open:inline">−</span>
                     </summary>
-                    <div className="px-5 pb-5 text-[#666] text-[16px] leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                    <div
+                      className="px-6 py-5 text-white text-[16px] leading-relaxed"
+                      style={{
+                        fontFamily: "'Fira Sans', sans-serif",
+                        background: "#333 url('/images/misc/main_back_gr-2.webp') repeat",
+                        backgroundSize: "1000px 500px",
+                        backgroundPosition: "0 -200px",
+                      }}
+                    >
                       {faq.answer}
                     </div>
                   </details>

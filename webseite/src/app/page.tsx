@@ -76,7 +76,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ===== HERO / SLIDER ===== */}
-      <section className="relative h-[70vh] md:h-[85vh] lg:h-[100vh] overflow-hidden">
+      <section className="relative h-[500px] md:h-[700px] lg:h-[900px] overflow-hidden">
         {/* Background image */}
         <Image
           src="/images/hero/fotobox-rosenheim-muenchen.jpg"
@@ -87,43 +87,46 @@ export default async function HomePage() {
           quality={85}
         />
 
-        {/* Fotobox - centered on mobile, left on desktop */}
-        <div className="absolute z-20 left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[10%] bottom-[40px] md:bottom-[30px] w-[220px] h-[370px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
-          <Image
-            src="/images/hero/fotobox-startseite.png"
-            alt="Knipserl Fotobox mit Stativ und Blitz"
-            fill
-            className="object-contain object-bottom drop-shadow-2xl"
-            priority
-          />
-        </div>
+        {/* Content container for fotobox + text */}
+        <div className="absolute inset-0 z-20 max-w-[1400px] mx-auto">
+          {/* Fotobox - centered on mobile, left on desktop */}
+          <div className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] bottom-[40px] md:bottom-[30px] w-[220px] h-[370px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
+            <Image
+              src="/images/hero/fotobox-startseite.png"
+              alt="Knipserl Fotobox mit Stativ und Blitz"
+              fill
+              className="object-contain object-bottom drop-shadow-2xl"
+              priority
+            />
+          </div>
 
-        {/* Text - hidden on mobile, visible from tablet */}
-        <div className="absolute z-20 text-white hidden md:block md:left-[38%] md:top-[35%] md:max-w-[58%] lg:left-[40%] lg:top-[40%] lg:max-w-[55%]">
-          <h1
-            className="text-[60px] md:text-[90px] lg:text-[130px] leading-[0.9] mb-3"
-            style={{
-              fontFamily: "'Beyond The Mountains', cursive",
-              textTransform: "none",
-              fontWeight: 400,
-              textShadow: "3px 3px 10px rgba(0,0,0,0.4)",
-            }}
-          >
-            Deine Fotobox
-          </h1>
-          <p
-            className="text-[22px] md:text-[30px] lg:text-[40px] leading-[1.1] mb-4 md:mb-6 font-medium font-[family-name:var(--font-fira-sans)]"
-            style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.4)" }}
-          >
-            für Rosenheim, München und Umgebung
-          </p>
-          <Link
-            href="/termin-reservieren"
-            className="inline-block px-6 py-3 md:px-10 md:py-4 bg-white text-[#1a171b] font-bold text-[16px] md:text-[18px] uppercase tracking-[0.1em] rounded-md hover:bg-gray-100 transition-colors"
-            style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif" }}
-          >
-            Jetzt reservieren
-          </Link>
+          {/* Text - hidden on mobile, visible from tablet */}
+          <div className="absolute text-white hidden md:block md:left-[40%] md:top-[35%] md:max-w-[55%] lg:left-[45%] lg:top-[38%] lg:max-w-[50%]">
+            <h1
+              className="text-[60px] md:text-[70px] lg:text-[90px] xl:text-[110px] leading-[0.9] mb-3"
+              style={{
+                fontFamily: "'Beyond The Mountains', cursive",
+                textTransform: "none",
+                fontWeight: 400,
+                textShadow: "3px 3px 10px rgba(0,0,0,0.4)",
+              }}
+            >
+              Deine Fotobox
+            </h1>
+            <p
+              className="text-[22px] md:text-[24px] lg:text-[30px] xl:text-[36px] leading-[1.1] mb-4 md:mb-6 font-medium font-[family-name:var(--font-fira-sans)]"
+              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.4)" }}
+            >
+              für Rosenheim, München und Umgebung
+            </p>
+            <Link
+              href="/termin-reservieren"
+              className="inline-block px-6 py-3 md:px-10 md:py-4 bg-white text-[#1a171b] font-bold text-[16px] md:text-[18px] uppercase tracking-[0.1em] rounded-md hover:bg-gray-100 transition-colors"
+              style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif" }}
+            >
+              Jetzt reservieren
+            </Link>
+          </div>
         </div>
 
         {/* Dark gradient to mask water behind tripod on mobile */}

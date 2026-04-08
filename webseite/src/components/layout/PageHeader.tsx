@@ -1,18 +1,12 @@
 export default function PageHeader({ title }: { title: string }) {
   return (
     <div
-      className="relative w-full h-[180px] bg-cover bg-center flex items-end"
+      className="relative w-full h-[280px] md:h-[320px] bg-cover bg-center flex items-end rough-bottom"
       style={{ backgroundImage: "url('/images/misc/fancy-header.jpg')" }}
     >
-      <div className="max-w-[1200px] mx-auto px-4 w-full pb-4">
+      <div className="max-w-[1200px] mx-auto px-4 w-full pb-12">
         <h1
-          className="text-[20px] text-[#1a171b] font-normal"
-          style={{
-            fontFamily: "'Fira Sans', Helvetica, Arial, sans-serif",
-            textTransform: "none",
-            fontWeight: 400,
-            letterSpacing: "normal",
-          }}
+          className="text-[36px] md:text-[48px] text-white font-extrabold uppercase tracking-[0.02em] font-[family-name:var(--font-fira-condensed)]"
         >
           {title}
         </h1>

@@ -26,8 +26,6 @@ const navItems = [
   { label: "Termin prüfen", href: "/termin-reservieren", highlight: true },
 ];
 
-const navLinkClass = "px-4 py-2 font-bold text-[21px] leading-[25px] uppercase font-[family-name:var(--font-fira-condensed)] transition-colors text-[#1a171b] hover:text-[#F3A300]";
-
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [extrasOpen, setExtrasOpen] = useState(false);
@@ -41,9 +39,15 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // On subpages: always white bg, smaller logo, with paper edge
-  // On homepage: transparent initially, white on scroll
-  const showSolid = !isHome || scrolled;
+  // Solid white bg only when scrolled (both homepage and subpages)
+  const showSolid = scrolled;
+  // White nav text only on subpages when NOT scrolled (over dark wood header)
+  // Homepage always has dark text (over light hero image)
+  const lightText = !isHome && !scrolled;
+
+  const navLinkClass = `px-4 py-2 font-bold text-[21px] leading-[25px] uppercase font-[family-name:var(--font-fira-condensed)] transition-colors ${
+    lightText ? "text-white hover:text-[#F3A300]" : "text-[#1a171b] hover:text-[#F3A300]"
+  }`;
 
   return (
     <>
@@ -55,23 +59,35 @@ export default function Header() {
             : "bg-transparent pt-[15px] lg:pt-[30px]"
         }`}
       >
-        <div className={`max-w-[1400px] mx-auto px-3 md:px-6 flex items-center justify-between transition-all duration-300 ${
+        <div className={`max-w-[1200px] mx-auto px-4 md:px-6 flex items-center justify-between transition-all duration-300 ${
           showSolid ? "h-[56px] md:h-[56px] lg:h-[64px]" : "h-[70px] md:h-[70px] lg:h-[80px]"
         }`}>
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0 flex items-center gap-3">
+          {/* Logo — positiv (dark) for homepage & scrolled, negativ (white) for subpages unscrolled */}
+          <Link href="/" className="flex-shrink-0 flex items-center gap-3 relative">
             <Image
-              src="/images/logo/knipserl-logo.png"
+              src="/images/logo/knipserl_breit_4c_positiv.svg"
               alt="Knipserl Fotobox - Fotobox mieten in Oberbayern und Tirol"
-              width={160}
-              height={53}
+              width={1342}
+              height={377}
               priority
-              className={`${showSolid ? "w-[160px]" : "w-[250px]"} h-auto transition-all duration-300`}
+              className={`h-auto transition-all duration-300 ${
+                showSolid ? "w-[160px]" : isHome ? "w-[250px]" : "w-[200px]"
+              } ${lightText ? "opacity-0" : "opacity-100"}`}
+            />
+            <Image
+              src="/images/logo/knipserl_breit_4c_negativ.svg"
+              alt="Knipserl Fotobox - Fotobox mieten in Oberbayern und Tirol"
+              width={1342}
+              height={377}
+              priority
+              className={`absolute top-0 left-0 h-auto transition-all duration-300 ${
+                showSolid ? "w-[160px]" : isHome ? "w-[250px]" : "w-[200px]"
+              } ${lightText ? "opacity-100" : "opacity-0"}`}
             />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1 ml-auto" aria-label="Hauptnavigation">
+          <nav className="hidden min-[1150px]:flex items-center gap-1 ml-auto" aria-label="Hauptnavigation">
             {navItems.map((item) =>
               item.children ? (
                 <div key={item.label} className="relative group">
@@ -102,7 +118,9 @@ export default function Header() {
                   {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className={
                     item.highlight
-                      ? "ml-3 px-6 py-3 bg-[#1a171b] text-white font-bold text-[21px] leading-[25px] uppercase font-[family-name:var(--font-fira-condensed)] tracking-wider rounded-md hover:bg-[#333] transition-colors"
+                      ? lightText
+                        ? `${navLinkClass} ml-3`
+                        : "ml-3 px-6 py-3 bg-[#1a171b] text-white font-bold text-[21px] leading-[25px] uppercase font-[family-name:var(--font-fira-condensed)] tracking-wider rounded-md hover:bg-[#333] transition-colors"
                       : navLinkClass
                   }
                 >
@@ -115,7 +133,7 @@ export default function Header() {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden flex items-center gap-2 p-2 text-[#1a171b]"
+            className={`min-[1150px]:hidden flex items-center gap-2 p-2 transition-colors ${lightText ? "text-white" : "text-[#1a171b]"}`}
             aria-label="Menü öffnen"
           >
             <span className="text-[18px] font-bold uppercase font-[family-name:var(--font-fira-condensed)]">Menü</span>
@@ -141,7 +159,7 @@ export default function Header() {
 
       {/* Mobile slide-in overlay */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden" aria-label="Mobile Navigation">
+        <div className="fixed inset-0 z-[100] min-[1150px]:hidden" aria-label="Mobile Navigation">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
 
