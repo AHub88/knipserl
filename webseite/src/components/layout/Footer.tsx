@@ -59,13 +59,15 @@ export default async function Footer() {
         backgroundSize: "cover",
       }}
     >
-      {/* Papercut torn edge */}
+      {/* Papercut torn edge — inside footer so dark wood bg shows through transparent rips */}
       <div
-        className="absolute left-0 w-full pointer-events-none"
+        className="w-full pointer-events-none"
         style={{
-          top: "-25px",
           height: "50px",
-          zIndex: 50,
+          marginTop: "-25px",
+          marginBottom: "-25px",
+          position: "relative",
+          zIndex: 10,
           background: "url('/images/misc/rough-top-orig.png') repeat-x",
           backgroundSize: "auto 50px",
         }}

@@ -448,7 +448,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== REFERENZ-LOGOS ===== */}
-      <section className="py-20 relative z-10 bg-white">
+      <section className="py-20 relative bg-white">
         <div className="w-full mx-auto px-[3%] lg:px-[5%]">
           <div className="text-center mb-14">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
