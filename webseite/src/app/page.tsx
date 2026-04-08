@@ -413,7 +413,7 @@ export default async function HomePage() {
 
       {/* ===== REZENSIONEN / CLIENT LOGOS ===== */}
       <section className="py-20 relative z-10 bg-white" style={{ marginTop: "80px" }}>
-        <div className="max-w-[1200px] mx-auto px-6">
+        <div className="max-w-[1400px] mx-auto px-[5%] lg:px-[8%]">
           <div className="text-center mb-14">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
               Rezensionen
