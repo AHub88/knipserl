@@ -74,7 +74,7 @@ export default function PriceConfigurator() {
             <label
               key={addon.id}
               style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
-              className={`flex gap-4 p-4 cursor-pointer transition-all ${
+              className={`flex gap-4 p-4 rounded-lg cursor-pointer transition-all ${
                 selectedAddons.has(addon.id)
                   ? "bg-white ring-2 ring-[#F3A300]"
                   : "bg-[#F3F4F6]"
