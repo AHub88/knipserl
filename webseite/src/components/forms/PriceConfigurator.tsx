@@ -14,9 +14,15 @@ interface DeliveryInfo {
   destinationLon: number;
 }
 
+interface PlaceSelection {
+  address: string;
+  lat: number;
+  lon: number;
+}
+
 function useGooglePlacesAutocomplete(
   inputRef: React.RefObject<HTMLInputElement | null>,
-  onSelect: (place: string) => void
+  onSelect: (place: PlaceSelection) => void
 ) {
   useEffect(() => {
     let autocomplete: google.maps.places.Autocomplete | null = null;
@@ -44,13 +50,18 @@ function useGooglePlacesAutocomplete(
         autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
           types: ["establishment", "geocode"],
           componentRestrictions: { country: ["de", "at"] },
-          fields: ["formatted_address", "name"],
+          fields: ["formatted_address", "name", "geometry"],
         });
 
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete?.getPlace();
-          if (place?.formatted_address) {
-            onSelect(place.name ? `${place.name}, ${place.formatted_address}` : place.formatted_address);
+          const loc = place?.geometry?.location;
+          if (place?.formatted_address && loc) {
+            onSelect({
+              address: place.name ? `${place.name}, ${place.formatted_address}` : place.formatted_address,
+              lat: loc.lat(),
+              lon: loc.lng(),
+            });
           }
         });
       } catch {
@@ -74,14 +85,14 @@ export default function PriceConfigurator() {
   const [mapsApiKey, setMapsApiKey] = useState("");
   const destinationInputRef = useRef<HTMLInputElement>(null);
 
-  const runCalculation = useCallback(async (address: string) => {
+  const runCalculation = useCallback(async (address: string, coords?: { lat: number; lon: number }) => {
     if (!address.trim()) return;
     setDeliveryLoading(true);
     setDeliveryError("");
     setDelivery(null);
 
     try {
-      const result = await calculateDeliveryCost(address);
+      const result = await calculateDeliveryCost(address, coords);
       if (!result) {
         setDeliveryError("Adresse konnte nicht gefunden werden. Bitte genauer eingeben.");
         return;
@@ -94,9 +105,9 @@ export default function PriceConfigurator() {
     }
   }, []);
 
-  const handlePlaceSelect = useCallback((place: string) => {
-    setDestination(place);
-    runCalculation(place);
+  const handlePlaceSelect = useCallback((place: PlaceSelection) => {
+    setDestination(place.address);
+    runCalculation(place.address, { lat: place.lat, lon: place.lon });
   }, [runCalculation]);
 
   useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);

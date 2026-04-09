@@ -128,23 +128,38 @@ function getMaxDeliveryKm(tiers: TravelPricingTier[]): number {
 }
 
 /**
- * Full distance calculation from destination address
+ * Full distance calculation from destination address or coordinates
  * Origin is always Rosenheim
  */
 export async function calculateDeliveryCost(
-  destinationAddress: string
+  destinationAddress: string,
+  coords?: { lat: number; lon: number }
 ): Promise<DistanceResult | null> {
   const ORIGIN_LAT = 47.8571;
   const ORIGIN_LON = 12.1181;
 
-  const destination = await geocodeAddress(destinationAddress);
-  if (!destination) return null;
+  // Use provided coordinates (from Google Places) or geocode via Nominatim
+  let destLat: number;
+  let destLon: number;
+  let destName: string;
+
+  if (coords) {
+    destLat = coords.lat;
+    destLon = coords.lon;
+    destName = destinationAddress;
+  } else {
+    const destination = await geocodeAddress(destinationAddress);
+    if (!destination) return null;
+    destLat = destination.lat;
+    destLon = destination.lon;
+    destName = destination.display_name;
+  }
 
   const distanceKm = await calculateDrivingDistance(
     ORIGIN_LAT,
     ORIGIN_LON,
-    destination.lat,
-    destination.lon
+    destLat,
+    destLon
   );
 
   if (distanceKm === null) return null;
@@ -156,8 +171,8 @@ export async function calculateDeliveryCost(
     distanceKm,
     price: getDeliveryPriceFromTiers(distanceKm, tiers),
     outsideDeliveryArea: distanceKm > maxKm,
-    destinationName: destination.display_name,
-    destinationLat: destination.lat,
-    destinationLon: destination.lon,
+    destinationName: destName,
+    destinationLat: destLat,
+    destinationLon: destLon,
   };
 }
