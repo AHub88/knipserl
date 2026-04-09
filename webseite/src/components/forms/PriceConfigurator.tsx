@@ -119,7 +119,7 @@ export default function PriceConfigurator() {
                   <h4 className="font-bold text-[#1a171b] text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)]">
                     {addon.name}
                   </h4>
-                  <span className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]">
+                  <span className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
                     +{addon.price}&euro;
                   </span>
                 </div>
