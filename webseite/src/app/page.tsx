@@ -90,7 +90,7 @@ export default async function HomePage() {
         {/* Content container for fotobox + text */}
         <div className="absolute inset-0 z-20 max-w-[1400px] mx-auto">
           {/* Fotobox - centered on mobile, left on desktop */}
-          <div className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] bottom-[30px] md:bottom-[50px] lg:bottom-[30px] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]">
+          <div className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] bottom-[30px] md:bottom-[50px] lg:bottom-[60px] xl:bottom-[30px] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]">
             <Image
               src="/images/hero/fotobox-startseite.png"
               alt="Knipserl Fotobox mit Stativ und Blitz"
@@ -136,7 +136,7 @@ export default async function HomePage() {
             alt=""
             width={1920}
             height={217}
-            className="w-full min-h-[100px] object-cover object-top md:min-h-[140px] lg:min-h-0 lg:h-auto"
+            className="w-full min-h-[100px] object-cover object-top md:min-h-[140px] lg:min-h-[180px] xl:min-h-0 xl:h-auto xl:max-h-[217px]"
             priority
           />
         </div>
