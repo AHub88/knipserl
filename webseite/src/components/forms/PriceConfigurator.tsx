@@ -274,7 +274,7 @@ export default function PriceConfigurator() {
               <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Berechnete Distanz
               </span>
-              <span className="text-[#666] text-base">
+              <span className="text-[#666] text-[20px]">
                 {delivery ? `${delivery.distanceKm} km` : "– km"}
               </span>
             </div>
@@ -289,7 +289,7 @@ export default function PriceConfigurator() {
               <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Fahrtkosten
               </span>
-              <span className="text-[#666] text-base">
+              <span className="text-[#666] text-[20px]">
                 {delivery
                   ? delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`
                   : "– €"}
@@ -306,7 +306,7 @@ export default function PriceConfigurator() {
             <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
               Map
             </span>
-            <div className="bg-gray-100 overflow-hidden" style={{ height: "280px" }}>
+            <div className="bg-gray-100 overflow-hidden grayscale" style={{ height: "280px" }}>
               {mapsApiKey ? (
                 delivery ? (
                   <iframe
@@ -315,7 +315,7 @@ export default function PriceConfigurator() {
                     height="100%"
                     style={{ border: 0 }}
                     loading="lazy"
-                    src={`https://www.google.com/maps/embed/v1/directions?key=${mapsApiKey}&origin=Rosenheim,Germany&destination=${delivery.destinationLat},${delivery.destinationLon}&mode=driving&language=de`}
+                    src={`https://www.google.com/maps/embed/v1/directions?key=${mapsApiKey}&origin=Rosenheim,Germany&destination=${delivery.destinationLat},${delivery.destinationLon}&mode=driving&language=de&avoid=tolls`}
                   />
                 ) : (
                   <iframe
