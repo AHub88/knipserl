@@ -77,23 +77,25 @@ export default function PreisePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
             {includedFeatures.map((feature) => (
-              <div key={feature.title} className="text-center">
+              <div key={feature.title} className="flex gap-4 items-start">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={feature.icon}
                   alt=""
                   width={83}
                   height={70}
-                  className="mx-auto mb-2"
+                  className="flex-shrink-0 mt-1"
                 />
-                <h3 className="text-[16px] font-extrabold uppercase tracking-wide mb-1 font-[family-name:var(--font-fira-condensed)]">
-                  {feature.title}
-                </h3>
-                <p className="text-[13px] text-[#666] leading-snug font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
-                  {feature.description}
-                </p>
+                <div>
+                  <h3 className="text-[16px] font-extrabold uppercase tracking-wide mb-1 font-[family-name:var(--font-fira-condensed)]">
+                    {feature.title}
+                  </h3>
+                  <p className="text-[13px] text-[#666] leading-snug font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
+                    {feature.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
