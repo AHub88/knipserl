@@ -25,10 +25,8 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
 
   // Fetch busy dates when month changes
   useEffect(() => {
-    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
-    if (!adminUrl) return;
     const month = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
-    fetch(`${adminUrl}/api/busy-dates?month=${month}`)
+    fetch(`/api/busy-dates?month=${month}`)
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
         if (data?.busyDates) setBusyDates(new Set(data.busyDates));

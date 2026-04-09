@@ -22,11 +22,10 @@ function useGooglePlacesAutocomplete(
     let autocomplete: google.maps.places.Autocomplete | null = null;
 
     async function init() {
-      const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
-      if (!adminUrl || !inputRef.current) return;
+      if (!inputRef.current) return;
 
       try {
-        const res = await fetch(`${adminUrl}/api/maps-config`);
+        const res = await fetch("/api/maps-config");
         const data = await res.json();
         if (!data.apiKey) return;
 
@@ -81,11 +80,9 @@ export default function PriceConfigurator() {
 
   useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);
 
-  // Fetch Google Maps API key for embed
+  // Fetch Google Maps API key via own proxy endpoint (avoids NEXT_PUBLIC_ build-time issue)
   useEffect(() => {
-    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
-    if (!adminUrl) return;
-    fetch(`${adminUrl}/api/maps-config`)
+    fetch("/api/maps-config")
       .then((r) => r.json())
       .then((d) => { if (d.apiKey) setMapsApiKey(d.apiKey); })
       .catch(() => {});

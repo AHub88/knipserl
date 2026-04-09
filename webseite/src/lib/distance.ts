@@ -33,13 +33,8 @@ async function fetchPricingTiers(): Promise<TravelPricingTier[]> {
     return cachedTiers;
   }
 
-  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
-  if (!adminUrl) {
-    return DISTANCE_TIERS.map((t) => ({ distanceKm: t.maxKm === Infinity ? 9999 : t.maxKm, customerPrice: t.price }));
-  }
-
   try {
-    const res = await fetch(`${adminUrl}/api/travel-pricing/public`);
+    const res = await fetch("/api/travel-pricing");
     if (!res.ok) throw new Error();
     const tiers: TravelPricingTier[] = await res.json();
     if (tiers.length > 0) {
