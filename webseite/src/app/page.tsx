@@ -90,7 +90,7 @@ export default async function HomePage() {
         {/* Content container for fotobox + text */}
         <div className="absolute inset-0 z-20 max-w-[1400px] mx-auto">
           {/* Fotobox - centered on mobile, left on desktop */}
-          <div className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] bottom-[40px] md:bottom-[30px] w-[220px] h-[370px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
+          <div className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] bottom-[60px] md:bottom-[60px] lg:bottom-[30px] w-[220px] h-[370px] md:w-[300px] md:h-[500px] lg:w-[420px] lg:h-[680px]">
             <Image
               src="/images/hero/fotobox-startseite.png"
               alt="Knipserl Fotobox mit Stativ und Blitz"
@@ -129,9 +129,6 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Dark gradient to mask water behind tripod on mobile */}
-        <div className="absolute bottom-0 left-0 right-0 h-[200px] md:h-[150px] bg-gradient-to-t from-[#1a171b] via-[#1a171b]/70 to-transparent z-[5]" />
-
         {/* Holzsteg at bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <Image
@@ -139,7 +136,7 @@ export default async function HomePage() {
             alt=""
             width={1920}
             height={217}
-            className="w-full min-h-[70px] object-cover object-top md:min-h-0 md:h-auto"
+            className="w-full min-h-[150px] object-cover object-top md:min-h-[180px] lg:min-h-0 lg:h-auto"
             priority
           />
         </div>
