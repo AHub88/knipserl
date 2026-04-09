@@ -79,9 +79,21 @@ function useGooglePlacesAutocomplete(
 
 function StepHeader({ step, title, subtitle }: { step: number; title: string; subtitle?: string }) {
   return (
-    <div className="flex items-center gap-4 mb-6">
-      <div className="w-12 h-12 rounded-full bg-[#F3A300] flex items-center justify-center flex-shrink-0">
-        <span className="text-white text-[22px] font-bold">{step}</span>
+    <div className="flex items-center gap-5 mb-6">
+      {/* Holzscheibe */}
+      <div
+        className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 border-[3px] border-[#5a3a1a]"
+        style={{
+          background: "radial-gradient(circle at 40% 40%, #c49a5c, #8b6337 50%, #6b4423 80%, #4a2e14)",
+          boxShadow: "inset 0 2px 6px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3)",
+        }}
+      >
+        <span
+          className="text-white text-[28px] drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+          style={{ fontFamily: "'Beyond The Mountains', cursive" }}
+        >
+          {step}
+        </span>
       </div>
       <div>
         <h2 className="text-[28px] md:text-[36px] font-extrabold uppercase tracking-wide text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] leading-tight">
@@ -232,7 +244,7 @@ export default function PriceConfiguratorV2() {
                   </div>
 
                   {/* Image */}
-                  <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center overflow-hidden rounded">
+                  <div className="w-[120px] h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={addon.image} alt="" className="w-full h-auto" />
                   </div>
