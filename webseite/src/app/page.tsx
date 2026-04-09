@@ -73,8 +73,21 @@ export default async function HomePage() {
     getClientLogos(),
     getGoogleReviews(),
   ]);
+  // Preload LCP image — eliminates 700ms+ resource load delay
+  const heroImgBase = "/_next/image?url=%2Fimages%2Fhero%2Ffotobox-rosenheim-muenchen.jpg";
+  const heroSrcSet = [640, 828, 1080, 1200, 1920]
+    .map((w) => `${heroImgBase}&w=${w}&q=75 ${w}w`)
+    .join(", ");
+
   return (
     <>
+      <link
+        rel="preload"
+        as="image"
+        imageSrcSet={heroSrcSet}
+        imageSizes="100vw"
+        fetchPriority="high"
+      />
       {/* ===== HERO / SLIDER ===== */}
       <section className="relative h-[500px] md:h-[700px] lg:h-[900px] overflow-hidden">
         {/* Background image */}
