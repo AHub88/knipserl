@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { ADDONS, BASE_PRICE } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
@@ -12,12 +12,71 @@ interface DeliveryInfo {
   destinationName: string;
 }
 
+function useGooglePlacesAutocomplete(
+  inputRef: React.RefObject<HTMLInputElement | null>,
+  onSelect: (place: string) => void
+) {
+  useEffect(() => {
+    let autocomplete: google.maps.places.Autocomplete | null = null;
+
+    async function init() {
+      const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+      if (!adminUrl || !inputRef.current) return;
+
+      try {
+        const res = await fetch(`${adminUrl}/api/maps-config`);
+        const data = await res.json();
+        if (!data.apiKey) return;
+
+        // Load Google Maps script if not already loaded
+        if (!window.google?.maps?.places) {
+          await new Promise<void>((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=places&language=de&region=DE`;
+            script.async = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject();
+            document.head.appendChild(script);
+          });
+        }
+
+        autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
+          types: ["establishment", "geocode"],
+          componentRestrictions: { country: ["de", "at"] },
+          fields: ["formatted_address", "name"],
+        });
+
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete?.getPlace();
+          if (place?.formatted_address) {
+            onSelect(place.name ? `${place.name}, ${place.formatted_address}` : place.formatted_address);
+          }
+        });
+      } catch {
+        // Google Maps not available — fallback to manual input
+      }
+    }
+
+    init();
+    return () => {
+      if (autocomplete) google.maps.event.clearInstanceListeners(autocomplete);
+    };
+  }, [inputRef, onSelect]);
+}
+
 export default function PriceConfigurator() {
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
   const [destination, setDestination] = useState("");
   const [delivery, setDelivery] = useState<DeliveryInfo | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
+  const destinationInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePlaceSelect = useCallback((place: string) => {
+    setDestination(place);
+  }, []);
+
+  useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);
 
   const toggleAddon = (id: string) => {
     setSelectedAddons((prev) => {
@@ -170,6 +229,7 @@ export default function PriceConfigurator() {
                 Veranstaltungsort
               </label>
               <input
+                ref={destinationInputRef}
                 type="text"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
