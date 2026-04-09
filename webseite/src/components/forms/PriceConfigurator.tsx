@@ -234,7 +234,7 @@ export default function PriceConfigurator() {
 
       {/* ===== FAHRTKOSTEN ===== */}
       <div>
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Fahrtkosten
           </h2>
@@ -243,114 +243,123 @@ export default function PriceConfigurator() {
           </p>
         </div>
 
-        <p className="text-[#666] text-[15px] mb-6" style={{ fontWeight: 400, textTransform: "none" }}>
+        <p className="text-[#666] text-[15px] mb-8 max-w-[800px] mx-auto text-center" style={{ fontWeight: 400, textTransform: "none" }}>
           Wir liefern die Fotobox zu Deiner Location und kümmern uns um den kompletten Auf- und Abbau.
-          Da wir daher die Strecke zu Deiner Location insgesamt 4x mal fahren müssen, kommen hier ab 15km fahrtkostenhinzu.
+          Da wir daher die Strecke zu Deiner Location insgesamt 4x mal fahren müssen, kommen hier ab 15km Fahrtkosten hinzu.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left: Form */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                Veranstaltungsort
-              </label>
-              <input
-                ref={destinationInputRef}
-                type="text"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                placeholder="Name/Anschrift eingeben..."
-                className="w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    calculateDistance();
-                  }
-                }}
-              />
-            </div>
-
-            <div>
-              <span className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                Berechnete Distanz
-              </span>
-              <span className="text-[#666] text-[20px]">
-                {delivery ? `${delivery.distanceKm} km` : "– km"}
-              </span>
-            </div>
-
-            {delivery?.outsideDeliveryArea && (
-              <p className="bg-red-600 text-white font-bold text-[14px] px-3 py-2 mt-1 inline-block uppercase font-[family-name:var(--font-fira-condensed)]">
-                Außerhalb Liefergebiet!
-              </p>
-            )}
-
-            <div>
-              <span className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                Fahrtkosten
-              </span>
-              <span className="text-[#666] text-[20px]">
-                {delivery
-                  ? delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`
-                  : "– €"}
-              </span>
-            </div>
-
-            {deliveryError && (
-              <p className="text-red-600 text-sm">{deliveryError}</p>
-            )}
-          </div>
-
-          {/* Right: Map */}
-          <div>
-            <span className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-              Map
-            </span>
-            <div className="bg-gray-100 overflow-hidden" style={{ height: "280px" }}>
-              {mapsApiKey ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={delivery?.routePolyline
-                    ? `https://maps.googleapis.com/maps/api/staticmap?size=600x280&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&path=color:0xF3A300ff|weight:4|enc:${encodeURIComponent(delivery.routePolyline)}&markers=color:red|${delivery.destinationLat},${delivery.destinationLon}&markers=color:red|47.8571,12.1181&key=${mapsApiKey}`
-                    : `https://maps.googleapis.com/maps/api/staticmap?center=47.8571,12.1181&zoom=8&size=600x280&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&markers=color:red|47.8571,12.1181&key=${mapsApiKey}`
-                  }
-                  alt="Karte mit Route"
-                  className="w-full h-full object-cover"
+        <div
+          className="bg-[#F3F4F6] rounded-lg p-6 md:p-8"
+          style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left: Form */}
+            <div className="space-y-5">
+              <div>
+                <label className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-2 font-[family-name:var(--font-fira-condensed)]">
+                  Veranstaltungsort
+                </label>
+                <input
+                  ref={destinationInputRef}
+                  type="text"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  placeholder="Name/Anschrift eingeben..."
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:border-[#F3A300] focus:outline-none"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      calculateDistance();
+                    }
+                  }}
                 />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                  Karte wird geladen...
-                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-4">
+                <span className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                  Berechnete Distanz
+                </span>
+                <span className="text-[var(--brand-dark)] text-[22px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
+                  {delivery ? `${delivery.distanceKm} km` : "–"}
+                </span>
+              </div>
+
+              {delivery?.outsideDeliveryArea && (
+                <p className="bg-red-600 text-white font-bold text-[14px] px-4 py-2 rounded inline-block uppercase font-[family-name:var(--font-fira-condensed)]">
+                  Außerhalb Liefergebiet!
+                </p>
               )}
+
+              <div className="border-t border-gray-200 pt-4">
+                <span className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                  Fahrtkosten
+                </span>
+                <span className="text-[var(--brand-dark)] text-[22px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
+                  {delivery
+                    ? delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`
+                    : "–"}
+                </span>
+              </div>
+
+              {deliveryError && (
+                <p className="text-red-600 text-sm">{deliveryError}</p>
+              )}
+            </div>
+
+            {/* Right: Map */}
+            <div>
+              <span className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-2 font-[family-name:var(--font-fira-condensed)]">
+                Map
+              </span>
+              <div className="bg-gray-200 rounded overflow-hidden" style={{ height: "260px" }}>
+                {mapsApiKey ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={delivery?.routePolyline
+                      ? `https://maps.googleapis.com/maps/api/staticmap?size=600x260&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&path=color:0xF3A300ff|weight:5|enc:${encodeURIComponent(delivery.routePolyline)}&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}&markers=color:0xF3A300|47.8571,12.1181&key=${mapsApiKey}`
+                      : `https://maps.googleapis.com/maps/api/staticmap?center=47.8571,12.1181&zoom=8&size=600x260&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&markers=color:0xF3A300|47.8571,12.1181&key=${mapsApiKey}`
+                    }
+                    alt="Karte mit Route"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                    Karte wird geladen...
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* ===== GESAMTPREIS ===== */}
-      <div className="text-center py-4">
-        <p className="text-[60px] md:text-[80px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
-          {totalPrice.toFixed(2)} &euro;
-        </p>
-        {(addonsTotal > 0 || deliveryPrice > 0) && (
-          <div className="mt-3 text-[#666] text-[14px] space-y-1" style={{ fontWeight: 400, textTransform: "none" }}>
-            <p>Fotobox mit Drucker: {BASE_PRICE.toFixed(2)} &euro;</p>
-            {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
-              <p key={addon.id}>+ {addon.name}: {addon.price.toFixed(2)} &euro;</p>
-            ))}
-            {deliveryPrice > 0 && (
-              <p>+ Fahrtkosten ({delivery?.distanceKm} km): {deliveryPrice.toFixed(2)} &euro;</p>
-            )}
-          </div>
-        )}
+      <div className="text-center pt-8 pb-4">
+        <div className="inline-block">
+          <p className="text-[70px] md:text-[90px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+            {totalPrice.toFixed(2)}&euro;
+          </p>
+          {(addonsTotal > 0 || deliveryPrice > 0) && (
+            <div className="mt-4 text-[var(--brand-dark)] text-[14px] space-y-0.5 text-left" style={{ fontWeight: 400, textTransform: "none" }}>
+              <p>Fotobox mit Drucker: {BASE_PRICE.toFixed(2)} &euro;</p>
+              {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
+                <p key={addon.id}>+ {addon.name}: {addon.price.toFixed(2)} &euro;</p>
+              ))}
+              {deliveryPrice > 0 && (
+                <p>+ Fahrtkosten ({delivery?.distanceKm} km): {deliveryPrice.toFixed(2)} &euro;</p>
+              )}
+            </div>
+          )}
+        </div>
 
-        <a
-          href="/termin-reservieren"
-          className="btn-brand mt-8 inline-block"
-        >
-          Jetzt reservieren
-        </a>
+        <div className="mt-8">
+          <a
+            href="/termin-reservieren"
+            className="btn-brand"
+          >
+            Jetzt reservieren
+          </a>
+        </div>
       </div>
     </div>
   );
