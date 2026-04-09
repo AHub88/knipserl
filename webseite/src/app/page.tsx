@@ -104,7 +104,7 @@ export default async function HomePage() {
             src="/images/hero/fotobox-rosenheim-muenchen.jpg"
             alt="Knipserl Fotobox mieten in Rosenheim und München"
             fetchPriority="high"
-            decoding="async"
+            decoding="sync"
             className="absolute inset-0 w-full h-full object-cover object-center md:object-[center_20%]"
           />
         </picture>
@@ -225,15 +225,22 @@ export default async function HomePage() {
           {/* Two column: image + text */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             <div>
-              <Image
-                src="/images/hero/fotobox-startseite-teaser.jpg"
-                alt="Knipserl Fotobox im Einsatz bei einer Party"
-                width={739}
-                height={900}
-                className="w-full h-auto"
-                sizes="(max-width: 768px) 100vw, 500px"
-                quality={85}
-              />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet="/images/hero/optimized/teaser-500.avif 500w, /images/hero/optimized/teaser-739.avif 739w"
+                  sizes="(max-width: 768px) 100vw, 500px"
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/hero/fotobox-startseite-teaser.jpg"
+                  alt="Knipserl Fotobox im Einsatz bei einer Party"
+                  width={739}
+                  height={900}
+                  className="w-full h-auto"
+                  loading="lazy"
+                />
+              </picture>
             </div>
             <div className="text-[#1a171b] text-lg leading-relaxed space-y-5">
               <p>
