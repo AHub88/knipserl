@@ -147,7 +147,7 @@ export default async function HomePage() {
         style={{ background: `#666 url('/images/misc/main_back_gr-2.webp') repeat`, backgroundSize: '1000px 500px' }}
       >
         <div className="max-w-[1200px] mx-auto px-6 flex flex-col lg:flex-row items-center lg:items-center justify-between gap-6 lg:gap-8 text-center lg:text-left">
-          <div className="text-white lg:max-w-[550px]">
+          <div className="text-white lg:max-w-[700px]">
             <h2 className="text-[28px] md:text-[40px] lg:text-[52px] leading-[1] font-[800]">
               <span className="text-[#F3A300]">Fotobox</span> für Rosenheim,{" "}
               München und Umgebung
