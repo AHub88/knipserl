@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
-import { ADDONS, BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
+import { ADDONS, BASE_PRICE } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
 
 interface DeliveryInfo {
@@ -18,18 +18,6 @@ export default function PriceConfigurator() {
   const [delivery, setDelivery] = useState<DeliveryInfo | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
-
-  // Form fields for the inquiry
-  const [formData, setFormData] = useState({
-    vorname: "",
-    nachname: "",
-    telefon: "",
-    email: "",
-    eventType: "",
-    datum: "",
-    nachricht: "",
-  });
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const toggleAddon = (id: string) => {
     setSelectedAddons((prev) => {
@@ -68,93 +56,27 @@ export default function PriceConfigurator() {
     }
   }, [destination]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitStatus("loading");
-
-    const payload = {
-      art: "Preiskonfigurator",
-      ...formData,
-      location: destination,
-      addons: ADDONS.filter((a) => selectedAddons.has(a.id)).map((a) => a.name),
-      deliveryDistance: delivery?.distanceKm,
-      deliveryPrice,
-      totalPrice,
-    };
-
-    try {
-      const res = await fetch("/api/anfrage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error();
-      setSubmitStatus("success");
-    } catch {
-      setSubmitStatus("error");
-    }
-  };
-
-  if (submitStatus === "success") {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center max-w-2xl mx-auto">
-        <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-        <h3 className="text-xl font-semibold text-green-800 mb-2">Anfrage erfolgreich gesendet!</h3>
-        <p className="text-green-700 mb-2">
-          Deine Konfiguration mit einem Gesamtpreis von <strong>{totalPrice.toFixed(2)} &euro;</strong> wurde übermittelt.
-        </p>
-        <p className="text-green-600 text-sm">Wir melden uns schnellstmöglich bei Dir.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-10">
-      {/* Base package */}
-      <section className="bg-white rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
-        <div className="bg-amber-600 text-white px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-2xl font-bold">Fotobox mit Drucker</h3>
-              <p className="text-amber-100">Unser Komplettpaket</p>
-            </div>
-            <div className="text-right">
-              <span className="text-4xl font-bold">{BASE_PRICE}&euro;</span>
-            </div>
-          </div>
+    <div className="space-y-12">
+      {/* ===== ZUBEHÖR ===== */}
+      <div>
+        <div className="text-center mb-10">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
+            Fotobox Zubehör
+          </h2>
+          <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+            Zusätzlich buchbar
+          </p>
         </div>
-        <div className="p-6">
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {BASE_FEATURES.map((feature) => (
-              <li key={feature} className="flex items-start gap-2 text-stone-700">
-                <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-sm">{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
 
-      {/* Addons */}
-      <section>
-        <h3 className="text-2xl font-bold text-stone-800 mb-2">Fotobox Zubehör</h3>
-        <p className="text-stone-600 mb-6">Zusätzlich buchbar</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {ADDONS.map((addon) => (
             <label
               key={addon.id}
-              className={`flex gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+              className={`flex gap-4 p-4 bg-white cursor-pointer transition-all shadow-md hover:shadow-lg ${
                 selectedAddons.has(addon.id)
-                  ? "border-amber-500 bg-amber-50 shadow-md"
-                  : "border-stone-200 bg-white hover:border-stone-300"
+                  ? "ring-2 ring-[#F3A300]"
+                  : ""
               }`}
             >
               <input
@@ -163,249 +85,160 @@ export default function PriceConfigurator() {
                 onChange={() => toggleAddon(addon.id)}
                 className="sr-only"
               />
-              <div className="w-20 h-20 relative flex-shrink-0 rounded-lg overflow-hidden bg-stone-100">
+              {/* Checkbox indicator */}
+              <div className="flex-shrink-0 pt-1">
+                <div
+                  className={`w-5 h-5 border-2 flex items-center justify-center ${
+                    selectedAddons.has(addon.id)
+                      ? "bg-[#F3A300] border-[#F3A300]"
+                      : "border-gray-300"
+                  }`}
+                >
+                  {selectedAddons.has(addon.id) && (
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+
+              {/* Image */}
+              <div className="w-16 h-16 relative flex-shrink-0 overflow-hidden bg-gray-100">
                 <Image
                   src={addon.image}
                   alt={addon.name}
                   fill
                   className="object-cover"
-                  sizes="80px"
+                  sizes="64px"
                 />
               </div>
+
+              {/* Text */}
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start gap-2">
-                  <h4 className="font-semibold text-stone-800">{addon.name}</h4>
-                  <span className="text-amber-700 font-bold whitespace-nowrap">
-                    +{addon.price},00 &euro;
+                  <h4 className="font-extrabold text-[#1a171b] text-[15px] uppercase font-[family-name:var(--font-fira-condensed)]">
+                    {addon.name}
+                  </h4>
+                  <span className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]">
+                    +{addon.price}&euro;
                   </span>
                 </div>
-                <p className="text-sm text-stone-500 mt-1 line-clamp-2">
+                <p className="text-[13px] text-[#666] mt-1 line-clamp-2" style={{ fontWeight: 400, textTransform: "none" }}>
                   {addon.description}
                 </p>
                 {addon.link && (
                   <a
                     href={addon.link}
-                    className="text-xs text-amber-600 hover:underline mt-1 inline-block"
+                    className="text-xs text-[#F3A300] hover:underline mt-1 inline-block"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    mehr Infos
+                    mehr Infos &raquo;
                   </a>
                 )}
-              </div>
-              <div className="flex items-center">
-                <div
-                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${
-                    selectedAddons.has(addon.id)
-                      ? "bg-amber-500 border-amber-500"
-                      : "border-stone-300"
-                  }`}
-                >
-                  {selectedAddons.has(addon.id) && (
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
               </div>
             </label>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* Distance / delivery cost */}
-      <section className="bg-white rounded-2xl shadow-lg border border-stone-200 p-6">
-        <h3 className="text-2xl font-bold text-stone-800 mb-2">Fahrtkosten</h3>
-        <p className="text-stone-600 mb-1">Für den Auf- und Abbau</p>
-        <p className="text-sm text-stone-500 mb-6">
-          Wir liefern die Fotobox zu Deiner Location und kümmern uns um den kompletten Auf- und Abbau.
-          Die ersten 15 km ab Rosenheim sind kostenlos.
-        </p>
-
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            placeholder="Name oder Adresse der Location eingeben..."
-            className="flex-1 px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                calculateDistance();
-              }
-            }}
-          />
-          <button
-            onClick={calculateDistance}
-            disabled={deliveryLoading || !destination.trim()}
-            className="px-6 py-3 bg-stone-700 text-white rounded-lg hover:bg-stone-800 transition-colors disabled:opacity-50 font-medium"
-          >
-            {deliveryLoading ? "..." : "Berechnen"}
-          </button>
+      {/* ===== FAHRTKOSTEN ===== */}
+      <div>
+        <div className="text-center mb-10">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
+            Fahrtkosten
+          </h2>
         </div>
 
-        {deliveryError && (
-          <p className="mt-3 text-red-600 text-sm">{deliveryError}</p>
-        )}
-
-        {delivery && (
-          <div className="mt-4 p-4 bg-stone-50 rounded-lg">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-stone-700">
-                  Entfernung: <strong>{delivery.distanceKm} km</strong>
-                </p>
-                {delivery.outsideDeliveryArea && (
-                  <p className="text-red-600 text-sm mt-1">
-                    Liegt außerhalb unseres regulären Liefergebiets (120 km). Bitte kontaktiere uns direkt.
-                  </p>
-                )}
-              </div>
-              <div className="text-right">
-                <span className="text-xl font-bold text-stone-800">
-                  {delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Total price */}
-      <section className="bg-stone-800 text-white rounded-2xl p-6">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-stone-300">Fotobox mit Drucker</span>
-          <span>{BASE_PRICE.toFixed(2)} &euro;</span>
-        </div>
-        {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
-          <div key={addon.id} className="flex justify-between items-center mb-2 text-sm">
-            <span className="text-stone-400">{addon.name}</span>
-            <span>+{addon.price.toFixed(2)} &euro;</span>
-          </div>
-        ))}
-        {deliveryPrice > 0 && (
-          <div className="flex justify-between items-center mb-2 text-sm">
-            <span className="text-stone-400">Fahrtkosten ({delivery?.distanceKm} km)</span>
-            <span>+{deliveryPrice.toFixed(2)} &euro;</span>
-          </div>
-        )}
-        <div className="border-t border-stone-600 pt-4 mt-4 flex justify-between items-center">
-          <span className="text-lg font-semibold">Gesamtsumme</span>
-          <span className="text-3xl font-bold text-amber-400">{totalPrice.toFixed(2)} &euro;</span>
-        </div>
-      </section>
-
-      {/* Inquiry form */}
-      <section className="bg-white rounded-2xl shadow-lg border border-stone-200 p-6">
-        <h3 className="text-2xl font-bold text-stone-800 mb-6">Unverbindliche Anfrage abschicken</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="cfg-datum" className="block text-sm font-medium text-stone-700 mb-1">
-                Wunschdatum *
-              </label>
-              <input
-                type="date"
-                id="cfg-datum"
-                required
-                value={formData.datum}
-                onChange={(e) => setFormData((p) => ({ ...p, datum: e.target.value }))}
-                className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
-            <div>
-              <label htmlFor="cfg-event" className="block text-sm font-medium text-stone-700 mb-1">
-                Art des Events *
-              </label>
-              <select
-                id="cfg-event"
-                required
-                value={formData.eventType}
-                onChange={(e) => setFormData((p) => ({ ...p, eventType: e.target.value }))}
-                className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              >
-                <option value="">Bitte wählen...</option>
-                <option value="Hochzeit">Hochzeit</option>
-                <option value="Geburtstag">Geburtstag</option>
-                <option value="Firmenevent">Firmenevent</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              type="text"
-              required
-              placeholder="Vorname *"
-              value={formData.vorname}
-              onChange={(e) => setFormData((p) => ({ ...p, vorname: e.target.value }))}
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            />
-            <input
-              type="text"
-              required
-              placeholder="Nachname *"
-              value={formData.nachname}
-              onChange={(e) => setFormData((p) => ({ ...p, nachname: e.target.value }))}
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              type="tel"
-              required
-              placeholder="Telefon *"
-              value={formData.telefon}
-              onChange={(e) => setFormData((p) => ({ ...p, telefon: e.target.value }))}
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            />
-            <input
-              type="email"
-              required
-              placeholder="E-Mail *"
-              value={formData.email}
-              onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            />
-          </div>
-
-          <textarea
-            rows={3}
-            placeholder="Fragen / Anmerkungen"
-            value={formData.nachricht}
-            onChange={(e) => setFormData((p) => ({ ...p, nachricht: e.target.value }))}
-            className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-y"
-          />
-
-          <p className="text-xs text-stone-500">
-            Detaillierte Informationen zum Umgang mit Nutzerdaten finden Sie in unserer{" "}
-            <a href="/datenschutzerklaerung" className="underline hover:text-amber-700">
-              Datenschutzerklärung
-            </a>.
+        <div className="bg-white shadow-md p-6">
+          <p className="text-[#666] text-[15px] mb-1" style={{ fontWeight: 400, textTransform: "none" }}>
+            Wir liefern die Fotobox zu Deiner Location und kümmern uns um den kompletten Auf- und Abbau.
+            Die ersten 15 km ab Rosenheim sind kostenlos. Berechne Dir Deine individuelle Anfahrt.
           </p>
 
-          <button
-            type="submit"
-            disabled={submitStatus === "loading"}
-            className="w-full py-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 text-lg"
-          >
-            {submitStatus === "loading"
-              ? "Wird gesendet..."
-              : `Unverbindliche Anfrage jetzt abschicken`}
-          </button>
+          <div className="mt-6 space-y-4">
+            <div>
+              <label className="block text-[13px] font-extrabold uppercase text-[#1a171b] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                Veranstaltungsort / Adresse
+              </label>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  placeholder="z.B. Schloss Herrenchiemsee"
+                  className="flex-1 px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 text-[#1a171b] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      calculateDistance();
+                    }
+                  }}
+                />
+                <button
+                  onClick={calculateDistance}
+                  disabled={deliveryLoading || !destination.trim()}
+                  className="px-6 py-3 bg-[#1a171b] text-white font-bold uppercase text-[14px] tracking-wide hover:bg-[#333] transition-colors disabled:opacity-50 font-[family-name:var(--font-fira-condensed)]"
+                >
+                  {deliveryLoading ? "..." : "Berechnen"}
+                </button>
+              </div>
+            </div>
 
-          {submitStatus === "error" && (
-            <p className="text-red-600 text-sm text-center">
-              Fehler beim Senden. Bitte versuche es erneut.
-            </p>
-          )}
-        </form>
-      </section>
+            {deliveryError && (
+              <p className="text-red-600 text-sm">{deliveryError}</p>
+            )}
+
+            {delivery && (
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div>
+                  <span className="block text-[13px] font-extrabold uppercase text-[#1a171b] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                    Berechnete Zufahrt
+                  </span>
+                  <span className="text-[#666] text-base">{delivery.distanceKm} km</span>
+                </div>
+                <div>
+                  <span className="block text-[13px] font-extrabold uppercase text-[#1a171b] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                    Fahrtkosten
+                  </span>
+                  <span className="text-[#666] text-base">
+                    {delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`}
+                  </span>
+                  {delivery.outsideDeliveryArea && (
+                    <p className="text-red-600 text-sm mt-1">
+                      Liegt außerhalb unseres regulären Liefergebiets. Bitte kontaktiere uns direkt.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ===== GESAMTPREIS ===== */}
+      <div className="text-center py-4">
+        <p className="text-[60px] md:text-[80px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+          {totalPrice.toFixed(2)} &euro;
+        </p>
+        {(addonsTotal > 0 || deliveryPrice > 0) && (
+          <div className="mt-3 text-white/70 text-[14px] space-y-1" style={{ fontWeight: 400, textTransform: "none" }}>
+            <p>Fotobox mit Drucker: {BASE_PRICE.toFixed(2)} &euro;</p>
+            {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
+              <p key={addon.id}>+ {addon.name}: {addon.price.toFixed(2)} &euro;</p>
+            ))}
+            {deliveryPrice > 0 && (
+              <p>+ Fahrtkosten ({delivery?.distanceKm} km): {deliveryPrice.toFixed(2)} &euro;</p>
+            )}
+          </div>
+        )}
+
+        <a
+          href="/termin-reservieren"
+          className="btn-brand mt-8 inline-block"
+        >
+          Jetzt reservieren
+        </a>
+      </div>
     </div>
   );
 }
