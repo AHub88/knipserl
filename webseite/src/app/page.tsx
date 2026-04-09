@@ -259,7 +259,7 @@ export default async function HomePage() {
             {/* Left column */}
             <div className="space-y-6">
               <div className="glass-card p-6">
-                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                <div className="flex flex-col-reverse items-center lg:flex-row lg:items-start gap-4">
                   <div className="flex-1 text-center lg:text-right">
                     <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Hochwertige Kamera</h3>
                     <p className="text-base text-gray-200 leading-snug">
@@ -271,7 +271,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <div className="glass-card p-6">
-                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                <div className="flex flex-col-reverse items-center lg:flex-row lg:items-start gap-4">
                   <div className="flex-1 text-center lg:text-right">
                     <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Individuelles Drucklayout</h3>
                     <p className="text-base text-gray-200 leading-snug">
@@ -283,7 +283,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <div className="glass-card p-6">
-                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                <div className="flex flex-col-reverse items-center lg:flex-row lg:items-start gap-4">
                   <div className="flex-1 text-center lg:text-right">
                     <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Riesiger Touchscreen</h3>
                     <p className="text-base text-gray-200 leading-snug">
@@ -295,7 +295,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <div className="glass-card p-6">
-                <div className="flex flex-col items-center lg:flex-row lg:items-start gap-4">
+                <div className="flex flex-col-reverse items-center lg:flex-row lg:items-start gap-4">
                   <div className="flex-1 text-center lg:text-right">
                     <h3 className="text-[28px] font-extrabold mb-2 uppercase leading-tight font-[family-name:var(--font-fira-condensed)]">Individualisierung / Startscreen</h3>
                     <p className="text-base text-gray-200 leading-snug">
