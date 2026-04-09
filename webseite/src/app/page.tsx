@@ -85,7 +85,8 @@ export default async function HomePage() {
           sizes="100vw"
           className="object-cover object-center md:object-[center_20%]"
           priority
-          quality={80}
+          fetchPriority="high"
+          quality={75}
         />
 
         {/* Content container for fotobox + text */}
@@ -135,14 +136,15 @@ export default async function HomePage() {
 
         {/* Holzsteg at bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
-          <picture>
-            <source srcSet="/images/hero/steg.webp" type="image/webp" />
-            <img
-              src="/images/hero/steg.png"
-              alt=""
-              className="hero-steg"
-            />
-          </picture>
+          <Image
+            src="/images/hero/steg.webp"
+            alt=""
+            width={1920}
+            height={217}
+            className="hero-steg"
+            sizes="100vw"
+            quality={60}
+          />
         </div>
       </section>
 
