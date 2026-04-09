@@ -66,9 +66,9 @@ export default function PreisePage() {
       <PageHeader title="Preiskonfigurator" />
 
       {/* ===== INCLUDED FEATURES ===== */}
-      <section className="py-16 md:py-20">
+      <section className="py-10 md:py-14">
         <div className="max-w-[1100px] mx-auto px-6">
-          <div className="text-center mb-14">
+          <div className="text-center mb-8">
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
               Unser Preis: 379&euro;
             </h2>
@@ -77,7 +77,7 @@ export default function PreisePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
             {includedFeatures.map((feature) => (
               <div key={feature.title} className="text-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -86,12 +86,12 @@ export default function PreisePage() {
                   alt=""
                   width={83}
                   height={70}
-                  className="mx-auto mb-4"
+                  className="mx-auto mb-2"
                 />
-                <h3 className="text-[20px] font-extrabold uppercase tracking-wide mb-2 font-[family-name:var(--font-fira-condensed)]">
+                <h3 className="text-[16px] font-extrabold uppercase tracking-wide mb-1 font-[family-name:var(--font-fira-condensed)]">
                   {feature.title}
                 </h3>
-                <p className="text-[15px] text-[#666] leading-relaxed font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
+                <p className="text-[13px] text-[#666] leading-snug font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
                   {feature.description}
                 </p>
               </div>
