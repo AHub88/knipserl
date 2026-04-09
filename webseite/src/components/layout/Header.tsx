@@ -118,7 +118,7 @@ export default function Header() {
                       <Link
                         key={child.href}
                         href={child.href}
-                        className="block px-5 py-3 text-[#3c3e45] hover:text-[#F3A300] hover:bg-gray-50 transition-colors text-[16px] leading-[20px] uppercase font-normal font-[family-name:var(--font-fira-condensed)]"
+                        className="block px-5 py-3 text-[#3c3e45] hover:text-[#F3A300] hover:bg-gray-50 transition-colors text-[16px] leading-[20px] uppercase font-bold font-[family-name:var(--font-fira-condensed)]"
                       >
                         {child.label}
                       </Link>

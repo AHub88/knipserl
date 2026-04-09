@@ -9,13 +9,13 @@ import { SITE_NAME, SITE_URL } from "@/lib/constants";
 const firaSans = Fira_Sans({
   variable: "--font-fira-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const firaCondensed = Fira_Sans_Extra_Condensed({
   variable: "--font-fira-condensed",
   subsets: ["latin"],
-  weight: ["400", "700", "800"],
+  weight: ["700", "800"],
 });
 
 // generateMetadata() is evaluated at REQUEST time, not build time

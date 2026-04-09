@@ -116,8 +116,8 @@ export default function FAQPage() {
                       }}
                     >
                       {faq.question}
-                      <span className="text-white text-[24px] font-light flex-shrink-0 ml-4 group-open:hidden">+</span>
-                      <span className="text-white text-[24px] font-light flex-shrink-0 ml-4 hidden group-open:inline">−</span>
+                      <span className="text-white text-[24px] font-normal flex-shrink-0 ml-4 group-open:hidden">+</span>
+                      <span className="text-white text-[24px] font-normal flex-shrink-0 ml-4 hidden group-open:inline">−</span>
                     </summary>
                     <div
                       className="px-6 py-5 text-white text-[16px] leading-relaxed"

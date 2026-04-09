@@ -71,4 +71,16 @@ jobs:
 
             docker compose -f docker-compose.prod.yml up -d ${{ steps.env.outputs.service }}
             docker image prune -f
+
+            # Purge Varnish cache for this site
+            DOMAIN="${{ steps.env.outputs.env == 'production' && 'www.knipserl.de' || 'dev.knipserl.de' }}"
+            if command -v varnishadm &> /dev/null; then
+              varnishadm "ban req.http.host == ${DOMAIN}"
+              echo "✓ Varnish cache purged for ${DOMAIN}"
+            elif curl -s -o /dev/null -w "%{http_code}" -X PURGE "http://127.0.0.1:6081/" -H "Host: ${DOMAIN}" | grep -q "200"; then
+              echo "✓ Varnish cache purged via PURGE request for ${DOMAIN}"
+            else
+              echo "⚠ Varnish purge skipped (varnishadm not available or PURGE failed)"
+            fi
+
             echo "✓ Website (${{ steps.env.outputs.env }}) deployed successfully"
