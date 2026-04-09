@@ -152,70 +152,90 @@ export default function PriceConfigurator() {
           <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Fahrtkosten
           </h2>
+          <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+            für den Auf- und Abbau
+          </p>
         </div>
 
-        <div className="bg-white shadow-md p-6">
-          <p className="text-[#666] text-[15px] mb-1" style={{ fontWeight: 400, textTransform: "none" }}>
-            Wir liefern die Fotobox zu Deiner Location und kümmern uns um den kompletten Auf- und Abbau.
-            Die ersten 15 km ab Rosenheim sind kostenlos. Berechne Dir Deine individuelle Anfahrt.
-          </p>
+        <p className="text-[#666] text-[15px] mb-6" style={{ fontWeight: 400, textTransform: "none" }}>
+          Wir liefern die Fotobox zu Deiner Location und kümmern uns um den kompletten Auf- und Abbau.
+          Da wir daher die Strecke zu Deiner Location insgesamt 4x mal fahren müssen, kommen hier ab 15km fahrtkostenhinzu.
+        </p>
 
-          <div className="mt-6 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left: Form */}
+          <div className="space-y-4">
             <div>
               <label className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                Veranstaltungsort / Adresse
+                Veranstaltungsort
               </label>
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  placeholder="z.B. Schloss Herrenchiemsee"
-                  className="flex-1 px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      calculateDistance();
-                    }
-                  }}
-                />
-                <button
-                  onClick={calculateDistance}
-                  disabled={deliveryLoading || !destination.trim()}
-                  className="px-6 py-3 bg-[#1a171b] text-white font-bold uppercase text-[14px] tracking-wide hover:bg-[#333] transition-colors disabled:opacity-50 font-[family-name:var(--font-fira-condensed)]"
-                >
-                  {deliveryLoading ? "..." : "Berechnen"}
-                </button>
-              </div>
+              <input
+                type="text"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                placeholder="Name/Anschrift eingeben..."
+                className="w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    calculateDistance();
+                  }
+                }}
+              />
+            </div>
+
+            <div>
+              <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                Berechnete Distanz
+              </span>
+              <span className="text-[#666] text-base">
+                {delivery ? `${delivery.distanceKm} km` : "– km"}
+              </span>
+            </div>
+
+            <div>
+              <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                Fahrtkosten
+              </span>
+              <span className="text-[#666] text-base">
+                {delivery
+                  ? delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`
+                  : "– €"}
+              </span>
+              {delivery?.outsideDeliveryArea && (
+                <p className="text-red-600 text-sm mt-1">
+                  Liegt außerhalb unseres regulären Liefergebiets. Bitte kontaktiere uns direkt.
+                </p>
+              )}
             </div>
 
             {deliveryError && (
               <p className="text-red-600 text-sm">{deliveryError}</p>
             )}
 
-            {delivery && (
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div>
-                  <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                    Berechnete Zufahrt
-                  </span>
-                  <span className="text-[#666] text-base">{delivery.distanceKm} km</span>
-                </div>
-                <div>
-                  <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                    Fahrtkosten
-                  </span>
-                  <span className="text-[#666] text-base">
-                    {delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`}
-                  </span>
-                  {delivery.outsideDeliveryArea && (
-                    <p className="text-red-600 text-sm mt-1">
-                      Liegt außerhalb unseres regulären Liefergebiets. Bitte kontaktiere uns direkt.
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
+            <button
+              onClick={calculateDistance}
+              disabled={deliveryLoading || !destination.trim()}
+              className="px-6 py-3 bg-[var(--brand-dark)] text-white font-bold uppercase text-[14px] tracking-wide hover:bg-[#333] transition-colors disabled:opacity-50 font-[family-name:var(--font-fira-condensed)]"
+            >
+              {deliveryLoading ? "Wird berechnet..." : "Berechnen"}
+            </button>
+          </div>
+
+          {/* Right: Map */}
+          <div>
+            <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+              Map
+            </span>
+            <div className="bg-gray-100 overflow-hidden" style={{ height: "280px" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://staticmap.openstreetmap.de/staticmap.php?center=47.8566,12.1300&zoom=8&size=500x280&markers=47.8566,12.1300,ol-marker`}
+                alt="Karte Rosenheim und Umgebung"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </div>
