@@ -91,7 +91,7 @@ export default function PriceConfigurator() {
                   className={`w-5 h-5 border-2 flex items-center justify-center ${
                     selectedAddons.has(addon.id)
                       ? "bg-[#F3A300] border-[#F3A300]"
-                      : "border-gray-300"
+                      : "bg-[#F3F4F6] border-[#F3F4F6]"
                   }`}
                 >
                   {selectedAddons.has(addon.id) && (
@@ -103,13 +103,13 @@ export default function PriceConfigurator() {
               </div>
 
               {/* Image */}
-              <div className="w-16 h-16 relative flex-shrink-0 overflow-hidden bg-gray-100">
+              <div className="w-24 h-24 relative flex-shrink-0 overflow-hidden bg-gray-100">
                 <Image
                   src={addon.image}
                   alt={addon.name}
                   fill
                   className="object-cover"
-                  sizes="64px"
+                  sizes="96px"
                 />
               </div>
 
