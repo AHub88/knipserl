@@ -69,7 +69,7 @@ export default function PreisePage() {
       <section className="py-10 md:py-14">
         <div className="max-w-[1100px] mx-auto px-6">
           <div className="text-center mb-8">
-            <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
               Unser Preis: 379&euro;
             </h2>
             <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
@@ -112,7 +112,7 @@ export default function PreisePage() {
       {/* ===== CTA ===== */}
       <section className="py-20 text-center">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block mb-4">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block mb-4">
             Du möchtest lieber direkt anfragen?
           </h2>
           <p className="text-[18px] text-[#666] mb-8 font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>

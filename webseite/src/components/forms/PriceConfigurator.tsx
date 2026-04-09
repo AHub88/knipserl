@@ -61,7 +61,7 @@ export default function PriceConfigurator() {
       {/* ===== ZUBEHÖR ===== */}
       <div>
         <div className="text-center mb-10">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Fotobox Zubehör
           </h2>
           <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
@@ -116,14 +116,14 @@ export default function PriceConfigurator() {
               {/* Text */}
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start gap-2">
-                  <h4 className="font-bold text-[#1a171b] text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)]">
+                  <h4 className="font-bold text-[var(--brand-dark)] text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)]">
                     {addon.name}
                   </h4>
                   <span className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
                     +{addon.price}&euro;
                   </span>
                 </div>
-                <p className="text-[13px] text-[#666] mt-1 line-clamp-2" style={{ fontWeight: 400, textTransform: "none" }}>
+                <p className="text-[13px] text-[var(--brand-dark)] mt-1 line-clamp-2" style={{ fontWeight: 400, textTransform: "none" }}>
                   {addon.description}
                 </p>
                 {addon.link && (
@@ -144,7 +144,7 @@ export default function PriceConfigurator() {
       {/* ===== FAHRTKOSTEN ===== */}
       <div>
         <div className="text-center mb-10">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Fahrtkosten
           </h2>
         </div>
@@ -157,7 +157,7 @@ export default function PriceConfigurator() {
 
           <div className="mt-6 space-y-4">
             <div>
-              <label className="block text-[13px] font-extrabold uppercase text-[#1a171b] mb-1 font-[family-name:var(--font-fira-condensed)]">
+              <label className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Veranstaltungsort / Adresse
               </label>
               <div className="flex gap-3">
@@ -166,7 +166,7 @@ export default function PriceConfigurator() {
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                   placeholder="z.B. Schloss Herrenchiemsee"
-                  className="flex-1 px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 text-[#1a171b] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
+                  className="flex-1 px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -191,13 +191,13 @@ export default function PriceConfigurator() {
             {delivery && (
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div>
-                  <span className="block text-[13px] font-extrabold uppercase text-[#1a171b] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                  <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                     Berechnete Zufahrt
                   </span>
                   <span className="text-[#666] text-base">{delivery.distanceKm} km</span>
                 </div>
                 <div>
-                  <span className="block text-[13px] font-extrabold uppercase text-[#1a171b] mb-1 font-[family-name:var(--font-fira-condensed)]">
+                  <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                     Fahrtkosten
                   </span>
                   <span className="text-[#666] text-base">
