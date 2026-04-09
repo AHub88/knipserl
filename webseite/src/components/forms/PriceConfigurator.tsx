@@ -104,13 +104,12 @@ export default function PriceConfigurator() {
               </div>
 
               {/* Image */}
-              <div className="w-32 h-32 relative flex-shrink-0 overflow-hidden">
-                <Image
+              <div className="w-[120px] h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={addon.image}
                   alt={addon.name}
-                  fill
-                  className="object-cover"
-                  sizes="128px"
+                  className="w-full h-auto"
                 />
               </div>
 
