@@ -140,15 +140,11 @@ export default function PriceConfiguratorV2() {
     fetch("/api/maps-config").then((r) => r.json()).then((d) => { if (d.apiKey) setMapsApiKey(d.apiKey); }).catch(() => {});
   }, []);
 
-  // Show sticky bar when scrolled past step 1
+  // Show sticky bar after scrolling 200px
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setStickyVisible(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    const el = document.getElementById("step-1");
-    if (el) observer.observe(el);
-    return () => observer.disconnect();
+    const onScroll = () => setStickyVisible(window.scrollY > 200);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const toggleAddon = (id: string) => {
@@ -251,7 +247,7 @@ export default function PriceConfiguratorV2() {
                         +{addon.price}&euro;
                       </span>
                     </div>
-                    <p className="text-[12px] text-[#666] mt-0.5 line-clamp-1" style={{ fontWeight: 400, textTransform: "none" }}>
+                    <p className="text-[13px] text-[#666] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>
                       {addon.description}
                     </p>
                   </div>
