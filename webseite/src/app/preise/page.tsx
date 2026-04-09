@@ -89,10 +89,10 @@ export default function PreisePage() {
                   className="flex-shrink-0 mt-1"
                 />
                 <div>
-                  <h3 className="text-[16px] font-extrabold uppercase tracking-wide mb-1 font-[family-name:var(--font-fira-condensed)]">
+                  <h3 className="text-[20px] font-extrabold uppercase tracking-wide mb-1 font-[family-name:var(--font-fira-condensed)]">
                     {feature.title}
                   </h3>
-                  <p className="text-[13px] text-[#666] leading-snug font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
+                  <p className="text-[14px] text-[#444] leading-snug font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
                     {feature.description}
                   </p>
                 </div>
