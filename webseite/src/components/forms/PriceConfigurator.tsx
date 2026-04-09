@@ -76,7 +76,7 @@ export default function PriceConfigurator() {
               style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
               className={`flex gap-4 p-4 rounded-lg cursor-pointer transition-all ${
                 selectedAddons.has(addon.id)
-                  ? "bg-white ring-2 ring-[#F3A300]"
+                  ? "bg-[var(--brand-dark)] text-white"
                   : "bg-[#F3F4F6]"
               }`}
             >
@@ -86,22 +86,6 @@ export default function PriceConfigurator() {
                 onChange={() => toggleAddon(addon.id)}
                 className="sr-only"
               />
-              {/* Checkbox indicator */}
-              <div className="flex-shrink-0 pt-1">
-                <div
-                  className={`w-5 h-5 border-2 flex items-center justify-center ${
-                    selectedAddons.has(addon.id)
-                      ? "bg-[#F3A300] border-[#F3A300]"
-                      : "bg-white border-gray-300"
-                  }`}
-                >
-                  {selectedAddons.has(addon.id) && (
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
-              </div>
 
               {/* Image */}
               <div className="w-[120px] h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
@@ -116,14 +100,18 @@ export default function PriceConfigurator() {
               {/* Text */}
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start gap-2">
-                  <h4 className="font-bold text-[var(--brand-dark)] text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)]">
+                  <h4 className={`font-bold text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
+                    selectedAddons.has(addon.id) ? "text-white" : "text-[var(--brand-dark)]"
+                  }`}>
                     {addon.name}
                   </h4>
                   <span className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
                     +{addon.price}&euro;
                   </span>
                 </div>
-                <p className="text-[13px] text-[var(--brand-dark)] mt-1 line-clamp-2" style={{ fontWeight: 400, textTransform: "none" }}>
+                <p className={`text-[13px] mt-3 line-clamp-2 ${
+                  selectedAddons.has(addon.id) ? "text-gray-300" : "text-[var(--brand-dark)]"
+                }`} style={{ fontWeight: 400, textTransform: "none" }}>
                   {addon.description}
                 </p>
                 {addon.link && (
@@ -135,6 +123,23 @@ export default function PriceConfigurator() {
                     mehr Infos &raquo;
                   </a>
                 )}
+              </div>
+
+              {/* Checkbox indicator — rechts */}
+              <div className="flex-shrink-0 self-center">
+                <div
+                  className={`w-6 h-6 border-2 flex items-center justify-center ${
+                    selectedAddons.has(addon.id)
+                      ? "bg-[#F3A300] border-[#F3A300]"
+                      : "bg-white border-gray-300"
+                  }`}
+                >
+                  {selectedAddons.has(addon.id) && (
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
               </div>
             </label>
           ))}
