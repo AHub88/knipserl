@@ -91,8 +91,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 z-20 max-w-[1400px] mx-auto">
           {/* Fotobox - centered on mobile, left on desktop */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]"
-            style={{ bottom: "clamp(30px, 7vw, 80px)" }}
+            className="hero-fotobox absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]"
           >
             <Image
               src="/images/hero/fotobox-startseite.png"
@@ -137,8 +136,7 @@ export default async function HomePage() {
           <img
             src="/images/hero/steg.png"
             alt=""
-            className="w-full object-cover object-top"
-            style={{ height: "clamp(100px, 14vw, 217px)" }}
+            className="hero-steg"
           />
         </div>
       </section>

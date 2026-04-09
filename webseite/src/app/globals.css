@@ -109,6 +109,34 @@ section.rough-bottom {
   pointer-events: none;
 }
 
+/* ===== HERO STEG + FOTOBOX ===== */
+.hero-steg {
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  height: clamp(100px, 14vw, 217px);
+}
+.hero-fotobox {
+  bottom: clamp(30px, 7vw, 80px);
+}
+
+@media (max-width: 767px) {
+  .hero-steg { height: clamp(120px, 18vw, 200px); }
+  .hero-fotobox { bottom: clamp(40px, 10vw, 40px); }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-steg { height: clamp(120px, 18vw, 200px); }
+  .hero-fotobox { bottom: clamp(40px, 10vw, 40px); }
+}
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .hero-steg { height: clamp(150px, 20vw, 217px); }
+  .hero-fotobox { bottom: clamp(50px, 7vw, 40px); }
+}
+@media (min-width: 1440px) {
+  .hero-steg { height: clamp(180px, 20vw, 217px); }
+  .hero-fotobox { bottom: clamp(30px, 5vw, 50px); }
+}
+
 /* ===== GLASS CARD ===== */
 .glass-card {
   background: rgba(255, 255, 255, 0.12);
