@@ -152,7 +152,7 @@ export default async function HomePage() {
               <span className="text-[#F3A300]">Fotobox</span> für Rosenheim,{" "}
               München und Umgebung
             </h2>
-            <p className="text-[16px] md:text-[18px] lg:text-[20px] leading-[24px] lg:leading-[28px] mt-3 font-normal font-[family-name:var(--font-fira-sans)]">
+            <p className="text-[16px] md:text-[18px] lg:text-[20px] leading-[24px] lg:leading-[28px] mt-3 font-normal font-[family-name:var(--font-fira-sans)] lg:whitespace-nowrap">
               Miete jetzt unsere Fotobox für Deine{" "}
               <Link href="/preise" className="text-[#F3A300] underline hover:no-underline">Hochzeit</Link>,{" "}
               <Link href="/preise" className="text-[#F3A300] underline hover:no-underline">Firmenfeier</Link>,{" "}
