@@ -74,13 +74,34 @@ export default function PriceConfigurator() {
   const [mapsApiKey, setMapsApiKey] = useState("");
   const destinationInputRef = useRef<HTMLInputElement>(null);
 
+  const runCalculation = useCallback(async (address: string) => {
+    if (!address.trim()) return;
+    setDeliveryLoading(true);
+    setDeliveryError("");
+    setDelivery(null);
+
+    try {
+      const result = await calculateDeliveryCost(address);
+      if (!result) {
+        setDeliveryError("Adresse konnte nicht gefunden werden. Bitte genauer eingeben.");
+        return;
+      }
+      setDelivery(result);
+    } catch {
+      setDeliveryError("Fehler bei der Berechnung. Bitte versuche es erneut.");
+    } finally {
+      setDeliveryLoading(false);
+    }
+  }, []);
+
   const handlePlaceSelect = useCallback((place: string) => {
     setDestination(place);
-  }, []);
+    runCalculation(place);
+  }, [runCalculation]);
 
   useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);
 
-  // Fetch Google Maps API key via own proxy endpoint (avoids NEXT_PUBLIC_ build-time issue)
+  // Fetch Google Maps API key via own proxy endpoint
   useEffect(() => {
     fetch("/api/maps-config")
       .then((r) => r.json())
@@ -105,25 +126,9 @@ export default function PriceConfigurator() {
   const deliveryPrice = delivery?.price ?? 0;
   const totalPrice = BASE_PRICE + addonsTotal + deliveryPrice;
 
-  const calculateDistance = useCallback(async () => {
-    if (!destination.trim()) return;
-    setDeliveryLoading(true);
-    setDeliveryError("");
-    setDelivery(null);
-
-    try {
-      const result = await calculateDeliveryCost(destination);
-      if (!result) {
-        setDeliveryError("Adresse konnte nicht gefunden werden. Bitte genauer eingeben.");
-        return;
-      }
-      setDelivery(result);
-    } catch {
-      setDeliveryError("Fehler bei der Berechnung. Bitte versuche es erneut.");
-    } finally {
-      setDeliveryLoading(false);
-    }
-  }, [destination]);
+  const calculateDistance = useCallback(() => {
+    runCalculation(destination);
+  }, [destination, runCalculation]);
 
   return (
     <div className="space-y-12">
