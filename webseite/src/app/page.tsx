@@ -90,7 +90,10 @@ export default async function HomePage() {
         {/* Content container for fotobox + text */}
         <div className="absolute inset-0 z-20 max-w-[1400px] mx-auto">
           {/* Fotobox - centered on mobile, left on desktop */}
-          <div className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] bottom-[30px] md:bottom-[50px] lg:bottom-[60px] xl:bottom-[30px] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]">
+          <div
+            className="absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]"
+            style={{ bottom: "clamp(30px, 7vw, 80px)" }}
+          >
             <Image
               src="/images/hero/fotobox-startseite.png"
               alt="Knipserl Fotobox mit Stativ und Blitz"
@@ -130,12 +133,12 @@ export default async function HomePage() {
         </div>
 
         {/* Holzsteg at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 flex justify-center">
+        <div className="absolute bottom-0 left-0 right-0 z-10">
           <img
             src="/images/hero/steg.png"
             alt=""
-            className="w-full max-w-[1920px] h-auto"
-            style={{ minHeight: "clamp(100px, 12vw, 217px)" }}
+            className="w-full object-cover object-top"
+            style={{ height: "clamp(100px, 14vw, 217px)" }}
           />
         </div>
       </section>
