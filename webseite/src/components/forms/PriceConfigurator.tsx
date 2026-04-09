@@ -61,7 +61,7 @@ export default function PriceConfigurator() {
       {/* ===== ZUBEHÖR ===== */}
       <div>
         <div className="text-center mb-10">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
             Fotobox Zubehör
           </h2>
           <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
@@ -144,7 +144,7 @@ export default function PriceConfigurator() {
       {/* ===== FAHRTKOSTEN ===== */}
       <div>
         <div className="text-center mb-10">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-white inline-block">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
             Fahrtkosten
           </h2>
         </div>
@@ -221,7 +221,7 @@ export default function PriceConfigurator() {
           {totalPrice.toFixed(2)} &euro;
         </p>
         {(addonsTotal > 0 || deliveryPrice > 0) && (
-          <div className="mt-3 text-white/70 text-[14px] space-y-1" style={{ fontWeight: 400, textTransform: "none" }}>
+          <div className="mt-3 text-[#666] text-[14px] space-y-1" style={{ fontWeight: 400, textTransform: "none" }}>
             <p>Fotobox mit Drucker: {BASE_PRICE.toFixed(2)} &euro;</p>
             {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
               <p key={addon.id}>+ {addon.name}: {addon.price.toFixed(2)} &euro;</p>

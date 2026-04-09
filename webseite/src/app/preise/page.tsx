@@ -102,11 +102,8 @@ export default function PreisePage() {
         </div>
       </section>
 
-      {/* ===== CONFIGURATOR (dark background) ===== */}
-      <section
-        className="relative z-10 py-16 rough-top rough-bottom"
-        style={{ background: "#666 url('/images/misc/main_back_gr-2.webp') repeat", backgroundSize: "1000px 500px" }}
-      >
+      {/* ===== CONFIGURATOR ===== */}
+      <section className="pb-16">
         <div className="max-w-[1100px] mx-auto px-6">
           <PriceConfigurator />
         </div>
