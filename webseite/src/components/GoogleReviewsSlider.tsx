@@ -47,13 +47,17 @@ function GoogleLogo({ size = 24 }: { size?: number }) {
 
 const AVATAR_COLORS = ["#4285F4", "#EA4335", "#FBBC05", "#34A853", "#7B1FA2", "#FF6D00"];
 
+const MONTH_NAMES_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+
+function formatDateDE(isoString: string): string {
+  const d = new Date(isoString);
+  return `${d.getDate()}. ${MONTH_NAMES_DE[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 function ReviewCard({ review, index }: { review: Review; index: number }) {
   const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
-  const date = new Date(review.time).toLocaleDateString("de-DE", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  // Manual formatting avoids locale-dependent toLocaleDateString hydration mismatches
+  const date = formatDateDE(review.time);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-5 flex flex-col h-full min-w-0">

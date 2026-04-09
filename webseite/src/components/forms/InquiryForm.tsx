@@ -11,10 +11,16 @@ const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "A
 const WEEKDAYS = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
 
 function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (date: string) => void }) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const [mounted, setMounted] = useState(false);
+  const [today] = useState(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
+
+  useEffect(() => setMounted(true), []);
   const [busyDates, setBusyDates] = useState<Set<string>>(new Set());
 
   // Fetch busy dates when month changes
@@ -83,6 +89,20 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
     onSelect(`${viewYear}-${m}-${d}`);
   };
 
+  if (!mounted) {
+    // SSR placeholder — prevents hydration mismatch from date-dependent rendering
+    return (
+      <div className="bg-[#F1F3F6] rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
+        <div className="flex items-center justify-between px-4 py-4 bg-[#1a171b]">
+          <span className="font-bold text-xl uppercase tracking-wide text-white font-[family-name:var(--font-fira-condensed)]">
+            Kalender wird geladen...
+          </span>
+        </div>
+        <div className="h-[320px]" />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#F1F3F6] rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
       {/* Month header */}
@@ -115,6 +135,7 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
               type="button"
               disabled={!day || disabled}
               onClick={() => day && handleSelect(day)}
+              aria-label={day ? `${day}. ${MONTHS[viewMonth]} ${viewYear}${disabled ? " (nicht verfügbar)" : ""}` : undefined}
               className={`py-4 text-center text-[18px] transition-colors ${borderLeft} ${borderTop} ${
                 !day ? "bg-[#F1F3F6]" :
                 isSelected(day) ? "bg-[#F3A300] text-white font-bold" :

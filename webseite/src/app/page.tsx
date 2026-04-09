@@ -228,7 +228,7 @@ export default async function HomePage() {
               <picture>
                 <source
                   type="image/avif"
-                  srcSet="/images/hero/optimized/teaser-500.avif 500w, /images/hero/optimized/teaser-739.avif 739w"
+                  srcSet="/images/hero/optimized/teaser-400.avif 400w, /images/hero/optimized/teaser-500.avif 500w, /images/hero/optimized/teaser-739.avif 739w"
                   sizes="(max-width: 768px) 100vw, 500px"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
