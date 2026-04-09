@@ -73,10 +73,10 @@ export default function PriceConfigurator() {
           {ADDONS.map((addon) => (
             <label
               key={addon.id}
-              className={`flex gap-4 p-4 bg-white cursor-pointer transition-all shadow-md hover:shadow-lg ${
+              className={`flex gap-4 p-4 cursor-pointer transition-all shadow-md hover:shadow-lg ${
                 selectedAddons.has(addon.id)
-                  ? "ring-2 ring-[#F3A300]"
-                  : ""
+                  ? "bg-white ring-2 ring-[#F3A300]"
+                  : "bg-[#F3F4F6]"
               }`}
             >
               <input
@@ -91,7 +91,7 @@ export default function PriceConfigurator() {
                   className={`w-5 h-5 border-2 flex items-center justify-center ${
                     selectedAddons.has(addon.id)
                       ? "bg-[#F3A300] border-[#F3A300]"
-                      : "bg-[#F3F4F6] border-[#F3F4F6]"
+                      : "bg-white border-white"
                   }`}
                 >
                   {selectedAddons.has(addon.id) && (
@@ -103,13 +103,13 @@ export default function PriceConfigurator() {
               </div>
 
               {/* Image */}
-              <div className="w-24 h-24 relative flex-shrink-0 overflow-hidden bg-gray-100">
+              <div className="w-32 h-32 relative flex-shrink-0 overflow-hidden">
                 <Image
                   src={addon.image}
                   alt={addon.name}
                   fill
                   className="object-cover"
-                  sizes="96px"
+                  sizes="128px"
                 />
               </div>
 
