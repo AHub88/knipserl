@@ -79,7 +79,7 @@ export default function Header() {
           {/* Logo — positiv (dark) for homepage & scrolled, negativ (white) for subpages unscrolled */}
           <Link href="/" className="flex-shrink-0 flex items-center gap-3 relative">
             <Image
-              src="/images/logo/knipserl_breit_4c_positiv.svg"
+              src={isHome && !showSolid ? "/images/logo/knipserl_breit_4c_positiv-dunkler.svg" : "/images/logo/knipserl_breit_4c_positiv.svg"}
               alt="Knipserl Fotobox - Fotobox mieten in Oberbayern und Tirol"
               width={1342}
               height={377}
