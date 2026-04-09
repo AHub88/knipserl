@@ -98,7 +98,7 @@ export default function PriceConfigurator() {
               </div>
 
               {/* Text */}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 pt-3">
                 <div className="flex justify-between items-start gap-2">
                   <h4 className={`font-bold text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
                     selectedAddons.has(addon.id) ? "text-white" : "text-[var(--brand-dark)]"
