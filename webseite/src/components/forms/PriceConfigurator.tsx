@@ -294,24 +294,30 @@ export default function PriceConfigurator() {
               Map
             </span>
             <div className="bg-gray-100 overflow-hidden" style={{ height: "280px" }}>
-              {delivery ? (
-                <iframe
-                  title="Route zur Location"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  src={`https://www.google.com/maps/embed/v1/directions?key=${mapsApiKey || ""}&origin=Rosenheim,Germany&destination=${delivery.destinationLat},${delivery.destinationLon}&mode=driving&language=de`}
-                />
+              {mapsApiKey ? (
+                delivery ? (
+                  <iframe
+                    title="Route zur Location"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    src={`https://www.google.com/maps/embed/v1/directions?key=${mapsApiKey}&origin=Rosenheim,Germany&destination=${delivery.destinationLat},${delivery.destinationLon}&mode=driving&language=de`}
+                  />
+                ) : (
+                  <iframe
+                    title="Karte Rosenheim"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    src={`https://www.google.com/maps/embed/v1/place?key=${mapsApiKey}&q=Rosenheim,Germany&zoom=8&language=de`}
+                  />
+                )
               ) : (
-                <iframe
-                  title="Karte Rosenheim"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  src={`https://www.google.com/maps/embed/v1/place?key=${mapsApiKey || ""}&q=Rosenheim,Germany&zoom=8&language=de`}
-                />
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                  Karte wird geladen...
+                </div>
               )}
             </div>
           </div>
