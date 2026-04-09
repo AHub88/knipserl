@@ -12,6 +12,7 @@ interface DeliveryInfo {
   destinationName: string;
   destinationLat: number;
   destinationLon: number;
+  routePolyline: string;
 }
 
 interface PlaceSelection {
@@ -251,7 +252,7 @@ export default function PriceConfigurator() {
           {/* Left: Form */}
           <div className="space-y-4">
             <div>
-              <label className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+              <label className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Veranstaltungsort
               </label>
               <input
@@ -271,7 +272,7 @@ export default function PriceConfigurator() {
             </div>
 
             <div>
-              <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+              <span className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Berechnete Distanz
               </span>
               <span className="text-[#666] text-[20px]">
@@ -286,7 +287,7 @@ export default function PriceConfigurator() {
             )}
 
             <div>
-              <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+              <span className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Fahrtkosten
               </span>
               <span className="text-[#666] text-[20px]">
@@ -303,30 +304,20 @@ export default function PriceConfigurator() {
 
           {/* Right: Map */}
           <div>
-            <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
+            <span className="block text-[22px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
               Map
             </span>
-            <div className="bg-gray-100 overflow-hidden grayscale" style={{ height: "280px" }}>
+            <div className="bg-gray-100 overflow-hidden" style={{ height: "280px" }}>
               {mapsApiKey ? (
-                delivery ? (
-                  <iframe
-                    title="Route zur Location"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    src={`https://www.google.com/maps/embed/v1/directions?key=${mapsApiKey}&origin=Rosenheim,Germany&destination=${delivery.destinationLat},${delivery.destinationLon}&mode=driving&language=de&avoid=tolls`}
-                  />
-                ) : (
-                  <iframe
-                    title="Karte Rosenheim"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    src={`https://www.google.com/maps/embed/v1/place?key=${mapsApiKey}&q=Rosenheim,Germany&zoom=8&language=de`}
-                  />
-                )
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={delivery?.routePolyline
+                    ? `https://maps.googleapis.com/maps/api/staticmap?size=600x280&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&path=color:0xF3A300ff|weight:4|enc:${encodeURIComponent(delivery.routePolyline)}&markers=color:red|${delivery.destinationLat},${delivery.destinationLon}&markers=color:red|47.8571,12.1181&key=${mapsApiKey}`
+                    : `https://maps.googleapis.com/maps/api/staticmap?center=47.8571,12.1181&zoom=8&size=600x280&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&markers=color:red|47.8571,12.1181&key=${mapsApiKey}`
+                  }
+                  alt="Karte mit Route"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                   Karte wird geladen...

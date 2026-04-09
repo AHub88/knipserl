@@ -18,6 +18,7 @@ export interface DistanceResult {
   destinationName: string;
   destinationLat: number;
   destinationLon: number;
+  routePolyline: string;
 }
 
 // Cache for dynamic pricing tiers
@@ -80,14 +81,19 @@ export async function geocodeAddress(
 /**
  * Calculate driving distance using OSRM (Open Source Routing Machine) - DSGVO compliant
  */
+interface DrivingResult {
+  distanceKm: number;
+  polyline: string;
+}
+
 export async function calculateDrivingDistance(
   originLat: number,
   originLon: number,
   destLat: number,
   destLon: number
-): Promise<number | null> {
+): Promise<DrivingResult | null> {
   const res = await fetch(
-    `https://router.project-osrm.org/route/v1/driving/${originLon},${originLat};${destLon},${destLat}?overview=false`,
+    `https://router.project-osrm.org/route/v1/driving/${originLon},${originLat};${destLon},${destLat}?overview=full&geometries=polyline`,
     {
       headers: {
         "User-Agent": "Knipserl-Fotobox-Website/1.0",
@@ -100,7 +106,10 @@ export async function calculateDrivingDistance(
   const data = await res.json();
   if (data.code !== "Ok" || !data.routes?.length) return null;
 
-  return Math.round(data.routes[0].distance / 1000);
+  return {
+    distanceKm: Math.round(data.routes[0].distance / 1000),
+    polyline: data.routes[0].geometry,
+  };
 }
 
 /**
@@ -155,24 +164,25 @@ export async function calculateDeliveryCost(
     destName = destination.display_name;
   }
 
-  const distanceKm = await calculateDrivingDistance(
+  const driving = await calculateDrivingDistance(
     ORIGIN_LAT,
     ORIGIN_LON,
     destLat,
     destLon
   );
 
-  if (distanceKm === null) return null;
+  if (!driving) return null;
 
   const tiers = await fetchPricingTiers();
   const maxKm = getMaxDeliveryKm(tiers);
 
   return {
-    distanceKm,
-    price: getDeliveryPriceFromTiers(distanceKm, tiers),
-    outsideDeliveryArea: distanceKm > maxKm,
+    distanceKm: driving.distanceKm,
+    price: getDeliveryPriceFromTiers(driving.distanceKm, tiers),
+    outsideDeliveryArea: driving.distanceKm > maxKm,
     destinationName: destName,
     destinationLat: destLat,
     destinationLon: destLon,
+    routePolyline: driving.polyline,
   };
 }
