@@ -93,7 +93,7 @@ export default function PriceConfigurator() {
                 <img
                   src={addon.image}
                   alt={addon.name}
-                  className="w-full h-auto"
+                  className={`w-full h-auto ${selectedAddons.has(addon.id) ? "invert" : ""}`}
                 />
               </div>
 
