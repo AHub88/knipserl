@@ -92,7 +92,7 @@ export default function PriceConfigurator() {
                   className={`w-5 h-5 border-2 flex items-center justify-center ${
                     selectedAddons.has(addon.id)
                       ? "bg-[#F3A300] border-[#F3A300]"
-                      : "bg-white border-white"
+                      : "bg-white border-gray-300"
                   }`}
                 >
                   {selectedAddons.has(addon.id) && (
