@@ -130,14 +130,12 @@ export default async function HomePage() {
         </div>
 
         {/* Holzsteg at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 z-10">
-          <Image
+        <div className="absolute bottom-0 left-0 right-0 z-10 flex justify-center">
+          <img
             src="/images/hero/steg.png"
             alt=""
-            width={1920}
-            height={217}
-            className="w-full min-h-[100px] object-cover object-top md:min-h-[140px] lg:min-h-[180px] xl:min-h-0 xl:h-auto xl:max-h-[217px]"
-            priority
+            className="w-full max-w-[1920px] h-auto"
+            style={{ minHeight: "clamp(100px, 12vw, 217px)" }}
           />
         </div>
       </section>
