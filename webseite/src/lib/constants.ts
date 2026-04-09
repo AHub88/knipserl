@@ -36,6 +36,14 @@ export const ADDONS: {
     image: "/images/addons/requisiten.png",
   },
   {
+    id: "usb-stick",
+    name: "Alle Bilder auf USB Stick",
+    price: 20,
+    description:
+      "Du erhältst 3 Werktage nach deiner Feier einen urigen Holz-USB-Stick im Knipserl Design.",
+    image: "/images/addons/usb-stick.png",
+  },
+  {
     id: "gaestetelefon",
     name: "Gästetelefon / Audio Gästebuch",
     price: 100,
@@ -43,30 +51,6 @@ export const ADDONS: {
       "Eure Gäste können auf unserem urigen Gästetelefon Sprachnachrichten hinterlassen. Diese werden Euch nach dem Event zugesandt.",
     image: "/images/addons/gaestetelefon.png",
     link: "/audio-gaestebuch",
-  },
-  {
-    id: "online-funktionen",
-    name: "Online Funktionen",
-    price: 50,
-    description:
-      "Eure Gäste können sich Ihre geschossenen Fotos ganz einfach per SMS, E-Mail oder QR-Code direkt auf das Handy senden.",
-    image: "/images/addons/online-funktionen.png",
-  },
-  {
-    id: "live-slideshow",
-    name: "Live Slideshow mit 50 Zoll TV",
-    price: 150,
-    description:
-      "Wir stellen euch einen TV inkl. Ständer zur Verfügung. Darauf wird eine Live-Slideshow mit den Fotos angezeigt.",
-    image: "/images/addons/live-slideshow.png",
-  },
-  {
-    id: "usb-stick",
-    name: "Alle Bilder auf USB Stick",
-    price: 20,
-    description:
-      "Du erhältst 3 Werktage nach deiner Feier einen urigen Holz-USB-Stick im Knipserl Design.",
-    image: "/images/addons/usb-stick.png",
   },
   {
     id: "gaestebuch",
@@ -77,6 +61,14 @@ export const ADDONS: {
     image: "/images/addons/gaestebuch.png",
   },
   {
+    id: "online-funktionen",
+    name: "Online Funktionen",
+    price: 50,
+    description:
+      "Eure Gäste können sich Ihre geschossenen Fotos ganz einfach per SMS, E-Mail oder QR-Code direkt auf das Handy senden.",
+    image: "/images/addons/online-funktionen.png",
+  },
+  {
     id: "love-buchstaben",
     name: "XXL LOVE Buchstaben",
     price: 150,
@@ -84,6 +76,14 @@ export const ADDONS: {
       '120cm hoch, beleuchtet und wasserdicht - Perfekt für eure Hochzeit!',
     image: "/images/addons/love-buchstaben.jpg",
     link: "/love-buchstaben",
+  },
+  {
+    id: "live-slideshow",
+    name: "Live Slideshow mit 50 Zoll TV",
+    price: 150,
+    description:
+      "Wir stellen euch einen TV inkl. Ständer zur Verfügung. Darauf wird eine Live-Slideshow mit den Fotos angezeigt.",
+    image: "/images/addons/live-slideshow.png",
   },
   {
     id: "hintergrundsystem",
