@@ -55,7 +55,7 @@ export default async function Footer() {
       itemScope
       itemType="https://schema.org/LocalBusiness"
       style={{
-        background: `url('/images/misc/footer-bg.jpg') repeat center top`,
+        background: `url('/images/misc/footer-bg.avif') repeat center top`,
         backgroundSize: "1920px auto",
       }}
     >

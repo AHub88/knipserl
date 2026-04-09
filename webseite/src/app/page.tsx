@@ -73,11 +73,13 @@ export default async function HomePage() {
     getClientLogos(),
     getGoogleReviews(),
   ]);
-  // Preload LCP image — eliminates 700ms+ resource load delay
-  const heroImgBase = "/_next/image?url=%2Fimages%2Fhero%2Ffotobox-rosenheim-muenchen.jpg";
-  const heroSrcSet = [640, 828, 1080, 1200, 1920]
-    .map((w) => `${heroImgBase}&w=${w}&q=75 ${w}w`)
-    .join(", ");
+  // Preload LCP image — static AVIF, no server-side processing needed
+  const heroSrcSet = [
+    "/images/hero/optimized/hero-bg-640.avif 640w",
+    "/images/hero/optimized/hero-bg-828.avif 828w",
+    "/images/hero/optimized/hero-bg-1080.avif 1080w",
+    "/images/hero/optimized/hero-bg-1920.avif 1920w",
+  ].join(", ");
 
   return (
     <>
@@ -90,17 +92,22 @@ export default async function HomePage() {
       />
       {/* ===== HERO / SLIDER ===== */}
       <section className="relative h-[500px] md:h-[700px] lg:h-[900px] overflow-hidden">
-        {/* Background image */}
-        <Image
-          src="/images/hero/fotobox-rosenheim-muenchen.jpg"
-          alt="Knipserl Fotobox mieten in Rosenheim und München"
-          fill
-          sizes="100vw"
-          className="object-cover object-center md:object-[center_20%]"
-          priority
-          fetchPriority="high"
-          quality={75}
-        />
+        {/* Background image — pre-optimized AVIF, bypasses Next.js Image Optimizer (saves 1.2s TTFB) */}
+        <picture>
+          <source
+            type="image/avif"
+            srcSet="/images/hero/optimized/hero-bg-640.avif 640w, /images/hero/optimized/hero-bg-828.avif 828w, /images/hero/optimized/hero-bg-1080.avif 1080w, /images/hero/optimized/hero-bg-1920.avif 1920w"
+            sizes="100vw"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/hero/fotobox-rosenheim-muenchen.jpg"
+            alt="Knipserl Fotobox mieten in Rosenheim und München"
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover object-center md:object-[center_20%]"
+          />
+        </picture>
 
         {/* Content container for fotobox + text */}
         <div className="absolute inset-0 z-20 max-w-[1400px] mx-auto">
@@ -108,14 +115,21 @@ export default async function HomePage() {
           <div
             className="hero-fotobox absolute left-1/2 -translate-x-1/2 md:left-[6%] md:translate-x-0 lg:left-[7%] w-[190px] h-[320px] md:w-[280px] md:h-[470px] lg:w-[420px] lg:h-[680px]"
           >
-            <Image
-              src="/images/hero/fotobox-startseite.png"
-              alt="Knipserl Fotobox mit Stativ und Blitz"
-              fill
-              sizes="(max-width: 768px) 190px, (max-width: 1024px) 280px, 420px"
-              className="object-contain object-bottom drop-shadow-2xl"
-              priority
-            />
+            <picture>
+              <source
+                type="image/avif"
+                srcSet="/images/hero/optimized/fotobox-190.avif 190w, /images/hero/optimized/fotobox-280.avif 280w, /images/hero/optimized/fotobox-420.avif 420w, /images/hero/optimized/fotobox-640.avif 640w"
+                sizes="(max-width: 768px) 190px, (max-width: 1024px) 280px, 420px"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/hero/fotobox-startseite.png"
+                alt="Knipserl Fotobox mit Stativ und Blitz"
+                fetchPriority="high"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-contain object-bottom drop-shadow-2xl"
+              />
+            </picture>
           </div>
 
           {/* Text - hidden on mobile, visible from tablet */}
@@ -149,15 +163,22 @@ export default async function HomePage() {
 
         {/* Holzsteg at bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
-          <Image
-            src="/images/hero/steg.webp"
-            alt=""
-            width={1920}
-            height={217}
-            className="hero-steg"
-            sizes="100vw"
-            quality={60}
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="/images/hero/optimized/steg-828.avif 828w, /images/hero/optimized/steg-1920.avif 1920w"
+              sizes="100vw"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/hero/steg.webp"
+              alt=""
+              width={1920}
+              height={217}
+              className="hero-steg"
+              loading="lazy"
+            />
+          </picture>
         </div>
       </section>
 
