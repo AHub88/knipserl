@@ -51,11 +51,25 @@ export default function Header() {
 
   return (
     <>
-      {/* Main header */}
+      {/* Floating mobile hamburger — visible on small screens when scrolled */}
+      {scrolled && (
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="fixed top-4 right-4 z-[60] min-[1150px]:hidden flex items-center gap-2 px-4 py-2.5 bg-white/90 backdrop-blur-sm rounded-md shadow-lg text-[#1a171b] transition-colors"
+          aria-label="Menü öffnen"
+        >
+          <span className="text-[16px] font-bold uppercase font-[family-name:var(--font-fira-condensed)]">Menü</span>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      )}
+
+      {/* Main header — hidden on mobile when scrolled */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           showSolid
-            ? "bg-white shadow-md pt-[3px]"
+            ? "bg-white shadow-md pt-[3px] max-[1149px]:hidden"
             : "bg-transparent pt-[15px] lg:pt-[30px]"
         }`}
       >
