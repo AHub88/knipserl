@@ -10,6 +10,8 @@ interface DeliveryInfo {
   price: number;
   outsideDeliveryArea: boolean;
   destinationName: string;
+  destinationLat: number;
+  destinationLon: number;
 }
 
 function useGooglePlacesAutocomplete(
@@ -70,6 +72,7 @@ export default function PriceConfigurator() {
   const [delivery, setDelivery] = useState<DeliveryInfo | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
+  const [mapsApiKey, setMapsApiKey] = useState("");
   const destinationInputRef = useRef<HTMLInputElement>(null);
 
   const handlePlaceSelect = useCallback((place: string) => {
@@ -77,6 +80,16 @@ export default function PriceConfigurator() {
   }, []);
 
   useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);
+
+  // Fetch Google Maps API key for embed
+  useEffect(() => {
+    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+    if (!adminUrl) return;
+    fetch(`${adminUrl}/api/maps-config`)
+      .then((r) => r.json())
+      .then((d) => { if (d.apiKey) setMapsApiKey(d.apiKey); })
+      .catch(() => {});
+  }, []);
 
   const toggleAddon = (id: string) => {
     setSelectedAddons((prev) => {
@@ -253,6 +266,12 @@ export default function PriceConfigurator() {
               </span>
             </div>
 
+            {delivery?.outsideDeliveryArea && (
+              <p className="bg-red-600 text-white font-bold text-[14px] px-3 py-2 mt-1 inline-block uppercase font-[family-name:var(--font-fira-condensed)]">
+                Außerhalb Liefergebiet!
+              </p>
+            )}
+
             <div>
               <span className="block text-[13px] font-extrabold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
                 Fahrtkosten
@@ -262,24 +281,11 @@ export default function PriceConfigurator() {
                   ? delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`
                   : "– €"}
               </span>
-              {delivery?.outsideDeliveryArea && (
-                <p className="text-red-600 text-sm mt-1">
-                  Liegt außerhalb unseres regulären Liefergebiets. Bitte kontaktiere uns direkt.
-                </p>
-              )}
             </div>
 
             {deliveryError && (
               <p className="text-red-600 text-sm">{deliveryError}</p>
             )}
-
-            <button
-              onClick={calculateDistance}
-              disabled={deliveryLoading || !destination.trim()}
-              className="px-6 py-3 bg-[var(--brand-dark)] text-white font-bold uppercase text-[14px] tracking-wide hover:bg-[#333] transition-colors disabled:opacity-50 font-[family-name:var(--font-fira-condensed)]"
-            >
-              {deliveryLoading ? "Wird berechnet..." : "Berechnen"}
-            </button>
           </div>
 
           {/* Right: Map */}
@@ -288,13 +294,25 @@ export default function PriceConfigurator() {
               Map
             </span>
             <div className="bg-gray-100 overflow-hidden" style={{ height: "280px" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`https://staticmap.openstreetmap.de/staticmap.php?center=47.8566,12.1300&zoom=8&size=500x280&markers=47.8566,12.1300,ol-marker`}
-                alt="Karte Rosenheim und Umgebung"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+              {delivery ? (
+                <iframe
+                  title="Route zur Location"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  src={`https://www.google.com/maps/embed/v1/directions?key=${mapsApiKey || ""}&origin=Rosenheim,Germany&destination=${delivery.destinationLat},${delivery.destinationLon}&mode=driving&language=de`}
+                />
+              ) : (
+                <iframe
+                  title="Karte Rosenheim"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  src={`https://www.google.com/maps/embed/v1/place?key=${mapsApiKey || ""}&q=Rosenheim,Germany&zoom=8&language=de`}
+                />
+              )}
             </div>
           </div>
         </div>

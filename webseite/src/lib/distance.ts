@@ -6,11 +6,52 @@ interface GeocodingResult {
   display_name: string;
 }
 
-interface DistanceResult {
+interface TravelPricingTier {
+  distanceKm: number;
+  customerPrice: number;
+}
+
+export interface DistanceResult {
   distanceKm: number;
   price: number;
   outsideDeliveryArea: boolean;
   destinationName: string;
+  destinationLat: number;
+  destinationLon: number;
+}
+
+// Cache for dynamic pricing tiers
+let cachedTiers: TravelPricingTier[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Fetch travel pricing tiers from admin API, with fallback to hardcoded tiers
+ */
+async function fetchPricingTiers(): Promise<TravelPricingTier[]> {
+  if (cachedTiers && Date.now() - cacheTimestamp < CACHE_TTL) {
+    return cachedTiers;
+  }
+
+  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+  if (!adminUrl) {
+    return DISTANCE_TIERS.map((t) => ({ distanceKm: t.maxKm === Infinity ? 9999 : t.maxKm, customerPrice: t.price }));
+  }
+
+  try {
+    const res = await fetch(`${adminUrl}/api/travel-pricing/public`);
+    if (!res.ok) throw new Error();
+    const tiers: TravelPricingTier[] = await res.json();
+    if (tiers.length > 0) {
+      cachedTiers = tiers;
+      cacheTimestamp = Date.now();
+      return tiers;
+    }
+  } catch {
+    // Fallback to hardcoded tiers
+  }
+
+  return DISTANCE_TIERS.map((t) => ({ distanceKm: t.maxKm === Infinity ? 9999 : t.maxKm, customerPrice: t.price }));
 }
 
 /**
@@ -64,20 +105,31 @@ export async function calculateDrivingDistance(
   const data = await res.json();
   if (data.code !== "Ok" || !data.routes?.length) return null;
 
-  // Convert meters to kilometers, round to nearest integer
   return Math.round(data.routes[0].distance / 1000);
 }
 
 /**
- * Get the delivery price for a given distance in km
+ * Get the delivery price for a given distance using dynamic tiers
  */
-export function getDeliveryPrice(distanceKm: number): number {
-  for (const tier of DISTANCE_TIERS) {
-    if (distanceKm <= tier.maxKm) {
-      return tier.price;
+function getDeliveryPriceFromTiers(distanceKm: number, tiers: TravelPricingTier[]): number {
+  // Find the highest tier <= distanceKm
+  let price = 0;
+  for (const tier of tiers) {
+    if (distanceKm >= tier.distanceKm) {
+      price = tier.customerPrice;
+    } else {
+      break;
     }
   }
-  return DISTANCE_TIERS[DISTANCE_TIERS.length - 1].price;
+  return price;
+}
+
+/**
+ * Get the max delivery distance from tiers
+ */
+function getMaxDeliveryKm(tiers: TravelPricingTier[]): number {
+  if (tiers.length === 0) return MAX_DELIVERY_KM;
+  return tiers[tiers.length - 1].distanceKm;
 }
 
 /**
@@ -87,7 +139,6 @@ export function getDeliveryPrice(distanceKm: number): number {
 export async function calculateDeliveryCost(
   destinationAddress: string
 ): Promise<DistanceResult | null> {
-  // Rosenheim coordinates
   const ORIGIN_LAT = 47.8571;
   const ORIGIN_LON = 12.1181;
 
@@ -103,10 +154,15 @@ export async function calculateDeliveryCost(
 
   if (distanceKm === null) return null;
 
+  const tiers = await fetchPricingTiers();
+  const maxKm = getMaxDeliveryKm(tiers);
+
   return {
     distanceKm,
-    price: getDeliveryPrice(distanceKm),
-    outsideDeliveryArea: distanceKm > MAX_DELIVERY_KM,
+    price: getDeliveryPriceFromTiers(distanceKm, tiers),
+    outsideDeliveryArea: distanceKm > maxKm,
     destinationName: destination.display_name,
+    destinationLat: destination.lat,
+    destinationLon: destination.lon,
   };
 }
