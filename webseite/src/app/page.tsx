@@ -82,9 +82,10 @@ export default async function HomePage() {
           src="/images/hero/fotobox-rosenheim-muenchen.jpg"
           alt="Knipserl Fotobox mieten in Rosenheim und München"
           fill
+          sizes="100vw"
           className="object-cover object-center md:object-[center_20%]"
           priority
-          quality={85}
+          quality={80}
         />
 
         {/* Content container for fotobox + text */}
@@ -97,6 +98,7 @@ export default async function HomePage() {
               src="/images/hero/fotobox-startseite.png"
               alt="Knipserl Fotobox mit Stativ und Blitz"
               fill
+              sizes="(max-width: 768px) 190px, (max-width: 1024px) 280px, 420px"
               className="object-contain object-bottom drop-shadow-2xl"
               priority
             />
@@ -133,11 +135,14 @@ export default async function HomePage() {
 
         {/* Holzsteg at bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
-          <img
-            src="/images/hero/steg.png"
-            alt=""
-            className="hero-steg"
-          />
+          <picture>
+            <source srcSet="/images/hero/steg.webp" type="image/webp" />
+            <img
+              src="/images/hero/steg.png"
+              alt=""
+              className="hero-steg"
+            />
+          </picture>
         </div>
       </section>
 

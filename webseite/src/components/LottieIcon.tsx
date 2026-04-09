@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import Lottie, { type LottieRefCurrentProps } from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface LottieIconProps {
   src: string;
@@ -10,7 +12,6 @@ interface LottieIconProps {
 
 export default function LottieIcon({ src, className }: LottieIconProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const lottieRef = useRef<LottieRefCurrentProps>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [animationData, setAnimationData] = useState<any>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -44,7 +45,6 @@ export default function LottieIcon({ src, className }: LottieIconProps) {
     <div ref={containerRef} className={className}>
       {animationData && (
         <Lottie
-          lottieRef={lottieRef}
           animationData={animationData}
           loop
           className="w-full h-full"

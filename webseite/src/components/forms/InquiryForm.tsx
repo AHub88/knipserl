@@ -87,11 +87,11 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
     <div className="bg-[#F1F3F6] rounded-md overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.12)]">
       {/* Month header */}
       <div className="flex items-center justify-between px-4 py-4 bg-[#1a171b]">
-        <button type="button" onClick={prevMonth} className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&lsaquo;</button>
+        <button type="button" onClick={prevMonth} aria-label="Vorheriger Monat" className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&lsaquo;</button>
         <span className="font-bold text-xl uppercase tracking-wide text-white font-[family-name:var(--font-fira-condensed)]">
           {MONTHS[viewMonth]} {viewYear}
         </span>
-        <button type="button" onClick={nextMonth} className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&rsaquo;</button>
+        <button type="button" onClick={nextMonth} aria-label="Nächster Monat" className="text-gray-400 hover:text-white text-2xl font-bold px-4 py-2">&rsaquo;</button>
       </div>
       {/* Weekday header */}
       <div className="grid grid-cols-7 border-b border-gray-200">
