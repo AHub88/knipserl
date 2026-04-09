@@ -73,7 +73,8 @@ export default function PriceConfigurator() {
           {ADDONS.map((addon) => (
             <label
               key={addon.id}
-              className={`flex gap-4 p-4 cursor-pointer transition-all shadow-md hover:shadow-lg ${
+              style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
+              className={`flex gap-4 p-4 cursor-pointer transition-all ${
                 selectedAddons.has(addon.id)
                   ? "bg-white ring-2 ring-[#F3A300]"
                   : "bg-[#F3F4F6]"
