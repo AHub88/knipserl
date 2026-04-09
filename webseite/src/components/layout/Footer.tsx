@@ -55,8 +55,8 @@ export default async function Footer() {
       itemScope
       itemType="https://schema.org/LocalBusiness"
       style={{
-        background: `url('/images/misc/footer-bg.jpg') no-repeat center top`,
-        backgroundSize: "cover",
+        background: `url('/images/misc/footer-bg.jpg') repeat center top`,
+        backgroundSize: "1920px auto",
       }}
     >
       {/* Papercut torn edge — matches original WP implementation */}
