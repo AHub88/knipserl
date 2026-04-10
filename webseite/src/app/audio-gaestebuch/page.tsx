@@ -116,9 +116,13 @@ export default async function AudioGaestebuchPage() {
                 besondere Erfahrung auf Deiner Feier machen. Die herzlichen Wünsche und
                 Nachrichten Deiner Gäste werden aufgenommen und bleiben für immer erhalten.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Link href="/termin-reservieren" className="btn-brand">Jetzt anfragen</Link>
-                <Link href="/preise" className="btn-outline-dark">Zusammen mit Fotobox buchen</Link>
+              <div className="flex flex-col sm:flex-row items-start gap-3 pt-2">
+                <Link href="/termin-reservieren" className="btn-brand whitespace-nowrap text-[18px] px-5 py-3">
+                  Jetzt anfragen
+                </Link>
+                <Link href="/preise" className="btn-outline-dark whitespace-nowrap text-[18px] px-5 py-3">
+                  Mit Fotobox kombinieren
+                </Link>
               </div>
             </div>
             <div className="relative aspect-[4/3] w-full">
@@ -167,11 +171,19 @@ export default async function AudioGaestebuchPage() {
               Vorteile eines Gästetelefons
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {benefits.map((benefit) => (
-              <div key={benefit.title} className="bg-white/10 backdrop-blur-sm border border-white/20 p-6">
-                <h3 className="text-[22px] leading-[1.2] text-[#F3A300] mb-3">{benefit.title}</h3>
-                <p className="text-white/85 text-[16px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+            {benefits.map((benefit, idx) => (
+              <div
+                key={benefit.title}
+                className="glass-card p-8 pt-10 relative border-t-[3px] border-t-[#F3A300]"
+              >
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#F3A300] text-[#1a171b] flex items-center justify-center font-bold text-[20px] shadow-lg font-[family-name:var(--font-fira-condensed)]">
+                  {idx + 1}
+                </div>
+                <h3 className="text-[22px] md:text-[24px] leading-[1.2] text-[#F3A300] mb-3 text-center uppercase font-extrabold tracking-[0.02em] font-[family-name:var(--font-fira-condensed)]">
+                  {benefit.title}
+                </h3>
+                <p className="text-white/85 text-[16px] text-center" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                   {benefit.description}
                 </p>
               </div>
