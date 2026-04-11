@@ -86,7 +86,7 @@ section.rough-bottom {
   left: 0;
   width: 100%;
   height: 50px;
-  background: url('/images/misc/rough-top-orig.png') repeat-x;
+  background: url('/images/misc/rough-top.webp') repeat-x;
   background-size: auto 50px;
   z-index: 20;
   pointer-events: none;

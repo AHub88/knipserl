@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ImageLightbox from "@/components/ImageLightbox";
 import InquiryForm from "@/components/forms/InquiryForm";
-import GoogleReviewsSlider, { type ReviewData } from "@/components/GoogleReviewsSlider";
+import { type ReviewData } from "@/components/GoogleReviewsSlider";
 import PageHeader from "@/components/layout/PageHeader";
 import {
   generatePageMetadata,
@@ -14,7 +15,7 @@ import { SITE_URL, SITE_NAME, ADDRESS, CONTACT_PHONE_DISPLAY } from "@/lib/const
 export const metadata: Metadata = generatePageMetadata({
   title: "Audio-Gästebuch mieten — Gästetelefon für Hochzeit & Feier",
   description:
-    "Audio-Gästebuch / Gästetelefon mieten in Oberbayern und Tirol. Vintage-Telefon für Hochzeit, Geburtstag oder Firmenfeier. Ab 100 €. Lieferung München, Rosenheim, Kufstein.",
+    "Audio-Gästebuch / Gästetelefon mieten — deutschlandweiter Versand per Post. Vintage-Telefon für Hochzeit, Geburtstag oder Firmenfeier. 100 € + 20 € Versand. Rücksendeetikett inklusive.",
   path: "/audio-gaestebuch",
 });
 
@@ -43,7 +44,7 @@ async function getGoogleReviews(): Promise<ReviewData | null> {
 // ============================================================================
 
 const HERO_USPS = [
-  "Handrestauriertes Vintage-Telefon",
+  "Vintage-Telefon im Retro-Look",
   "Autark – kein Strom, kein WLAN nötig",
   "Persönliche Begrüßungsansage möglich",
   "Alle Aufnahmen als MP3 nach dem Event",
@@ -57,8 +58,8 @@ const STEPS = [
   },
   {
     step: "2",
-    title: "Wir liefern & richten ein",
-    text: "Wir bringen das Gästetelefon zu Eurer Location, stellen es auf und machen es einsatzbereit. Plug & Play für Eure Gäste.",
+    title: "Paket kommt per Post",
+    text: "Wir schicken das Gästetelefon rechtzeitig vor Eurem Event per DHL zu Euch nach Hause – inklusive frankiertem Rücksendeetikett.",
   },
   {
     step: "3",
@@ -67,8 +68,8 @@ const STEPS = [
   },
   {
     step: "4",
-    title: "Aufnahmen erhalten",
-    text: "Wenige Tage nach dem Event schicken wir Dir alle Aufnahmen als saubere MP3-Dateien zum Download.",
+    title: "Zurücksenden & MP3 erhalten",
+    text: "Einfach zurück in den Karton, Etikett drauf, bei der Post abgeben. Wenige Tage später bekommt Ihr alle Aufnahmen als MP3-Download.",
   },
 ];
 
@@ -119,7 +120,7 @@ const FAQS = [
   {
     question: "Was kostet das Mieten eines Gästetelefons?",
     answer:
-      "Unser Gästetelefon kostet 100 € für Eure Veranstaltung. Im Umkreis von 15 km um Bruckmühl ist die Lieferung kostenlos, darüber hinaus werden transparente Fahrtkosten ausgewiesen – keine versteckten Gebühren.",
+      "Unser Gästetelefon kostet 100 € für Eure Veranstaltung plus 20 € Versandpauschale (Hin- und Rückversand per DHL, frankiertes Rücksendeetikett liegt bei). Wenn Ihr das Audio-Gästebuch direkt zur Knipserl Fotobox dazubucht, entfällt der Versand komplett – wir bringen es dann einfach mit.",
   },
   {
     question: "Braucht das Telefon Strom oder Internet?",
@@ -132,24 +133,14 @@ const FAQS = [
       "Die Beteiligung ist erfahrungsgemäß deutlich höher als beim klassischen Gästebuch. Gerade auch zurückhaltende Gäste und ältere Verwandte greifen zum Hörer, weil es sich wie ein kurzer Anruf anfühlt und keine Hemmschwelle zum Schreiben überwunden werden muss.",
   },
   {
-    question: "Können wir eine eigene Begrüßungsnachricht aufsprechen?",
-    answer:
-      "Ja, absolut. Ihr erhaltet vor Eurem Event eine kurze Anleitung, wie Ihr Eure persönliche Ansage aufnehmt – oder wir sprechen sie auf Wunsch für Euch ein. So hören Eure Gäste zuerst Eure Stimme.",
-  },
-  {
     question: "Wie lange vor dem Event sollte ich buchen?",
     answer:
       "Für Hochzeiten in der Hauptsaison (Mai bis September) empfehlen wir eine Buchung mindestens 3 bis 6 Monate im Voraus. Kurzfristige Anfragen sind möglich – prüfe einfach im Kalender auf dieser Seite, ob Dein Datum noch frei ist.",
   },
   {
-    question: "Liefert Ihr auch nach München, Rosenheim oder Kufstein?",
+    question: "Versendet Ihr deutschlandweit?",
     answer:
-      "Ja. Wir liefern das Gästetelefon in ganz Oberbayern und bis ins Tiroler Unterland – inklusive München, Rosenheim, Ebersberg, Miesbach, Traunstein, Mühldorf, Erding, Wasserburg am Inn und Kufstein. Fahrtkosten zeigen wir vorab transparent im Angebot.",
-  },
-  {
-    question: "Was passiert, wenn das Telefon ausfällt?",
-    answer:
-      "Jedes Gerät wird vor jeder Vermietung getestet. Sollte trotzdem ein technisches Problem auftreten, erhaltet Ihr die Miete vollständig zurückerstattet. So habt Ihr keinerlei Risiko.",
+      "Ja. Wir verschicken das Audio-Gästebuch per DHL deutschlandweit – egal ob Eure Feier in München, Hamburg, Berlin oder auf Sylt stattfindet. Der Versand ist in der 20-€-Versandpauschale enthalten, ein frankiertes Rücksendeetikett liegt dem Paket bei. Bei Kombi mit unserer Fotobox im Umkreis Oberbayern/Tirol liefern wir persönlich und der Versand entfällt.",
   },
   {
     question: "Können wir Audio-Gästebuch und Fotobox kombinieren?",
@@ -158,33 +149,21 @@ const FAQS = [
   },
 ];
 
-const SERVICE_CITIES = [
-  { name: "München", slug: "muenchen", drive: "ca. 45 Min" },
-  { name: "Rosenheim", slug: "rosenheim", drive: "ca. 20 Min" },
-  { name: "Ebersberg", slug: "ebersberg", drive: "ca. 35 Min" },
-  { name: "Miesbach", slug: "miesbach", drive: "ca. 25 Min" },
-  { name: "Traunstein", slug: "traunstein", drive: "ca. 45 Min" },
-  { name: "Wasserburg am Inn", slug: null, drive: "ca. 20 Min" },
-  { name: "Mühldorf am Inn", slug: null, drive: "ca. 45 Min" },
-  { name: "Erding", slug: null, drive: "ca. 55 Min" },
-  { name: "Kufstein (AT)", slug: null, drive: "ca. 50 Min" },
-];
-
 const PACKAGE_FEATURES = [
-  "Handrestauriertes Vintage-Gästetelefon",
+  "Vintage-Gästetelefon im Retro-Look",
   "Persönliche Begrüßungsansage (von Euch oder von uns eingesprochen)",
   "Autark – kein Strom, kein WLAN nötig",
   "Unbegrenzte Anzahl Aufnahmen",
   "Alle Aufnahmen als MP3 zum Download nach dem Event",
-  "Lieferung im Umkreis 15 km Bruckmühl kostenlos",
-  "Auch als Add-On zur Fotobox buchbar",
+  "Versand per DHL inkl. frankiertem Rücksendeetikett",
+  "Bei Kombi mit Fotobox: Versand kostenlos",
 ];
 
 const IMPRESSIONEN = [
-  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-005-605x453.jpg", alt: "Audio-Gästebuch Gästetelefon im Einsatz bei einer Hochzeit in Oberbayern" },
-  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-015-605x453.jpg", alt: "Vintage-Gästetelefon Nahaufnahme mit Holzkasten" },
-  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-016-605x453.jpg", alt: "Gästetelefon als Audio-Gästebuch auf Brauttisch" },
-  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-017-605x453.jpg", alt: "Urige Gästetelefon Miete für Hochzeit Rosenheim München" },
+  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-005-2500x1875.jpg", alt: "Audio-Gästebuch Gästetelefon im Einsatz bei einer Hochzeit" },
+  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-015-2500x1875.jpg", alt: "Vintage-Gästetelefon Nahaufnahme mit Holzkasten" },
+  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-016-2500x1875.jpg", alt: "Gästetelefon als Audio-Gästebuch auf Brauttisch" },
+  { src: "/images/audio-gaestebuch/audio-gaestebuch-mieten-017-2500x1875.jpg", alt: "Audio-Gästebuch / Gästetelefon zum Mieten für Hochzeit und Feier" },
 ];
 
 // ============================================================================
@@ -201,14 +180,14 @@ export default async function AudioGaestebuchPage() {
 
   const faqSchema = generateFAQSchema(FAQS);
 
-  // Service-Schema speziell für Gästetelefon (100 €, areaServed, Provider = LocalBusiness)
+  // Service-Schema für Gästetelefon — deutschlandweiter Verleih per DHL
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
     name: "Audio-Gästebuch / Gästetelefon mieten",
     serviceType: "Audio-Gästebuch Verleih",
     description:
-      "Handrestauriertes Vintage-Gästetelefon zum Mieten für Hochzeiten, Geburtstage und Firmenfeiern in Oberbayern und Tirol. Gäste hinterlassen Sprachnachrichten, die als MP3 nach dem Event übergeben werden.",
+      "Vintage-Gästetelefon im Retro-Look zum Mieten für Hochzeiten, Geburtstage und Firmenfeiern. Deutschlandweiter Versand per DHL inkl. Rücksendeetikett. Gäste hinterlassen Sprachnachrichten, die als MP3 nach dem Event übergeben werden.",
     provider: {
       "@type": "LocalBusiness",
       "@id": `${SITE_URL}/#business`,
@@ -229,17 +208,10 @@ export default async function AudioGaestebuchPage() {
       availability: "https://schema.org/InStock",
       url: `${SITE_URL}/audio-gaestebuch`,
     },
-    areaServed: [
-      { "@type": "City", name: "München" },
-      { "@type": "City", name: "Rosenheim" },
-      { "@type": "City", name: "Ebersberg" },
-      { "@type": "City", name: "Miesbach" },
-      { "@type": "City", name: "Traunstein" },
-      { "@type": "City", name: "Wasserburg am Inn" },
-      { "@type": "City", name: "Mühldorf am Inn" },
-      { "@type": "City", name: "Erding" },
-      { "@type": "City", name: "Kufstein" },
-    ],
+    areaServed: {
+      "@type": "Country",
+      name: "Deutschland",
+    },
     ...(reviewData && reviewData.totalCount > 0
       ? {
           aggregateRating: {
@@ -272,7 +244,19 @@ export default async function AudioGaestebuchPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <PageHeader title="Audio-Gästebuch / Gästetelefon" />
+      <PageHeader title="Audio-Gästebuch / Gästetelefon" decorative />
+
+      {/* SVG-Filter: animierte Grunge-Border für Preis-Card */}
+      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+        <defs>
+          <filter id="grunge-border-heavy-animated" x="-8%" y="-8%" width="116%" height="116%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="13" result="noise">
+              <animate attributeName="seed" values="13;15;17;19;21;13" dur="8s" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" />
+          </filter>
+        </defs>
+      </svg>
 
       {/* ========================================================================
           HERO — Emotion + USP + Preis-Anker + primary CTA + micro-trust
@@ -281,11 +265,11 @@ export default async function AudioGaestebuchPage() {
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-10 md:gap-12 items-center">
             <div>
-              <p className="text-[#F3A300] text-[18px] md:text-[20px] font-semibold mb-3 font-[family-name:var(--font-fira-condensed)] uppercase tracking-[0.05em]">
-                Die moderne Alternative zum Gästebuch
+              <p className="text-[#F3A300] text-[16px] md:text-[18px] font-semibold mb-3 font-[family-name:var(--font-fira-condensed)] uppercase tracking-[0.05em]">
+                Deutschlandweiter Versand per DHL
               </p>
-              <h1 className="text-[34px] md:text-[48px] lg:text-[56px] leading-[1] text-[#1a171b] mb-5">
-                Audio-Gästebuch mieten in Oberbayern & Tirol
+              <h1 className="text-[32px] md:text-[44px] lg:text-[52px] leading-[1.05] text-[#1a171b] mb-5">
+                Audio-Gästebuch mieten
               </h1>
               <p className="text-[#666] text-[17px] md:text-[19px] leading-relaxed mb-6" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                 Ein handrestauriertes Vintage-Telefon auf Eurer Feier – Eure Gäste
@@ -304,15 +288,15 @@ export default async function AudioGaestebuchPage() {
                 ))}
               </ul>
 
-              <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-[#666] text-[15px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                  ab
-                </span>
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-5">
                 <span className="text-[#1a171b] text-[42px] md:text-[52px] leading-[1] font-extrabold font-[family-name:var(--font-fira-condensed)]">
                   100&nbsp;€
                 </span>
-                <span className="text-[#666] text-[14px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                  inkl. MwSt. · für Eure Veranstaltung
+                <span className="text-[#666] text-[16px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  + 20 € Versand
+                </span>
+                <span className="w-full text-[#999] text-[13px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  inkl. MwSt. · Rücksendeetikett inklusive · bei Fotobox-Kombi versandfrei
                 </span>
               </div>
 
@@ -352,25 +336,58 @@ export default async function AudioGaestebuchPage() {
       </section>
 
       {/* ========================================================================
-          TRUST BAR — dünne Leiste, Social Proof + Claims
+          TRUST BAR — Social Proof + Claims mit Icons & Dividern
           ======================================================================== */}
       <section
-        className="relative z-10 py-6 rough-top rough-bottom text-white"
+        className="relative z-10 py-14 md:py-16 rough-top rough-bottom text-white"
         style={{ background: "#1a171b url('/images/misc/main_back_gr-2.webp') repeat", backgroundSize: "1000px 500px" }}
       >
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-white/15 text-center">
             {[
-              { big: "Familienbetrieb", small: "aus Bruckmühl – Oberbayern" },
-              { big: "Oberbayern & Tirol", small: "München · Rosenheim · Kufstein" },
-              { big: "Plug & Play", small: "Autark, kein Strom nötig" },
-              { big: "Ausfall-Garantie", small: "Volle Rückerstattung bei Defekt" },
+              {
+                big: "Familienbetrieb",
+                small: "aus Bruckmühl – Oberbayern",
+                icon: (
+                  <svg className="w-8 h-8 md:w-9 md:h-9" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                ),
+              },
+              {
+                big: "Deutschlandweit",
+                small: "Versand per DHL · Rücksendeetikett inkl.",
+                icon: (
+                  <svg className="w-8 h-8 md:w-9 md:h-9" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 3h5v5M14 10l7-7M9 21H5a2 2 0 01-2-2v-4m0-4V5a2 2 0 012-2h4m4 18h4a2 2 0 002-2v-4" />
+                  </svg>
+                ),
+              },
+              {
+                big: "Plug & Play",
+                small: "Autark, kein Strom nötig",
+                icon: (
+                  <svg className="w-8 h-8 md:w-9 md:h-9" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                ),
+              },
+              {
+                big: "Ausfall-Garantie",
+                small: "Volle Rückerstattung bei Defekt",
+                icon: (
+                  <svg className="w-8 h-8 md:w-9 md:h-9" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                ),
+              },
             ].map((item) => (
-              <div key={item.big}>
-                <div className="text-[#F3A300] text-[18px] md:text-[20px] font-extrabold uppercase leading-[1.1] font-[family-name:var(--font-fira-condensed)] tracking-[0.02em]">
+              <div key={item.big} className="flex flex-col items-center md:px-6">
+                <div className="text-[#F3A300] mb-3">{item.icon}</div>
+                <div className="text-white text-[18px] md:text-[20px] font-extrabold uppercase leading-[1.1] font-[family-name:var(--font-fira-condensed)] tracking-[0.02em]">
                   {item.big}
                 </div>
-                <div className="text-white/70 text-[13px] md:text-[14px] mt-1" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                <div className="text-white/70 text-[13px] md:text-[14px] mt-2 max-w-[200px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                   {item.small}
                 </div>
               </div>
@@ -392,7 +409,7 @@ export default async function AudioGaestebuchPage() {
           <div className="text-[#1a171b] text-[17px] md:text-[18px] leading-relaxed space-y-4" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
             <p>
               Ein <strong>Audio-Gästebuch</strong> – auch <strong>Gästetelefon</strong> oder{" "}
-              <strong>Hochzeitstelefon</strong> genannt – ist ein umgebautes Vintage-Telefon,
+              <strong>Hochzeitstelefon</strong> genannt – ist ein Telefon im Vintage-Look,
               über das Eure Gäste persönliche Sprachnachrichten für Euch aufnehmen. Statt
               handgeschriebener Zeilen entstehen ehrliche, emotionale Audio-Aufnahmen, die Ihr
               nach der Hochzeit als MP3-Dateien erhaltet.
@@ -430,7 +447,7 @@ export default async function AudioGaestebuchPage() {
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#F3A300] text-[#1a171b] flex items-center justify-center font-bold text-[22px] shadow-lg font-[family-name:var(--font-fira-condensed)]">
                   {item.step}
                 </div>
-                <h3 className="text-[20px] md:text-[22px] leading-[1.2] text-[#F3A300] mb-3 uppercase font-extrabold font-[family-name:var(--font-fira-condensed)] tracking-[0.02em]">
+                <h3 className="text-[20px] md:text-[22px] leading-[1.2] text-white mb-3 uppercase font-extrabold font-[family-name:var(--font-fira-condensed)] tracking-[0.02em]">
                   {item.title}
                 </h3>
                 <p className="text-white/85 text-[15px] leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
@@ -458,32 +475,44 @@ export default async function AudioGaestebuchPage() {
           </p>
 
           <div className="overflow-x-auto -mx-6 px-6">
-            <table className="w-full min-w-[680px] border-collapse text-[15px] md:text-[16px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+            <table className="w-full min-w-[720px] border-collapse text-[15px] md:text-[16px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+              <caption className="sr-only">Audio-Gästebuch vs. klassisches Gästebuch vs. Polaroid-Gästebuch im Vergleich</caption>
               <thead>
-                <tr>
-                  <th className="text-left p-4 border-b-2 border-[#1a171b] text-[#1a171b] font-bold uppercase text-[13px] tracking-[0.05em] font-[family-name:var(--font-fira-condensed)]">
+                <tr
+                  style={{
+                    background: "#1a171b url('/images/misc/main_back_gr-2.webp') repeat",
+                    backgroundSize: "1000px 500px",
+                  }}
+                >
+                  <th scope="col" className="text-left px-5 py-4 text-white font-bold uppercase text-[12px] md:text-[13px] tracking-[0.08em] font-[family-name:var(--font-fira-condensed)] border border-[#1a171b]">
                     Kriterium
                   </th>
-                  <th className="text-left p-4 border-b-2 border-[#F3A300] bg-[#F3A300]/10 text-[#1a171b] font-bold uppercase text-[13px] tracking-[0.05em] font-[family-name:var(--font-fira-condensed)]">
+                  <th scope="col" className="text-left px-5 py-4 text-[#F3A300] font-bold uppercase text-[12px] md:text-[13px] tracking-[0.08em] font-[family-name:var(--font-fira-condensed)] border border-[#1a171b] border-t-4 border-t-[#F3A300]">
                     Audio-Gästebuch
                   </th>
-                  <th className="text-left p-4 border-b-2 border-[#1a171b]/30 text-[#666] font-bold uppercase text-[13px] tracking-[0.05em] font-[family-name:var(--font-fira-condensed)]">
+                  <th scope="col" className="text-left px-5 py-4 text-white/70 font-bold uppercase text-[12px] md:text-[13px] tracking-[0.08em] font-[family-name:var(--font-fira-condensed)] border border-[#1a171b]">
                     Klassisches Gästebuch
                   </th>
-                  <th className="text-left p-4 border-b-2 border-[#1a171b]/30 text-[#666] font-bold uppercase text-[13px] tracking-[0.05em] font-[family-name:var(--font-fira-condensed)]">
+                  <th scope="col" className="text-left px-5 py-4 text-white/70 font-bold uppercase text-[12px] md:text-[13px] tracking-[0.08em] font-[family-name:var(--font-fira-condensed)] border border-[#1a171b]">
                     Polaroid-Gästebuch
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {COMPARISON_ROWS.map((row, idx) => (
-                  <tr key={row.label} className={idx % 2 === 0 ? "bg-[#1a171b]/[0.03]" : ""}>
-                    <td className="p-4 text-[#1a171b] font-bold align-top">{row.label}</td>
-                    <td className="p-4 text-[#1a171b] align-top bg-[#F3A300]/5 border-l border-r border-[#F3A300]/20">
+                {COMPARISON_ROWS.map((row) => (
+                  <tr key={row.label} className="bg-white">
+                    <td className="px-5 py-4 align-top text-[#1a171b] font-bold uppercase text-[15px] md:text-[16px] tracking-[0.02em] font-[family-name:var(--font-fira-condensed)] border border-[#e5e3df]">
+                      {row.label}
+                    </td>
+                    <td className="px-5 py-4 align-top text-[#1a171b] text-[15px] md:text-[16px] bg-[#F3A300]/[0.08] border border-[#F3A300]/40">
                       {row.audio}
                     </td>
-                    <td className="p-4 text-[#666] align-top">{row.klassisch}</td>
-                    <td className="p-4 text-[#666] align-top">{row.polaroid}</td>
+                    <td className="px-5 py-4 align-top text-[#666] text-[15px] md:text-[16px] border border-[#e5e3df]">
+                      {row.klassisch}
+                    </td>
+                    <td className="px-5 py-4 align-top text-[#666] text-[15px] md:text-[16px] border border-[#e5e3df]">
+                      {row.polaroid}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -509,24 +538,12 @@ export default async function AudioGaestebuchPage() {
           <p className="text-center text-[18px] md:text-[22px] text-[#F3A300] font-semibold mb-10 font-[family-name:var(--font-fira-condensed)]">
             Unser Gästetelefon im Einsatz
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {IMPRESSIONEN.map((img) => (
-              <div key={img.src} className="relative aspect-[4/3] overflow-hidden group">
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
-              </div>
-            ))}
-          </div>
+          <ImageLightbox images={IMPRESSIONEN} />
         </div>
       </section>
 
       {/* ========================================================================
-          PREIS & LEISTUNGSUMFANG — transparent, 1 Paket (Hick's Law)
+          PREIS & LEISTUNGSUMFANG
           ======================================================================== */}
       <section className="py-16 md:py-20">
         <div className="max-w-[900px] mx-auto px-6">
@@ -539,128 +556,136 @@ export default async function AudioGaestebuchPage() {
             </p>
           </div>
 
-          <div className="bg-white border-2 border-[#F3A300] rounded-lg shadow-xl overflow-hidden">
-            <div className="bg-[#1a171b] text-white p-6 md:p-8 text-center">
-              <div className="text-[14px] uppercase tracking-[0.1em] text-white/70 mb-1 font-[family-name:var(--font-fira-condensed)]">
-                Audio-Gästebuch / Gästetelefon
+          {/* ================= Preis-Card: Heavy Grunge + Animated Border ================= */}
+          <div className="relative">
+            <div
+              className="absolute inset-0 bg-white border-[6px] border-[#1a171b] shadow-2xl"
+              style={{ filter: "url(#grunge-border-heavy-animated)" }}
+              aria-hidden="true"
+            />
+            <div className="relative px-6 md:px-12 pt-14 pb-14">
+              <div className="text-center mb-6">
+                <div className="text-[#F3A300] text-[13px] uppercase tracking-[0.2em] mb-2 font-[family-name:var(--font-fira-condensed)]">
+                  Das Paket
+                </div>
+                <h3 className="heading-decorated text-[24px] md:text-[34px] leading-[1] text-[#1a171b] inline-block">
+                  Audio-Gästebuch
+                </h3>
               </div>
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-[60px] md:text-[72px] leading-[1] font-extrabold text-[#F3A300] font-[family-name:var(--font-fira-condensed)]">
-                  100&nbsp;€
-                </span>
+
+              <div className="text-center mb-8">
+                <div className="inline-flex items-baseline gap-2 md:gap-3 flex-wrap justify-center">
+                  <span className="text-[#1a171b] text-[56px] md:text-[96px] leading-[0.9] font-extrabold font-[family-name:var(--font-fira-condensed)]">
+                    100&nbsp;€
+                  </span>
+                  <div className="flex flex-col items-start">
+                    <span className="text-[#1a171b] text-[18px] md:text-[24px] leading-[1] font-extrabold font-[family-name:var(--font-fira-condensed)]">
+                      + 20 €
+                    </span>
+                    <span className="text-[#666] text-[11px] md:text-[13px] uppercase tracking-[0.1em] font-[family-name:var(--font-fira-condensed)]">
+                      Versand
+                    </span>
+                  </div>
+                </div>
+                <div className="text-[#666] text-[14px] mt-2" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  inkl. MwSt. · Rücksendeetikett inklusive
+                </div>
               </div>
-              <div className="text-white/70 text-[14px] mt-2" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                inkl. MwSt. · für Eure Veranstaltung
+
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-[#F3A300]/15 border-2 border-dashed border-[#F3A300] px-4 py-2 -rotate-1">
+                  <svg className="w-5 h-5 text-[#F3A300]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 3h5v5M14 10l7-7M9 21H5a2 2 0 01-2-2v-4m0-4V5a2 2 0 012-2h4m4 18h4a2 2 0 002-2v-4" />
+                  </svg>
+                  <span className="text-[#1a171b] text-[13px] md:text-[14px] font-extrabold uppercase tracking-[0.05em] font-[family-name:var(--font-fira-condensed)]">
+                    Rücksendung frei Haus
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="p-6 md:p-10">
-              <ul className="space-y-3 mb-8">
+
+              <div className="md:columns-2 gap-x-8 max-w-[700px] mx-auto mb-10">
                 {PACKAGE_FEATURES.map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-[#1a171b] text-[16px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  <div key={f} className="flex items-start gap-3 text-[#1a171b] text-[15px] mb-3 break-inside-avoid" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                     <svg className="w-5 h-5 text-[#F3A300] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <span>{f}</span>
-                  </li>
+                  </div>
                 ))}
-              </ul>
-              <p className="text-[#666] text-[14px] mb-6" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                Außerhalb des 15-km-Radius um Bruckmühl berechnen wir Fahrtkosten
-                gestaffelt nach Entfernung. Wir weisen sie transparent im Angebot aus.
-              </p>
+              </div>
+
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="#anfragen" className="btn-brand whitespace-nowrap text-[18px] px-6 py-3">
+                <Link href="#anfragen" className="btn-brand whitespace-nowrap text-[14px] md:text-[18px] px-4 md:px-6 py-2.5 md:py-3">
                   Jetzt Termin prüfen
                 </Link>
-                <Link href="/preise" className="btn-outline-dark whitespace-nowrap text-[18px] px-6 py-3">
+                <Link href="/preise" className="btn-outline-dark whitespace-nowrap text-[14px] md:text-[18px] px-4 md:px-6 py-2.5 md:py-3">
                   Mit Fotobox kombinieren
                 </Link>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
       {/* ========================================================================
-          EINSATZGEBIET / GEO — städte-differenziert, NAP-Konsistenz,
-          Fahrtzeiten-Content. Local-SEO-Kern.
+          VERSAND — deutschlandweit per DHL
           ======================================================================== */}
-      <section className="py-16 md:py-20 bg-[#f8f7f4]">
+      <section className="py-16 md:py-20">
         <div className="max-w-[1100px] mx-auto px-6">
           <div className="text-center mb-4">
             <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] text-[#1a171b] inline-block">
-              Einsatzgebiet
+              Versand deutschlandweit
             </h2>
           </div>
           <p className="text-center text-[18px] md:text-[22px] text-[#F3A300] font-semibold mb-8 font-[family-name:var(--font-fira-condensed)]">
-            Wir liefern in ganz Oberbayern und ins Tiroler Unterland
+            Wo immer Eure Feier stattfindet – das Gästetelefon kommt per Post
           </p>
-          <p className="max-w-[750px] mx-auto text-center text-[#666] text-[17px] leading-relaxed mb-10" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-            Unser Gästetelefon startet in Bruckmühl bei Rosenheim. Von hier aus sind
-            wir schnell bei Eurer Hochzeit – ob Chiemgau, Tegernseer Tal, Münchner
-            Umland oder Tiroler Inntal.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {SERVICE_CITIES.map((c) => {
-              const content = (
-                <div className="bg-white border border-[#e5e3df] px-5 py-4 hover:border-[#F3A300] transition-colors">
-                  <div className="text-[#1a171b] font-bold text-[17px] font-[family-name:var(--font-fira-condensed)] uppercase tracking-[0.02em]">
-                    {c.name}
-                  </div>
-                  <div className="text-[#666] text-[13px] mt-0.5" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                    {c.drive} Fahrtzeit
-                  </div>
-                </div>
-              );
-              return c.slug ? (
-                <Link key={c.name} href={`/fotobox/${c.slug}`} className="block">
-                  {content}
-                </Link>
-              ) : (
-                <div key={c.name}>{content}</div>
-              );
-            })}
-          </div>
-
-          <p className="text-center text-[#666] text-[14px] mt-8" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-            Euer Ort ist nicht dabei? Kein Problem – wir liefern auf Anfrage auch
-            weiter. Einfach unten im Formular anfragen.
-          </p>
-        </div>
-      </section>
-
-      {/* ========================================================================
-          FAQ — Accordion mit <details>. FAQPage-Schema ist oben eingefügt.
-          ======================================================================== */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-[820px] mx-auto px-6">
-          <div className="text-center mb-4">
-            <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] text-[#1a171b] inline-block">
-              Häufige Fragen
-            </h2>
-          </div>
-          <p className="text-center text-[18px] md:text-[22px] text-[#F3A300] font-semibold mb-10 font-[family-name:var(--font-fira-condensed)]">
-            Alles rund um das Audio-Gästebuch
+          <p className="max-w-[750px] mx-auto text-center text-[#666] text-[17px] leading-relaxed mb-12" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+            Wir verschicken das Audio-Gästebuch per DHL in ganz Deutschland – inklusive
+            frankiertem Rücksendeetikett. Kombiniert Ihr es mit unserer Fotobox in
+            Oberbayern oder Tirol, liefern wir es persönlich mit und der Versand entfällt.
           </p>
 
-          <div className="space-y-3">
-            {FAQS.map((faq, idx) => (
-              <details
-                key={faq.question}
-                className="group border border-[#e5e3df] bg-white"
-                open={idx === 0}
-              >
-                <summary className="cursor-pointer list-none p-5 flex items-start justify-between gap-4 text-[#1a171b] font-bold text-[16px] md:text-[17px] hover:text-[#F3A300]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 600 }}>
-                  <span>{faq.question}</span>
-                  <svg className="w-5 h-5 flex-shrink-0 text-[#F3A300] transition-transform group-open:rotate-180 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-0 md:divide-x md:divide-[#1a171b]/15 max-w-[1000px] mx-auto text-center">
+            {[
+              {
+                title: "Hinversand per DHL",
+                text: "Wir schicken das Paket rechtzeitig vor Eurem Termin – sicher verpackt im Original-Karton.",
+                icon: (
+                  <svg className="w-10 h-10 md:w-11 md:h-11" fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
-                </summary>
-                <div className="px-5 pb-5 text-[#666] text-[16px] leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                  {faq.answer}
-                </div>
-              </details>
+                ),
+              },
+              {
+                title: "Rücksendeetikett inklusive",
+                text: "Frankiertes DHL-Label liegt bei. Karton zukleben, abgeben, fertig – Ihr zahlt nichts.",
+                icon: (
+                  <svg className="w-10 h-10 md:w-11 md:h-11" fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                ),
+              },
+              {
+                title: "Bei Fotobox-Kombi versandfrei",
+                text: "Bucht Ihr unsere Knipserl Fotobox dazu, bringen wir das Gästetelefon persönlich mit.",
+                icon: (
+                  <svg className="w-10 h-10 md:w-11 md:h-11" fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2zm4 8h6" />
+                  </svg>
+                ),
+              },
+            ].map((f) => (
+              <div key={f.title} className="flex flex-col items-center md:px-6">
+                <div className="text-[#F3A300] mb-4">{f.icon}</div>
+                <h3 className="text-[#1a171b] text-[18px] md:text-[20px] font-extrabold uppercase leading-[1.1] mb-3 font-[family-name:var(--font-fira-condensed)] tracking-[0.02em]">
+                  {f.title}
+                </h3>
+                <p className="text-[#666] text-[14px] md:text-[15px] leading-relaxed max-w-[260px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  {f.text}
+                </p>
+              </div>
             ))}
           </div>
         </div>
@@ -697,7 +722,9 @@ export default async function AudioGaestebuchPage() {
           <p className="text-white/85 text-[17px] md:text-[18px] leading-relaxed mb-8" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
             Visuelle UND akustische Erinnerungen: Das Audio-Gästebuch lässt sich direkt
             als Add-On zur Fotobox dazubuchen. Eure Gäste lachen vor der Kamera und
-            sprechen am Telefon – und Ihr habt hinterher beides.
+            sprechen am Telefon – und Ihr habt hinterher beides. <strong className="text-white">Bonus:</strong>{" "}
+            <span className="text-[#F3A300] font-semibold">Versand entfällt</span> – wir
+            bringen das Telefon mit der Fotobox persönlich vorbei.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/preise" className="btn-brand">Fotobox-Preise ansehen</Link>
@@ -707,32 +734,52 @@ export default async function AudioGaestebuchPage() {
       </section>
 
       {/* ========================================================================
-          KUNDENREZENSIONEN
+          FAQ — Accordion mit <details>. FAQPage-Schema ist oben eingefügt.
+          Byline/Datum als kleiner GEO-Footer direkt drunter (war vorher eigene Section).
           ======================================================================== */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] text-[#1a171b] inline-block">
-              Kundenrezensionen
-            </h2>
-            <p className="text-[18px] md:text-[22px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
-              Das sagen unsere Kunden zum Knipserl
-            </p>
-          </div>
-          {reviewData && <GoogleReviewsSlider data={reviewData} />}
-        </div>
-      </section>
-
-      {/* ========================================================================
-          AUTOR / DATUM — GEO-Signal: Byline + Datum erhöhen LLM-Zitierbarkeit
-          ======================================================================== */}
-      <section className="pb-16 -mt-6">
         <div className="max-w-[820px] mx-auto px-6">
-          <div className="border-t border-[#e5e3df] pt-6 text-center text-[#999] text-[13px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-            Text: <strong className="text-[#666]">Andreas Huber</strong>, Inhaber{" "}
-            {SITE_NAME}, {ADDRESS.street}, {ADDRESS.zip} {ADDRESS.city}. Telefon{" "}
-            {CONTACT_PHONE_DISPLAY}. Letzte Aktualisierung: April 2026.
+          <div className="text-center mb-4">
+            <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] text-[#1a171b] inline-block">
+              Häufige Fragen
+            </h2>
           </div>
+          <p className="text-center text-[18px] md:text-[22px] text-[#F3A300] font-semibold mb-10 font-[family-name:var(--font-fira-condensed)]">
+            Alles rund um das Audio-Gästebuch
+          </p>
+
+          <div className="space-y-4">
+            {FAQS.map((faq) => (
+              <details
+                key={faq.question}
+                className="group overflow-hidden rounded-sm"
+              >
+                <summary
+                  className="flex items-center justify-between px-5 md:px-6 py-4 md:py-5 cursor-pointer text-white font-bold text-[15px] md:text-[18px] uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide list-none"
+                  style={{
+                    background: "#444 url('/images/misc/main_back_gr-2.webp') repeat",
+                    backgroundSize: "1000px 500px",
+                  }}
+                >
+                  <span>{faq.question}</span>
+                  <span className="text-white text-[24px] font-normal flex-shrink-0 ml-4 group-open:hidden">+</span>
+                  <span className="text-white text-[24px] font-normal flex-shrink-0 ml-4 hidden group-open:inline">−</span>
+                </summary>
+                <div
+                  className="px-5 md:px-6 py-5 text-white text-[15px] md:text-[16px] leading-relaxed"
+                  style={{
+                    fontFamily: "'Fira Sans', sans-serif",
+                    background: "#333 url('/images/misc/main_back_gr-2.webp') repeat",
+                    backgroundSize: "1000px 500px",
+                    backgroundPosition: "0 -200px",
+                  }}
+                >
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+
         </div>
       </section>
 
