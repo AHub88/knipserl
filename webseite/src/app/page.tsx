@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
+import ImageLightbox from "@/components/ImageLightbox";
 import LottieIcon from "@/components/LottieIcon";
 import GoogleReviewsSlider, { type ReviewData } from "@/components/GoogleReviewsSlider";
 import { SEO_CITIES } from "@/lib/constants";
@@ -466,19 +467,7 @@ export default async function HomePage() {
               Unsere Fotobox im Einsatz
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {galleryImages.map((img) => (
-              <div key={img.src} className="relative aspect-[4/3] overflow-hidden group cursor-pointer">
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
-              </div>
-            ))}
-          </div>
+          <ImageLightbox images={galleryImages} />
         </div>
       </section>
 

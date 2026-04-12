@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 type LightboxImage = { src: string; alt: string };
 
 export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   const close = useCallback(() => setOpenIdx(null), []);
   const next = useCallback(
@@ -32,6 +33,20 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
       document.body.style.overflow = "";
     };
   }, [openIdx, close, next, prev]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartY.current === null) return;
+      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+      if (deltaY > 80) close();
+      touchStartY.current = null;
+    },
+    [close]
+  );
 
   return (
     <>
@@ -59,6 +74,8 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
         <div
           className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 md:p-8"
           onClick={close}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
           role="dialog"
           aria-modal="true"
           aria-label="Bildvergrößerung"
@@ -69,10 +86,10 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
               e.stopPropagation();
               close();
             }}
-            className="absolute top-4 right-4 text-white/80 hover:text-white p-2 z-10"
+            className="absolute top-3 right-3 md:top-4 md:right-4 z-20 flex items-center justify-center w-11 h-11 md:w-10 md:h-10 rounded-full bg-black/60 text-white active:bg-black/80 md:bg-transparent md:hover:text-white md:text-white/80"
             aria-label="Schließen"
           >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -84,7 +101,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
                 e.stopPropagation();
                 prev();
               }}
-              className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-10"
+              className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-20"
               aria-label="Vorheriges Bild"
             >
               <svg className="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -93,10 +110,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
             </button>
           )}
 
-          <div
-            className="relative w-full max-w-[1400px] h-[80vh] md:h-[85vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative w-full max-w-[1400px] h-[80vh] md:h-[85vh] pointer-events-none">
             <Image
               src={images[openIdx].src}
               alt={images[openIdx].alt}
@@ -114,7 +128,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
                 e.stopPropagation();
                 next();
               }}
-              className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-10"
+              className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-20"
               aria-label="Nächstes Bild"
             >
               <svg className="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
