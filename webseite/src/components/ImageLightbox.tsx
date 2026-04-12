@@ -7,7 +7,7 @@ type LightboxImage = { src: string; alt: string };
 
 export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const close = useCallback(() => setOpenIdx(null), []);
   const next = useCallback(
@@ -35,17 +35,28 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
   }, [openIdx, close, next, prev]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   }, []);
 
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent) => {
-      if (touchStartY.current === null) return;
-      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
-      if (deltaY > 80) close();
-      touchStartY.current = null;
+      if (!touchStart.current) return;
+      const dx = e.changedTouches[0].clientX - touchStart.current.x;
+      const dy = e.changedTouches[0].clientY - touchStart.current.y;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (absDx > 60 && absDx > absDy) {
+        // Horizontal swipe: left = next, right = prev
+        if (dx < 0) next();
+        else prev();
+      } else if (dy > 80 && absDy > absDx) {
+        // Swipe down = close
+        close();
+      }
+      touchStart.current = null;
     },
-    [close]
+    [close, next, prev]
   );
 
   return (
@@ -72,7 +83,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
 
       {openIdx !== null && (
         <div
-          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4 md:p-8"
           onClick={close}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
@@ -86,7 +97,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
               e.stopPropagation();
               close();
             }}
-            className="absolute top-3 right-3 md:top-4 md:right-4 z-20 flex items-center justify-center w-11 h-11 md:w-10 md:h-10 rounded-full bg-black/60 text-white active:bg-black/80 md:bg-transparent md:hover:text-white md:text-white/80"
+            className="absolute top-3 left-3 md:top-4 md:right-4 md:left-auto z-20 flex items-center justify-center w-11 h-11 md:w-10 md:h-10 rounded-full bg-black/60 text-white active:bg-black/80 md:bg-transparent md:hover:text-white md:text-white/80"
             aria-label="Schließen"
           >
             <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -101,10 +112,10 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
                 e.stopPropagation();
                 prev();
               }}
-              className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-20"
+              className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-20 hidden md:block"
               aria-label="Vorheriges Bild"
             >
-              <svg className="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -128,10 +139,10 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
                 e.stopPropagation();
                 next();
               }}
-              className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-20"
+              className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 z-20 hidden md:block"
               aria-label="Nächstes Bild"
             >
-              <svg className="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
