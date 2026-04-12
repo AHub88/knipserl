@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 
 type LightboxImage = { src: string; alt: string };
@@ -81,7 +82,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
         ))}
       </div>
 
-      {openIdx !== null && (
+      {openIdx !== null && createPortal(
         <div
           className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4 md:p-8"
           onClick={close}
@@ -153,7 +154,8 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
               {openIdx + 1} / {images.length}
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
