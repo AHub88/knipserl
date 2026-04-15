@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useViewMode } from "@/lib/view-mode-context";
+import { SETTINGS_SECTIONS } from "@/lib/settings-nav";
 import {
   IconDashboard,
   IconFileText,
@@ -27,7 +29,6 @@ import {
   IconWorld,
   IconCurrencyEuro,
   IconBrush,
-  IconAdjustments,
   IconBrandGoogle,
 } from "@tabler/icons-react";
 import {
@@ -112,12 +113,14 @@ const adminNav: NavGroup[] = [
     ],
   },
   {
-    title: "System",
-    icon: IconAdjustments,
-    children: [
-      { title: "Statistiken", href: "/statistics", icon: IconChartBar },
-      { title: "Einstellungen", href: "/settings", icon: IconSettings },
-    ],
+    title: "Statistiken",
+    icon: IconChartBar,
+    href: "/statistics",
+  },
+  {
+    title: "Einstellungen",
+    icon: IconSettings,
+    href: "/settings",
   },
 ];
 
@@ -267,6 +270,103 @@ function AccordionNavItem({
   );
 }
 
+// ── Flyout nav item (Level-3 Popover auf Hover) ──
+function FlyoutNavItem({ group, pathname }: { group: NavGroup; pathname: string }) {
+  const { setOpenMobile } = useSidebar();
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => setMounted(true), []);
+
+  const active = group.href ? pathname.startsWith(group.href) : false;
+
+  const scheduleClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), 150);
+  };
+  const cancelClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+
+  const handleEnter = () => {
+    cancelClose();
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setPos({ top: rect.top, left: rect.right + 8 });
+    }
+    setOpen(true);
+  };
+
+  return (
+    <div
+      ref={triggerRef}
+      className="relative"
+      onMouseEnter={handleEnter}
+      onMouseLeave={scheduleClose}
+    >
+      <Link
+        href={group.href ?? "#"}
+        onClick={() => setOpenMobile(false)}
+        className={
+          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
+          (active
+            ? "bg-[#F6A11C]/10 text-[#F6A11C]"
+            : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+        }
+      >
+        <group.icon className={"size-[18px] shrink-0 " + (active ? "text-[#F6A11C]" : "text-zinc-400")} />
+        <span className="flex-1">{group.title}</span>
+      </Link>
+
+      {mounted && open && createPortal(
+        <div
+          className="fixed z-[60] min-w-[320px] max-w-[380px] rounded-xl border border-white/[0.10] bg-sidebar shadow-2xl shadow-black/60 py-2"
+          style={{ top: pos.top, left: pos.left }}
+          onMouseEnter={cancelClose}
+          onMouseLeave={scheduleClose}
+        >
+          {SETTINGS_SECTIONS.map((section, idx) => (
+            <div key={section.title} className={idx === 0 ? "" : "mt-1 pt-2 border-t border-white/[0.06]"}>
+              <div className="px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                {section.title}
+              </div>
+              <div className="space-y-0.5">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const itemActive = !item.href.startsWith("#") && pathname.startsWith(item.href.split("#")[0]);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => { setOpen(false); setOpenMobile(false); }}
+                      className={
+                        "flex items-start gap-3 px-4 py-2 text-[13px] transition-colors " +
+                        (itemActive
+                          ? "bg-[#F6A11C]/10 text-[#F6A11C]"
+                          : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+                      }
+                    >
+                      <Icon className={`size-4 shrink-0 mt-0.5 ${item.iconColor ?? (itemActive ? "text-[#F6A11C]" : "text-zinc-500")}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium leading-tight">{item.title}</div>
+                        <div className="text-[11px] text-zinc-500 mt-0.5 leading-snug truncate">{item.description}</div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
 export function AppSidebar() {
   const pathname = usePathname();
   const { viewMode } = useViewMode();
@@ -309,15 +409,19 @@ export function AppSidebar() {
 
       {/* Navigation */}
       <SidebarContent className="px-2 py-3 space-y-1 overflow-y-auto">
-        {groups.map((group) => (
-          <AccordionNavItem
-            key={group.title}
-            group={group}
-            pathname={pathname}
-            openKey={openKey}
-            onToggle={handleToggle}
-          />
-        ))}
+        {groups.map((group) =>
+          group.title === "Einstellungen" && group.href ? (
+            <FlyoutNavItem key={group.title} group={group} pathname={pathname} />
+          ) : (
+            <AccordionNavItem
+              key={group.title}
+              group={group}
+              pathname={pathname}
+              openKey={openKey}
+              onToggle={handleToggle}
+            />
+          )
+        )}
       </SidebarContent>
 
       {/* Footer */}
