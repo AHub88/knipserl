@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 
-const inputClass =
-  "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
+const inputBase =
+  "w-full h-[52px] px-4 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
+
+const textareaClass =
+  "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)] resize-y";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -15,17 +18,14 @@ export default function ContactForm() {
     email: "",
     telefon: "",
     nachricht: "",
-    consent: false,
-    // honeypot — real users leave empty
     website: "",
   });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,13 +33,7 @@ export default function ContactForm() {
     setErrorMsg("");
 
     if (form.website) {
-      // Honeypot triggered — silently "succeed"
       setStatus("success");
-      return;
-    }
-
-    if (!form.consent) {
-      setErrorMsg("Bitte stimme der Datenschutzerklärung zu.");
       return;
     }
 
@@ -73,13 +67,8 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-        <svg
-          className="w-16 h-16 text-green-500 mx-auto mb-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+      <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
+        <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
         <h3 className="text-xl font-semibold text-green-800 mb-2">Nachricht gesendet!</h3>
@@ -91,28 +80,26 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        name="firma"
-        placeholder="Firma (optional)"
-        value={form.firma}
-        onChange={handleChange}
-        className={inputClass}
-        autoComplete="organization"
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-3">
+      {/* Firma with icon */}
+      <div className="relative">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F3A300] pointer-events-none">
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M9 17h1M14 9h1M14 13h1M14 17h1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
         <input
           type="text"
-          name="vorname"
-          required
-          placeholder="Vorname *"
-          value={form.vorname}
+          name="firma"
+          placeholder="Unternehmen"
+          value={form.firma}
           onChange={handleChange}
-          className={inputClass}
-          autoComplete="given-name"
+          className={inputBase + " pl-11"}
+          autoComplete="organization"
         />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <input
           type="text"
           name="nachname"
@@ -120,8 +107,18 @@ export default function ContactForm() {
           placeholder="Nachname *"
           value={form.nachname}
           onChange={handleChange}
-          className={inputClass}
+          className={inputBase}
           autoComplete="family-name"
+        />
+        <input
+          type="text"
+          name="vorname"
+          required
+          placeholder="Vorname *"
+          value={form.vorname}
+          onChange={handleChange}
+          className={inputBase}
+          autoComplete="given-name"
         />
       </div>
 
@@ -133,7 +130,7 @@ export default function ContactForm() {
           placeholder="E-Mail *"
           value={form.email}
           onChange={handleChange}
-          className={inputClass}
+          className={inputBase}
           autoComplete="email"
         />
         <input
@@ -143,7 +140,7 @@ export default function ContactForm() {
           placeholder="Telefon *"
           value={form.telefon}
           onChange={handleChange}
-          className={inputClass}
+          className={inputBase}
           autoComplete="tel"
         />
       </div>
@@ -155,10 +152,10 @@ export default function ContactForm() {
         placeholder="Deine Nachricht *"
         value={form.nachricht}
         onChange={handleChange}
-        className={inputClass + " resize-y"}
+        className={textareaClass}
       />
 
-      {/* Honeypot field — hidden from real users, bots fill it */}
+      {/* Honeypot */}
       <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", top: "auto", width: "1px", height: "1px", overflow: "hidden" }}>
         <label>
           Website (nicht ausfüllen)
@@ -173,22 +170,13 @@ export default function ContactForm() {
         </label>
       </div>
 
-      <label className="flex items-start gap-3 text-sm text-[#666] cursor-pointer">
-        <input
-          type="checkbox"
-          name="consent"
-          checked={form.consent}
-          onChange={handleChange}
-          className="mt-1 w-4 h-4 accent-[#F3A300]"
-        />
-        <span>
-          Ich habe die{" "}
-          <a href="/datenschutzerklaerung" className="underline hover:text-[#F3A300]">
-            Datenschutzerklärung
-          </a>{" "}
-          gelesen und bin mit der Verarbeitung meiner Daten zur Bearbeitung der Anfrage einverstanden. *
-        </span>
-      </label>
+      <p className="text-[13px] text-[#888] italic px-2" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+        Detaillierte Informationen zum Umgang mit Nutzerdaten finden Sie in unserer{" "}
+        <a href="/datenschutzerklaerung" className="underline hover:text-[#F3A300] not-italic">
+          Datenschutzerklärung
+        </a>
+        .
+      </p>
 
       {errorMsg && (
         <p className="text-red-600 text-sm" role="alert">
@@ -196,13 +184,15 @@ export default function ContactForm() {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="w-full px-8 py-4 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
-      >
-        {status === "loading" ? "Wird gesendet..." : "Nachricht senden"}
-      </button>
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="w-full sm:w-auto px-10 py-4 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
+        >
+          {status === "loading" ? "Wird gesendet..." : "Nachricht senden"}
+        </button>
+      </div>
     </form>
   );
 }

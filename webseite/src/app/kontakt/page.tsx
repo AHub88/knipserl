@@ -3,7 +3,6 @@ import Script from "next/script";
 import ContactForm from "@/components/forms/ContactForm";
 import { generatePageMetadata, generateLocalBusinessSchema, generateBreadcrumbSchema } from "@/lib/seo";
 import {
-  ADDRESS,
   CONTACT_EMAIL,
   CONTACT_PHONE,
   SITE_NAME,
@@ -18,36 +17,6 @@ export const metadata: Metadata = generatePageMetadata({
     "Kontaktiere Knipserl Fotobox – per Telefon, E-Mail oder WhatsApp. Persönliche Beratung, Rückmeldung innerhalb 24 Stunden.",
   path: "/kontakt",
 });
-
-const trustItems = [
-  { label: "Antwort binnen 24 h", icon: "clock" },
-  { label: "Persönliche Beratung", icon: "phone" },
-  { label: "Unverbindlich & kostenlos", icon: "euro" },
-];
-
-function Icon({ name }: { name: string }) {
-  const common = "w-6 h-6";
-  if (name === "clock") {
-    return (
-      <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3 2" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  if (name === "phone") {
-    return (
-      <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.9.72 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0122 16.92z" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  return (
-    <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 10h12M4 14h9M19 6c-1.5-1.5-3.5-2-5-2-4 0-7 3.5-7 8s3 8 7 8c1.5 0 3.5-.5 5-2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export default function KontaktPage() {
   const contactPageSchema = {
@@ -122,32 +91,13 @@ export default function KontaktPage() {
             </p>
           </div>
 
-          {/* Trust bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 md:mb-16">
-            {trustItems.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center gap-3 justify-center bg-white border border-gray-200 rounded-md px-4 py-4 text-[#1a171b]"
-              >
-                <span className="text-[#F3A300]">
-                  <Icon name={item.icon} />
-                </span>
-                <span className="text-[15px] md:text-[16px] font-semibold" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none" }}>
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-10 lg:gap-14">
             {/* Left: Form */}
             <div>
               <h2 className="text-[22px] md:text-[28px] leading-[1.2] text-[#1a171b] mb-6 uppercase font-[family-name:var(--font-fira-condensed)] font-extrabold tracking-[0.02em]">
                 Schreib uns eine Nachricht
               </h2>
-              <div className="bg-white p-6 md:p-8 border border-gray-200 rounded-md">
-                <ContactForm />
-              </div>
+              <ContactForm />
             </div>
 
             {/* Right: Contact info */}
@@ -200,34 +150,18 @@ export default function KontaktPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 pt-2">
-                  <span className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-[#F3A300]/15 text-[#F3A300]">
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="12" cy="9" r="2.5" />
-                    </svg>
-                  </span>
-                  <div>
-                    <div className="text-[13px] uppercase text-[#999] tracking-wider mb-0.5">Anschrift</div>
-                    <address className="not-italic text-[16px] leading-relaxed text-[#1a171b]">
-                      {ADDRESS.name}
-                      <br />
-                      {ADDRESS.owner}
-                      <br />
-                      {ADDRESS.street}
-                      <br />
-                      {ADDRESS.zip} {ADDRESS.city}
-                    </address>
-                  </div>
-                </div>
               </div>
 
-              {/* Trust footer */}
-              <div className="mt-8 p-5 bg-[#1a171b] text-white rounded-md">
-                <p className="text-[14px] leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none" }}>
-                  <strong className="text-[#F3A300]">Deine Anfrage ist unverbindlich.</strong> Wir erstellen Dir gerne ein
-                  individuelles Angebot — ohne Fixkosten, ohne versteckte Gebühren.
-                </p>
+              {/* Knipsi mascot */}
+              <div className="mt-8 flex justify-center lg:justify-end">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/misc/knipsi-party.png"
+                  alt="Knipsi Maskottchen"
+                  width={220}
+                  height={220}
+                  className="w-[180px] md:w-[220px] h-auto"
+                />
               </div>
             </div>
           </div>
