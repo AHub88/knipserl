@@ -47,9 +47,8 @@ function buildNotificationHtml(
   const isContact = data.source === "kontakt";
 
   const adminLink = `${ctx.adminUrl}/inquiries/${inquiryId}`;
-  const telLink = data.customerPhone
-    ? `tel:${data.customerPhone.replace(/[^\d+]/g, "")}`
-    : "";
+  const telDigits = data.customerPhone ? data.customerPhone.replace(/[^\d+]/g, "") : "";
+  const telLink = telDigits ? `tel:${telDigits}` : "";
   const mailLink = data.customerEmail ? `mailto:${data.customerEmail}` : "";
 
   const mapsLink = (() => {
@@ -61,179 +60,190 @@ function buildNotificationHtml(
     return "";
   })();
 
-  const locationText = data.locationName || data.locationAddress || "";
-
-  // Datum groß
   const d = new Date(data.eventDate);
-  const weekdayShort = ["SO", "MO", "DI", "MI", "DO", "FR", "SA"][d.getDay()];
-  const monthShort = ["JAN", "FEB", "MRZ", "APR", "MAI", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEZ"][d.getMonth()];
-  const dateBig = `${weekdayShort} ${d.getDate()}. ${monthShort} ${d.getFullYear()}`;
-
+  const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+  const months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+  const dateLong = `${weekdays[d.getDay()]}, ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
+  const dateBig = `${d.getDate()}. ${months[d.getMonth()].slice(0, 3)} ${d.getFullYear()}`;
   const contactTypeLabel = data.customerType === "BUSINESS" ? "Firmenkunde" : "Privatkunde";
 
-  const extras = data.extras.filter((e) => e && e !== "Drucker");
-  const extrasRow =
-    data.extras.length > 0
-      ? `<tr>
-          <td style="padding:14px 24px 6px;color:#a8a29e;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600">Extras</td>
-        </tr>
-        <tr>
-          <td style="padding:0 24px 14px">
-            <span style="display:inline-block;background:#F3A300;color:#1a171b;font-weight:600;font-size:13px;padding:4px 12px;border-radius:999px;margin-right:4px;margin-bottom:4px">Drucker</span>
-            ${extras
-              .map(
-                (e) =>
-                  `<span style="display:inline-block;background:#fff;color:#1a171b;font-weight:500;font-size:13px;padding:4px 12px;border-radius:999px;border:1px solid #e7e5e4;margin-right:4px;margin-bottom:4px">${esc(e)}</span>`
-              )
-              .join("")}
-          </td>
-        </tr>`
-      : "";
+  // Color tokens — light-mode locked
+  const C = {
+    bg: "#f3f4f6",
+    card: "#ffffff",
+    border: "#e5e7eb",
+    ink: "#111111",
+    inkSoft: "#4b5563",
+    inkMuted: "#9ca3af",
+    accent: "#F3A300",
+    accentInk: "#1a171b",
+    dark: "#111111",
+    tile: "#f9fafb",
+  };
+  const FONT = `'Helvetica Neue', Helvetica, Arial, sans-serif`;
 
-  const messageRow = data.comments
-    ? `<tr>
-        <td style="padding:14px 24px 6px;color:#a8a29e;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600">Nachricht</td>
-      </tr>
-      <tr>
-        <td style="padding:0 24px 20px">
-          <div style="background:#fff;padding:14px 16px;border:1px solid #e7e5e4;border-radius:10px;color:#44403c;font-size:14px;line-height:1.55;white-space:pre-wrap">${esc(data.comments)}</div>
-        </td>
-      </tr>`
+  // ── Hero ──
+  const hero = isContact
+    ? `<tr><td style="padding:32px 32px 0 32px;" class="px">
+        <div style="font:700 11px/1 ${FONT};letter-spacing:1.5px;color:${C.accent};text-transform:uppercase;">Neue Kontaktanfrage</div>
+        <div style="font:700 26px/1.15 ${FONT};color:${C.ink};margin-top:10px;letter-spacing:-0.4px;">Eingegangen über knipserl.de</div>
+      </td></tr>`
+    : `<tr><td style="padding:32px 32px 0 32px;" class="px">
+        <div style="font:700 11px/1 ${FONT};letter-spacing:1.5px;color:${C.accent};text-transform:uppercase;">${esc(data.eventType)} &middot; ${contactTypeLabel}</div>
+        <div style="font:700 28px/1.15 ${FONT};color:${C.ink};margin-top:10px;letter-spacing:-0.4px;">${esc(dateBig)}</div>
+        <div style="font:400 14px/1.4 ${FONT};color:${C.inkSoft};margin-top:6px;">${esc(dateLong)}</div>
+      </td></tr>`;
+
+  // ── Contact ──
+  const contactRows = `
+    <tr><td style="padding:24px 32px 4px 32px;" class="px">
+      <div style="font:700 22px/1.25 ${FONT};color:${C.ink};letter-spacing:-0.2px;">${esc(data.customerName)}</div>
+    </td></tr>
+    ${telLink ? `<tr><td style="padding:8px 32px 0 32px;font:500 15px/1.4 ${FONT};color:${C.ink};" class="px">
+      <a href="${esc(telLink)}" style="color:${C.ink};text-decoration:none;">${esc(data.customerPhone || "")}</a>
+    </td></tr>` : ""}
+    ${mailLink ? `<tr><td style="padding:4px 32px 0 32px;font:500 15px/1.4 ${FONT};color:${C.ink};word-break:break-all;" class="px">
+      <a href="${esc(mailLink)}" style="color:${C.ink};text-decoration:none;">${esc(data.customerEmail)}</a>
+    </td></tr>` : ""}`;
+
+  const sectionLabel = (label: string) =>
+    `<tr><td style="padding:22px 32px 8px 32px;font:700 11px/1 ${FONT};letter-spacing:1.2px;color:${C.inkMuted};text-transform:uppercase;" class="px">${label}</td></tr>`;
+
+  // ── Location ──
+  const locationCard = (data.locationName || data.locationAddress) && !isContact
+    ? `${sectionLabel("Location")}
+       <tr><td style="padding:0 32px 0 32px;" class="px">
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;background:${C.tile};border:1px solid ${C.border};border-radius:12px;">
+           <tr><td style="padding:16px 18px;">
+             <a href="${esc(mapsLink)}" style="text-decoration:none;color:${C.ink};display:block;">
+               <div style="font:600 15px/1.35 ${FONT};color:${C.ink};">${esc(data.locationName || data.locationAddress || "")}</div>
+               ${data.locationName && data.locationAddress && data.locationName !== data.locationAddress
+                 ? `<div style="font:400 13px/1.4 ${FONT};color:${C.inkSoft};margin-top:4px;">${esc(data.locationAddress)}</div>`
+                 : ""}
+               <div style="font:600 12px/1 ${FONT};color:${C.accent};margin-top:10px;letter-spacing:0.2px;">Auf Google Maps öffnen &rarr;</div>
+             </a>
+           </td></tr>
+         </table>
+       </td></tr>`
     : "";
 
-  // Hero block
-  const heroLabel = isContact ? "KONTAKTANFRAGE" : `${esc(data.eventType).toUpperCase()} · ${contactTypeLabel.toUpperCase()}`;
-  const heroDate = isContact ? new Date().toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }).toUpperCase() : dateBig.toUpperCase();
-
-  const hero = `
-    <tr>
-      <td style="padding:0">
-        <div style="background:#1a171b;color:#fff;padding:28px 24px;border-radius:16px 16px 0 0">
-          <div style="font-size:11px;letter-spacing:0.15em;color:#F3A300;font-weight:700;margin-bottom:8px">${heroLabel}</div>
-          <div style="font-size:28px;font-weight:800;line-height:1.1;letter-spacing:-0.01em">${heroDate}</div>
-          ${
-            isContact
-              ? ""
-              : `<div style="margin-top:6px;font-size:14px;color:#d6d3d1;font-weight:500">${esc(data.eventType)} · ${contactTypeLabel}</div>`
-          }
-        </div>
-      </td>
-    </tr>`;
-
-  // Contact card (big)
-  const contactCard = `
-    <tr>
-      <td style="padding:20px 24px 8px">
-        <div style="font-size:20px;font-weight:700;color:#1a171b;line-height:1.25">${esc(data.customerName)}</div>
-      </td>
-    </tr>
-    ${
-      data.customerPhone
-        ? `<tr>
-        <td style="padding:4px 24px;font-size:14px">
-          <span style="color:#78716c">📞</span>
-          <a href="${esc(telLink)}" style="color:#1a171b;text-decoration:none;font-weight:500;margin-left:6px">${esc(data.customerPhone)}</a>
-        </td>
-      </tr>`
-        : ""
-    }
-    ${
-      data.customerEmail
-        ? `<tr>
-        <td style="padding:4px 24px 16px;font-size:14px">
-          <span style="color:#78716c">✉</span>
-          <a href="${esc(mailLink)}" style="color:#1a171b;text-decoration:none;font-weight:500;margin-left:6px">${esc(data.customerEmail)}</a>
-        </td>
-      </tr>`
-        : ""
-    }`;
-
-  // Location card — clickable → Google Maps
-  const locationCard =
-    locationText
-      ? `<tr>
-          <td style="padding:8px 24px 4px;color:#a8a29e;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600">Location</td>
-        </tr>
-        <tr>
-          <td style="padding:0 24px 16px">
-            <a href="${esc(mapsLink)}" style="display:block;background:#fff;border:1px solid #e7e5e4;border-radius:12px;padding:14px 16px;text-decoration:none;color:#1a171b">
-              <div style="font-weight:600;font-size:15px;line-height:1.3">📍 ${esc(locationText)}</div>
-              ${
-                ctx.distanceKm != null
-                  ? `<div style="margin-top:4px;color:#78716c;font-size:13px">${ctx.distanceKm} km · auf Google Maps öffnen →</div>`
-                  : `<div style="margin-top:4px;color:#78716c;font-size:13px">auf Google Maps öffnen →</div>`
-              }
-            </a>
-          </td>
-        </tr>`
-      : "";
-
-  // Fahrtkosten-Hervorhebung
-  const travelBox =
-    ctx.travelCost != null
-      ? `<tr>
-          <td style="padding:6px 24px 18px">
-            <div style="background:linear-gradient(135deg,#F3A300 0%,#d99200 100%);border-radius:12px;padding:16px 20px;color:#1a171b">
-              <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;opacity:0.8">Fahrtkosten</div>
-              <div style="font-size:28px;font-weight:800;line-height:1.1;margin-top:2px">${ctx.travelCost.toFixed(2).replace(".", ",")} €</div>
-              ${
-                ctx.distanceKm != null
-                  ? `<div style="font-size:12px;margin-top:2px;opacity:0.75">${ctx.distanceKm} km Entfernung</div>`
-                  : ""
-              }
-            </div>
-          </td>
-        </tr>`
-      : "";
-
-  // CTAs
-  const primaryCta = `
-    <tr>
-      <td style="padding:8px 24px 0">
-        <a href="${esc(adminLink)}" style="display:block;background:#1a171b;color:#fff;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.02em">IM ADMIN ÖFFNEN</a>
-      </td>
-    </tr>`;
-
-  const secondaryCtas = `
-    <tr>
-      <td style="padding:10px 24px 24px">
-        <table role="presentation" style="width:100%;border-collapse:separate;border-spacing:8px 0">
-          <tr>
-            ${
-              telLink
-                ? `<td style="width:50%"><a href="${esc(telLink)}" style="display:block;background:#fff;border:1px solid #e7e5e4;color:#1a171b;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px">📞 Anrufen</a></td>`
-                : ""
-            }
-            ${
-              mailLink
-                ? `<td style="width:50%"><a href="${esc(mailLink)}" style="display:block;background:#fff;border:1px solid #e7e5e4;color:#1a171b;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px">✉ Antworten</a></td>`
-                : ""
-            }
-          </tr>
+  // ── Fahrtkosten ──
+  const travelBox = ctx.travelCost != null
+    ? `<tr><td style="padding:14px 32px 0 32px;" class="px">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.accent}" style="border-collapse:separate;background:${C.accent};border-radius:12px;">
+          <tr><td style="padding:18px 20px;">
+            <div style="font:700 11px/1 ${FONT};letter-spacing:1.2px;color:${C.accentInk};text-transform:uppercase;opacity:0.8;">Fahrtkosten</div>
+            <div style="font:800 30px/1.05 ${FONT};color:${C.accentInk};margin-top:6px;letter-spacing:-0.5px;">${ctx.travelCost.toFixed(2).replace(".", ",")}&nbsp;&euro;</div>
+            ${ctx.distanceKm != null ? `<div style="font:500 12px/1.3 ${FONT};color:${C.accentInk};margin-top:4px;opacity:0.75;">${ctx.distanceKm} km Entfernung</div>` : ""}
+          </td></tr>
         </table>
-      </td>
-    </tr>`;
+      </td></tr>`
+    : "";
 
-  const footer = `
-    <tr>
-      <td style="padding:0 24px 20px;text-align:center;color:#a8a29e;font-size:11px">
-        Automatisch versendet · knipserl.de · Quelle: ${esc(data.source)}
-      </td>
-    </tr>`;
+  // ── Extras ──
+  const allExtras = data.extras.filter(Boolean);
+  const extrasRow = allExtras.length > 0
+    ? `${sectionLabel("Extras")}
+       <tr><td style="padding:0 32px 0 32px;" class="px">
+         ${allExtras.map((e, i) => {
+           const isPrinter = e === "Drucker";
+           const bg = isPrinter ? C.accent : C.tile;
+           const color = isPrinter ? C.accentInk : C.ink;
+           const border = isPrinter ? C.accent : C.border;
+           const mr = i < allExtras.length - 1 ? "6px" : "0";
+           return `<span style="display:inline-block;background:${bg};color:${color};border:1px solid ${border};font:600 13px/1 ${FONT};padding:8px 14px;border-radius:999px;margin-right:${mr};margin-bottom:6px;">${esc(e)}</span>`;
+         }).join("")}
+       </td></tr>`
+    : "";
+
+  // ── Nachricht ──
+  const messageRow = data.comments
+    ? `${sectionLabel("Nachricht")}
+       <tr><td style="padding:0 32px 0 32px;" class="px">
+         <div style="background:${C.tile};border:1px solid ${C.border};border-radius:12px;padding:14px 16px;font:400 14px/1.55 ${FONT};color:${C.inkSoft};white-space:pre-wrap;">${esc(data.comments)}</div>
+       </td></tr>`
+    : "";
+
+  // ── CTAs ──
+  const primaryCta = `<tr><td style="padding:24px 32px 0 32px;" class="px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;">
+      <tr><td align="center" bgcolor="${C.dark}" style="background:${C.dark};border-radius:10px;">
+        <a href="${esc(adminLink)}" style="display:block;padding:16px 24px;font:700 14px/1 ${FONT};color:#ffffff;text-decoration:none;letter-spacing:0.6px;text-transform:uppercase;">Im Admin öffnen</a>
+      </td></tr>
+    </table>
+  </td></tr>`;
+
+  const secondaryCtas = (telLink || mailLink) ? `<tr><td style="padding:10px 32px 0 32px;" class="px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;">
+      <tr>
+        ${telLink ? `<td width="50%" valign="top" style="padding-right:5px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td align="center" bgcolor="${C.tile}" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
+              <a href="${esc(telLink)}" style="display:block;padding:14px 12px;font:600 14px/1 ${FONT};color:${C.ink};text-decoration:none;">Anrufen</a>
+            </td>
+          </tr></table>
+        </td>` : ""}
+        ${mailLink ? `<td width="50%" valign="top" style="padding-left:${telLink ? 5 : 0}px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td align="center" bgcolor="${C.tile}" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
+              <a href="${esc(mailLink)}" style="display:block;padding:14px 12px;font:600 14px/1 ${FONT};color:${C.ink};text-decoration:none;">Antworten</a>
+            </td>
+          </tr></table>
+        </td>` : ""}
+      </tr>
+    </table>
+  </td></tr>` : "";
+
+  const footer = `<tr><td style="padding:24px 32px 28px 32px;text-align:center;font:400 11px/1.5 ${FONT};color:${C.inkMuted};" class="px">
+    Automatisch versendet &middot; knipserl.de &middot; Quelle: ${esc(data.source)}
+  </td></tr>`;
+
+  const preheader = isContact
+    ? `Neue Kontaktanfrage von ${data.customerName}`
+    : `${data.eventType} am ${dateLong} – ${data.customerName}`;
 
   return `<!doctype html>
-<html>
-<body style="margin:0;padding:24px 12px;background:#e7e5e4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
-  <table role="presentation" style="width:100%;max-width:520px;margin:0 auto;border-collapse:separate;border-spacing:0;background:#fafaf9;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);overflow:hidden">
-    ${hero}
-    ${contactCard}
-    ${isContact ? "" : locationCard}
-    ${isContact ? "" : travelBox}
-    ${extrasRow}
-    ${messageRow}
-    ${primaryCta}
-    ${secondaryCtas}
-    ${footer}
+<html lang="de" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title>Neue Anfrage knipserl.de</title>
+<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+<style type="text/css">
+  :root { color-scheme: light; supported-color-schemes: light; }
+  html, body { margin:0 !important; padding:0 !important; width:100% !important; }
+  table { border-collapse:collapse !important; }
+  img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+  a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; font-size:inherit !important; font-family:inherit !important; font-weight:inherit !important; line-height:inherit !important; }
+  .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height:100%; }
+  @media only screen and (max-width:620px) {
+    .container { width:100% !important; max-width:100% !important; }
+    .px { padding-left:20px !important; padding-right:20px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:${C.bg};">
+  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${esc(preheader)}</div>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.bg}" style="background:${C.bg};">
+    <tr><td align="center" style="padding:32px 16px;">
+      <!--[if mso | IE]><table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="600"><tr><td><![endif]-->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center" class="container" bgcolor="${C.card}" style="width:600px;max-width:600px;background:${C.card};border-radius:16px;border:1px solid ${C.border};">
+        ${hero}
+        ${contactRows}
+        ${locationCard}
+        ${travelBox}
+        ${extrasRow}
+        ${messageRow}
+        ${primaryCta}
+        ${secondaryCtas}
+        ${footer}
+      </table>
+      <!--[if mso | IE]></td></tr></table><![endif]-->
+    </td></tr>
   </table>
 </body>
 </html>`;
