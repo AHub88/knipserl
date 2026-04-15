@@ -35,80 +35,208 @@ function escapeHtml(raw: string): string {
 function buildNotificationHtml(
   data: z.infer<typeof createInquirySchema>,
   inquiryId: string,
-  enrichment: { distanceKm: number | null; travelCost: number | null } = { distanceKm: null, travelCost: null }
+  ctx: {
+    distanceKm: number | null;
+    travelCost: number | null;
+    locationLat: number | null;
+    locationLng: number | null;
+    adminUrl: string;
+  }
 ): string {
   const esc = escapeHtml;
   const isContact = data.source === "kontakt";
-  const effectiveDistance = enrichment.distanceKm ?? data.distanceKm ?? null;
 
-  const header = `
-    <div style="background:#F3A300;color:#1a171b;padding:20px;border-radius:8px 8px 0 0">
-      <h1 style="margin:0;font-size:22px">${isContact ? "Neue Kontaktanfrage über knipserl.de" : "Neue Anfrage über knipserl.de"}</h1>
-      <p style="margin:5px 0 0;font-size:13px;opacity:0.85">Quelle: ${esc(data.source)} · ID: ${esc(inquiryId)}</p>
-    </div>`;
-
-  const contactTable = `
-    <h2 style="margin:0 0 12px;color:#1a171b">Kontaktdaten</h2>
-    <table style="width:100%;border-collapse:collapse;font-size:14px">
-      <tr><td style="padding:6px 12px 6px 0;color:#78716c">Name:</td><td style="padding:6px 0"><strong>${esc(data.customerName)}</strong></td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#78716c">E-Mail:</td><td style="padding:6px 0"><a href="mailto:${esc(data.customerEmail)}">${esc(data.customerEmail || "—")}</a></td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#78716c">Telefon:</td><td style="padding:6px 0"><a href="tel:${esc(data.customerPhone || "")}">${esc(data.customerPhone || "—")}</a></td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#78716c">Kundentyp:</td><td style="padding:6px 0">${data.customerType === "BUSINESS" ? "Firma" : "Privat"}</td></tr>
-    </table>`;
-
-  const message = data.comments
-    ? `<h2 style="margin:20px 0 12px;color:#1a171b">Nachricht</h2><div style="background:#fff;padding:12px;border:1px solid #e7e5e4;white-space:pre-wrap">${esc(data.comments)}</div>`
+  const adminLink = `${ctx.adminUrl}/inquiries/${inquiryId}`;
+  const telLink = data.customerPhone
+    ? `tel:${data.customerPhone.replace(/[^\d+]/g, "")}`
     : "";
+  const mailLink = data.customerEmail ? `mailto:${data.customerEmail}` : "";
+
+  const mapsLink = (() => {
+    if (ctx.locationLat != null && ctx.locationLng != null) {
+      return `https://www.google.com/maps?q=${ctx.locationLat},${ctx.locationLng}`;
+    }
+    const q = data.locationAddress || data.locationName;
+    if (q) return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+    return "";
+  })();
+
+  const locationText = data.locationName || data.locationAddress || "";
+
+  // Datum groß
+  const d = new Date(data.eventDate);
+  const weekdayShort = ["SO", "MO", "DI", "MI", "DO", "FR", "SA"][d.getDay()];
+  const monthShort = ["JAN", "FEB", "MRZ", "APR", "MAI", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEZ"][d.getMonth()];
+  const dateBig = `${weekdayShort} ${d.getDate()}. ${monthShort} ${d.getFullYear()}`;
+
+  const contactTypeLabel = data.customerType === "BUSINESS" ? "Firmenkunde" : "Privatkunde";
+
+  const extras = data.extras.filter((e) => e && e !== "Drucker");
+  const extrasRow =
+    data.extras.length > 0
+      ? `<tr>
+          <td style="padding:14px 24px 6px;color:#a8a29e;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600">Extras</td>
+        </tr>
+        <tr>
+          <td style="padding:0 24px 14px">
+            <span style="display:inline-block;background:#F3A300;color:#1a171b;font-weight:600;font-size:13px;padding:4px 12px;border-radius:999px;margin-right:4px;margin-bottom:4px">Drucker</span>
+            ${extras
+              .map(
+                (e) =>
+                  `<span style="display:inline-block;background:#fff;color:#1a171b;font-weight:500;font-size:13px;padding:4px 12px;border-radius:999px;border:1px solid #e7e5e4;margin-right:4px;margin-bottom:4px">${esc(e)}</span>`
+              )
+              .join("")}
+          </td>
+        </tr>`
+      : "";
+
+  const messageRow = data.comments
+    ? `<tr>
+        <td style="padding:14px 24px 6px;color:#a8a29e;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600">Nachricht</td>
+      </tr>
+      <tr>
+        <td style="padding:0 24px 20px">
+          <div style="background:#fff;padding:14px 16px;border:1px solid #e7e5e4;border-radius:10px;color:#44403c;font-size:14px;line-height:1.55;white-space:pre-wrap">${esc(data.comments)}</div>
+        </td>
+      </tr>`
+    : "";
+
+  // Hero block
+  const heroLabel = isContact ? "KONTAKTANFRAGE" : `${esc(data.eventType).toUpperCase()} · ${contactTypeLabel.toUpperCase()}`;
+  const heroDate = isContact ? new Date().toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }).toUpperCase() : dateBig.toUpperCase();
+
+  const hero = `
+    <tr>
+      <td style="padding:0">
+        <div style="background:#1a171b;color:#fff;padding:28px 24px;border-radius:16px 16px 0 0">
+          <div style="font-size:11px;letter-spacing:0.15em;color:#F3A300;font-weight:700;margin-bottom:8px">${heroLabel}</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.1;letter-spacing:-0.01em">${heroDate}</div>
+          ${
+            isContact
+              ? ""
+              : `<div style="margin-top:6px;font-size:14px;color:#d6d3d1;font-weight:500">${esc(data.eventType)} · ${contactTypeLabel}</div>`
+          }
+        </div>
+      </td>
+    </tr>`;
+
+  // Contact card (big)
+  const contactCard = `
+    <tr>
+      <td style="padding:20px 24px 8px">
+        <div style="font-size:20px;font-weight:700;color:#1a171b;line-height:1.25">${esc(data.customerName)}</div>
+      </td>
+    </tr>
+    ${
+      data.customerPhone
+        ? `<tr>
+        <td style="padding:4px 24px;font-size:14px">
+          <span style="color:#78716c">📞</span>
+          <a href="${esc(telLink)}" style="color:#1a171b;text-decoration:none;font-weight:500;margin-left:6px">${esc(data.customerPhone)}</a>
+        </td>
+      </tr>`
+        : ""
+    }
+    ${
+      data.customerEmail
+        ? `<tr>
+        <td style="padding:4px 24px 16px;font-size:14px">
+          <span style="color:#78716c">✉</span>
+          <a href="${esc(mailLink)}" style="color:#1a171b;text-decoration:none;font-weight:500;margin-left:6px">${esc(data.customerEmail)}</a>
+        </td>
+      </tr>`
+        : ""
+    }`;
+
+  // Location card — clickable → Google Maps
+  const locationCard =
+    locationText
+      ? `<tr>
+          <td style="padding:8px 24px 4px;color:#a8a29e;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600">Location</td>
+        </tr>
+        <tr>
+          <td style="padding:0 24px 16px">
+            <a href="${esc(mapsLink)}" style="display:block;background:#fff;border:1px solid #e7e5e4;border-radius:12px;padding:14px 16px;text-decoration:none;color:#1a171b">
+              <div style="font-weight:600;font-size:15px;line-height:1.3">📍 ${esc(locationText)}</div>
+              ${
+                ctx.distanceKm != null
+                  ? `<div style="margin-top:4px;color:#78716c;font-size:13px">${ctx.distanceKm} km · auf Google Maps öffnen →</div>`
+                  : `<div style="margin-top:4px;color:#78716c;font-size:13px">auf Google Maps öffnen →</div>`
+              }
+            </a>
+          </td>
+        </tr>`
+      : "";
+
+  // Fahrtkosten-Hervorhebung
+  const travelBox =
+    ctx.travelCost != null
+      ? `<tr>
+          <td style="padding:6px 24px 18px">
+            <div style="background:linear-gradient(135deg,#F3A300 0%,#d99200 100%);border-radius:12px;padding:16px 20px;color:#1a171b">
+              <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;opacity:0.8">Fahrtkosten</div>
+              <div style="font-size:28px;font-weight:800;line-height:1.1;margin-top:2px">${ctx.travelCost.toFixed(2).replace(".", ",")} €</div>
+              ${
+                ctx.distanceKm != null
+                  ? `<div style="font-size:12px;margin-top:2px;opacity:0.75">${ctx.distanceKm} km Entfernung</div>`
+                  : ""
+              }
+            </div>
+          </td>
+        </tr>`
+      : "";
+
+  // CTAs
+  const primaryCta = `
+    <tr>
+      <td style="padding:8px 24px 0">
+        <a href="${esc(adminLink)}" style="display:block;background:#1a171b;color:#fff;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.02em">IM ADMIN ÖFFNEN</a>
+      </td>
+    </tr>`;
+
+  const secondaryCtas = `
+    <tr>
+      <td style="padding:10px 24px 24px">
+        <table role="presentation" style="width:100%;border-collapse:separate;border-spacing:8px 0">
+          <tr>
+            ${
+              telLink
+                ? `<td style="width:50%"><a href="${esc(telLink)}" style="display:block;background:#fff;border:1px solid #e7e5e4;color:#1a171b;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px">📞 Anrufen</a></td>`
+                : ""
+            }
+            ${
+              mailLink
+                ? `<td style="width:50%"><a href="${esc(mailLink)}" style="display:block;background:#fff;border:1px solid #e7e5e4;color:#1a171b;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px">✉ Antworten</a></td>`
+                : ""
+            }
+          </tr>
+        </table>
+      </td>
+    </tr>`;
 
   const footer = `
-    <div style="padding:12px;text-align:center;color:#a8a29e;font-size:12px">
-      Automatisch versendet · Details im Admintool unter /inquiries/${esc(inquiryId)}
-    </div>`;
+    <tr>
+      <td style="padding:0 24px 20px;text-align:center;color:#a8a29e;font-size:11px">
+        Automatisch versendet · knipserl.de · Quelle: ${esc(data.source)}
+      </td>
+    </tr>`;
 
-  if (isContact) {
-    return `
-      <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto">
-        ${header}
-        <div style="background:#fafaf9;padding:24px;border:1px solid #e7e5e4">
-          ${contactTable}
-          ${message}
-        </div>
-        ${footer}
-      </div>
-    `;
-  }
-
-  const extras = data.extras.length
-    ? `<ul>${data.extras.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>`
-    : "<p>Keine Extras ausgewählt</p>";
-  const eventDate = new Date(data.eventDate).toLocaleDateString("de-DE");
-  const distance = effectiveDistance != null
-    ? `<tr><td style="padding:6px 12px 6px 0;color:#78716c">Entfernung:</td><td style="padding:6px 0">${effectiveDistance} km</td></tr>`
-    : "";
-  const travelRow = enrichment.travelCost != null
-    ? `<tr><td style="padding:6px 12px 6px 0;color:#78716c">Fahrtkosten:</td><td style="padding:6px 0"><strong>${enrichment.travelCost.toFixed(2)} €</strong></td></tr>`
-    : "";
-
-  return `
-    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto">
-      ${header}
-      <div style="background:#fafaf9;padding:24px;border:1px solid #e7e5e4">
-        ${contactTable}
-        <h2 style="margin:20px 0 12px;color:#1a171b">Event</h2>
-        <table style="width:100%;border-collapse:collapse;font-size:14px">
-          <tr><td style="padding:6px 12px 6px 0;color:#78716c">Eventart:</td><td style="padding:6px 0">${esc(data.eventType)}</td></tr>
-          <tr><td style="padding:6px 12px 6px 0;color:#78716c">Datum:</td><td style="padding:6px 0">${eventDate}</td></tr>
-          <tr><td style="padding:6px 12px 6px 0;color:#78716c">Location:</td><td style="padding:6px 0">${esc(data.locationName || data.locationAddress || "—")}</td></tr>
-          ${distance}
-          ${travelRow}
-        </table>
-        <h2 style="margin:20px 0 12px;color:#1a171b">Extras</h2>
-        ${extras}
-        ${message}
-      </div>
-      ${footer}
-    </div>
-  `;
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:24px 12px;background:#e7e5e4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+  <table role="presentation" style="width:100%;max-width:520px;margin:0 auto;border-collapse:separate;border-spacing:0;background:#fafaf9;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);overflow:hidden">
+    ${hero}
+    ${contactCard}
+    ${isContact ? "" : locationCard}
+    ${isContact ? "" : travelBox}
+    ${extrasRow}
+    ${messageRow}
+    ${primaryCta}
+    ${secondaryCtas}
+    ${footer}
+  </table>
+</body>
+</html>`;
 }
 
 async function getNotificationRecipient(): Promise<string> {
@@ -119,11 +247,21 @@ async function getNotificationRecipient(): Promise<string> {
   return process.env.MAIL_TO || "info@knipserl.de";
 }
 
+function resolveAdminUrl(request: NextRequest): string {
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.ADMIN_URL;
+  if (envUrl) return envUrl.replace(/\/$/, "");
+  const host = request.headers.get("host") || "";
+  const proto = request.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
+  if (host) return `${proto}://${host}`;
+  return "https://admin.knipserl.de";
+}
+
 // POST /api/inquiries - External endpoint for website form
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = createInquirySchema.parse(body);
+    const adminUrl = resolveAdminUrl(request);
 
     // Find or create customer
     const emailLower = data.customerEmail?.toLowerCase().trim() || null;
@@ -219,7 +357,13 @@ export async function POST(request: NextRequest) {
         const subject = data.source === "kontakt"
           ? `Neue Kontaktanfrage – ${data.customerName}`
           : `Neue Anfrage: ${data.eventType} – ${data.customerName}`;
-        const html = buildNotificationHtml(data, inquiry.id, { distanceKm, travelCost });
+        const html = buildNotificationHtml(data, inquiry.id, {
+          distanceKm,
+          travelCost,
+          locationLat: lat,
+          locationLng: lng,
+          adminUrl,
+        });
         await sendEmail({ to, subject, html });
       } catch (err) {
         console.error("Inquiry notification email failed:", err);
