@@ -106,6 +106,7 @@ const adminNav: NavGroup[] = [
     title: "Webseite",
     icon: IconWorld,
     children: [
+      { title: "Rechtliche Seiten", href: "/settings/legal-pages", icon: IconFileText },
       { title: "Referenz-Logos", href: "/settings/logos", icon: IconPhoto },
       { title: "Google Bewertungen", href: "/google-reviews", icon: IconBrandGoogle },
     ],

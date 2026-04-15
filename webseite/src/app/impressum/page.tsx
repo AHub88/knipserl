@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { generatePageMetadata } from "@/lib/seo";
 import { ADDRESS, CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/constants";
+import { getAdminBaseUrl } from "@/lib/admin-url";
 import PageHeader from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = generatePageMetadata({
@@ -9,27 +11,21 @@ export const metadata: Metadata = generatePageMetadata({
   path: "/impressum",
 });
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 async function fetchLegalHtml(): Promise<string | null> {
-  const adminInternal = process.env.ADMIN_API_URL;
-  const adminPublic = process.env.ADMIN_PUBLIC_URL;
-  const urls = [adminInternal, adminPublic].filter(Boolean) as string[];
+  const host = (await headers()).get("host");
+  const base = getAdminBaseUrl(host);
+  if (!base) return null;
 
-  for (const base of urls) {
-    try {
-      const res = await fetch(`${base.replace(/\/$/, "")}/api/legal/impressum`, {
-        next: { revalidate: 60 },
-      });
-      if (res.ok) {
-        const data = (await res.json()) as { html?: string };
-        if (typeof data.html === "string") return data.html;
-      }
-    } catch {
-      // try next
-    }
+  try {
+    const res = await fetch(`${base}/api/legal/impressum`, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { html?: string };
+    return typeof data.html === "string" ? data.html : null;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 function FallbackContent() {
