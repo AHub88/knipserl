@@ -80,6 +80,17 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function fetchDistanceKm(lat: number, lng: number): Promise<number | null> {
+    try {
+      const res = await fetch(`/api/distance?toLat=${lat}&toLng=${lng}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return typeof data?.distanceKm === "number" ? Math.round(data.distanceKm) : null;
+    } catch {
+      return null;
+    }
+  }
+
   const resolveLocation = useCallback(async (query: string) => {
     if (query.length < 3) return;
     setGeocodeLoading(true);
@@ -88,12 +99,13 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
       if (res.ok) {
         const suggestions: GeocodeSuggestion[] = await res.json();
         if (suggestions.length > 0) {
-          // Auto-apply first result
           const best = suggestions[0];
+          const distanceKm = await fetchDistanceKm(best.lat, best.lng);
           await saveField({
             locationAddress: best.label,
             locationLat: best.lat,
             locationLng: best.lng,
+            ...(distanceKm != null ? { distanceKm } : {}),
           });
         }
       }
@@ -163,10 +175,12 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
   }
 
   async function selectSuggestion(suggestion: GeocodeSuggestion) {
+    const distanceKm = await fetchDistanceKm(suggestion.lat, suggestion.lng);
     await saveField({
       locationAddress: suggestion.label,
       locationLat: suggestion.lat,
       locationLng: suggestion.lng,
+      ...(distanceKm != null ? { distanceKm } : {}),
     });
   }
 
