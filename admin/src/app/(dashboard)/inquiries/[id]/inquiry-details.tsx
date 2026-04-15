@@ -76,6 +76,17 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
       !inquiry.locationLat
     ) {
       resolveLocation(inquiry.locationName);
+      return;
+    }
+
+    // Location ist geocoded, aber distanceKm fehlt → nachziehen
+    if (inquiry.locationLat && inquiry.locationLng && inquiry.distanceKm == null) {
+      (async () => {
+        const distanceKm = await fetchDistanceKm(inquiry.locationLat!, inquiry.locationLng!);
+        if (distanceKm != null) {
+          await saveField({ distanceKm });
+        }
+      })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
