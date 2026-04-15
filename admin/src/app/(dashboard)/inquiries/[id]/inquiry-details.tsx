@@ -350,11 +350,34 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
             value={inquiry.customerPhone ?? ""}
             field="customerPhone"
           />
-          <ReadonlyRow
-            icon={<IconBriefcase className="size-4" />}
-            label="Kundentyp"
-            value={inquiry.customerType === "BUSINESS" ? "Firmenkunde" : "Privatkunde"}
-          />
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-500 shrink-0"><IconBriefcase className="size-4" /></span>
+            <span className="text-xs text-zinc-500 w-20 shrink-0">Kundentyp</span>
+            <div className="flex gap-1">
+              {([
+                { value: "PRIVATE", label: "Privat" },
+                { value: "BUSINESS", label: "Firma" },
+              ] as const).map((opt) => {
+                const active = inquiry.customerType === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    disabled={saving || active}
+                    onClick={() => saveField({ customerType: opt.value })}
+                    className={
+                      "rounded-md px-2.5 py-1 text-xs font-medium transition-colors border " +
+                      (active
+                        ? "bg-[#F6A11C]/10 text-[#F6A11C] border-[#F6A11C]/30"
+                        : "bg-transparent text-zinc-400 border-white/[0.08] hover:bg-white/[0.04] hover:text-zinc-200")
+                    }
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 

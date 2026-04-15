@@ -23,8 +23,10 @@ interface AnfragePayload {
 function mapToInquiryPayload(data: AnfragePayload) {
   const firma = data.firma?.trim();
   const namePrefix = firma ? `${firma} — ` : "";
+  // "Knipserl mit Drucker" ist der Default — nur notieren wenn abweichend (z.B. Gästetelefon)
+  const isDefaultProduct = !data.art || data.art === "Knipserl mit Drucker";
   const comments = [
-    data.art ? `Produkt: ${data.art}` : "",
+    !isDefaultProduct ? `Produkt: ${data.art}` : "",
     firma ? `Firma: ${firma}` : "",
     data.nachricht ? data.nachricht : "",
     data.totalPrice ? `Kalkulierter Preis: ${data.totalPrice.toFixed(2)} €` : "",
@@ -40,7 +42,12 @@ function mapToInquiryPayload(data: AnfragePayload) {
     locationName: data.location,
     locationAddress: data.location,
     distanceKm: data.deliveryDistance ?? null,
-    extras: data.addons ?? [],
+    // Drucker ist Standard — wenn der Interessent das Fotobox-Paket anfragt,
+    // ist der Drucker immer inkludiert. Zusätzliche Addons werden davor gemerged.
+    extras: (() => {
+      const addons = data.addons ?? [];
+      return addons.includes("Drucker") ? addons : ["Drucker", ...addons];
+    })(),
     comments,
     source: data.source ?? "api",
   };

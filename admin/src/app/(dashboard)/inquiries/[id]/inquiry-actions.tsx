@@ -76,9 +76,16 @@ export function InquiryActions({
   }, [distanceKm]);
 
   function toggleExtra(key: string) {
-    setExtras((prev) =>
-      prev.includes(key) ? prev.filter((e) => e !== key) : [...prev, key]
-    );
+    setExtras((prev) => {
+      const next = prev.includes(key) ? prev.filter((e) => e !== key) : [...prev, key];
+      // Sofort auf der Inquiry persistieren — sonst gehen die Extras beim Refresh verloren
+      fetch(`/api/inquiries/${inquiryId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "updateFields", extras: next }),
+      }).catch(() => { /* ignore — wird beim Accept erneut geschrieben */ });
+      return next;
+    });
   }
 
   // Live calculation
