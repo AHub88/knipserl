@@ -11,6 +11,10 @@ interface AnfragePayload {
   eventType: string;
   datum: string;
   location: string;
+  locationName?: string;
+  locationAddress?: string;
+  locationLat?: number | null;
+  locationLng?: number | null;
   nachricht?: string;
   addons?: string[];
   deliveryDistance?: number;
@@ -39,8 +43,12 @@ function mapToInquiryPayload(data: AnfragePayload) {
     customerType: firma || data.eventType === "Firmenevent" ? "BUSINESS" : "PRIVATE",
     eventDate: data.datum || new Date().toISOString().slice(0, 10),
     eventType: data.eventType || "Sonstiges",
-    locationName: data.location,
-    locationAddress: data.location,
+    // Wenn der Nutzer einen Google-Place gewählt hat, haben wir Name + Adresse getrennt.
+    // Andernfalls Freitext — dann ist nur "location" gefüllt (als Adresse interpretieren).
+    locationName: data.locationName || data.location,
+    locationAddress: data.locationAddress || data.location,
+    locationLat: data.locationLat ?? undefined,
+    locationLng: data.locationLng ?? undefined,
     distanceKm: data.deliveryDistance ?? null,
     // Drucker ist Standard — wenn der Interessent das Fotobox-Paket anfragt,
     // ist der Drucker immer inkludiert. Zusätzliche Addons werden davor gemerged.

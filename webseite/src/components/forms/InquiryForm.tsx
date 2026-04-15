@@ -179,20 +179,45 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
     email: "",
     eventType: "",
     location: "",
+    locationName: "",
+    locationAddress: "",
+    locationLat: null as number | null,
+    locationLng: null as number | null,
     nachricht: "",
   });
 
   const locationInputRef = useRef<HTMLInputElement>(null);
   const handlePlaceSelect = useCallback(
-    (place: { address: string; lat: number; lon: number }) => {
-      setFormData((prev) => ({ ...prev, location: place.address }));
+    (place: { address: string; name: string; formattedAddress: string; lat: number; lon: number }) => {
+      setFormData((prev) => ({
+        ...prev,
+        location: place.address,
+        locationName: place.name || place.formattedAddress,
+        locationAddress: place.formattedAddress,
+        locationLat: place.lat,
+        locationLng: place.lon,
+      }));
     },
     []
   );
   useGooglePlacesAutocomplete(locationInputRef, handlePlaceSelect);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      // Manuelles Editieren des Location-Felds → gespeicherte Places-Metadaten invalidieren
+      if (name === "location") {
+        return {
+          ...prev,
+          location: value,
+          locationName: "",
+          locationAddress: "",
+          locationLat: null,
+          locationLng: null,
+        };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const toggleEventType = (type: string) => {

@@ -3,7 +3,12 @@
 import { useEffect } from "react";
 
 export interface PlaceSelection {
+  /** Combined display-friendly string: "Name, Formatted Address" */
   address: string;
+  /** Venue name (e.g. "Ferienwohnung ...") — empty for plain addresses */
+  name: string;
+  /** Street + zip + city */
+  formattedAddress: string;
   lat: number;
   lon: number;
 }
@@ -57,10 +62,11 @@ export function useGooglePlacesAutocomplete(
           const place = autocomplete?.getPlace();
           const loc = place?.geometry?.location;
           if (place?.formatted_address && loc) {
+            const name = place.name && place.name !== place.formatted_address ? place.name : "";
             onSelect({
-              address: place.name
-                ? `${place.name}, ${place.formatted_address}`
-                : place.formatted_address,
+              name,
+              formattedAddress: place.formatted_address,
+              address: name ? `${name}, ${place.formatted_address}` : place.formatted_address,
               lat: loc.lat(),
               lon: loc.lng(),
             });
