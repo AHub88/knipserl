@@ -36,20 +36,14 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
   async function handleTest() {
     setTesting(true);
     try {
-      // Send a test email to the configured mail_from address
       const mailFrom = values.mail_from || "info@knipserl.de";
-      const res = await fetch("/api/accounting/send-email", {
+      const res = await fetch("/api/settings/test-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "test",
-          to: mailFrom,
-        }),
+        body: JSON.stringify({ to: mailFrom }),
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Test fehlgeschlagen");
-      }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Test fehlgeschlagen");
       toast.success(`Test-E-Mail gesendet an ${mailFrom}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Test fehlgeschlagen");
