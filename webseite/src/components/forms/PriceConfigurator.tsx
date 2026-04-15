@@ -334,31 +334,76 @@ export default function PriceConfigurator() {
       </div>
 
       {/* ===== GESAMTPREIS ===== */}
-      <div className="text-center pt-8 pb-4">
-        <div className="inline-block">
-          <p className="text-[70px] md:text-[90px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
-            {totalPrice.toFixed(2)}&euro;
-          </p>
-          {(addonsTotal > 0 || deliveryPrice > 0) && (
-            <div className="mt-4 text-[var(--brand-dark)] text-[14px] space-y-0.5 text-left" style={{ fontWeight: 400, textTransform: "none" }}>
-              <p>Fotobox mit Drucker: {BASE_PRICE.toFixed(2)} &euro;</p>
+      <div className="pt-8 pb-4">
+        <div className="max-w-[560px] mx-auto">
+          <div className="bg-white rounded-lg shadow-[0_2px_20px_rgba(0,0,0,0.08)] border border-gray-100 overflow-hidden">
+            {/* Header */}
+            <div className="bg-[#1a171b] text-white px-6 py-4">
+              <h3 className="text-[18px] uppercase tracking-wide font-[family-name:var(--font-fira-condensed)] font-extrabold">
+                Deine Konfiguration
+              </h3>
+            </div>
+
+            {/* Line items */}
+            <div className="px-6 py-4 divide-y divide-gray-100" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+              <div className="flex items-center justify-between py-3 text-[15px]">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#F3A300]/15 text-[#F3A300]">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </span>
+                  <span className="text-[#1a171b] font-semibold">Fotobox mit Drucker</span>
+                </div>
+                <span className="text-[#1a171b] font-semibold tabular-nums">{BASE_PRICE.toFixed(2)} €</span>
+              </div>
+
               {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
-                <p key={addon.id}>+ {addon.name}: {addon.price.toFixed(2)} &euro;</p>
+                <div key={addon.id} className="flex items-center justify-between py-3 text-[15px]">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#F3A300]/15 text-[#F3A300]">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </span>
+                    <span className="text-[#1a171b]">{addon.name}</span>
+                  </div>
+                  <span className="text-[#1a171b] tabular-nums">{addon.price.toFixed(2)} €</span>
+                </div>
               ))}
+
               {deliveryPrice > 0 && (
-                <p>+ Fahrtkosten ({delivery?.distanceKm} km): {deliveryPrice.toFixed(2)} &euro;</p>
+                <div className="flex items-center justify-between py-3 text-[15px]">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-gray-500">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 17h2l2-8h10l2 8h2" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="7" cy="17" r="2" />
+                        <circle cx="17" cy="17" r="2" />
+                      </svg>
+                    </span>
+                    <span className="text-[#1a171b]">
+                      Fahrtkosten
+                      <span className="text-[#999] text-[13px] ml-1">({delivery?.distanceKm} km)</span>
+                    </span>
+                  </div>
+                  <span className="text-[#1a171b] tabular-nums">{deliveryPrice.toFixed(2)} €</span>
+                </div>
               )}
             </div>
-          )}
-        </div>
 
-        <div className="mt-8">
-          <a
-            href="/termin-reservieren"
-            className="btn-brand"
-          >
-            Jetzt reservieren
-          </a>
+            {/* Total */}
+            <div className="bg-[#f9f9f9] border-t border-gray-200 px-6 py-5 flex items-baseline justify-between">
+              <span className="text-[14px] uppercase tracking-wider text-[#666] font-[family-name:var(--font-fira-condensed)] font-extrabold">
+                Gesamtpreis
+              </span>
+              <span className="text-[42px] md:text-[52px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)] tabular-nums">
+                {totalPrice.toFixed(2)}&nbsp;€
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-8 text-center">
+            <a href="/termin-reservieren" className="btn-brand">
+              Jetzt reservieren
+            </a>
+          </div>
         </div>
       </div>
     </div>

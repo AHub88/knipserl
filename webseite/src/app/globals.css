@@ -214,3 +214,52 @@ section.rough-bottom {
   background: #1a171b;
   color: white;
 }
+
+/* Legal pages (Impressum / Datenschutz) rendered from CMS HTML */
+.legal-content {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #666;
+}
+.legal-content h2 {
+  font-size: 24px;
+  line-height: 1.2;
+  color: #1a171b;
+  margin: 1.75rem 0 1rem;
+  font-weight: 700;
+}
+@media (min-width: 768px) {
+  .legal-content h2 { font-size: 32px; }
+}
+.legal-content h3 {
+  font-size: 20px;
+  line-height: 1.3;
+  color: #1a171b;
+  margin: 1.25rem 0 0.5rem;
+  font-weight: 600;
+}
+.legal-content p {
+  margin: 0 0 1rem;
+}
+.legal-content ul {
+  margin: 0 0 1rem 1.5rem;
+  list-style: disc;
+}
+.legal-content ol {
+  margin: 0 0 1rem 1.5rem;
+  list-style: decimal;
+}
+.legal-content li {
+  margin-bottom: 0.35rem;
+}
+.legal-content a {
+  color: #F3A300;
+  text-decoration: underline;
+}
+.legal-content a:hover {
+  color: #d99200;
+}
+.legal-content strong {
+  color: #1a171b;
+  font-weight: 700;
+}

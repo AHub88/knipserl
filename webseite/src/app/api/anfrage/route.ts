@@ -14,204 +14,65 @@ interface AnfragePayload {
   deliveryDistance?: number;
   deliveryPrice?: number;
   totalPrice?: number;
-}
-
-async function sendMailViaGraph(subject: string, htmlBody: string) {
-  const tenantId = process.env.AZURE_TENANT_ID!;
-  const clientId = process.env.AZURE_CLIENT_ID!;
-  const clientSecret = process.env.AZURE_CLIENT_SECRET!;
-  const senderEmail = process.env.MAIL_FROM || "info@knipserl.de";
-  const recipientEmail = process.env.MAIL_TO || "info@knipserl.de";
-
-  // Get access token via client credentials flow
-  const tokenUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
-  const tokenRes = await fetch(tokenUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      scope: "https://graph.microsoft.com/.default",
-      grant_type: "client_credentials",
-    }),
-  });
-
-  if (!tokenRes.ok) {
-    throw new Error(`Token request failed: ${tokenRes.status}`);
-  }
-
-  const tokenData = await tokenRes.json();
-  const accessToken = tokenData.access_token;
-
-  // Send mail via Graph API
-  const graphRes = await fetch(
-    `https://graph.microsoft.com/v1.0/users/${senderEmail}/sendMail`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: {
-          subject,
-          body: { contentType: "HTML", content: htmlBody },
-          toRecipients: [
-            { emailAddress: { address: recipientEmail } },
-          ],
-        },
-      }),
-    }
-  );
-
-  if (!graphRes.ok) {
-    const errorText = await graphRes.text();
-    throw new Error(`Graph sendMail failed: ${graphRes.status} ${errorText}`);
-  }
-}
-
-function buildEmailHtml(data: AnfragePayload): string {
-  const addonsList = data.addons?.length
-    ? data.addons.map((a) => `<li>${a}</li>`).join("")
-    : "<li>Keine</li>";
-
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #d97706; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
-        <h1 style="margin: 0; font-size: 24px;">Neue Anfrage über knipserl.de</h1>
-        <p style="margin: 5px 0 0; opacity: 0.9;">${data.art}</p>
-      </div>
-      <div style="background: #fafaf9; padding: 20px; border: 1px solid #e7e5e4;">
-        <h2 style="color: #292524; margin-top: 0;">Kontaktdaten</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr><td style="padding: 8px 0; color: #78716c;">Name:</td><td style="padding: 8px 0;"><strong>${data.vorname} ${data.nachname}</strong></td></tr>
-          <tr><td style="padding: 8px 0; color: #78716c;">E-Mail:</td><td style="padding: 8px 0;"><a href="mailto:${data.email}">${data.email}</a></td></tr>
-          <tr><td style="padding: 8px 0; color: #78716c;">Telefon:</td><td style="padding: 8px 0;"><a href="tel:${data.telefon}">${data.telefon}</a></td></tr>
-          <tr><td style="padding: 8px 0; color: #78716c;">Event:</td><td style="padding: 8px 0;">${data.eventType}</td></tr>
-          <tr><td style="padding: 8px 0; color: #78716c;">Datum:</td><td style="padding: 8px 0;">${data.datum}</td></tr>
-          <tr><td style="padding: 8px 0; color: #78716c;">Location:</td><td style="padding: 8px 0;">${data.location}</td></tr>
-        </table>
-
-        ${
-          data.addons
-            ? `
-        <h2 style="color: #292524;">Gewählte Extras</h2>
-        <ul>${addonsList}</ul>
-        `
-            : ""
-        }
-
-        ${
-          data.deliveryDistance !== undefined
-            ? `
-        <h2 style="color: #292524;">Fahrtkosten</h2>
-        <p>Entfernung: ${data.deliveryDistance} km — Kosten: ${data.deliveryPrice?.toFixed(2)} €</p>
-        `
-            : ""
-        }
-
-        ${
-          data.totalPrice !== undefined
-            ? `
-        <div style="background: #292524; color: white; padding: 15px; border-radius: 8px; margin-top: 20px;">
-          <h2 style="margin: 0; color: #fbbf24;">Gesamtpreis: ${data.totalPrice.toFixed(2)} €</h2>
-        </div>
-        `
-            : ""
-        }
-
-        ${
-          data.nachricht
-            ? `
-        <h2 style="color: #292524;">Nachricht</h2>
-        <p style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e7e5e4;">${data.nachricht}</p>
-        `
-            : ""
-        }
-      </div>
-      <div style="padding: 15px; text-align: center; color: #a8a29e; font-size: 12px;">
-        Gesendet über knipserl.de Preiskonfigurator
-      </div>
-    </div>
-  `;
+  firma?: string;
+  source?: "kontakt" | "startseite" | "preiskonfigurator";
 }
 
 function mapToAdminPayload(data: AnfragePayload) {
+  const firma = data.firma?.trim();
+  const namePrefix = firma ? `${firma} — ` : "";
+  const comments = [
+    data.art ? `Produkt: ${data.art}` : "",
+    firma ? `Firma: ${firma}` : "",
+    data.nachricht ? data.nachricht : "",
+    data.totalPrice ? `Kalkulierter Preis: ${data.totalPrice.toFixed(2)} €` : "",
+  ].filter(Boolean).join("\n");
+
   return {
-    customerName: `${data.vorname} ${data.nachname}`.trim(),
+    customerName: `${namePrefix}${data.vorname} ${data.nachname}`.trim(),
     customerEmail: data.email,
     customerPhone: data.telefon,
-    customerType: data.eventType === "Firmenevent" ? "BUSINESS" : "PRIVATE",
-    eventDate: data.datum,
+    customerType: firma || data.eventType === "Firmenevent" ? "BUSINESS" : "PRIVATE",
+    eventDate: data.datum || new Date().toISOString().slice(0, 10),
     eventType: data.eventType || "Sonstiges",
     locationName: data.location,
     locationAddress: data.location,
     distanceKm: data.deliveryDistance ?? null,
     extras: data.addons ?? [],
-    comments: [
-      data.art ? `Produkt: ${data.art}` : "",
-      data.nachricht ? data.nachricht : "",
-      data.totalPrice ? `Kalkulierter Preis: ${data.totalPrice.toFixed(2)} €` : "",
-    ].filter(Boolean).join("\n"),
+    comments,
+    source: data.source ?? "api",
   };
-}
-
-async function forwardToAdmin(data: AnfragePayload): Promise<void> {
-  const adminUrl = process.env.ADMIN_API_URL;
-  if (!adminUrl) {
-    console.warn("ADMIN_API_URL not set, skipping admin forwarding");
-    return;
-  }
-
-  const res = await fetch(`${adminUrl}/api/inquiries`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(mapToAdminPayload(data)),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Admin API error: ${res.status} ${errorText}`);
-  }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const data: AnfragePayload = await request.json();
 
-    // Basic validation
     if (!data.vorname || !data.nachname || !data.email || !data.telefon) {
+      return NextResponse.json({ error: "Pflichtfelder fehlen" }, { status: 400 });
+    }
+
+    const adminUrl = process.env.ADMIN_API_URL;
+    if (!adminUrl) {
+      console.error("ADMIN_API_URL not configured");
       return NextResponse.json(
-        { error: "Pflichtfelder fehlen" },
-        { status: 400 }
+        { error: "Service vorübergehend nicht verfügbar" },
+        { status: 503 }
       );
     }
 
-    const subject = `Neue Anfrage: ${data.art} – ${data.vorname} ${data.nachname} (${data.eventType})`;
-    const htmlBody = buildEmailHtml(data);
+    const res = await fetch(`${adminUrl}/api/inquiries`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mapToAdminPayload(data)),
+    });
 
-    // Send email and forward to admin console in parallel
-    const results = await Promise.allSettled([
-      sendMailViaGraph(subject, htmlBody),
-      forwardToAdmin(data),
-    ]);
-
-    // Log failures but don't fail the request if at least one succeeded
-    const emailResult = results[0];
-    const adminResult = results[1];
-
-    if (emailResult.status === "rejected") {
-      console.error("Email send failed:", emailResult.reason);
-    }
-    if (adminResult.status === "rejected") {
-      console.error("Admin forwarding failed:", adminResult.reason);
-    }
-
-    // Fail only if both failed
-    if (emailResult.status === "rejected" && adminResult.status === "rejected") {
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => "");
+      console.error("Admin API error:", res.status, errorText);
       return NextResponse.json(
         { error: "Interner Fehler beim Senden der Anfrage" },
-        { status: 500 }
+        { status: 502 }
       );
     }
 
