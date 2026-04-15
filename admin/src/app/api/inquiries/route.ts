@@ -64,7 +64,6 @@ function buildNotificationHtml(
   const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   const months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   const dateLong = `${weekdays[d.getDay()]}, ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
-  const dateBig = `${d.getDate()}. ${months[d.getMonth()].slice(0, 3)} ${d.getFullYear()}`;
   const contactTypeLabel = data.customerType === "BUSINESS" ? "Firmenkunde" : "Privatkunde";
 
   // Color tokens — light-mode locked
@@ -90,8 +89,7 @@ function buildNotificationHtml(
       </td></tr>`
     : `<tr><td style="padding:32px 32px 0 32px;" class="px">
         <div style="font:700 11px/1 ${FONT};letter-spacing:1.5px;color:${C.accent};text-transform:uppercase;">${esc(data.eventType)} &middot; ${contactTypeLabel}</div>
-        <div style="font:700 28px/1.15 ${FONT};color:${C.ink};margin-top:10px;letter-spacing:-0.4px;">${esc(dateBig)}</div>
-        <div style="font:400 14px/1.4 ${FONT};color:${C.inkSoft};margin-top:6px;">${esc(dateLong)}</div>
+        <div style="font:700 28px/1.15 ${FONT};color:${C.ink};margin-top:10px;letter-spacing:-0.4px;"><span style="color:${C.ink};">${esc(dateLong)}</span></div>
       </td></tr>`;
 
   // ── Contact ──
@@ -113,7 +111,7 @@ function buildNotificationHtml(
   const locationCard = (data.locationName || data.locationAddress) && !isContact
     ? `${sectionLabel("Location")}
        <tr><td style="padding:0 32px 0 32px;" class="px">
-         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;background:${C.tile};border:1px solid ${C.border};border-radius:12px;">
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.tile}" class="tile" style="border-collapse:separate;background:${C.tile};border:1px solid ${C.border};border-radius:12px;">
            <tr><td style="padding:16px 18px;">
              <a href="${esc(mapsLink)}" style="text-decoration:none;color:${C.ink};display:block;">
                <div style="font:600 15px/1.35 ${FONT};color:${C.ink};">${esc(data.locationName || data.locationAddress || "")}</div>
@@ -130,7 +128,7 @@ function buildNotificationHtml(
   // ── Fahrtkosten ──
   const travelBox = ctx.travelCost != null
     ? `<tr><td style="padding:14px 32px 0 32px;" class="px">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.accent}" style="border-collapse:separate;background:${C.accent};border-radius:12px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.accent}" class="accent-bg" style="border-collapse:separate;background:${C.accent};border-radius:12px;">
           <tr><td style="padding:18px 20px;">
             <div style="font:700 11px/1 ${FONT};letter-spacing:1.2px;color:${C.accentInk};text-transform:uppercase;opacity:0.8;">Fahrtkosten</div>
             <div style="font:800 30px/1.05 ${FONT};color:${C.accentInk};margin-top:6px;letter-spacing:-0.5px;">${ctx.travelCost.toFixed(2).replace(".", ",")}&nbsp;&euro;</div>
@@ -167,7 +165,7 @@ function buildNotificationHtml(
   // ── CTAs ──
   const primaryCta = `<tr><td style="padding:24px 32px 0 32px;" class="px">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;">
-      <tr><td align="center" bgcolor="${C.dark}" style="background:${C.dark};border-radius:10px;">
+      <tr><td align="center" bgcolor="${C.dark}" class="cta-primary" style="background:${C.dark};border-radius:10px;mso-padding-alt:0;">
         <a href="${esc(adminLink)}" style="display:block;padding:16px 24px;font:700 14px/1 ${FONT};color:#ffffff;text-decoration:none;letter-spacing:0.6px;text-transform:uppercase;">Im Admin öffnen</a>
       </td></tr>
     </table>
@@ -178,14 +176,14 @@ function buildNotificationHtml(
       <tr>
         ${telLink ? `<td width="50%" valign="top" style="padding-right:5px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td align="center" bgcolor="${C.tile}" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
+            <td align="center" bgcolor="${C.tile}" class="tile" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
               <a href="${esc(telLink)}" style="display:block;padding:14px 12px;font:600 14px/1 ${FONT};color:${C.ink};text-decoration:none;">Anrufen</a>
             </td>
           </tr></table>
         </td>` : ""}
         ${mailLink ? `<td width="50%" valign="top" style="padding-left:${telLink ? 5 : 0}px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td align="center" bgcolor="${C.tile}" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
+            <td align="center" bgcolor="${C.tile}" class="tile" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
               <a href="${esc(mailLink)}" style="display:block;padding:14px 12px;font:600 14px/1 ${FONT};color:${C.ink};text-decoration:none;">Antworten</a>
             </td>
           </tr></table>
@@ -220,18 +218,51 @@ function buildNotificationHtml(
   img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
   a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; font-size:inherit !important; font-family:inherit !important; font-weight:inherit !important; line-height:inherit !important; }
   .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height:100%; }
+
+  /* Outlook.com / Office 365 dark mode overrides — verhindert dass weiße Karten dunkel werden und dunkle Buttons weiß */
+  [data-ogsc] .card,
+  [data-ogsb] .card { background:${C.card} !important; }
+  [data-ogsc] .tile,
+  [data-ogsb] .tile { background:${C.tile} !important; }
+  [data-ogsc] .ink-primary,
+  [data-ogsb] .ink-primary { color:${C.ink} !important; }
+  [data-ogsc] .ink-soft,
+  [data-ogsb] .ink-soft { color:${C.inkSoft} !important; }
+  [data-ogsc] .ink-muted,
+  [data-ogsb] .ink-muted { color:${C.inkMuted} !important; }
+  [data-ogsc] .cta-primary,
+  [data-ogsb] .cta-primary { background:${C.dark} !important; }
+  [data-ogsc] .cta-primary a,
+  [data-ogsb] .cta-primary a { color:#ffffff !important; }
+  [data-ogsc] .accent-bg,
+  [data-ogsb] .accent-bg { background:${C.accent} !important; }
+
+  @media (prefers-color-scheme: dark) {
+    /* Force light layout in iOS Mail / Apple Mail dark mode */
+    .card { background:${C.card} !important; }
+    .tile { background:${C.tile} !important; }
+    .ink-primary { color:${C.ink} !important; }
+    .ink-soft { color:${C.inkSoft} !important; }
+    .ink-muted { color:${C.inkMuted} !important; }
+    .cta-primary { background:${C.dark} !important; }
+    .cta-primary a { color:#ffffff !important; }
+    .accent-bg { background:${C.accent} !important; }
+    .accent-ink { color:${C.accentInk} !important; }
+  }
+
   @media only screen and (max-width:620px) {
-    .container { width:100% !important; max-width:100% !important; }
+    .container { width:100% !important; max-width:100% !important; border-radius:0 !important; border:0 !important; }
     .px { padding-left:20px !important; padding-right:20px !important; }
+    .outer-pad { padding-left:0 !important; padding-right:0 !important; padding-top:0 !important; }
   }
 </style>
 </head>
 <body style="margin:0;padding:0;background:${C.bg};">
   <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${esc(preheader)}</div>
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.bg}" style="background:${C.bg};">
-    <tr><td align="center" style="padding:32px 16px;">
+    <tr><td align="center" class="outer-pad" style="padding:32px 16px;">
       <!--[if mso | IE]><table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="600"><tr><td><![endif]-->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center" class="container" bgcolor="${C.card}" style="width:600px;max-width:600px;background:${C.card};border-radius:16px;border:1px solid ${C.border};">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center" class="container card" bgcolor="${C.card}" style="width:600px;max-width:600px;background:${C.card};border-radius:16px;border:1px solid ${C.border};">
         ${hero}
         ${contactRows}
         ${locationCard}
