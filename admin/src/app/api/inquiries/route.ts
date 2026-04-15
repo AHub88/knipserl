@@ -3,6 +3,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
+import { geocodeAutocomplete, calculateDrivingDistance } from "@/lib/geocoding";
+import { calculateTravelPrice } from "@/lib/travel-pricing";
 
 const createInquirySchema = z.object({
   customerName: z.string().min(1, "Name ist erforderlich"),
@@ -30,9 +32,14 @@ function escapeHtml(raw: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function buildNotificationHtml(data: z.infer<typeof createInquirySchema>, inquiryId: string): string {
+function buildNotificationHtml(
+  data: z.infer<typeof createInquirySchema>,
+  inquiryId: string,
+  enrichment: { distanceKm: number | null; travelCost: number | null } = { distanceKm: null, travelCost: null }
+): string {
   const esc = escapeHtml;
   const isContact = data.source === "kontakt";
+  const effectiveDistance = enrichment.distanceKm ?? data.distanceKm ?? null;
 
   const header = `
     <div style="background:#F3A300;color:#1a171b;padding:20px;border-radius:8px 8px 0 0">
@@ -75,8 +82,11 @@ function buildNotificationHtml(data: z.infer<typeof createInquirySchema>, inquir
     ? `<ul>${data.extras.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>`
     : "<p>Keine Extras ausgewählt</p>";
   const eventDate = new Date(data.eventDate).toLocaleDateString("de-DE");
-  const distance = data.distanceKm !== null && data.distanceKm !== undefined
-    ? `<tr><td style="padding:6px 12px 6px 0;color:#78716c">Entfernung:</td><td style="padding:6px 0">${data.distanceKm} km</td></tr>`
+  const distance = effectiveDistance != null
+    ? `<tr><td style="padding:6px 12px 6px 0;color:#78716c">Entfernung:</td><td style="padding:6px 0">${effectiveDistance} km</td></tr>`
+    : "";
+  const travelRow = enrichment.travelCost != null
+    ? `<tr><td style="padding:6px 12px 6px 0;color:#78716c">Fahrtkosten:</td><td style="padding:6px 0"><strong>${enrichment.travelCost.toFixed(2)} €</strong></td></tr>`
     : "";
 
   return `
@@ -90,6 +100,7 @@ function buildNotificationHtml(data: z.infer<typeof createInquirySchema>, inquir
           <tr><td style="padding:6px 12px 6px 0;color:#78716c">Datum:</td><td style="padding:6px 0">${eventDate}</td></tr>
           <tr><td style="padding:6px 12px 6px 0;color:#78716c">Location:</td><td style="padding:6px 0">${esc(data.locationName || data.locationAddress || "—")}</td></tr>
           ${distance}
+          ${travelRow}
         </table>
         <h2 style="margin:20px 0 12px;color:#1a171b">Extras</h2>
         ${extras}
@@ -148,14 +159,67 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Notification email — fire-and-forget, don't fail the request
+    // Notification email — fire-and-forget, don't fail the request.
+    // Vorher: Location geocoden + Entfernung & Fahrtkosten berechnen, damit
+    // diese Werte in der Mail stehen und auf der Inquiry persistiert sind.
     (async () => {
+      let distanceKm: number | null = data.distanceKm ?? null;
+      let travelCost: number | null = null;
+      let lat = data.locationLat ?? null;
+      let lng = data.locationLng ?? null;
+
+      if (data.source !== "kontakt" && data.locationAddress) {
+        try {
+          if (lat == null || lng == null) {
+            const suggestions = await geocodeAutocomplete(data.locationAddress);
+            const best = suggestions[0];
+            if (best) {
+              lat = best.lat;
+              lng = best.lng;
+            }
+          }
+
+          if (lat != null && lng != null && distanceKm == null) {
+            const startLat = await prisma.appSetting.findUnique({ where: { key: "startLat" } });
+            const startLng = await prisma.appSetting.findUnique({ where: { key: "startLng" } });
+            if (startLat?.value && startLng?.value) {
+              const km = await calculateDrivingDistance(
+                Number(startLat.value),
+                Number(startLng.value),
+                lat,
+                lng
+              );
+              if (km != null) distanceKm = Math.round(km);
+            }
+          }
+
+          if (distanceKm != null) {
+            const result = await calculateTravelPrice(distanceKm);
+            travelCost = result.customerPrice;
+          }
+
+          // Ergebnisse auf der Inquiry persistieren — damit die Detailseite
+          // nicht nochmal rechnen muss
+          const updates: Record<string, unknown> = {};
+          if (lat != null && lng != null) {
+            updates.locationLat = lat;
+            updates.locationLng = lng;
+          }
+          if (distanceKm != null) updates.distanceKm = distanceKm;
+          if (Object.keys(updates).length > 0) {
+            await prisma.inquiry.update({ where: { id: inquiry.id }, data: updates });
+          }
+        } catch (err) {
+          console.error("Inquiry enrichment (geocode/distance) failed:", err);
+        }
+      }
+
       try {
         const to = await getNotificationRecipient();
         const subject = data.source === "kontakt"
           ? `Neue Kontaktanfrage – ${data.customerName}`
           : `Neue Anfrage: ${data.eventType} – ${data.customerName}`;
-        const html = buildNotificationHtml(data, inquiry.id);
+        const html = buildNotificationHtml(data, inquiry.id, { distanceKm, travelCost });
         await sendEmail({ to, subject, html });
       } catch (err) {
         console.error("Inquiry notification email failed:", err);
