@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useViewMode } from "@/lib/view-mode-context";
@@ -270,99 +269,86 @@ function AccordionNavItem({
   );
 }
 
-// ── Flyout nav item (Level-3 Popover auf Hover) ──
-function FlyoutNavItem({ group, pathname }: { group: NavGroup; pathname: string }) {
+// ── Settings accordion (gruppierte Sub-Items) ──
+function SettingsAccordionItem({
+  pathname,
+  isOpen,
+  onToggle,
+}: {
+  pathname: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
   const { setOpenMobile } = useSidebar();
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [pos, setPos] = useState({ top: 0, left: 0 });
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => setMounted(true), []);
-
-  const active = group.href ? pathname.startsWith(group.href) : false;
-
-  const scheduleClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => setOpen(false), 150);
-  };
-  const cancelClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
-
-  const handleEnter = () => {
-    cancelClose();
-    if (triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      setPos({ top: rect.top, left: rect.right + 8 });
-    }
-    setOpen(true);
-  };
+  const hasActiveChild = SETTINGS_SECTIONS.some((s) =>
+    s.items.some((i) => !i.href.startsWith("#") && pathname.startsWith(i.href.split("#")[0]))
+  ) || pathname === "/settings" || pathname.startsWith("/settings/");
 
   return (
-    <div
-      ref={triggerRef}
-      className="relative"
-      onMouseEnter={handleEnter}
-      onMouseLeave={scheduleClose}
-    >
-      <Link
-        href={group.href ?? "#"}
-        onClick={() => setOpenMobile(false)}
+    <div>
+      <button
+        onClick={onToggle}
         className={
-          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
-          (active
+          "flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
+          (hasActiveChild
             ? "bg-[#F6A11C]/10 text-[#F6A11C]"
             : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
         }
       >
-        <group.icon className={"size-[18px] shrink-0 " + (active ? "text-[#F6A11C]" : "text-zinc-400")} />
-        <span className="flex-1">{group.title}</span>
-      </Link>
+        <IconSettings className={"size-[18px] shrink-0 " + (hasActiveChild ? "text-[#F6A11C]" : "text-zinc-400")} />
+        <span className="flex-1 text-left">Einstellungen</span>
+        <IconChevronDown
+          className={
+            "size-4 shrink-0 transition-transform duration-200 " +
+            (isOpen ? "rotate-180 " : "") +
+            (hasActiveChild ? "text-[#F6A11C]/60" : "text-zinc-500")
+          }
+        />
+      </button>
 
-      {mounted && open && createPortal(
-        <div
-          className="fixed z-[60] min-w-[320px] max-w-[380px] rounded-xl border border-white/[0.10] bg-sidebar shadow-2xl shadow-black/60 py-2"
-          style={{ top: pos.top, left: pos.left }}
-          onMouseEnter={cancelClose}
-          onMouseLeave={scheduleClose}
-        >
-          {SETTINGS_SECTIONS.map((section, idx) => (
-            <div key={section.title} className={idx === 0 ? "" : "mt-1 pt-2 border-t border-white/[0.06]"}>
-              <div className="px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+      <div
+        className={
+          "overflow-hidden transition-all duration-200 " +
+          (isOpen ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0")
+        }
+      >
+        <div className="ml-3 border-l border-white/[0.06] pl-3 mt-1 space-y-2">
+          {SETTINGS_SECTIONS.map((section) => (
+            <div key={section.title}>
+              <div className="px-2.5 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                 {section.title}
               </div>
               <div className="space-y-0.5">
                 {section.items.map((item) => {
                   const Icon = item.icon;
-                  const itemActive = !item.href.startsWith("#") && pathname.startsWith(item.href.split("#")[0]);
+                  const hrefBase = item.href.split("#")[0];
+                  const active = item.href.startsWith("#")
+                    ? false
+                    : hrefBase === "/settings"
+                      ? pathname === "/settings"
+                      : pathname.startsWith(hrefBase);
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={() => { setOpen(false); setOpenMobile(false); }}
+                      onClick={() => setOpenMobile(false)}
                       className={
-                        "flex items-start gap-3 px-4 py-2 text-[13px] transition-colors " +
-                        (itemActive
-                          ? "bg-[#F6A11C]/10 text-[#F6A11C]"
-                          : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+                        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-150 " +
+                        (active
+                          ? "text-[#F6A11C] bg-[#F6A11C]/5"
+                          : "text-zinc-400 hover:bg-[#222326] hover:text-zinc-200")
                       }
                     >
-                      <Icon className={`size-4 shrink-0 mt-0.5 ${item.iconColor ?? (itemActive ? "text-[#F6A11C]" : "text-zinc-500")}`} />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium leading-tight">{item.title}</div>
-                        <div className="text-[11px] text-zinc-500 mt-0.5 leading-snug truncate">{item.description}</div>
-                      </div>
+                      <Icon className={`size-4 shrink-0 ${item.iconColor ?? (active ? "text-[#F6A11C]" : "text-zinc-500")}`} />
+                      <span>{item.title}</span>
                     </Link>
                   );
                 })}
               </div>
             </div>
           ))}
-        </div>,
-        document.body
-      )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -410,8 +396,13 @@ export function AppSidebar() {
       {/* Navigation */}
       <SidebarContent className="px-2 py-3 space-y-1 overflow-y-auto">
         {groups.map((group) =>
-          group.title === "Einstellungen" && group.href ? (
-            <FlyoutNavItem key={group.title} group={group} pathname={pathname} />
+          group.title === "Einstellungen" ? (
+            <SettingsAccordionItem
+              key={group.title}
+              pathname={pathname}
+              isOpen={openKey === "Einstellungen"}
+              onToggle={() => handleToggle("Einstellungen")}
+            />
           ) : (
             <AccordionNavItem
               key={group.title}

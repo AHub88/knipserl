@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { getAdminBaseUrl } from "@/lib/admin-url";
 
 interface AnfragePayload {
   art: string;
@@ -18,7 +20,7 @@ interface AnfragePayload {
   source?: "kontakt" | "startseite" | "preiskonfigurator";
 }
 
-function mapToAdminPayload(data: AnfragePayload) {
+function mapToInquiryPayload(data: AnfragePayload) {
   const firma = data.firma?.trim();
   const namePrefix = firma ? `${firma} — ` : "";
   const comments = [
@@ -44,6 +46,16 @@ function mapToAdminPayload(data: AnfragePayload) {
   };
 }
 
+function mapToContactPayload(data: AnfragePayload) {
+  return {
+    name: `${data.vorname} ${data.nachname}`.trim(),
+    email: data.email,
+    phone: data.telefon,
+    company: data.firma?.trim() || "",
+    message: data.nachricht ?? "",
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data: AnfragePayload = await request.json();
@@ -52,7 +64,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Pflichtfelder fehlen" }, { status: 400 });
     }
 
-    const adminUrl = process.env.ADMIN_API_URL;
+    const host = (await headers()).get("host");
+    const adminUrl = getAdminBaseUrl(host);
     if (!adminUrl) {
       console.error("ADMIN_API_URL not configured");
       return NextResponse.json(
@@ -61,10 +74,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const res = await fetch(`${adminUrl}/api/inquiries`, {
+    const isContact = data.source === "kontakt";
+    const endpoint = isContact ? "/api/contact-message" : "/api/inquiries";
+    const payload = isContact ? mapToContactPayload(data) : mapToInquiryPayload(data);
+
+    const res = await fetch(`${adminUrl}${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(mapToAdminPayload(data)),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
