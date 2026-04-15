@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useGooglePlacesAutocomplete } from "@/lib/use-google-places";
 
 interface InquiryFormProps {
   preset?: "fotobox" | "gaestetelefon";
@@ -136,9 +137,9 @@ function MiniCalendar({ selected, onSelect }: { selected: string; onSelect: (dat
               aria-label={day ? `${day}. ${MONTHS[viewMonth]} ${viewYear}${disabled ? " (nicht verfügbar)" : ""}` : undefined}
               className={`py-4 text-center text-[18px] transition-colors ${borderLeft} ${borderTop} ${
                 !day ? "bg-[#F1F3F6]" :
-                isSelected(day) ? "bg-[#F3A300] text-white font-bold" :
+                isSelected(day) ? "bg-[#F3A300] text-white font-bold cursor-pointer" :
                 disabled ? "text-gray-400 bg-[#F1F3F6] cursor-not-allowed" :
-                "text-[#1a171b] hover:bg-gray-50"
+                "text-[#1a171b] hover:bg-gray-50 cursor-pointer"
               }`}
             >
               {day || ""}
@@ -180,6 +181,15 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
     location: "",
     nachricht: "",
   });
+
+  const locationInputRef = useRef<HTMLInputElement>(null);
+  const handlePlaceSelect = useCallback(
+    (place: { address: string; lat: number; lon: number }) => {
+      setFormData((prev) => ({ ...prev, location: place.address }));
+    },
+    []
+  );
+  useGooglePlacesAutocomplete(locationInputRef, handlePlaceSelect);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -258,7 +268,17 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
             <ToggleSwitch label="Firmenevent" checked={formData.eventType === "Firmenevent"} onChange={() => toggleEventType("Firmenevent")} />
           </div>
 
-          <input type="text" name="location" required placeholder="Veranstaltungsort *" value={formData.location} onChange={handleChange} className={inputClass} />
+          <input
+            ref={locationInputRef}
+            type="text"
+            name="location"
+            required
+            placeholder="Veranstaltungsort *"
+            value={formData.location}
+            onChange={handleChange}
+            className={inputClass}
+            autoComplete="off"
+          />
 
           {!compact && (
             <textarea

@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
       <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto">
         <div style="background:#F3A300;color:#1a171b;padding:20px;border-radius:8px 8px 0 0">
           <h1 style="margin:0;font-size:22px">Neue Kontaktanfrage über knipserl.de</h1>
-          <p style="margin:5px 0 0;font-size:13px;opacity:0.85">Über das Kontaktformular</p>
         </div>
         <div style="background:#fafaf9;padding:24px;border:1px solid #e7e5e4">
           <h2 style="margin:0 0 12px;color:#1a171b">Kontaktdaten</h2>
