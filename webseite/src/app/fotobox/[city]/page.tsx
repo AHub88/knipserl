@@ -8,6 +8,7 @@ import { SEO_CITIES, BASE_PRICE, SITE_URL, SITE_NAME, ADDRESS, CONTACT_PHONE_DIS
 import {
   generatePageMetadata,
   generateBreadcrumbSchema,
+  generateFAQSchema,
 } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -24,7 +25,7 @@ export async function generateMetadata({
   if (!city) return {};
 
   return generatePageMetadata({
-    title: `Fotobox mieten in ${city.name} | Ab ${BASE_PRICE}€ inkl. Drucker`,
+    title: city.seoTitle,
     description: city.description,
     path: `/fotobox/${city.slug}`,
   });
@@ -66,6 +67,15 @@ export default async function CityPage({
     areaServed: {
       "@type": "City",
       name: city.name,
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: city.landkreis,
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: city.lat,
+        longitude: city.lng,
+      },
     },
     offers: {
       "@type": "Offer",
@@ -75,6 +85,9 @@ export default async function CityPage({
       url: `${SITE_URL}/fotobox/${city.slug}`,
     },
   };
+
+  // readonly -> mutable copy, weil SEO_CITIES "as const" ist
+  const faqSchema = generateFAQSchema(city.faqs.map((f) => ({ question: f.question, answer: f.answer })));
 
   const otherCities = SEO_CITIES.filter((c) => c.slug !== city.slug);
 
@@ -87,6 +100,10 @@ export default async function CityPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Wood-Texture-Streifen ohne Titel — verhindert die Doppelung
@@ -101,32 +118,14 @@ export default async function CityPage({
           <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-10 md:gap-12 items-center">
             <div>
               <p className="text-[#F3A300] text-[16px] md:text-[18px] font-semibold mb-3 font-[family-name:var(--font-fira-condensed)] uppercase tracking-[0.05em]">
-                Für den perfekten Schnappschuss bei Eurer Feier
+                {city.heroTeaser}
               </p>
               <h1 className="text-[32px] md:text-[44px] lg:text-[52px] leading-[1.05] text-[#1a171b] mb-6">
                 Fotobox mieten in {city.name}
               </h1>
               <div className="text-[#666] text-[16px] md:text-[17px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                <p>
-                  Mit der <strong>Knipserl-Fotobox aus {city.name}</strong> könnt
-                  Ihr auf Eurer <strong>Hochzeit</strong>, dem{" "}
-                  <strong>Firmenevent</strong> oder auf{" "}
-                  <strong>Messen</strong> die geschossenen Bilder direkt in den
-                  Händen halten! Unser Knipserl ähnelt im Prinzip einer Kamera
-                  mit Selbstauslöser.
-                </p>
-                <p>
-                  Die gigantische Selfie-Maschine hat jedoch den großen Vorteil,
-                  dass die Bilder in einer bestechend scharfen Qualität
-                  geschossen werden und diese zudem direkt für eine Menge Spaß
-                  sorgen! Denn unsere <strong>Fotobox aus {city.name}</strong>{" "}
-                  kommt inklusive eingebautem{" "}
-                  <strong>Profi-Drucker</strong>, der die Bilder der
-                  hochauflösenden <strong>Spiegelreflexkamera</strong> im
-                  Handumdrehen ausdruckt! Wir liefern nach {city.name} und
-                  Umgebung – auch nach {city.nearbyAreas.slice(0, -1).join(", ")}{" "}
-                  und {city.nearbyAreas[city.nearbyAreas.length - 1]}.
-                </p>
+                <p>{city.heroP1}</p>
+                <p>{city.heroP2}</p>
               </div>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Link href="#anfragen" className="btn-brand whitespace-nowrap">
@@ -175,19 +174,8 @@ export default async function CityPage({
                 Momente für die Ewigkeit
               </h2>
               <div className="text-white/85 text-[16px] md:text-[17px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                <p>
-                  Neben genialen Bildern, die häufig auch durch verschiedenste
-                  Kostüme oder Masken vor Ort aufgefrischt werden können, sorgt
-                  das Knipserl nicht nur für tolle Erinnerungen, sondern auch für
-                  jede Menge Spaß!
-                </p>
-                <p>
-                  Eure Gäste werden bestens unterhalten und Ihr werdet schnell
-                  erkennen, dass sich so manche der Partybesucher schneller vor
-                  der Linse finden, als sie selbst glauben konnten. Ein Spaß für
-                  Groß und Klein, Jung und Alt und vor allem auch für Früh und
-                  Spät. Klar ist: Je später, desto verrückter.
-                </p>
+                <p>{city.momenteP1}</p>
+                <p>{city.momenteP2}</p>
               </div>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 items-center md:items-start">
                 <Link href="/preise" className="btn-brand whitespace-nowrap">Die Preise</Link>
@@ -210,21 +198,8 @@ export default async function CityPage({
                 Einfache Bedienung
               </h2>
               <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                <p>
-                  Die Bedienung unserer <strong>Fotobox</strong> ist ein
-                  Kinderspiel. Vergleichbar mit einem klassischen Fotoautomat
-                  vergangener Jahrzehnte muss sich einfach davorgesetzt werden
-                  und es kann losgehen. Der kleine aber feine Unterschied ist der{" "}
-                  <strong>22-Zoll-Bildschirm</strong>, der die Bedienung noch
-                  einfacher macht.
-                </p>
-                <p>
-                  Selbsterklärend und intuitiv kann zwischen verschiedenen
-                  Fotoeffekten gewählt werden, die stark an die Funktionen von
-                  Instagram erinnern. Egal ob Firmenfeier, Hochzeit, Geburtstag
-                  oder Vereinsfest: Die einfache Handhabung sorgt dafür, dass die
-                  Fotobox durchgehend genutzt wird.
-                </p>
+                <p>{city.bedienungP1}</p>
+                <p>{city.bedienungP2}</p>
               </div>
             </div>
 
@@ -234,20 +209,8 @@ export default async function CityPage({
                 Unsere Fotoprops
               </h2>
               <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                <p>
-                  Eine <strong>Fotobox für die Hochzeit mieten</strong> oder
-                  damit das Firmenevent aufpeppen ist eine Leichtigkeit. Vor
-                  allem durch unsere <strong>Fotoprops</strong> (Accessoires).
-                  Das lustige Zubehör macht eine Gruppe von Freunden in Sekunden
-                  zu einer Rockband, Kollegen zu einer bunten Partymeute oder
-                  Geburtstagsgäste zu wilden Tieren.
-                </p>
-                <p>
-                  Dadurch braucht es nicht zwangsläufig das digitale Tuning durch
-                  die Instagram-Fotoeffekte. Mehr Spaß, mehr glorreiche
-                  Erinnerungen und mehr Gesprächsstoff für Eure Hochzeit, Euer
-                  Firmenevent oder Messeauftritt ist ohnehin garantiert.
-                </p>
+                <p>{city.fotopropsP1}</p>
+                <p>{city.fotopropsP2}</p>
               </div>
             </div>
           </div>
@@ -293,21 +256,8 @@ export default async function CityPage({
             </p>
           </div>
           <div className="max-w-[820px] mx-auto text-white/85 text-[16px] md:text-[17px] space-y-4 leading-relaxed text-center" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-            <p>
-              Um Euch das <strong>Mieten</strong> unserer Fotobox so einfach wie
-              möglich zu gestalten, ist der Auf- und Abbau natürlich inklusive.
-              Viel Platz benötigen wir dafür nicht, der Abstand beträgt nur
-              wenige Meter.
-            </p>
-            <p>
-              Das Knipserl steht für höchste Qualität! Eine moderne{" "}
-              <strong>Spiegelreflexkamera (DSLR)</strong> sorgt für
-              hochauflösende Fotos, die bei jeglichen Lichtverhältnissen
-              gelingen. Der Touchscreen lässt Euch die Einstellungen wie im
-              Schlaf beherrschen und der{" "}
-              <strong>High-End-Drucker (Thermosublimation)</strong> sorgt für
-              mitnehmbare Erinnerungen auf Hochglanz-Fotopapier.
-            </p>
+            <p>{city.qualitaetP1}</p>
+            <p>{city.qualitaetP2}</p>
           </div>
 
           {/* Basispaket Features */}
@@ -339,6 +289,52 @@ export default async function CityPage({
 
           <div className="text-center mt-10">
             <Link href="/preise" className="btn-brand">Ab {BASE_PRICE}&euro; konfigurieren</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================
+          LOCAL CONTEXT — stadtspezifischer Block (gegen Duplicate Content)
+          ======================================================================== */}
+      <section className="py-16 md:py-20">
+        <div className="max-w-[900px] mx-auto px-6 text-center">
+          <h2 className="heading-decorated text-[28px] md:text-[40px] leading-[1] text-[#1a171b] inline-block mb-6">
+            {city.localTitle}
+          </h2>
+          <div className="text-[#666] text-[16px] md:text-[17px] space-y-4 leading-relaxed text-left md:text-center" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+            <p>{city.localP1}</p>
+            <p>{city.localP2}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================
+          FAQ — stadtspezifisch (FAQPage-Schema im <head>)
+          ======================================================================== */}
+      <section className="pb-16 md:pb-20">
+        <div className="max-w-[900px] mx-auto px-6">
+          <div className="text-center mb-10">
+            <h2 className="heading-decorated text-[28px] md:text-[40px] leading-[1] text-[#1a171b] inline-block">
+              Häufige Fragen zu {city.name}
+            </h2>
+          </div>
+          <div className="space-y-3">
+            {city.faqs.map((faq) => (
+              <details
+                key={faq.question}
+                className="group bg-[#F3F4F6] rounded-lg overflow-hidden"
+              >
+                <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between gap-4 font-bold text-[#1a171b] text-[17px] font-[family-name:var(--font-fira-condensed)] uppercase tracking-[0.02em]">
+                  <span>{faq.question}</span>
+                  <svg className="w-5 h-5 flex-shrink-0 text-[#F3A300] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <div className="px-6 pb-5 text-[#666] text-[15px] leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>
