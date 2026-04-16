@@ -118,7 +118,7 @@ function buildNotificationHtml(
   const locationCard = (data.locationName || data.locationAddress) && !isContact
     ? `${sectionLabel("Location")}
        <tr><td style="padding:0 32px 0 32px;" class="px">
-         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.tile}" class="tile" style="border-collapse:separate;background:${C.tile};border:1px solid ${C.border};border-radius:12px;">
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.tile}" class="tile" style="border-collapse:separate;background:${C.tile};border:0;border-radius:12px;">
            <tr><td style="padding:16px 18px;">
              <a href="${esc(mapsLink)}" style="text-decoration:none;color:${C.ink};display:block;">
                <div style="font:600 15px/1.35 ${FONT};color:${C.ink};">${esc(data.locationName || data.locationAddress || "")}</div>
@@ -167,12 +167,14 @@ function buildNotificationHtml(
   const extrasRow = allExtras.length > 0
     ? `${sectionLabel("Angefragte Extras")}
        <tr><td style="padding:0 32px 0 32px;" class="px">
-         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.tile}" class="tile" style="border-collapse:separate;background:${C.tile};border:1px solid ${C.border};border-radius:12px;">
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.tile}" class="tile" style="border-collapse:separate;background:${C.tile};border:0;border-radius:12px;">
            ${allExtras.map((raw, i) => {
              const label = extraLabel(raw);
              const isPrinter = label === "Drucker";
              const isLast = i === allExtras.length - 1;
-             const borderBottom = isLast ? "" : `border-bottom:1px solid ${C.border};`;
+             // Separator zwischen Extras: leicht dunkler als Tile, damit er in Dark-Mode
+             // nicht als pale Outline hochkommt (und in Light-Mode trotzdem sichtbar ist).
+             const borderBottom = isLast ? "" : `border-bottom:1px solid #e7e8eb;`;
              const bulletBg = isPrinter ? C.accent : C.ink;
              return `<tr><td style="padding:12px 16px;${borderBottom}">
                <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
@@ -191,7 +193,7 @@ function buildNotificationHtml(
   const messageRow = data.comments
     ? `${sectionLabel("Nachricht")}
        <tr><td style="padding:0 32px 0 32px;" class="px">
-         <div style="background:${C.tile};border:1px solid ${C.border};border-radius:12px;padding:14px 16px;font:400 14px/1.55 ${FONT};color:${C.inkSoft};white-space:pre-wrap;">${esc(data.comments)}</div>
+         <div style="background:${C.tile};border:0;border-radius:12px;padding:14px 16px;font:400 14px/1.55 ${FONT};color:${C.inkSoft};white-space:pre-wrap;">${esc(data.comments)}</div>
        </td></tr>`
     : "";
 
@@ -209,14 +211,14 @@ function buildNotificationHtml(
       <tr>
         ${telLink ? `<td width="50%" valign="top" style="padding-right:5px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td align="center" bgcolor="${C.tile}" class="tile" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
+            <td align="center" bgcolor="${C.tile}" class="tile" style="background:${C.tile};border:0;border-radius:10px;">
               <a href="${esc(telLink)}" style="display:block;padding:14px 12px;font:600 14px/1 ${FONT};color:${C.ink};text-decoration:none;">Anrufen</a>
             </td>
           </tr></table>
         </td>` : ""}
         ${mailLink ? `<td width="50%" valign="top" style="padding-left:${telLink ? 5 : 0}px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td align="center" bgcolor="${C.tile}" class="tile" style="background:${C.tile};border:1px solid ${C.border};border-radius:10px;">
+            <td align="center" bgcolor="${C.tile}" class="tile" style="background:${C.tile};border:0;border-radius:10px;">
               <a href="${esc(mailLink)}" style="display:block;padding:14px 12px;font:600 14px/1 ${FONT};color:${C.ink};text-decoration:none;">Antworten</a>
             </td>
           </tr></table>
