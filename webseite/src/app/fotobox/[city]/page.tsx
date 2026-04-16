@@ -135,11 +135,10 @@ export default async function CityPage({
                 </Link>
               </div>
             </div>
-            {/* TODO: Platzhalter — durch Original-Setup-Bild (Curtain-Venue) ersetzen */}
             <div className="relative aspect-[3/4] w-full max-w-[450px] mx-auto shadow-2xl">
               <Image
-                src="/images/gallery/fotobox-rosenheim-bild2.jpg"
-                alt={`Knipserl Fotobox Aufbau bei Event in ${city.name}`}
+                src="/images/landing/fotobox-mieten.jpg"
+                alt={`Knipserl Fotobox mieten in ${city.name}`}
                 fill
                 priority
                 className="object-cover"
@@ -251,12 +250,12 @@ export default async function CityPage({
             </div>
           </div>
 
-          {/* Bilder-Reihe */}
+          {/* Bilder-Reihe — Reihenfolge matcht die Textspalten darüber */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
             <div className="relative aspect-[4/3] shadow-xl">
               <Image
-                src="/images/gallery/fotobox-mieten-5-scaled.jpg"
-                alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
+                src="/images/landing/einfache-bedienung.png"
+                alt="Einfache Bedienung der Knipserl Fotobox über den 22-Zoll-Touchscreen"
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -264,8 +263,8 @@ export default async function CityPage({
             </div>
             <div className="relative aspect-[4/3] shadow-xl">
               <Image
-                src="/images/fotobox/fotobox-mockup.jpg"
-                alt="Knipserl Fotobox Aufbau – Touchscreen und Drucker"
+                src="/images/landing/unsere-fotoprops.webp"
+                alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
