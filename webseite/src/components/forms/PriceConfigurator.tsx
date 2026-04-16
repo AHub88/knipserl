@@ -203,7 +203,7 @@ export default function PriceConfigurator() {
           <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Fotobox Zubehör
           </h2>
-          <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+          <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
             Zusätzlich buchbar
           </p>
         </div>
@@ -286,12 +286,12 @@ export default function PriceConfigurator() {
       </div>
 
       {/* ===== FAHRTKOSTEN ===== */}
-      <div>
+      <div className="pt-5">
         <div className="text-center mb-8">
           <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Fahrtkosten
           </h2>
-          <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+          <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
             für den Auf- und Abbau
           </p>
         </div>
@@ -473,7 +473,7 @@ export default function PriceConfigurator() {
           <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Jetzt reservieren
           </h2>
-          <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+          <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
             Datum wählen und unverbindlich anfragen
           </p>
         </div>

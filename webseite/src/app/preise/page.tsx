@@ -71,7 +71,7 @@ export default function PreisePage() {
             <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
               Unser Preis: 379&euro;
             </h2>
-            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
               Fotobox mit Drucker
             </p>
           </div>
