@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
 import { InquiryActions } from "./inquiry-actions";
 import { InquiryDetails } from "./inquiry-details";
+import { normalizeExtraKey } from "@/lib/extras-pricing";
 import Link from "next/link";
 import {
   IconArrowLeft,
@@ -58,6 +59,12 @@ export default async function InquiryDetailPage({
   };
 
   const status = statusConfig[inquiry.status] ?? statusConfig.NEW;
+
+  // Legacy-Inquiries haben u.U. lange Marketing-Namen gespeichert.
+  // Für Preis-Preview + Extras-Button-Preselection auf Admin-Keys normalisieren.
+  const normalizedExtras = Array.from(
+    new Set(inquiry.extras.filter(Boolean).map(normalizeExtraKey))
+  );
 
   const formattedEventDate = new Date(inquiry.eventDate).toLocaleDateString(
     "de-DE",
@@ -191,7 +198,7 @@ export default async function InquiryDetailPage({
           locationLat: inquiry.locationLat,
           locationLng: inquiry.locationLng,
           distanceKm: inquiry.distanceKm,
-          extras: inquiry.extras,
+          extras: normalizedExtras,
           comments: inquiry.comments,
         }}
       />
@@ -201,7 +208,7 @@ export default async function InquiryDetailPage({
         <InquiryActions
           inquiryId={inquiry.id}
           customerType={inquiry.customerType}
-          inquiryExtras={inquiry.extras}
+          inquiryExtras={normalizedExtras}
           distanceKm={inquiry.distanceKm}
         />
       )}

@@ -20,6 +20,7 @@ import {
   IconLoader2,
   IconSearch,
 } from "@tabler/icons-react";
+import { extraLabel } from "@/lib/extras-pricing";
 
 interface InquiryData {
   id: string;
@@ -454,11 +455,11 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
         </div>
       </div>
 
-      {/* Extras */}
+      {/* Angefragte Extras */}
       {inquiry.extras.length > 0 && (
         <div className="rounded-xl border border-white/[0.10] bg-card p-5">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Gebuchte Extras
+            Angefragte Extras
           </h3>
           <div className="flex flex-wrap gap-2">
             {inquiry.extras.map((extra) => (
@@ -467,7 +468,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
                 variant="outline"
                 className="bg-[#F6A11C]/10 text-[#F6A11C] border-[#F6A11C]/25"
               >
-                {extra}
+                {extraLabel(extra)}
               </Badge>
             ))}
           </div>

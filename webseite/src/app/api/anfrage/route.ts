@@ -33,7 +33,6 @@ function mapToInquiryPayload(data: AnfragePayload) {
     !isDefaultProduct ? `Produkt: ${data.art}` : "",
     firma ? `Firma: ${firma}` : "",
     data.nachricht ? data.nachricht : "",
-    data.totalPrice ? `Kalkulierter Preis: ${data.totalPrice.toFixed(2)} €` : "",
   ].filter(Boolean).join("\n");
 
   return {
@@ -57,6 +56,8 @@ function mapToInquiryPayload(data: AnfragePayload) {
       return addons.includes("Drucker") ? addons : ["Drucker", ...addons];
     })(),
     comments,
+    // Nur vom Preiskonfigurator gesetzt — Admin zeigt daraus den Gesamtpreis-Block
+    totalPrice: data.totalPrice,
     source: data.source ?? "api",
   };
 }

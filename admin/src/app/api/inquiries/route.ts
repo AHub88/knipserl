@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { geocodeAutocomplete, calculateDrivingDistance } from "@/lib/geocoding";
 import { calculateTravelPrice } from "@/lib/travel-pricing";
+import { normalizeExtraKey, extraLabel } from "@/lib/extras-pricing";
 
 const createInquirySchema = z.object({
   customerName: z.string().min(1, "Name ist erforderlich"),
@@ -20,6 +21,7 @@ const createInquirySchema = z.object({
   distanceKm: z.number().nullable().optional(),
   extras: z.array(z.string()).default([]),
   comments: z.string().optional(),
+  totalPrice: z.number().optional(),
   source: z.enum(["kontakt", "startseite", "preiskonfigurator", "api"]).default("api"),
 });
 
@@ -38,6 +40,7 @@ function buildNotificationHtml(
   ctx: {
     distanceKm: number | null;
     travelCost: number | null;
+    totalPrice: number | null;
     locationLat: number | null;
     locationLng: number | null;
     adminUrl: string;
@@ -125,8 +128,25 @@ function buildNotificationHtml(
        </td></tr>`
     : "";
 
-  // ── Fahrtkosten ──
-  const travelBox = ctx.travelCost != null
+  // ── Gesamtpreis-Block (aus Preiskonfigurator) — bevorzugt vor Fahrtkosten-Einzelbox ──
+  const priceBox = ctx.totalPrice != null
+    ? `<tr><td style="padding:14px 32px 0 32px;" class="px">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.accent}" class="accent-bg" style="border-collapse:separate;background:${C.accent};border-radius:12px;">
+          <tr><td style="padding:18px 20px;">
+            <div style="font:700 11px/1 ${FONT};letter-spacing:1.2px;color:${C.accentInk};text-transform:uppercase;opacity:0.8;">Kalkulierter Gesamtpreis</div>
+            <div style="font:800 34px/1.05 ${FONT};color:${C.accentInk};margin-top:6px;letter-spacing:-0.5px;">${ctx.totalPrice.toFixed(2).replace(".", ",")}&nbsp;&euro;</div>
+            ${ctx.travelCost != null && ctx.distanceKm != null
+              ? `<div style="font:500 12px/1.3 ${FONT};color:${C.accentInk};margin-top:4px;opacity:0.75;">inkl. ${ctx.travelCost.toFixed(2).replace(".", ",")} € Fahrtkosten (${ctx.distanceKm} km)</div>`
+              : ctx.distanceKm != null
+              ? `<div style="font:500 12px/1.3 ${FONT};color:${C.accentInk};margin-top:4px;opacity:0.75;">${ctx.distanceKm} km Entfernung</div>`
+              : ""}
+          </td></tr>
+        </table>
+      </td></tr>`
+    : "";
+
+  // ── Fahrtkosten (nur wenn kein Gesamtpreis vorhanden, z.B. Startseiten-Anfrage) ──
+  const travelBox = ctx.totalPrice == null && ctx.travelCost != null
     ? `<tr><td style="padding:14px 32px 0 32px;" class="px">
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.accent}" class="accent-bg" style="border-collapse:separate;background:${C.accent};border-radius:12px;">
           <tr><td style="padding:18px 20px;">
@@ -138,19 +158,28 @@ function buildNotificationHtml(
       </td></tr>`
     : "";
 
-  // ── Extras ──
+  // ── Extras — vertikale Liste mit Labels ──
   const allExtras = data.extras.filter(Boolean);
   const extrasRow = allExtras.length > 0
-    ? `${sectionLabel("Extras")}
+    ? `${sectionLabel("Angefragte Extras")}
        <tr><td style="padding:0 32px 0 32px;" class="px">
-         ${allExtras.map((e, i) => {
-           const isPrinter = e === "Drucker";
-           const bg = isPrinter ? C.accent : C.tile;
-           const color = isPrinter ? C.accentInk : C.ink;
-           const border = isPrinter ? C.accent : C.border;
-           const mr = i < allExtras.length - 1 ? "6px" : "0";
-           return `<span style="display:inline-block;background:${bg};color:${color};border:1px solid ${border};font:600 13px/1 ${FONT};padding:8px 14px;border-radius:999px;margin-right:${mr};margin-bottom:6px;">${esc(e)}</span>`;
-         }).join("")}
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.tile}" class="tile" style="border-collapse:separate;background:${C.tile};border:1px solid ${C.border};border-radius:12px;">
+           ${allExtras.map((raw, i) => {
+             const label = extraLabel(raw);
+             const isPrinter = label === "Drucker";
+             const isLast = i === allExtras.length - 1;
+             const borderBottom = isLast ? "" : `border-bottom:1px solid ${C.border};`;
+             const bulletBg = isPrinter ? C.accent : C.ink;
+             return `<tr><td style="padding:12px 16px;${borderBottom}">
+               <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+                 <td valign="middle" style="padding-right:10px;">
+                   <div style="width:8px;height:8px;background:${bulletBg};border-radius:999px;"></div>
+                 </td>
+                 <td valign="middle" style="font:600 14px/1.3 ${FONT};color:${C.ink};">${esc(label)}</td>
+               </tr></table>
+             </td></tr>`;
+           }).join("")}
+         </table>
        </td></tr>`
     : "";
 
@@ -266,6 +295,7 @@ function buildNotificationHtml(
         ${hero}
         ${contactRows}
         ${locationCard}
+        ${priceBox}
         ${travelBox}
         ${extrasRow}
         ${messageRow}
@@ -301,7 +331,14 @@ function resolveAdminUrl(request: NextRequest): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const data = createInquirySchema.parse(body);
+    const parsed = createInquirySchema.parse(body);
+    // Webseite sendet Marketing-Namen ("Alle Bilder auf USB Stick") — auf kanonische
+    // Admin-Keys normalisieren, damit sie in den Extras-Buttons vorausgewählt sind
+    // und der Preis korrekt berechnet wird. Duplikate entfernen.
+    const normalizedExtras = Array.from(
+      new Set(parsed.extras.filter(Boolean).map(normalizeExtraKey))
+    );
+    const data = { ...parsed, extras: normalizedExtras };
     const adminUrl = resolveAdminUrl(request);
 
     // Find or create customer
@@ -329,7 +366,7 @@ export async function POST(request: NextRequest) {
       customerId = newCustomer.id;
     }
 
-    const { source: _source, ...inquiryData } = data;
+    const { source: _source, totalPrice: _totalPrice, ...inquiryData } = data;
     const inquiry = await prisma.inquiry.create({
       data: {
         ...inquiryData,
@@ -401,6 +438,7 @@ export async function POST(request: NextRequest) {
         const html = buildNotificationHtml(data, inquiry.id, {
           distanceKm,
           travelCost,
+          totalPrice: data.totalPrice ?? null,
           locationLat: lat,
           locationLng: lng,
           adminUrl,
