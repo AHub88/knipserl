@@ -69,9 +69,12 @@ function buildNotificationHtml(
   const dateLong = `${weekdays[d.getDay()]}, ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
   const contactTypeLabel = data.customerType === "BUSINESS" ? "Firmenkunde" : "Privatkunde";
 
-  // Color tokens — light-mode locked
+  // Color tokens — light-mode locked.
+  // Body-Bg = Card-Bg: iOS Outlook erzwingt Dark-Mode und darkt die Card,
+  // lässt aber den Body hell → sichtbarer "weißer Rahmen". Mit gleicher
+  // Grundfarbe gibt es nichts zum Ausfransen.
   const C = {
-    bg: "#f3f4f6",
+    bg: "#ffffff",
     card: "#ffffff",
     border: "#e5e7eb",
     ink: "#111111",
@@ -80,7 +83,8 @@ function buildNotificationHtml(
     accent: "#F3A300",
     accentInk: "#1a171b",
     dark: "#111111",
-    tile: "#f9fafb",
+    tile: "#f4f5f7",
+    cardEdge: "#ffffff",
   };
   const FONT = `'Helvetica Neue', Helvetica, Arial, sans-serif`;
 
@@ -291,7 +295,7 @@ function buildNotificationHtml(
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.bg}" style="background:${C.bg};">
     <tr><td align="center" class="outer-pad" style="padding:32px 16px;">
       <!--[if mso | IE]><table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="600"><tr><td><![endif]-->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center" class="container card" bgcolor="${C.card}" style="width:600px;max-width:600px;background:${C.card};border-radius:16px;border:1px solid ${C.border};">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center" class="container card" bgcolor="${C.card}" style="width:600px;max-width:600px;background:${C.card};border-radius:16px;border:0;">
         ${hero}
         ${contactRows}
         ${locationCard}
