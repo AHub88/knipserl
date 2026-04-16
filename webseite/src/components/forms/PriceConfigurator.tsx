@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import Image from "next/image";
 import { ADDONS, BASE_PRICE } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
+import { useGooglePlacesAutocomplete, type PlaceSelection } from "@/lib/use-google-places";
+import MiniCalendar from "./MiniCalendar";
 
 interface DeliveryInfo {
   distanceKm: number;
@@ -15,76 +16,48 @@ interface DeliveryInfo {
   routePolyline: string;
 }
 
-interface PlaceSelection {
-  address: string;
-  lat: number;
-  lon: number;
+function ToggleSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
+  return (
+    <label className="flex flex-col items-center gap-1 cursor-pointer">
+      <button
+        type="button"
+        onClick={onChange}
+        className={`relative w-12 h-6 rounded-full transition-colors ${checked ? "bg-[#F3A300]" : "bg-gray-300"}`}
+      >
+        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? "translate-x-6" : ""}`} />
+      </button>
+      <span className="text-sm text-[#1a171b]">{label}</span>
+    </label>
+  );
 }
 
-function useGooglePlacesAutocomplete(
-  inputRef: React.RefObject<HTMLInputElement | null>,
-  onSelect: (place: PlaceSelection) => void
-) {
-  useEffect(() => {
-    let autocomplete: google.maps.places.Autocomplete | null = null;
-
-    async function init() {
-      if (!inputRef.current) return;
-
-      try {
-        const res = await fetch("/api/maps-config");
-        const data = await res.json();
-        if (!data.apiKey) return;
-
-        // Load Google Maps script if not already loaded
-        if (!window.google?.maps?.places) {
-          await new Promise<void>((resolve, reject) => {
-            const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=places&language=de&region=DE`;
-            script.async = true;
-            script.onload = () => resolve();
-            script.onerror = () => reject();
-            document.head.appendChild(script);
-          });
-        }
-
-        autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-          types: ["establishment", "geocode"],
-          componentRestrictions: { country: ["de", "at"] },
-          fields: ["formatted_address", "name", "geometry"],
-        });
-
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete?.getPlace();
-          const loc = place?.geometry?.location;
-          if (place?.formatted_address && loc) {
-            onSelect({
-              address: place.name ? `${place.name}, ${place.formatted_address}` : place.formatted_address,
-              lat: loc.lat(),
-              lon: loc.lng(),
-            });
-          }
-        });
-      } catch {
-        // Google Maps not available — fallback to manual input
-      }
-    }
-
-    init();
-    return () => {
-      if (autocomplete) google.maps.event.clearInstanceListeners(autocomplete);
-    };
-  }, [inputRef, onSelect]);
-}
+const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
 
 export default function PriceConfigurator() {
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
   const [destination, setDestination] = useState("");
+  const [locationName, setLocationName] = useState("");
+  const [locationAddress, setLocationAddress] = useState("");
+  const [locationLat, setLocationLat] = useState<number | null>(null);
+  const [locationLng, setLocationLng] = useState<number | null>(null);
   const [delivery, setDelivery] = useState<DeliveryInfo | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
   const [mapsApiKey, setMapsApiKey] = useState("");
   const destinationInputRef = useRef<HTMLInputElement>(null);
+
+  // Inquiry form state
+  const [inquiry, setInquiry] = useState({
+    vorname: "",
+    nachname: "",
+    telefon: "",
+    email: "",
+    eventType: "",
+    datum: "",
+    nachricht: "",
+  });
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [submitError, setSubmitError] = useState("");
 
   const runCalculation = useCallback(async (address: string, coords?: { lat: number; lon: number }) => {
     if (!address.trim()) return;
@@ -108,12 +81,15 @@ export default function PriceConfigurator() {
 
   const handlePlaceSelect = useCallback((place: PlaceSelection) => {
     setDestination(place.address);
+    setLocationName(place.name || place.formattedAddress);
+    setLocationAddress(place.formattedAddress);
+    setLocationLat(place.lat);
+    setLocationLng(place.lon);
     runCalculation(place.address, { lat: place.lat, lon: place.lon });
   }, [runCalculation]);
 
   useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);
 
-  // Fetch Google Maps API key via own proxy endpoint
   useEffect(() => {
     fetch("/api/maps-config")
       .then((r) => r.json())
@@ -141,6 +117,73 @@ export default function PriceConfigurator() {
   const calculateDistance = useCallback(() => {
     runCalculation(destination);
   }, [destination, runCalculation]);
+
+  const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDestination(value);
+    // Manuelles Editieren invalidiert die Places-Metadaten
+    setLocationName("");
+    setLocationAddress("");
+    setLocationLat(null);
+    setLocationLng(null);
+  };
+
+  const handleInquiryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInquiry((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleEventType = (type: string) => {
+    setInquiry((prev) => ({ ...prev, eventType: prev.eventType === type ? "" : type }));
+  };
+
+  const selectedAddonNames = ADDONS.filter((a) => selectedAddons.has(a.id)).map((a) => a.name);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inquiry.datum) {
+      setSubmitError("Bitte wähle ein Datum im Kalender aus.");
+      return;
+    }
+    if (!destination.trim()) {
+      setSubmitError("Bitte gib Deinen Veranstaltungsort an.");
+      return;
+    }
+    setSubmitError("");
+    setSubmitStatus("loading");
+
+    try {
+      const res = await fetch("/api/anfrage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          art: "Knipserl mit Drucker",
+          vorname: inquiry.vorname,
+          nachname: inquiry.nachname,
+          telefon: inquiry.telefon,
+          email: inquiry.email,
+          eventType: inquiry.eventType,
+          datum: inquiry.datum,
+          location: destination,
+          locationName,
+          locationAddress,
+          locationLat,
+          locationLng,
+          nachricht: inquiry.nachricht,
+          addons: selectedAddonNames,
+          deliveryDistance: delivery?.distanceKm,
+          deliveryPrice: delivery?.price,
+          totalPrice,
+          source: "preiskonfigurator",
+        }),
+      });
+
+      if (!res.ok) throw new Error("Fehler beim Senden");
+      setSubmitStatus("success");
+    } catch {
+      setSubmitStatus("error");
+    }
+  };
 
   return (
     <div className="space-y-12">
@@ -263,7 +306,7 @@ export default function PriceConfigurator() {
                   ref={destinationInputRef}
                   type="text"
                   value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
+                  onChange={handleDestinationChange}
                   placeholder="Name/Anschrift eingeben..."
                   className="w-full px-4 py-3 bg-white border border-gray-200 rounded text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:border-[#F3A300] focus:outline-none"
                   onKeyDown={(e) => {
@@ -398,13 +441,96 @@ export default function PriceConfigurator() {
               </span>
             </div>
           </div>
-
-          <div className="mt-8 text-center">
-            <a href="/termin-reservieren" className="btn-brand">
-              Jetzt reservieren
-            </a>
-          </div>
         </div>
+      </div>
+
+      {/* ===== INQUIRY FORM ===== */}
+      <div id="jetzt-reservieren" className="scroll-mt-28">
+        <div className="text-center mb-8">
+          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
+            Jetzt reservieren
+          </h2>
+          <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+            Datum wählen und unverbindlich anfragen
+          </p>
+        </div>
+
+        {submitStatus === "success" ? (
+          <div className="max-w-[700px] mx-auto bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+            <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <h3 className="text-xl font-semibold text-green-800 mb-2">
+              Anfrage erfolgreich gesendet!
+            </h3>
+            <p className="text-green-700">
+              Wir melden uns schnellstmöglich bei Dir. Prüfe auch Deinen Spam-Ordner.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Left: Calendar */}
+              <MiniCalendar
+                selected={inquiry.datum}
+                onSelect={(date) => setInquiry((prev) => ({ ...prev, datum: date }))}
+              />
+
+              {/* Right: Contact fields */}
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="text" name="vorname" required placeholder="Vorname" value={inquiry.vorname} onChange={handleInquiryChange} className={inputClass} />
+                  <input type="text" name="nachname" required placeholder="Nachname" value={inquiry.nachname} onChange={handleInquiryChange} className={inputClass} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="tel" name="telefon" required placeholder="Telefon *" value={inquiry.telefon} onChange={handleInquiryChange} className={inputClass} />
+                  <input type="email" name="email" required placeholder="E-Mail *" value={inquiry.email} onChange={handleInquiryChange} className={inputClass} />
+                </div>
+
+                <div className="flex gap-6 py-2">
+                  <ToggleSwitch label="Hochzeit" checked={inquiry.eventType === "Hochzeit"} onChange={() => toggleEventType("Hochzeit")} />
+                  <ToggleSwitch label="Geburtstag" checked={inquiry.eventType === "Geburtstag"} onChange={() => toggleEventType("Geburtstag")} />
+                  <ToggleSwitch label="Firmenevent" checked={inquiry.eventType === "Firmenevent"} onChange={() => toggleEventType("Firmenevent")} />
+                </div>
+
+                <textarea
+                  name="nachricht"
+                  rows={3}
+                  placeholder="Fragen / Anmerkungen"
+                  value={inquiry.nachricht}
+                  onChange={handleInquiryChange}
+                  className={inputClass + " resize-y"}
+                />
+
+                <p className="text-xs text-gray-500">
+                  Veranstaltungsort, Zubehör und Preis werden aus dem Konfigurator übernommen. Detaillierte Informationen zum Umgang mit Nutzerdaten findest Du in unserer{" "}
+                  <a href="/datenschutzerklaerung" className="underline hover:text-[#F3A300]">Datenschutzerklärung</a>.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center mt-8">
+              <button
+                type="submit"
+                disabled={submitStatus === "loading" || deliveryLoading}
+                className="px-12 py-5 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-2xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
+              >
+                {submitStatus === "loading" ? "Wird gesendet..." : "Jetzt reservieren"}
+              </button>
+            </div>
+
+            {submitError && (
+              <p className="text-red-600 text-sm text-center mt-4">{submitError}</p>
+            )}
+
+            {submitStatus === "error" && (
+              <p className="text-red-600 text-sm text-center mt-4">
+                Es gab einen Fehler. Bitte versuche es erneut oder kontaktiere uns direkt.
+              </p>
+            )}
+          </form>
+        )}
       </div>
     </div>
   );

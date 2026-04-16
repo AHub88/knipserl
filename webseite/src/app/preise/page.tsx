@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import PriceConfigurator from "@/components/forms/PriceConfigurator";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
 import PageHeader from "@/components/layout/PageHeader";
@@ -102,33 +101,10 @@ export default function PreisePage() {
         </div>
       </section>
 
-      {/* ===== CONFIGURATOR ===== */}
-      <section className="pb-16">
+      {/* ===== CONFIGURATOR + INQUIRY ===== */}
+      <section className="pb-20">
         <div className="max-w-[1100px] mx-auto px-6">
           <PriceConfigurator />
-        </div>
-      </section>
-
-      {/* ===== CTA ===== */}
-      <section className="py-20 text-center">
-        <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block mb-4">
-            Du möchtest lieber direkt anfragen?
-          </h2>
-          <p className="text-[18px] text-[#666] mb-8 font-[family-name:var(--font-fira-sans)]" style={{ fontWeight: 400, textTransform: "none" }}>
-            Kein Problem! Nutze unser einfaches Anfrageformular oder kontaktiere uns per WhatsApp.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/termin-reservieren" className="btn-brand">Jetzt reservieren</Link>
-            <a
-              href="https://wa.me/4915792495836"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline-dark"
-            >
-              WhatsApp Anfrage
-            </a>
-          </div>
         </div>
       </section>
     </>
