@@ -14,9 +14,12 @@ type Props = {
 
 export default function PageHeader({ title, decorative = false }: Props) {
   const Tag = decorative ? "div" : "h1";
+  // Ohne Titel braucht der Streifen nur die Decker-Dicke + rough-bottom-Kante,
+  // nicht die volle Titel-Hoehe.
+  const heightClass = title ? "h-[280px] md:h-[320px]" : "h-[140px] md:h-[160px]";
   return (
     <div
-      className="relative w-full h-[280px] md:h-[320px] bg-cover bg-center flex items-end rough-bottom"
+      className={`relative w-full ${heightClass} bg-cover bg-center flex items-end rough-bottom`}
       style={{ backgroundImage: "url('/images/misc/fancy-header.jpg')" }}
     >
       {title ? (
