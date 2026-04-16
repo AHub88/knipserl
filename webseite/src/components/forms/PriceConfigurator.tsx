@@ -58,6 +58,16 @@ export default function PriceConfigurator() {
   });
   const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [submitError, setSubmitError] = useState("");
+  const [showInquiry, setShowInquiry] = useState(false);
+  const inquiryRef = useRef<HTMLDivElement>(null);
+
+  const openInquiry = () => {
+    setShowInquiry(true);
+    // Nach dem Rendern scrollen
+    setTimeout(() => {
+      inquiryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
 
   const runCalculation = useCallback(async (address: string, coords?: { lat: number; lon: number }) => {
     if (!address.trim()) return;
@@ -441,11 +451,24 @@ export default function PriceConfigurator() {
               </span>
             </div>
           </div>
+
+          {!showInquiry && submitStatus !== "success" && (
+            <div className="mt-8 text-center">
+              <button
+                type="button"
+                onClick={openInquiry}
+                className="px-12 py-5 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors text-2xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
+              >
+                Jetzt unverbindlich anfragen
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* ===== INQUIRY FORM ===== */}
-      <div id="jetzt-reservieren" className="scroll-mt-28">
+      {(showInquiry || submitStatus === "success") && (
+      <div id="jetzt-reservieren" ref={inquiryRef} className="scroll-mt-28">
         <div className="text-center mb-8">
           <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
             Jetzt reservieren
@@ -532,6 +555,7 @@ export default function PriceConfigurator() {
           </form>
         )}
       </div>
+      )}
     </div>
   );
 }
