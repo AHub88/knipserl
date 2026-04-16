@@ -175,7 +175,7 @@ export default async function CityPage({
               </h2>
               <div className="text-white/85 text-[16px] md:text-[17px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                 <p>{city.momenteP1}</p>
-                <p>{city.momenteP2}</p>
+                {city.momenteP2 && <p>{city.momenteP2}</p>}
               </div>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 items-center md:items-start">
                 <Link href="/preise" className="btn-brand whitespace-nowrap">Die Preise</Link>
@@ -289,21 +289,6 @@ export default async function CityPage({
 
           <div className="text-center mt-10">
             <Link href="/preise" className="btn-brand">Ab {BASE_PRICE}&euro; konfigurieren</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================
-          LOCAL CONTEXT — stadtspezifischer Block (gegen Duplicate Content)
-          ======================================================================== */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-[900px] mx-auto px-6 text-center">
-          <h2 className="heading-decorated text-[28px] md:text-[40px] leading-[1] text-[#1a171b] inline-block mb-6">
-            {city.localTitle}
-          </h2>
-          <div className="text-[#666] text-[16px] md:text-[17px] space-y-4 leading-relaxed text-left md:text-center" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-            <p>{city.localP1}</p>
-            <p>{city.localP2}</p>
           </div>
         </div>
       </section>
