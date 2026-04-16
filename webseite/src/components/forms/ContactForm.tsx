@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
 
 const inputBase =
   "w-full h-[52px] px-4 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
@@ -9,6 +11,7 @@ const textareaClass =
   "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)] resize-y";
 
 export default function ContactForm() {
+  const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
@@ -33,7 +36,7 @@ export default function ContactForm() {
     setErrorMsg("");
 
     if (form.website) {
-      setStatus("success");
+      router.push("/anfrage-erhalten");
       return;
     }
 
@@ -58,26 +61,15 @@ export default function ContactForm() {
       });
 
       if (!res.ok) throw new Error("Fehler beim Senden");
-      setStatus("success");
+      // Kontaktformular hat keine Event-Details — Summary bleibt leer,
+      // dadurch zeigt die Dankesseite nur den Danke-Text ohne "Deine Anfrage"-Box
+      saveInquirySummary({});
+      router.push("/anfrage-erhalten");
     } catch {
       setStatus("error");
       setErrorMsg("Beim Senden ist ein Fehler aufgetreten. Bitte versuche es erneut oder ruf uns direkt an.");
     }
   };
-
-  if (status === "success") {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-        <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-        <h3 className="text-xl font-semibold text-green-800 mb-2">Nachricht gesendet!</h3>
-        <p className="text-green-700">
-          Wir melden uns innerhalb von 24 Stunden bei Dir — in der Regel deutlich schneller. Prüfe auch Deinen Spam-Ordner.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">

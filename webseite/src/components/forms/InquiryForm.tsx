@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useGooglePlacesAutocomplete } from "@/lib/use-google-places";
+import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
 import MiniCalendar from "./MiniCalendar";
 
 interface InquiryFormProps {
@@ -27,6 +29,7 @@ function ToggleSwitch({ label, checked, onChange }: { label: string; checked: bo
 const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
 
 export default function InquiryForm({ preset = "fotobox", compact = false }: InquiryFormProps) {
+  const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formData, setFormData] = useState({
     art: preset === "gaestetelefon" ? "Gästetelefon" : "Knipserl mit Drucker",
@@ -101,27 +104,16 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
       });
 
       if (!res.ok) throw new Error("Fehler beim Senden");
-      setStatus("success");
+      saveInquirySummary({
+        eventDate: formData.datum,
+        eventType: formData.eventType,
+        location: formData.locationName || formData.location,
+      });
+      router.push("/anfrage-erhalten");
     } catch {
       setStatus("error");
     }
   };
-
-  if (status === "success") {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-        <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-        <h3 className="text-xl font-semibold text-green-800 mb-2">
-          Anfrage erfolgreich gesendet!
-        </h3>
-        <p className="text-green-700">
-          Wir melden uns schnellstmöglich bei Dir. Prüfe auch Deinen Spam-Ordner.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit}>

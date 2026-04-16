@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ADDONS, BASE_PRICE } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
 import { useGooglePlacesAutocomplete, type PlaceSelection } from "@/lib/use-google-places";
+import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
 import MiniCalendar from "./MiniCalendar";
 
 interface DeliveryInfo {
@@ -34,6 +36,7 @@ function ToggleSwitch({ label, checked, onChange }: { label: string; checked: bo
 const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
 
 export default function PriceConfigurator() {
+  const router = useRouter();
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
   const [destination, setDestination] = useState("");
   const [locationName, setLocationName] = useState("");
@@ -189,7 +192,15 @@ export default function PriceConfigurator() {
       });
 
       if (!res.ok) throw new Error("Fehler beim Senden");
-      setSubmitStatus("success");
+      saveInquirySummary({
+        eventDate: inquiry.datum,
+        eventType: inquiry.eventType,
+        location: locationName || destination,
+        addons: selectedAddonNames,
+        totalPrice,
+        deliveryDistance: delivery?.distanceKm,
+      });
+      router.push("/anfrage-erhalten");
     } catch {
       setSubmitStatus("error");
     }
