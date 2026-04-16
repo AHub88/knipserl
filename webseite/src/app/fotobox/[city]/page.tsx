@@ -168,7 +168,7 @@ export default async function CityPage({
                 sizes="(max-width: 768px) 280px, 340px"
               />
             </div>
-            <div>
+            <div className="text-center md:text-left">
               <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] inline-block mb-6">
                 Momente für die Ewigkeit
               </h2>
@@ -187,7 +187,7 @@ export default async function CityPage({
                   Spät. Klar ist: Je später, desto verrückter.
                 </p>
               </div>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 items-center md:items-start">
                 <Link href="/preise" className="btn-brand whitespace-nowrap">Die Preise</Link>
                 <Link href="#anfragen" className="btn-outline whitespace-nowrap">Termin frei?</Link>
               </div>
@@ -203,7 +203,7 @@ export default async function CityPage({
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
             {/* Einfache Bedienung */}
-            <div>
+            <div className="text-center md:text-left">
               <h2 className="heading-decorated text-[28px] md:text-[36px] leading-[1] text-[#1a171b] inline-block mb-6">
                 Einfache Bedienung
               </h2>
@@ -227,7 +227,7 @@ export default async function CityPage({
             </div>
 
             {/* Fotoprops */}
-            <div>
+            <div className="text-center md:text-left">
               <h2 className="heading-decorated text-[28px] md:text-[36px] leading-[1] text-[#1a171b] inline-block mb-6">
                 Unsere Fotoprops
               </h2>
