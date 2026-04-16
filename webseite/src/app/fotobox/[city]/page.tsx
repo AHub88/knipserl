@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
+import PageHeader from "@/components/layout/PageHeader";
 import { SEO_CITIES, BASE_PRICE, SITE_URL, SITE_NAME, ADDRESS, CONTACT_PHONE_DISPLAY } from "@/lib/constants";
 import {
   generatePageMetadata,
@@ -88,10 +89,12 @@ export default async function CityPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
 
+      {/* Wood-Texture-Streifen ohne Titel — verhindert die Doppelung
+          "Fotobox mieten in X" (Streifen + Hero-H1). H1 kommt aus dem Hero. */}
+      <PageHeader />
+
       {/* ========================================================================
           HERO — Intro + Bild + CTA
-          (kein PageHeader: H1 im Hero ist der einzige Anker — verhindert
-          die Doppelung "Fotobox mieten in X" zweimal untereinander)
           ======================================================================== */}
       <section className="py-14 md:py-20">
         <div className="max-w-[1200px] mx-auto px-6">
