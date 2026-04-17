@@ -91,6 +91,17 @@ export default async function CityPage({
 
   const otherCities = SEO_CITIES.filter((c) => c.slug !== city.slug);
 
+  // Stadtspezifische Headlines mit Fallback auf generische (fuer Staedte ohne eigene Headlines)
+  const headlines = ("headlines" in city ? city.headlines : undefined) as
+    | { momente: string; bedienung: string; fotoprops: string; qualitaet: string }
+    | undefined;
+  const h = {
+    momente: headlines?.momente ?? "Momente für die Ewigkeit",
+    bedienung: headlines?.bedienung ?? "Einfache Bedienung",
+    fotoprops: headlines?.fotoprops ?? "Unsere Fotoprops",
+    qualitaet: headlines?.qualitaet ?? "Höchste Qualität garantiert",
+  };
+
   return (
     <>
       <script
@@ -171,7 +182,7 @@ export default async function CityPage({
             </div>
             <div className="text-center md:text-left">
               <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] inline-block mb-6">
-                Momente für die Ewigkeit
+                {h.momente}
               </h2>
               <div className="text-white/85 text-[16px] md:text-[17px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                 <p>{city.momenteP1}</p>
@@ -195,7 +206,7 @@ export default async function CityPage({
             {/* Einfache Bedienung */}
             <div className="text-center md:text-left">
               <h2 className="heading-decorated text-[28px] md:text-[36px] leading-[1] text-[#1a171b] inline-block mb-6">
-                Einfache Bedienung
+                {h.bedienung}
               </h2>
               <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                 <p>{city.bedienungP1}</p>
@@ -206,7 +217,7 @@ export default async function CityPage({
             {/* Fotoprops */}
             <div className="text-center md:text-left">
               <h2 className="heading-decorated text-[28px] md:text-[36px] leading-[1] text-[#1a171b] inline-block mb-6">
-                Unsere Fotoprops
+                {h.fotoprops}
               </h2>
               <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
                 <p>{city.fotopropsP1}</p>
@@ -249,7 +260,7 @@ export default async function CityPage({
         <div className="max-w-[1100px] mx-auto px-6">
           <div className="text-center mb-8">
             <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] inline-block">
-              Höchste Qualität garantiert
+              {h.qualitaet}
             </h2>
             <p className="text-[18px] md:text-[22px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
               Knipserl-Fotobox mieten in {city.name}

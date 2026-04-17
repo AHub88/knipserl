@@ -300,10 +300,17 @@ export const SEO_CITIES = [
     heroP1:
       "Wenn Du einen Event wie eine Hochzeit oder eine Weihnachtsfeier in Miesbach planst und allen Gästen einmalige Erinnerungen mitgeben möchtest, dann solltest Du eine Fotobox mieten und in Miesbach am Ort Deines Events aufstellen. Denn die Knipserl Fotobox lädt Deine Gäste zu einer spontanen Fotosession ein: mit neuen oder alten Freunden und Geschäftspartnern, mit großen Lieben und kleinen Liebeleien. Die Fotobox macht es ihnen allen ganz einfach, ein paar hochauflösende Fotos als Erinnerung ans Event mitzunehmen. Und wer mag, kann noch visuelle Effekte hinzufügen.",
     heroP2:
-      "Zusätzlich liefern wir auf Wunsch diverse Accessoires, unsere Fotoprops. Sie erlauben es Deinen Gästen, sich für Fotos zu verkleiden: vielleicht als Rockband oder als Wildtiere? Der Fantasie sind nur wenige Grenzen gesetzt. Eine Fotobox zu mieten für Miesbach ist ganz einfach und einfach toll. Ermögliche Deinen Gästen und Dir diese einmaligen Erinnerungen.",
+      "Zusätzlich liefern wir auf Wunsch (gegen Aufpreis) diverse Accessoires, unsere Fotoprops. Sie erlauben es Deinen Gästen, sich für Fotos zu verkleiden: vielleicht als Rockband oder als Wildtiere? Der Fantasie sind nur wenige Grenzen gesetzt. Eine Fotobox zu mieten für Miesbach ist ganz einfach und einfach toll. Ermögliche Deinen Gästen und Dir diese einmaligen Erinnerungen.",
+    headlines: {
+      momente: "Hochzeit & Firmenevent unvergesslich machen",
+      bedienung: "Fotobox bedienen? Kann jeder!",
+      fotoprops: "Verkleiden und fotografieren — doppelt Spaß",
+      qualitaet: "Top-Technik für Top-Fotos in Miesbach",
+    },
     momenteP1:
-      "Du musst Deine Gäste sicher nicht zum Fotomachen auffordern. Schon nach kurzer Zeit finden sich junge und alte Gäste vor der Linse, eine Verkleidung schräger als die andere. Das ist nicht nur genial für Hochzeiten, sondern auch optimal für Firmenevents, um die Kollegen untereinander vertrauter zu machen.",
-    momenteP2: "",
+      "Unvergesslich ist hier im wahrsten Sinne des Wortes zu verstehen. Denn die Bilder der Fotobox können direkt verschenkt oder auf der Party ausgelegt werden. Der hochauflösende, verbaute Profi-Drucker sorgt somit für viel Freude — sowohl für die spontanen Fotomodels als auch für die restlichen Gäste.",
+    momenteP2:
+      "Und glaub uns: Du musst Deine Gäste sicher nicht zum Fotomachen auffordern. Schon nach kurzer Zeit finden sich junge und alte Gäste vor der Linse, eine Verkleidung schräger als die andere. Das ist nicht nur genial für Hochzeiten, sondern auch optimal für Firmenevents, um die Kollegen untereinander vertrauter zu machen.",
     bedienungP1:
       "Falls Du Dich dafür entscheidest, eine Knipserl-Fotobox zu mieten und in Miesbach aufzustellen, fällt für Dich kaum Arbeit an. Knipserl bringt Dir die Fotobox zum Aufstellort, baut sie auf und holt sie am Ende wieder ab. Die Bedienung der Fotobox ist kinderleicht und intuitiv. Du musst niemandem erklären, wie man mit der Fotobox Fotos schießt. Alle Funktionen lassen sich bequem und einfach über das nutzerfreundliche Programm auf dem 22-Zoll-Bildschirm steuern.",
     bedienungP2:
