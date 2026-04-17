@@ -118,7 +118,7 @@ export const MAX_DELIVERY_KM = 120;
 
 export const BASE_FEATURES = [
   "Kostenloser Auf- & Abbau (40 km inklusive ab Rosenheim)",
-  "Druckflatrate (400 Bilder) in 10x15 cm",
+  "400 Drucke inklusive (10×15 cm oder als Doppel-Streifen 2× 5×15 cm)",
   "Inklusive Profi-Thermosublimationsdrucker",
   "Hochwertige Spiegelreflexkamera",
   "Riesiger Touchscreen (22 Zoll!)",
@@ -214,7 +214,7 @@ export const SEO_CITIES = [
       "Auf Wunsch liefern wir auch unsere beliebten Fotoprops mit: Dazu gehören zum Beispiel jede Menge aufblasbare Instrumente, die eine Gruppe Gäste vor der Kamera schnell zur Rockband werden lassen. Darüber hinaus lassen sich unzählige weitere Accessoires finden, mit denen das Bild aufgepeppt werden kann: Hüte, Brillen, Perücken, Spritzpistolen oder Haarreife lassen die witzigsten Bilder entstehen.",
     fotopropsP2: "",
     qualitaetP1:
-      "Damit die Bilder fleißig verteilt werden können, ist im Mietpreis eine Druckflatrate inklusive. Sie reicht für satte 13 Stunden Dauerbetrieb. Mit dem „Mediakit“ für 400 Bilder à 10×15 cm oder 800 Bilder à 5×15 cm geht Euch die Farbe nie aus, und Ihr könnt knipsen, was das Zeug hält.",
+      "Damit die Bilder fleißig verteilt werden können, ist im Mietpreis unser Druckpaket enthalten — das „Mediakit“ reicht für 400 Drucke à 10×15 cm oder alternativ 400 Motive im Streifen-Format (je Druckvorgang kommen 2 Streifen à 5×15 cm raus, zusammen 800 Streifen). Gut für rund 13 Stunden Dauerbetrieb.",
     qualitaetP2:
       "Außerdem bekommt Ihr nach dem Event einen Online-Zugang, über den Ihr alle geschossenen Bilder digital downloaden und abspeichern könnt. Das ist optimal, um Danksagungen per E-Mail zu verschicken oder die Gäste am nächsten Tag in WhatsApp mit Schnappschüssen zu überraschen.",
     faqs: [
@@ -519,7 +519,7 @@ export const SEO_CITIES = [
       "Auf Wunsch liefern wir auch unsere beliebten Fotoprops mit: jede Menge aufblasbare Instrumente, die eine Gruppe Gäste vor der Kamera schnell zur Rockband werden lassen. Darüber hinaus lassen sich unzählige weitere Accessoires finden, mit denen das Bild aufgepeppt werden kann — Hüte, Brillen, Perücken, Spritzpistolen oder Haarreife lassen die witzigsten Bilder entstehen.",
     fotopropsP2: "",
     qualitaetP1:
-      "Damit die Bilder fleißig verteilt werden können, ist im Mietpreis eine Druckflatrate inklusive. Sie reicht für rund 13 Stunden Dauerbetrieb. Mit dem „Mediakit“ für 400 Bilder à 10×15 cm oder 800 Bilder à 5×15 cm geht Euch die Farbe nie aus, und Ihr könnt knipsen, was das Zeug hält.",
+      "Damit die Bilder fleißig verteilt werden können, ist im Mietpreis unser Druckpaket enthalten — das „Mediakit“ reicht für 400 Drucke à 10×15 cm oder alternativ 400 Motive im Streifen-Format (je Druckvorgang kommen 2 Streifen à 5×15 cm raus, zusammen 800 Streifen). Gut für rund 13 Stunden Dauerbetrieb.",
     qualitaetP2:
       "Nach dem Event bekommt Ihr einen Online-Zugang, über den Ihr alle geschossenen Bilder digital herunterladen und abspeichern könnt. Das ist optimal, um Danksagungen per E-Mail zu verschicken oder Gäste am nächsten Tag in WhatsApp mit Schnappschüssen zu überraschen.",
     faqs: [

@@ -280,7 +280,7 @@ export default async function CityPage({
               {[
                 `Kostenlose Lieferung nach ${city.name}`,
                 "Kompletter Auf- und Abbau",
-                "Druckflatrate (400 Bilder in 10x15cm)",
+                "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)",
                 "Profi-Thermosublimationsdrucker",
                 "Hochwertige Spiegelreflexkamera (16 MP)",
                 "22 Zoll Full-HD Touchscreen",

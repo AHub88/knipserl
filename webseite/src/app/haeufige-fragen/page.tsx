@@ -62,7 +62,7 @@ const faqSections = [
       {
         question: "Wie viele Fotos können gedruckt werden?",
         answer:
-          "Das Mediakit reicht für 400 Fotos im Vollbildformat (10x15cm) oder 800 Fotos im Streifenformat (5x15cm). Das entspricht ca. 13 Stunden Dauerbetrieb bei durchschnittlich 2 Minuten pro Foto-Zyklus.",
+          "Das Mediakit reicht für 400 Motive — entweder als Vollbild (10×15 cm) oder als Doppel-Streifen (pro Motiv 2× 5×15 cm, zusammen 800 Streifen). Das entspricht ca. 13 Stunden Dauerbetrieb bei durchschnittlich 2 Minuten pro Foto-Zyklus.",
       },
       {
         question: "Wie schnell druckt die Fotobox?",

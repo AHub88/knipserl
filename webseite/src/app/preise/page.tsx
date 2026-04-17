@@ -6,7 +6,7 @@ import PageHeader from "@/components/layout/PageHeader";
 export const metadata: Metadata = generatePageMetadata({
   title: "Preiskonfigurator | Fotobox ab 379€",
   description:
-    "Fotobox mieten ab 379€ inkl. Drucker, Auf- & Abbau und Druckflatrate. Stelle Dein Paket im Preiskonfigurator zusammen. Fahrtkosten automatisch berechnet.",
+    "Fotobox mieten ab 379€ inkl. Drucker, Auf- & Abbau und Druckpaket. Stelle Dein Paket im Preiskonfigurator zusammen. Fahrtkosten automatisch berechnet.",
   path: "/preise",
 });
 
@@ -36,9 +36,9 @@ const includedFeatures = [
     icon: "/images/features/fotolayout.png",
   },
   {
-    title: "Druckflatrate",
+    title: "Druckpaket",
     description:
-      'Unsere Fotobox wird dir mit einem "Mediakit" für 400 Bilder (10x15cm) bzw. 800 Bilder (5x15cm) geliefert. Reicht für ca. 13 Stunden Dauerbetrieb.',
+      'Unser "Mediakit" umfasst 400 Drucke à 10×15 cm — alternativ 400 Motive als Doppel-Streifen (2× 5×15 cm, zusammen 800 Streifen). Reicht für ca. 13 Stunden Dauerbetrieb.',
     icon: "/images/features/druckflatrate.png",
   },
   {

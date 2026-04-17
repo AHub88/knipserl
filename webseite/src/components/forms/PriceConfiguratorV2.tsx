@@ -23,7 +23,7 @@ interface PlaceSelection {
 
 const INCLUDED_FEATURES = [
   "Kostenloser Auf- & Abbau (15 km ab Rosenheim)",
-  "Druckflatrate (400 Bilder 10x15cm)",
+  "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)",
   "Profi-Spiegelreflexkamera (16 MP)",
   "22 Zoll Full-HD Touchscreen",
   "Studioblitz mit Softbox",

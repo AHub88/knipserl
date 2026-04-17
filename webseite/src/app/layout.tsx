@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${SITE_NAME}`,
     },
     description:
-      "Professionelle Fotobox mit Sofortdruck mieten ab 379€. Inklusive Auf- & Abbau, Druckflatrate und 24/7 Support. Für Hochzeit, Firmenfeier und Party in Oberbayern und Tirol.",
+      "Professionelle Fotobox mit Sofortdruck mieten ab 379€. Inklusive Auf- & Abbau, Druckpaket und 24/7 Support. Für Hochzeit, Firmenfeier und Party in Oberbayern und Tirol.",
     keywords: [
       "Fotobox mieten",
       "Fotobox Rosenheim",
@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: SITE_NAME,
       title: `Fotobox mieten | ${SITE_NAME}`,
       description:
-        "Professionelle Fotobox mit Sofortdruck mieten ab 379€. Inklusive Auf- & Abbau, Druckflatrate und 24/7 Support.",
+        "Professionelle Fotobox mit Sofortdruck mieten ab 379€. Inklusive Auf- & Abbau, Druckpaket und 24/7 Support.",
       images: [{ url: "/images/og-default.jpg", width: 1200, height: 630 }],
     },
     robots: isProduction

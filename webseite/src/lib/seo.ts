@@ -47,7 +47,7 @@ export function generateLocalBusinessSchema() {
     "@id": `${SITE_URL}/#business`,
     name: SITE_NAME,
     description:
-      "Professionelle Fotobox mit Sofortdruck mieten in Oberbayern und Tirol. Inklusive Auf- und Abbau, Druckflatrate und 24/7 Support.",
+      "Professionelle Fotobox mit Sofortdruck mieten in Oberbayern und Tirol. Inklusive Auf- und Abbau, Druckpaket und 24/7 Support.",
     url: SITE_URL,
     telephone: CONTACT_PHONE,
     email: CONTACT_EMAIL,
