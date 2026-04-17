@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import PageHeader from "@/components/layout/PageHeader";
-import { SEO_CITIES, BASE_PRICE, SITE_URL, SITE_NAME, ADDRESS, CONTACT_PHONE_DISPLAY } from "@/lib/constants";
+import { SEO_CITIES, BASE_PRICE, BASE_FEATURES, SITE_URL, SITE_NAME, ADDRESS, CONTACT_PHONE_DISPLAY } from "@/lib/constants";
 import {
   generatePageMetadata,
   generateBreadcrumbSchema,
@@ -274,24 +274,18 @@ export default async function CityPage({
               Das ist im Basispaket ab {BASE_PRICE}&euro; enthalten
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-              {[
-                `Kostenlose Lieferung nach ${city.name}`,
-                "Kompletter Auf- und Abbau",
-                "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)",
-                "Profi-Thermosublimationsdrucker",
-                "Hochwertige Spiegelreflexkamera (16 MP)",
-                "22 Zoll Full-HD Touchscreen",
-                "Individuelles Drucklayout",
-                "Online-Galerie mit Passwortschutz",
-                "24/7 Telefonsupport",
-              ].map((feature) => (
-                <div key={feature} className="flex items-start gap-3 text-white/90 text-[15px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                  <svg className="w-5 h-5 text-[#F3A300] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  {feature}
-                </div>
-              ))}
+              {BASE_FEATURES.map((feature, i) => {
+                // Item 0 = generischer Lieferungs-Hinweis → stadtspezifisch ueberschreiben
+                const label = i === 0 ? `Kostenlose Lieferung nach ${city.name}` : feature;
+                return (
+                  <div key={feature} className="flex items-start gap-3 text-white/90 text-[15px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                    <svg className="w-5 h-5 text-[#F3A300] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {label}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ADDONS, BASE_PRICE } from "@/lib/constants";
+import { ADDONS, BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
 
 interface DeliveryInfo {
@@ -21,16 +21,7 @@ interface PlaceSelection {
   lon: number;
 }
 
-const INCLUDED_FEATURES = [
-  "Kostenloser Auf- & Abbau (15 km ab Rosenheim)",
-  "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)",
-  "Profi-Spiegelreflexkamera (16 MP)",
-  "22 Zoll Full-HD Touchscreen",
-  "Studioblitz mit Softbox",
-  "Online-Galerie mit Passwortschutz",
-  "Individuelles Drucklayout",
-  "24/7 Telefonsupport",
-];
+const INCLUDED_FEATURES = BASE_FEATURES;
 
 function useGooglePlacesAutocomplete(
   inputRef: React.RefObject<HTMLInputElement | null>,

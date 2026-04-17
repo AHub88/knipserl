@@ -116,16 +116,20 @@ export const DISTANCE_TIERS = [
 export const ORIGIN_ADDRESS = "Rosenheim, Deutschland";
 export const MAX_DELIVERY_KM = 120;
 
+// Wird auf Landing-Pages durch stadt-spezifische Lieferung ersetzt
+// ("Kostenlose Lieferung nach <Stadt>"). Reihenfolge ist bewusst paarweise
+// thematisch sortiert fuer 2-Spalten-Grid (Row 1 = Logistik, Row 2 = Druck,
+// Row 3 = Bildgebung, Row 4 = Licht/Design, Row 5 = Service).
 export const BASE_FEATURES = [
-  "Kostenloser Auf- & Abbau (40 km inklusive ab Rosenheim)",
-  "400 Drucke inklusive (10×15 cm oder als Doppel-Streifen 2× 5×15 cm)",
-  "Inklusive Profi-Thermosublimationsdrucker",
-  "Hochwertige Spiegelreflexkamera",
-  "Riesiger Touchscreen (22 Zoll!)",
+  "Kostenlose Lieferung (15 km ab Rosenheim)",
+  "Kompletter Auf- & Abbau",
+  "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)",
+  "Profi-Thermosublimationsdrucker",
+  "Hochwertige Spiegelreflexkamera (16 MP)",
+  "22 Zoll Full-HD Touchscreen",
   "Studioblitz mit Softbox",
+  "Individuelles Drucklayout",
   "Online-Galerie mit Passwortschutz",
-  "Alle Bilder per Download (innerhalb 3 Werktage)",
-  "Individuelles Design der Ausdrucke",
   "24/7 Telefonsupport",
 ];
 
