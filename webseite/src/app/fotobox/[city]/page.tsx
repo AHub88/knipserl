@@ -307,7 +307,7 @@ export default async function CityPage({
       {/* ========================================================================
           FAQ — stadtspezifisch (FAQPage-Schema im <head>)
           ======================================================================== */}
-      <section className="pb-16 md:pb-20">
+      <section className="pt-16 md:pt-20 pb-16 md:pb-20">
         <div className="max-w-[900px] mx-auto px-6">
           <div className="text-center mb-10">
             <h2 className="text-[28px] md:text-[40px] leading-[1.05] text-[#1a171b]">
