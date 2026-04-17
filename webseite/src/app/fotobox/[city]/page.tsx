@@ -262,9 +262,6 @@ export default async function CityPage({
             <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] inline-block">
               {h.qualitaet}
             </h2>
-            <p className="text-[18px] md:text-[22px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
-              Knipserl-Fotobox mieten in {city.name}
-            </p>
           </div>
           <div className="max-w-[820px] mx-auto text-white/85 text-[16px] md:text-[17px] space-y-4 leading-relaxed text-center" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
             <p>{city.qualitaetP1}</p>

@@ -296,7 +296,7 @@ export const SEO_CITIES = [
       {
         question: "Liefert Ihr auch nach Poing, Vaterstetten oder Grafing?",
         answer:
-          "Ja, regelmäßig. Alle Orte im Landkreis Ebersberg stehen auf unserer Standardroute. Auch S-Bahn-nahe Gemeinden wie Markt Schwaben und Kirchseeon beliefern wir ohne besonderen Aufpreis.",
+          "Ja, regelmäßig. Alle Orte im Landkreis Ebersberg stehen auf unserer Standardroute.",
       },
       {
         question: "Kann ich die Fotobox auch für eine kleine Feier mit 30 Gästen buchen?",
