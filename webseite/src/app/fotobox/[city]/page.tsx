@@ -203,48 +203,48 @@ export default async function CityPage({
       <section className="py-16 md:py-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-            {/* Einfache Bedienung */}
-            <div className="text-center md:text-left">
-              <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
-                {h.bedienung}
-              </h2>
-              <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                <p>{city.bedienungP1}</p>
-                <p>{city.bedienungP2}</p>
+            {/* Einfache Bedienung — Text + Bild als eine Einheit (Mobile-Reihenfolge) */}
+            <div className="flex flex-col">
+              <div className="text-center md:text-left">
+                <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
+                  {h.bedienung}
+                </h2>
+                <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  <p>{city.bedienungP1}</p>
+                  <p>{city.bedienungP2}</p>
+                </div>
+              </div>
+              <div className="relative aspect-[4/3] shadow-xl mt-8 md:mt-auto md:pt-10">
+                <Image
+                  src="/images/landing/einfache-bedienung.png"
+                  alt="Einfache Bedienung der Knipserl Fotobox über den 22-Zoll-Touchscreen"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
               </div>
             </div>
 
-            {/* Fotoprops */}
-            <div className="text-center md:text-left">
-              <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
-                {h.fotoprops}
-              </h2>
-              <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                <p>{city.fotopropsP1}</p>
-                <p>{city.fotopropsP2}</p>
+            {/* Fotoprops — Text + Bild als eine Einheit */}
+            <div className="flex flex-col">
+              <div className="text-center md:text-left">
+                <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
+                  {h.fotoprops}
+                </h2>
+                <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
+                  <p>{city.fotopropsP1}</p>
+                  <p>{city.fotopropsP2}</p>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Bilder-Reihe — Reihenfolge matcht die Textspalten darüber */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-            <div className="relative aspect-[4/3] shadow-xl">
-              <Image
-                src="/images/landing/einfache-bedienung.png"
-                alt="Einfache Bedienung der Knipserl Fotobox über den 22-Zoll-Touchscreen"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-            <div className="relative aspect-[4/3] shadow-xl">
-              <Image
-                src="/images/landing/unsere-fotoprops.webp"
-                alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+              <div className="relative aspect-[4/3] shadow-xl mt-8 md:mt-auto md:pt-10">
+                <Image
+                  src="/images/landing/unsere-fotoprops.webp"
+                  alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
             </div>
           </div>
         </div>
