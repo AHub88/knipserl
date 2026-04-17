@@ -205,7 +205,7 @@ export default async function CityPage({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
             {/* Einfache Bedienung */}
             <div className="text-center md:text-left">
-              <h2 className="heading-decorated text-[28px] md:text-[36px] leading-[1] text-[#1a171b] inline-block mb-6">
+              <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
                 {h.bedienung}
               </h2>
               <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
@@ -216,7 +216,7 @@ export default async function CityPage({
 
             {/* Fotoprops */}
             <div className="text-center md:text-left">
-              <h2 className="heading-decorated text-[28px] md:text-[36px] leading-[1] text-[#1a171b] inline-block mb-6">
+              <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
                 {h.fotoprops}
               </h2>
               <div className="text-[#666] text-[16px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
@@ -310,7 +310,7 @@ export default async function CityPage({
       <section className="pb-16 md:pb-20">
         <div className="max-w-[900px] mx-auto px-6">
           <div className="text-center mb-10">
-            <h2 className="heading-decorated text-[28px] md:text-[40px] leading-[1] text-[#1a171b] inline-block">
+            <h2 className="text-[28px] md:text-[40px] leading-[1.05] text-[#1a171b]">
               Häufige Fragen zu {city.name}
             </h2>
           </div>
@@ -357,7 +357,7 @@ export default async function CityPage({
           ======================================================================== */}
       <section className="py-12 md:py-16">
         <div className="max-w-[1200px] mx-auto px-4 text-center">
-          <h2 className="heading-decorated text-[24px] md:text-[32px] leading-[1] text-[#1a171b] inline-block mb-8">
+          <h2 className="text-[24px] md:text-[32px] leading-[1.05] text-[#1a171b] mb-8">
             Fotobox auch in anderen Regionen
           </h2>
           <div className="flex flex-wrap justify-center gap-3">
