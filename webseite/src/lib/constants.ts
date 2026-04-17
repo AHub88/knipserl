@@ -153,9 +153,16 @@ export const SEO_CITIES = [
       "Mit der Knipserl-Fotobox aus Rosenheim könnt Ihr auf Eurer Hochzeit, dem Firmenevent oder auf Messen die geschossenen Bilder direkt in den Händen halten! Unser Knipserl ähnelt im Prinzip einer Kamera mit Selbstauslöser.",
     heroP2:
       "Die gigantische Selfie-Maschine hat jedoch den großen Vorteil, dass die Bilder in einer bestechend scharfen Qualität geschossen werden und diese zudem direkt für eine Menge Spaß sorgen! Denn unsere Fotobox aus Rosenheim kommt inklusive eingebautem Profi-Drucker, der die Bilder der hochauflösenden Spiegelreflexkamera im Handumdrehen ausdruckt! Das garantiert einmalige Erinnerungen!",
+    headlines: {
+      momente: "Momente für die Ewigkeit mit der Fotobox aus Rosenheim",
+      bedienung: "Fotobox bedienen? Ein Kinderspiel",
+      fotoprops: "Fotoprops — Zubehör für die beste Party",
+      qualitaet: "Höchste Qualität für Eure Rosenheimer Feier",
+    },
     momenteP1:
+      "Neben genialen Bildern, die häufig auch durch verschiedenste Kostüme oder Masken vor Ort aufgefrischt werden können, sorgt das Knipserl nicht nur für tolle Erinnerungen, sondern auch für jede Menge Spaß.",
+    momenteP2:
       "Eure Gäste werden bestens unterhalten und Ihr werdet schnell erkennen, dass sich so manche der Partybesucher schneller vor der Linse finden, als sie selbst glauben konnten. Ein Spaß für Groß und Klein, Jung und Alt und vor allem auch für Früh und Spät. Klar ist, je später desto verrückter.",
-    momenteP2: "",
     bedienungP1:
       "Die Bedienung unserer Fotobox ist ein Kinderspiel. Vergleichbar mit einem klassischen Fotoautomat vergangener Jahrzehnte muss sich einfach davorgesetzt werden und es kann losgehen. Der kleine aber feine Unterschied ist der 22-Zoll-Bildschirm, der die Bedienung der mietbaren Fotobox aus Rosenheim noch einfacher macht.",
     bedienungP2:
@@ -203,9 +210,16 @@ export const SEO_CITIES = [
       "Unscheinbar und fast schon unauffällig versteckt sie sich in der Ecke auf vielen Hochzeiten oder Firmenevents: Doch stille Wasser sind tief, und unsere Fotobox für München macht so manchen Abend einfach unvergesslich.",
     heroP2:
       "Eine Fotobox mieten für Hochzeiten oder Events ist ein Ereignis. Zwar liefern wir mit unserem Knipserl nur das Produkt, doch Ihr und Eure Gäste machen das Ganze zum Happening. Denn kaum hat sich der erste Gast vor die Linse getraut, steht unser Photobooth nicht mehr still. Sowohl für Kinder als natürlich auch für Erwachsene jeden Alters ist ein solches Party-Accessoire eine wahre Freude.",
+    headlines: {
+      momente: "Die Münchner Fotobox zum Mieten: einfach, schnell, spaßig",
+      bedienung: "Touchscreen sorgt für einfache Bedienung",
+      fotoprops: "Aufblasbare Instrumente & witzige Accessoires",
+      qualitaet: "Druckpaket und Online-Galerie für Eure Münchner Feier",
+    },
     momenteP1:
       "Unser Knipserl versüßt Euren Abend. Lasst die Gäste mit der Fotobox Spaß haben, erhaltet einmalige Erinnerungen und lasst uns die Arbeit machen. Auf- und Abbau übernehmen wir, und die Bilder erhaltet Ihr ganz bequem und ohne Umstände alle online. Viel Spaß beim Knipsen.",
-    momenteP2: "",
+    momenteP2:
+      "Bei einem großen Event — ob Hochzeit, Firmenfeier oder Messeauftritt in München — gibt es meist sehr viel zu planen. Deshalb unterstützt Euch unser Knipserl-Team beim Aufstellen der Fotobox, und Ihr müsst Euch weder um den Auf- noch um den Abbau kümmern.",
     bedienungP1:
       "Ein Problem mit der Einstellung wird es nicht geben. Ein großer 22-Zoll-Touchscreen sorgt für ein intuitives Manövrieren durch das Menü. Justierungen des Fokus oder der Helligkeit übernimmt unsere professionelle Spiegelreflexkamera ohnehin ganz von alleine.",
     bedienungP2:
@@ -252,9 +266,16 @@ export const SEO_CITIES = [
       "Egal ob Hochzeit, Firmenevent oder Messe: Der perfekte Schnappschuss gelingt Euch garantiert mit unserer Fotobox für Ebersberg. Das Knipserl liefert Euch hochauflösende Fotos, die Eure Gäste direkt in den Händen halten können.",
     heroP2:
       "Dadurch nimmt der Abend eine ungeahnte Dynamik an. Junge, alte, männliche und weibliche Gäste tragen bunte Hüte, schiefe Brillen oder entdecken ihre Leidenschaft für das Spielen aufblasbarer Musikinstrumente. Alles nur durch unsere Knipserl-Fotobox aus Ebersberg.",
+    headlines: {
+      momente: "Hochzeit & Firmenevent im Landkreis Ebersberg unvergesslich machen",
+      bedienung: "Online- und Offline-Equipment zugleich",
+      fotoprops: "Fotoprops — physische Accessoires für Gäste mit Stil",
+      qualitaet: "Eure Ebersberger Fotobox mit Qualitätsgarantie",
+    },
     momenteP1:
+      "Unvergesslich ist hier im wahrsten Sinne des Wortes zu verstehen. Denn die Bilder der Fotobox können direkt verschenkt oder auf der Party ausgelegt werden. Der hochauflösende, verbaute Profi-Drucker sorgt somit für viel Freude — sowohl für die spontanen Fotomodels als auch für die restlichen Gäste.",
+    momenteP2:
       "Und glaubt uns: Ihr müsst Eure Gäste sicher nicht zum Fotomachen auffordern. Schon nach kurzer Zeit werden sich junge und alte Gäste vor der Linse finden, eine Verkleidung schräger als die andere. Das ist nicht nur genial für Hochzeiten, sondern auch optimal für Firmenevents, um die Kollegen untereinander vertrauter zu machen.",
-    momenteP2: "",
     bedienungP1:
       "Das Aussehen und auch die Funktionsweise des Knipserls erinnert an einen alten Fotoautomaten: davorsetzen, lächeln (oder eine Grimasse ziehen) und warten, bis es auslöst. Doch unsere Fotobox unterscheidet sich dann doch ein wenig von den klassischen Automaten und macht sich modernster Technik zu Hilfe.",
     bedienungP2:
@@ -357,9 +378,17 @@ export const SEO_CITIES = [
     heroP1:
       "Du möchtest eine Fotobox mieten für Traunstein, um sie auf einer Hochzeit, einer Firmenfeier oder auf einer Messe aufzustellen? Das ist eine ganz hervorragende Idee. Deine Gäste und Besucher werden sich freuen. Sie können sie spontan nutzen, um sich auf dem jeweiligen Event zu verewigen: vielleicht mit neuen Freunden, alten Bekannten oder mit der sich anbahnenden neuen großen Liebe.",
     heroP2:
-      "Wir liefern die Fotobox auf Wunsch mit diversen Fotoprops (Accessoires), mit denen sich Deine Gäste verkleiden können, was ihnen noch mehr Spaß bringt. Mit dem 22-Zoll-Bildschirm können sie alternativ oder zusätzlich auch visuelle Effekte ins Bild zaubern. Die Bedienung der Fotobox ist kinderleicht und lässt qualitativ hochwertige, hochauflösende Fotos entstehen. Also: für mehr Spaß auf Deinen Events — Fotobox mieten, Traunstein soll feiern wie nie zuvor.",
-    momenteP1: "",
-    momenteP2: "",
+      "Wir liefern die Fotobox auf Wunsch (gegen Aufpreis) mit diversen Fotoprops (Accessoires), mit denen sich Deine Gäste verkleiden können, was ihnen noch mehr Spaß bringt. Mit dem 22-Zoll-Bildschirm können sie alternativ oder zusätzlich auch visuelle Effekte ins Bild zaubern. Die Bedienung der Fotobox ist kinderleicht und lässt qualitativ hochwertige, hochauflösende Fotos entstehen. Also: für mehr Spaß auf Deinen Events — Fotobox mieten, Traunstein soll feiern wie nie zuvor.",
+    headlines: {
+      momente: "Mit der Knipserl-Fotobox wird Spaß in Traunstein ganz einfach",
+      bedienung: "Gedruckte Fotos in 8 Sekunden",
+      fotoprops: "Wecke die Lust an der Verkleidung",
+      qualitaet: "Komplettpaket für Deine Traunsteiner Feier",
+    },
+    momenteP1:
+      "Für Dein Event eine Fotobox zu mieten und in Traunstein aufzustellen, bedeutet keinerlei Mehraufwand für Dich. Wir liefern die Fotobox an den Veranstaltungsort und holen sie auch wieder ab. Auch während des Events musst Du Dich nicht um die Technik kümmern — die Bedienung ist selbsterklärend.",
+    momenteP2:
+      "Deine Gäste nutzen fürs Fotografieren einfach den 22-Zoll-Bildschirm. Und bei Bedarf wählen sie aus verschiedenen Fotoeffekten einen passenden aus, um sich beispielsweise mit Hüten, Schnurrhaaren oder Katzenohren zu verzieren — ohne physische Accessoires.",
     bedienungP1:
       "Hinter der Knipserl-Fotobox steckt hervorragende Technik, sodass in kürzester Zeit qualitativ hochwertige Fotos entstehen. Geschossen werden diese Fotos mit einer modernen Spiegelreflexkamera (DSLR) mit einer Auflösung von 16 Megapixel. Die Technik ist so eingestellt, dass mit der Fotobox bei verschiedensten Lichtverhältnissen gute Fotos entstehen. Alle mit der Fotobox in Traunstein entstandenen Fotos erhältst Du einen Tag nach dem Event in voller Auflösung (4928×3264 Pixel) als Download.",
     bedienungP2:
