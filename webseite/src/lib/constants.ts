@@ -332,7 +332,7 @@ export const SEO_CITIES = [
       {
         question: "Passt die Fotobox auch in eine kleinere Hochzeitslocation am Schliersee?",
         answer:
-          "Ja. Das Gehäuse ist kompakt (ca. 80×80 cm Grundfläche plus Stellraum für die Softbox), wir brauchen insgesamt einen Quadratmeter. Auch in Altbau-Sälen mit niedriger Decke und engen Türen passen wir problemlos durch.",
+          "Ja, für die Stellfläche rechne mit etwa 2×2 Metern. Bitte gib uns vorab die ungefähre Deckenhöhe Deiner Location durch — niedrige Decken können mit dem Softbox-Setup ein Problem werden, das klären wir am besten vor der Buchung.",
       },
       {
         question: "Gibt es ein Drucklayout, das zur bayerischen Hochzeit passt?",
