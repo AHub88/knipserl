@@ -48,6 +48,7 @@ h1, h2, h3, h4 {
   position: relative;
   display: inline-block;
   padding: 0 50px;
+  text-wrap: balance;
 }
 .heading-decorated::before {
   content: '';
