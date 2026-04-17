@@ -435,22 +435,29 @@ export const SEO_CITIES = [
     heroP1:
       "Wenn Du einen Event wie eine Hochzeit oder eine Weihnachtsfeier in Wasserburg am Inn planst und allen Gästen einmalige Erinnerungen mitgeben möchtest, dann lohnt es sich, eine Fotobox zu mieten und direkt an Deinem Veranstaltungsort aufzustellen. Die Knipserl-Fotobox lädt Deine Gäste zu einer spontanen Fotosession ein: mit neuen oder alten Freunden, mit großen Lieben und kleinen Liebeleien. Hochauflösende Fotos als Erinnerung ans Event sind damit schnell und unkompliziert gemacht.",
     heroP2:
-      "Auf Wunsch liefern wir diverse Accessoires mit — unsere Fotoprops. Sie erlauben es Deinen Gästen, sich für Fotos zu verkleiden: als Rockband, als Wildtiere, als was auch immer Spaß macht. Eine Fotobox zu mieten für Wasserburg am Inn ist ganz einfach, und Deine Feier bekommt damit ein Unterhaltungselement, das von allen Altersgruppen angenommen wird.",
+      "Auf Wunsch (gegen Aufpreis) liefern wir diverse Accessoires mit — unsere Fotoprops. Sie erlauben es Deinen Gästen, sich für Fotos zu verkleiden: als Rockband, als Wildtiere, als was auch immer Spaß macht. Eine Fotobox zu mieten für Wasserburg am Inn ist ganz einfach, und Deine Feier bekommt damit ein Unterhaltungselement, das von allen Altersgruppen angenommen wird.",
+    headlines: {
+      momente: "Fotospaß in der Wasserburger Altstadt",
+      bedienung: "Bedienung so leicht wie eine alte Sofortbildkamera",
+      fotoprops: "Fotoprops — für den Extra-Spaß auf Deiner Feier",
+      qualitaet: "Profi-Technik, die auch in Altbau-Sälen glänzt",
+    },
     momenteP1:
-      "Du musst Deine Gäste sicher nicht zum Fotomachen auffordern. Schon nach kurzer Zeit finden sich junge und alte Gäste vor der Linse, eine Verkleidung schräger als die andere. Das funktioniert nicht nur auf Hochzeiten, sondern auch optimal bei Firmenevents, um Kollegen untereinander vertrauter zu machen.",
-    momenteP2: "",
+      "In einer Stadt wie Wasserburg am Inn, die mit der historischen Altstadt und der charakteristischen Inn-Schleife jede Feier in ein kleines Filmset verwandelt, passt die Knipserl-Fotobox perfekt ins Bild. Die Gäste halten am Ende nicht nur Handy-Fotos in der Hand, sondern einen Hochglanz-Abzug, den sie zuhause an den Kühlschrank oder ins Hochzeitsalbum kleben können.",
+    momenteP2:
+      "Und Du musst niemanden hinschicken: Nach wenigen Minuten stehen schon die ersten Gruppen spontan vor der Linse — eine Verkleidung schräger als die andere. Das funktioniert in Wasserburger Altstadt-Gasthöfen genauso wie bei Firmenfeiern im Inn-Salzach-Raum, wo sich Kollegen aus der Produktion und aus dem Büro vor der Kamera erstmals entspannt kennenlernen.",
     bedienungP1:
-      "Falls Du Dich dafür entscheidest, eine Knipserl-Fotobox zu mieten und in Wasserburg am Inn aufzustellen, fällt für Dich kaum Arbeit an. Wir bringen Dir die Fotobox zum Aufstellort, bauen sie auf und holen sie am Ende wieder ab. Die Bedienung ist kinderleicht und intuitiv. Du musst niemandem erklären, wie man damit Fotos schießt — alle Funktionen lassen sich über das nutzerfreundliche Programm auf dem 22-Zoll-Bildschirm steuern.",
+      "Wir bringen die Fotobox zu Deinem Veranstaltungsort in Wasserburg, übernehmen den kompletten Auf- und Abbau und holen sie nach dem Event wieder ab. Die Bedienung läuft komplett über den 22-Zoll-Touchscreen — davorsetzen, Countdown abwarten, Foto in der Hand halten. Eine Einweisung für die Gäste ist nicht nötig.",
     bedienungP2:
-      "Nach dem Fotografieren druckt der professionelle Thermosublimationsdrucker der Fotobox die Fotos innerhalb von etwa acht Sekunden aus und versieht sie zusätzlich mit einer Schutzschicht, damit das Bild so brillant bleibt, wie es aus dem Drucker kommt.",
+      "Nach jedem Foto druckt der Profi-Thermosublimationsdrucker in rund 8 Sekunden ein Hochglanz-Bild und versiegelt es mit einer Schutzschicht. Die Fotos sind sofort wischfest, können angefasst und weitergereicht werden — auch wenn die Oma sie auf dem Weg zum Tisch aus Versehen in den Sektglas-Schlitz stopft, bleibt das Motiv erhalten.",
     fotopropsP1:
-      "Eine Fotobox in Wasserburg am Inn einzusetzen, kann aus mehreren Gründen eine gute Idee sein: Sie kann auf einem Messestand die Präsentation des eigentlichen Angebots unterstützen. Sie kann zusätzlichen Spaß bringen, wenn eine Party bereits im vollen Gange ist. Oder sie kann das Eis brechen, wenn sie gerade erst beginnt und die Gäste noch etwas verhalten sind.",
+      "Optional kannst Du unsere Fotoprops dazubuchen: aufblasbare Musikinstrumente, Hüte, Perücken, Schnurrbärte, Sonnenbrillen. Aus einer Gruppe Hochzeitsgäste wird in Sekunden eine Glam-Rockband oder ein Haufen Partytiere. Gerade in der intimen Atmosphäre einer Wasserburger Altstadt-Hochzeit — wo die Stimmung schnell familiär wird — sind die Props der entscheidende Kick für die besten Bilder.",
     fotopropsP2:
-      "Zum Spaß können dann auch unsere Fotoprops beitragen. Die Accessoires geben Deinen Gästen die Chance, sich individuell zu verkleiden und auszustatten, was den Reiz der Fotobox weiter steigert.",
+      "Die Fotoprops sind ein Zusatzpaket zum Basispreis. Manche Kunden starten ohne und merken während des Events, dass die digitale Variante (Instagram-Filter über den Touchscreen) völlig reicht. Andere wollen den physischen Extra-Effekt von Anfang an — entscheide im Konfigurator, was zu Deiner Feier passt.",
     qualitaetP1:
-      "Wer eine Fotobox mieten und in Wasserburg am Inn aufstellen lassen möchte, erhält Top-Fototechnik. Die Bilder entstehen mit einer modernen Spiegelreflexkamera (DSLR). Die Auflösung liegt bei 16 Megapixeln, und die Technik der Fotobox funktioniert bei unterschiedlichsten Lichtverhältnissen, sodass sie sich in verschiedensten Locations einsetzen lässt.",
+      "Die Bildqualität ist Profi-Standard: Spiegelreflexkamera mit 16 Megapixel, Studioblitz und Softbox für gleichmäßige Ausleuchtung. Auch in altbau-typisch gedämpftem Licht — wie es in Wasserburger Gewölbekellern oder historischen Sälen der Innenstadt üblich ist — liefert die Kamera gestochen scharfe Bilder ohne Rauschen.",
     qualitaetP2:
-      "Alle Fotos, die während des Events entstehen, liegen am Ende in ausgedruckter Form vor. Zusätzlich kannst Du am Tag nach Deinem Event alle Fotos in voller Auflösung (4928×3264 Pixel) herunterladen und Teilnehmern des Events den Link zum Downloadbereich senden.",
+      "Neben den gedruckten Fotos bekommst Du am Tag nach dem Event einen Online-Zugang mit Passwortschutz. Dort liegen alle Bilder in voller Auflösung (4928×3264 Pixel) zum Download bereit — ideal, um Danksagungskarten mit einem Erinnerungsfoto zu versehen oder Gästen noch Tage später in der WhatsApp-Gruppe eine Auswahl zu schicken.",
     faqs: [
       {
         question: "Kann die Fotobox in der Wasserburger Altstadt aufgebaut werden?",
@@ -487,20 +494,28 @@ export const SEO_CITIES = [
       "Egal ob Hochzeit, Firmenevent oder Messe: Der perfekte Schnappschuss gelingt Euch garantiert mit unserer Fotobox für Mühldorf am Inn. Das Knipserl liefert Euch hochauflösende Fotos, die Eure Gäste direkt in den Händen halten können.",
     heroP2:
       "Dadurch nimmt der Abend eine ungeahnte Dynamik an. Junge, alte, männliche und weibliche Gäste tragen bunte Hüte, schiefe Brillen oder entdecken ihre Leidenschaft für das Spielen aufblasbarer Musikinstrumente — alles mit der Knipserl-Fotobox für Mühldorf am Inn und das Inn-Salzach-Land.",
+    headlines: {
+      momente: "Unvergesslich feiern im Inn-Salzach-Land",
+      bedienung: "Fotoautomat-Feeling, moderne Technik dahinter",
+      fotoprops: "Fotoprops — von der Rockband bis zur 70er-Disco",
+      qualitaet: "Profi-Kamera auch für schwaches Hallenlicht",
+    },
     momenteP1:
-      "Und glaubt uns: Ihr müsst Eure Gäste sicher nicht zum Fotomachen auffordern. Schon nach kurzer Zeit werden sich junge und alte Gäste vor der Linse finden, eine Verkleidung schräger als die andere. Das ist nicht nur genial für Hochzeiten, sondern auch optimal für Firmenevents — etwa in Waldkraiburger Gewerbebetrieben —, um Kollegen untereinander vertrauter zu machen.",
-    momenteP2: "",
+      "Im Inn-Salzach-Land sind Feiern oft groß, laut und familiär — von der klassischen Mühldorfer Hochzeit im Landgasthof bis zum Firmenevent einer Waldkraiburger Industriefirma. Unsere Fotobox passt in beide Welten: Sie steht zunächst unauffällig in der Ecke und wird doch zum Herzstück des Abends, sobald die ersten Gäste sie entdecken und eine Spirale aus spontanen Fotosessions in Gang setzen.",
+    momenteP2:
+      "Das Schöne: Ihr müsst niemanden hinschicken. Erfahrungsgemäß entstehen nach 20 Minuten die ersten ungeplanten Gruppen vor der Linse — ob Brautjungfern im Abendkleid oder Kollegen aus dem Lager. Am Ende des Abends liegt auf jedem Tisch ein Stapel gedruckter Bilder, und jeder Gast hat mindestens eines in der Hand — oft das, das später im Fotoalbum landet.",
     bedienungP1:
-      "Das Aussehen und auch die Funktionsweise des Knipserls erinnert an einen alten Fotoautomaten: davorsetzen, lächeln und warten, bis es auslöst. Doch unsere Fotobox unterscheidet sich dann doch ein wenig von den klassischen Automaten und macht sich modernster Technik zu Hilfe.",
+      "Die Bedienung ist so einfach wie die eines Fotoautomaten aus den 80ern, nur mit moderner Profi-Technik darunter. Eure Gäste drücken den Start-Button auf dem 22-Zoll-Touchscreen, ein Countdown läuft, das Foto wird geschossen. Danach bestätigen sie nur noch — Effekt wählen optional, drucken, fertig.",
     bedienungP2:
-      "Über den verbauten 22-Zoll-Touchscreen können alle Einstellungen kinderleicht und intuitiv vorgenommen werden. Auch „digitale Verkleidung“ ist darüber möglich: Vergleichbar mit den Fotoeffekten von Instagram oder Snapchat lassen sich nach dem Foto jedem Model (digital) Hüte aufsetzen, Brillen aufziehen oder in Windeseile Schnauzbärte wachsen.",
+      "Wer möchte, legt vor dem Druck Instagram-ähnliche Filter über das Bild: Schnurrbärte aufmalen, Hüte aufziehen, Sonnenbrillen hinzufügen. Der Thermosublimationsdrucker spuckt das Bild in 8 Sekunden als Hochglanz-Print aus, versehen mit einer Schutzschicht — sofort anfassbar, wischfest, kinder- und großeltern-tauglich.",
     fotopropsP1:
-      "Wer auf physische Accessoires setzt, dem helfen wir gerne. Unsere Fotoprops können an der Fotobox platziert werden — und bevor man sich versieht, gründen sich in wenigen Sekunden Bands mit aufblasbaren Musikinstrumenten, oder wildgewordene Partytiere mit Löwenmähnen und Katzenohren treiben ihr Unwesen.",
-    fotopropsP2: "",
+      "Wer auf physische Accessoires statt digitaler Filter setzt, kann unsere Fotoprops dazu buchen. Im Paket stecken aufblasbare Gitarren, Mikrofone, Sonnenbrillen, Perücken und Kostümteile — genug Material, um eine Hochzeitstafel in eine Punk-Band zu verwandeln oder eine Firmenfeier in eine 70er-Jahre-Disco mit Afro-Perücken zu kippen.",
+    fotopropsP2:
+      "Die Fotoprops sind ein kostenpflichtiger Zusatz. Für Firmenevents in Waldkraiburg oder Ampfing passen wir die Auswahl auf Wunsch an — etwa mehr Business-verträgliche Accessoires für den strategischen Jahresauftakt statt aufblasbarer Plastik-Gitarren. Sag uns einfach vorab, welche Tonalität Euer Event haben soll.",
     qualitaetP1:
-      "Eine Fotobox mieten für die Hochzeit oder das Firmenevent wird Euch bei Knipserl so einfach wie möglich gemacht. Ihr müsst Euch weder um den Aufbau noch um den Abbau kümmern — das übernehmen selbstverständlich wir. Außerdem stellen wir Euch eine digitale, passwortgesicherte Online-Galerie zur Verfügung, über die Ihr die Bilder nachträglich abrufen, herunterladen und verschicken könnt. Physisch erhaltet Ihr die Bilder ohnehin direkt nach der Entstehung.",
+      "Die Kamera der Knipserl ist eine Profi-DSLR mit 16 Megapixel, ergänzt durch Studioblitz und Softbox. Auch bei schlechtem Hallenlicht — wie es in Waldkraiburger Mehrzwecksälen oder Mühldorfer Gasthäusern oft normal ist — entstehen saubere, gleichmäßig ausgeleuchtete Bilder ohne Rauschen oder Motion-Blur.",
     qualitaetP2:
-      "Die Spiegelreflexkamera sorgt für hochauflösende Bilder, die bei jeglichen Lichtverhältnissen gestochen scharf entstehen. Der Touchscreen lässt jeden Nutzer alle Einstellungen ohne Probleme vornehmen, und eine digitale Nachbearbeitung ist ebenfalls umgehend möglich.",
+      "Alle Fotos landen nach dem Event in Eurer privaten Online-Galerie mit Passwortschutz, in voller Auflösung (4928×3264 Pixel) zum Download. Ideal für Hochzeitsalben, Firmenpräsentationen oder einfach, um den Gästen in der WhatsApp-Gruppe eine Auswahl zu schicken. Physisch habt Ihr die Bilder ohnehin schon am Event-Abend selbst.",
     faqs: [
       {
         question: "Liefert Ihr auch an Waldkraiburger Firmenveranstaltungen?",
@@ -537,20 +552,28 @@ export const SEO_CITIES = [
       "Unscheinbar und fast schon unauffällig versteckt sie sich in der Ecke auf vielen Hochzeiten oder Firmenevents: Doch stille Wasser sind tief, und unsere Fotobox für Erding macht so manchen Abend einfach unvergesslich.",
     heroP2:
       "Eine Fotobox mieten für Hochzeiten oder Events ist ein Ereignis. Zwar liefern wir mit unserem Knipserl nur das Produkt, doch Ihr und Eure Gäste macht das Ganze zum Happening. Denn kaum hat sich der erste Gast vor die Linse getraut, steht unser Photobooth nicht mehr still. Sowohl für Kinder als auch für Erwachsene jeden Alters ist die Fotobox eine wahre Freude.",
+    headlines: {
+      momente: "Euer Erdinger Event wird unvergesslich",
+      bedienung: "Selbsterklärend — ganz ohne Einweisung",
+      fotoprops: "Fotoprops: vom Hochzeitsfest bis zur Firmenfeier",
+      qualitaet: "Druckpaket & Online-Galerie fürs Erdinger Land",
+    },
     momenteP1:
-      "Unser Knipserl versüßt Euren Abend. Lasst die Gäste mit der Fotobox Spaß haben, erhaltet einmalige Erinnerungen und lasst uns die Arbeit machen. Auf- und Abbau übernehmen wir, und die Bilder erhaltet Ihr ganz bequem und ohne Umstände alle online.",
-    momenteP2: "",
+      "Eure Erdinger Feier wird unvergesslich, wenn die Gäste die Bilder direkt in den Händen halten statt sie nur auf dem Handy zu speichern. Die Knipserl druckt auf Hochglanz-Fotopapier in Studioqualität — und das im Sekundentakt. Egal ob Hochzeit im Erdinger Landhotel, Firmenfeier im Veranstaltungsraum der Therme Erding oder private Gartenparty in einem Ortsteil des Erdinger Umlands.",
+    momenteP2:
+      "Wir übernehmen den gesamten Auf- und Abbau, liefern direkt an Eure Location und holen die Technik nach dem Event wieder ab. Eure Bilder bekommt Ihr einerseits sofort als Druck, andererseits am nächsten Tag digital in einer Online-Galerie — bequem, ohne Umstände, sortiert.",
     bedienungP1:
-      "Ein Problem mit der Einstellung wird es nicht geben. Ein großer 22-Zoll-Touchscreen sorgt für ein intuitives Manövrieren durch das Menü. Justierungen des Fokus oder der Helligkeit übernimmt unsere professionelle Spiegelreflexkamera ohnehin ganz von alleine.",
+      "Der 22-Zoll-Touchscreen führt Eure Gäste durch die Bedienung, als wäre es ein Fotoautomat aus der Bahnhofshalle. Der Autofokus der Spiegelreflexkamera stellt Helligkeit und Schärfe selbst ein — egal, ob die Feier im offenen Zelt stattfindet oder im gedämpften Licht eines historischen Saals. Ihr müsst niemanden einweisen, die Fotobox erklärt sich selbst.",
     bedienungP2:
-      "Wer die Hüte oder Brillen nicht aufsetzen möchte oder diese nicht vorhanden sind, kann dennoch eine schöne Gaudi aus dem Bild machen: Mit Fotoeffekten wie bei Instagram kann das Bild nachträglich auf dem Touchscreen verändert werden. Der integrierte Profi-Drucker liefert mit Studioqualität die Bilder, die Gäste direkt in den Händen halten.",
+      "Wer möchte, legt vor dem Druck Instagram-ähnliche Effekte über das Bild: Hüte, Brillen, Schnurrbärte, Filter. Der integrierte Profi-Thermodrucker spuckt das Foto in 8 Sekunden aus — sofort anfassbar, wischfest, Hochglanz. Praktisch auch für internationale Erdinger Gästelisten: Die Bedienung läuft komplett über Icons und Countdown, deutsche Beschriftung nicht nötig.",
     fotopropsP1:
-      "Auf Wunsch liefern wir auch unsere beliebten Fotoprops mit: jede Menge aufblasbare Instrumente, die eine Gruppe Gäste vor der Kamera schnell zur Rockband werden lassen. Darüber hinaus lassen sich unzählige weitere Accessoires finden, mit denen das Bild aufgepeppt werden kann — Hüte, Brillen, Perücken, Spritzpistolen oder Haarreife lassen die witzigsten Bilder entstehen.",
-    fotopropsP2: "",
+      "Fotoprops kannst Du dazubuchen: aufblasbare Instrumente, Hüte, Perücken, Sonnenbrillen, Haarreifen. Was aus einer Gruppe Hochzeitsgäste in einer Minute entsteht, überrascht jedes Mal — von der Glam-Rockband bis zum Tierkostüm-Chaos. Der Effekt: die Bilder sind später genau die, über die die Gäste noch Wochen später sprechen.",
+    fotopropsP2:
+      "Die Fotoprops sind ein kostenpflichtiges Zusatzpaket. Für Firmenfeiern passen wir die Auswahl auf Wunsch an — etwa ein Corporate-Branding im Drucklayout, dezenteres Zubehör passend zum Business-Kontext oder ein Erdinger Brauerei-Motiv als Hintergrund für die Weihnachtsfeier. Einfach in der Anfrage beschreiben.",
     qualitaetP1:
-      "Damit die Bilder fleißig verteilt werden können, ist im Mietpreis unser Druckpaket enthalten — das „Mediakit“ reicht für 400 Drucke à 10×15 cm oder alternativ 400 Motive im Streifen-Format (je Druckvorgang kommen 2 Streifen à 5×15 cm raus, zusammen 800 Streifen). Gut für rund 13 Stunden Dauerbetrieb.",
+      "Das Druckpaket ist fester Bestandteil des Mietpreises: Das Mediakit reicht für 400 Drucke à 10×15 cm oder 400 Motive als Doppel-Streifen (2× 5×15 cm pro Motiv, zusammen 800 Streifen). Das entspricht etwa 13 Stunden Dauerbetrieb. Für Erdinger Großveranstaltungen mit mehr als 200 Gästen lässt sich die Druckkapazität gegen Aufpreis erweitern — frag uns einfach im Konfigurator.",
     qualitaetP2:
-      "Nach dem Event bekommt Ihr einen Online-Zugang, über den Ihr alle geschossenen Bilder digital herunterladen und abspeichern könnt. Das ist optimal, um Danksagungen per E-Mail zu verschicken oder Gäste am nächsten Tag in WhatsApp mit Schnappschüssen zu überraschen.",
+      "Nach dem Event bekommst Du einen Online-Zugang mit Passwortschutz. Alle Bilder liegen dort in voller Auflösung (4928×3264 Pixel) zum Download — optimal, um Danksagungen zu verschicken oder Gästen tags darauf in der WhatsApp-Gruppe eine Bild-Auswahl zu schicken. Die gedruckten Hochglanz-Abzüge hatten sie bereits am Event-Abend in der Hand.",
     faqs: [
       {
         question: "Liefert Ihr auch zu Veranstaltungen in der Region Therme Erding?",
@@ -586,20 +609,29 @@ export const SEO_CITIES = [
     heroP1:
       "Du möchtest eine Fotobox mieten für Kufstein, um sie auf einer Hochzeit, einer Firmenfeier oder auf einem privaten Event aufzustellen? Das ist eine hervorragende Idee. Deine Gäste können sie spontan nutzen, um sich auf dem jeweiligen Event zu verewigen — mit neuen Freunden, alten Bekannten oder mit der sich anbahnenden neuen großen Liebe.",
     heroP2:
-      "Wir liefern die Fotobox auf Wunsch mit diversen Fotoprops, mit denen sich Deine Gäste verkleiden können. Mit dem 22-Zoll-Bildschirm lassen sich alternativ oder zusätzlich visuelle Effekte ins Bild zaubern. Die Bedienung ist kinderleicht und lässt qualitativ hochwertige, hochauflösende Fotos entstehen. Von unserem Standort in Bruckmühl aus sind wir in rund 25 Minuten in Kufstein — über die Grenze nach Tirol und zurück ist Alltag für uns.",
-    momenteP1: "",
-    momenteP2: "",
+      "Wir liefern die Fotobox auf Wunsch (gegen Aufpreis) mit diversen Fotoprops, mit denen sich Deine Gäste verkleiden können. Mit dem 22-Zoll-Bildschirm lassen sich alternativ oder zusätzlich visuelle Effekte ins Bild zaubern. Die Bedienung ist kinderleicht und lässt qualitativ hochwertige, hochauflösende Fotos entstehen. Von unserem Standort in Bruckmühl aus sind wir in rund 25 Minuten in Kufstein — über die Grenze nach Tirol und zurück ist Alltag für uns.",
+    headlines: {
+      momente: "Fotobox-Partner aus Bayern für Tiroler Events",
+      bedienung: "DSLR-Qualität für Deine Alpen-Feier",
+      fotoprops: "Fotoprops: Trachten-Hochzeit oder Alpen-Motto",
+      qualitaet: "Grenzüberschreitend liefern — 1:1 das gleiche Paket",
+    },
+    momenteP1:
+      "Von Bruckmühl aus sind wir in rund 25 Minuten bei Dir in Kufstein. Die Grenzquerung nach Tirol gehört zu unserer Wochenroutine — Abrechnung in Euro, Leistungspaket 1:1 wie für deutsche Kunden, kein Zollformular. Eine Knipserl-Fotobox auf Deiner Kufsteiner Hochzeit oder Firmenfeier fühlt sich nicht wie ein importiertes Produkt an, sondern wie ein regionaler Partner mit Alpen-Erfahrung.",
+    momenteP2:
+      "Kufstein und das Kufsteinerland bieten eine Kulisse, die fotogener kaum sein könnte — Festung, Inn, Wilder Kaiser am Horizont. Die Knipserl ergänzt diese Kulisse mit einem handfesten, mitnehmbaren Element: gedruckte Erinnerungsfotos auf Hochglanz-Fotopapier, die Deine Gäste nicht nur auf dem Handy speichern, sondern tatsächlich in der Brust- oder Handtasche haben.",
     bedienungP1:
-      "Hinter der Knipserl-Fotobox steckt Technik auf Profi-Niveau. Fotos entstehen mit einer modernen Spiegelreflexkamera (DSLR) mit einer Auflösung von 16 Megapixel. Die Technik funktioniert bei verschiedensten Lichtverhältnissen, sodass sich die Fotobox in Kufsteiner Festsälen, Tiroler Gasthöfen oder privaten Eventräumen zuverlässig einsetzen lässt. Alle Fotos erhältst Du einen Tag nach dem Event in voller Auflösung (4928×3264 Pixel) als Download.",
+      "Die Fotobox bedient sich wie ein alter Fotoautomat — nur mit moderner DSLR-Technik darunter. Deine Gäste drücken den Start-Button am 22-Zoll-Touchscreen, ein Countdown läuft, das Foto wird geschossen. Danach wählen sie optional einen Effekt (Hut, Brille, Schnurrbart via Touchscreen), bestätigen den Druck und halten in 8 Sekunden einen Hochglanz-Abzug in der Hand.",
     bedienungP2:
-      "Bei jedem Mieten der Fotobox für Kufstein liefert Knipserl ein Komplettpaket, das neben der Fotobox auch den Drucker beinhaltet. Deine Gäste oder Besucher können die geschossenen Fotos sofort auf Hochglanz-Fotopapier in Studioqualität ausdrucken und als Erinnerung mit nach Hause nehmen. Der professionelle Thermosublimationsdrucker druckt in drei Farbschichten und schützt die Bilder anschließend mit einer Schutzschicht.",
+      "Die Profi-Spiegelreflexkamera mit 16 Megapixel liefert auch in schwach ausgeleuchteten Kufsteiner Gasthöfen oder Almhütten-Innenräumen scharfe Bilder — dank integriertem Studioblitz und Softbox. Alle Fotos bekommst Du am Tag nach dem Event zusätzlich in voller Auflösung (4928×3264 Pixel) als Download in Deiner privaten Online-Galerie.",
     fotopropsP1:
-      "Das Aussehen durch virtuelle Fotoeffekte zu verändern, ist toll — aber sich für ein Foto zu verkleiden, macht oft noch viel mehr Spaß. Wenn Du Dich entscheidest, die Fotobox zu mieten und in Kufstein aufstellen zu lassen, liefern wir Dir auf Wunsch neben der Fotobox und dem Drucker zahlreiche Accessoires zum Verkleiden.",
-    fotopropsP2: "",
+      "Digitale Filter sind eine Option, aber echte Verkleidung macht oft mehr Spaß. Unsere Fotoprops können dazu gebucht werden: aufblasbare Instrumente, Hüte, Perücken, Sonnenbrillen. In Tiroler Hochzeitsgesellschaften besonders beliebt ist die Mischung aus traditionellen Elementen (Trachtenhüte, Gamsbart, Filz-Dirndl-Accessoires) und schräg-bunten Party-Accessoires.",
+    fotopropsP2:
+      "Die Fotoprops sind ein Zusatz zum Basispaket und werden separat berechnet. Falls Du auf Deiner Feier einen bestimmten Look wünschst — komplett Trachten-basiert, Alpen-Motto oder nur zurückhaltende Party-Zutaten — passen wir die Auswahl vorab an. Einfach in der Anfrage beschreiben, wir stellen die Box entsprechend zusammen.",
     qualitaetP1:
-      "Der Auf- und Abbau der Fotobox ist bei jeder Buchung für Kufstein inklusive. Wir bringen die Box zum Aufstellort, bauen sie auf und holen sie nach dem Event wieder ab. Die Grenze passieren wir dabei unkompliziert — Abrechnung erfolgt in Euro, die Leistung entspricht 1:1 dem Angebot für deutsche Zielorte.",
+      "Auf- und Abbau sind auch bei grenzüberschreitender Lieferung nach Kufstein im Mietpreis enthalten. Die Grenzquerung ist innerhalb des Schengenraums unkompliziert — keine Zollformulare, keine zusätzlichen Kosten. Du bekommst ein Komplettpaket inklusive Drucker, Kamera, Touchscreen, Blitz und Softbox — nichts, worum Du Dich vor Ort kümmern musst.",
     qualitaetP2:
-      "Als Komplettpaket gehört neben der Fotobox der professionelle Drucker dazu. Die Bilder landen direkt auf Hochglanz-Fotopapier in Studioqualität. Zusätzlich stellen wir Dir eine Online-Galerie mit Passwortschutz bereit, in der alle Fotos nach dem Event zum Download verfügbar sind.",
+      "Das Druckpaket — unser „Mediakit“ — reicht für 400 Drucke à 10×15 cm oder 400 Motive als Doppel-Streifen (2× 5×15 cm pro Motiv, zusammen 800 Streifen). Das entspricht rund 13 Stunden Dauerbetrieb. Nach dem Event liegen alle Fotos zusätzlich in Deiner privaten Online-Galerie mit Passwortschutz zum Download bereit — für Dich und für Deine Gäste.",
     faqs: [
       {
         question: "Liefert Ihr über die Grenze nach Tirol?",
