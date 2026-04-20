@@ -181,7 +181,7 @@ export default async function CityPage({
               />
             </div>
             <div className="text-center md:text-left">
-              <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] inline-block mb-6">
+              <h2 className="text-[28px] md:text-[44px] leading-[1] inline-block mb-6">
                 {h.momente}
               </h2>
               <div className="text-white/85 text-[16px] md:text-[17px] space-y-4 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
@@ -259,7 +259,7 @@ export default async function CityPage({
       >
         <div className="max-w-[1100px] mx-auto px-6">
           <div className="text-center mb-8">
-            <h2 className="heading-decorated text-[28px] md:text-[44px] leading-[1] inline-block">
+            <h2 className="text-[28px] md:text-[44px] leading-[1] inline-block">
               {h.qualitaet}
             </h2>
           </div>
