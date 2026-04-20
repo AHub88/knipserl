@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL, SEO_CITIES } from "@/lib/constants";
+import { SITE_URL, SEO_CITIES, cityUrlPath } from "@/lib/constants";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
@@ -9,6 +9,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/haeufige-fragen`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
     { url: `${SITE_URL}/audio-gaestebuch`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
     { url: `${SITE_URL}/love-buchstaben`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+    { url: `${SITE_URL}/fotobox-fuer-hochzeit`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${SITE_URL}/fotobox-fuer-firmenfeier`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${SITE_URL}/fotobox-fuer-messe`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${SITE_URL}/fotobox-fuer-weihnachtsfeier`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${SITE_URL}/termin-reservieren`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.9 },
     { url: `${SITE_URL}/kontakt`, lastModified: new Date(), changeFrequency: "yearly" as const, priority: 0.5 },
     { url: `${SITE_URL}/impressum`, lastModified: new Date(), changeFrequency: "yearly" as const, priority: 0.3 },
@@ -16,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const cityPages = SEO_CITIES.map((city) => ({
-    url: `${SITE_URL}/fotobox/${city.slug}`,
+    url: `${SITE_URL}${cityUrlPath(city.slug)}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.8,

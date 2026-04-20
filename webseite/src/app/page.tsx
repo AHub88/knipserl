@@ -258,12 +258,12 @@ export default async function HomePage() {
               </p>
               <p>
                 Wir liefern Dir die Fotobox in folgende Landkreise:{" "}
-                <Link href="/fotobox/rosenheim" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Rosenheim</Link>,{" "}
-                <Link href="/fotobox/muenchen" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">München</Link>,{" "}
-                <Link href="/fotobox/ebersberg" className="text-[#F3A300] font-bold underline hover:no-underline">Ebersberg</Link>,{" "}
+                <Link href="/fotobox-rosenheim" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Rosenheim</Link>,{" "}
+                <Link href="/fotobox-fuer-muenchen" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">München</Link>,{" "}
+                <Link href="/fotobox-ebersberg" className="text-[#F3A300] font-bold underline hover:no-underline">Ebersberg</Link>,{" "}
                 Mühldorf am Inn, Erding,{" "}
-                <Link href="/fotobox/miesbach" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Miesbach</Link>,{" "}
-                <Link href="/fotobox/traunstein" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Traunstein</Link>,{" "}
+                <Link href="/fotobox-miesbach" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Miesbach</Link>,{" "}
+                <Link href="/fotobox-traunstein" className="text-[#1a171b] font-bold underline hover:text-[#F3A300]">Traunstein</Link>,{" "}
                 <strong>Wasserburg am Inn</strong> und auch nach{" "}
                 <strong>Kufstein</strong>.
               </p>

@@ -26,15 +26,15 @@ async function getReviewSummary(): Promise<ReviewSummary | null> {
 }
 
 const footerLinks = [
-  { label: "Fotobox mieten Rosenheim", href: "/fotobox/rosenheim" },
-  { label: "Fotobox mieten Ebersberg", href: "/fotobox/ebersberg" },
-  { label: "Fotobox für Miesbach", href: "/fotobox/miesbach" },
-  { label: "Fotobox mieten München", href: "/fotobox/muenchen" },
-  { label: "Fotobox für Traunstein", href: "/fotobox/traunstein" },
-  { label: "Fotobox für Hochzeit", href: "/preise" },
-  { label: "Fotobox mieten für Firmenfeier", href: "/preise" },
-  { label: "Fotobox für Messe", href: "/preise" },
-  { label: "Fotobox für Weihnachtsfeier", href: "/preise" },
+  { label: "Fotobox mieten Rosenheim", href: "/fotobox-rosenheim" },
+  { label: "Fotobox mieten Ebersberg", href: "/fotobox-ebersberg" },
+  { label: "Fotobox für Miesbach", href: "/fotobox-miesbach" },
+  { label: "Fotobox mieten München", href: "/fotobox-fuer-muenchen" },
+  { label: "Fotobox für Traunstein", href: "/fotobox-traunstein" },
+  { label: "Fotobox für Hochzeit", href: "/fotobox-fuer-hochzeit" },
+  { label: "Fotobox mieten für Firmenfeier", href: "/fotobox-fuer-firmenfeier" },
+  { label: "Fotobox für Messe", href: "/fotobox-fuer-messe" },
+  { label: "Fotobox für Weihnachtsfeier", href: "/fotobox-fuer-weihnachtsfeier" },
   { label: "XXL LOVE Leuchtbuchstaben", href: "/love-buchstaben" },
 ];
 

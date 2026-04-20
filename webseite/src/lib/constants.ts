@@ -657,3 +657,14 @@ export const SEO_CITIES = [
 ] as const;
 
 export type CitySlug = (typeof SEO_CITIES)[number]["slug"];
+
+// Stadt-URL-Pfade: 1:1 zu den bestehenden Live-URLs. München hat historisch
+// "-fuer-" im Slug, alle anderen nicht. Neue Städte (Wasserburg, Mühldorf,
+// Erding, Kufstein) folgen dem Mehrheitsmuster ohne "-fuer-".
+const CITY_URL_OVERRIDES: Partial<Record<CitySlug, string>> = {
+  muenchen: "/fotobox-fuer-muenchen",
+};
+
+export function cityUrlPath(slug: CitySlug): string {
+  return CITY_URL_OVERRIDES[slug] ?? `/fotobox-${slug}`;
+}

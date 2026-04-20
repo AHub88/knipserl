@@ -6,20 +6,22 @@ interface SEOProps {
   description: string;
   path: string;
   image?: string;
+  appendSiteName?: boolean;
 }
 
-export function generatePageMetadata({ title, description, path, image }: SEOProps): Metadata {
+export function generatePageMetadata({ title, description, path, image, appendSiteName = true }: SEOProps): Metadata {
   const url = `${SITE_URL}${path}`;
   const ogImage = image || `${SITE_URL}/images/og-default.jpg`;
+  const finalTitle = appendSiteName ? `${title} | ${SITE_NAME}` : title;
 
   return {
-    title: `${title} | ${SITE_NAME}`,
+    title: finalTitle,
     description,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: `${title} | ${SITE_NAME}`,
+      title: finalTitle,
       description,
       url,
       siteName: SITE_NAME,
@@ -29,7 +31,7 @@ export function generatePageMetadata({ title, description, path, image }: SEOPro
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${SITE_NAME}`,
+      title: finalTitle,
       description,
       images: [ogImage],
     },

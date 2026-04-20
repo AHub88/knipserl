@@ -4,45 +4,43 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import PageHeader from "@/components/layout/PageHeader";
-import { SEO_CITIES, BASE_PRICE, BASE_FEATURES, SITE_URL, SITE_NAME, ADDRESS, CONTACT_PHONE_DISPLAY } from "@/lib/constants";
+import {
+  SEO_CITIES,
+  BASE_PRICE,
+  BASE_FEATURES,
+  SITE_URL,
+  SITE_NAME,
+  ADDRESS,
+  CONTACT_PHONE_DISPLAY,
+  cityUrlPath,
+  type CitySlug,
+} from "@/lib/constants";
 import {
   generatePageMetadata,
   generateBreadcrumbSchema,
   generateFAQSchema,
 } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return SEO_CITIES.map((city) => ({ city: city.slug }));
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ city: string }>;
-}): Promise<Metadata> {
-  const { city: slug } = await params;
+export function generateCityMetadata(slug: CitySlug): Metadata {
   const city = SEO_CITIES.find((c) => c.slug === slug);
   if (!city) return {};
-
   return generatePageMetadata({
     title: city.seoTitle,
     description: city.description,
-    path: `/fotobox/${city.slug}`,
+    path: cityUrlPath(slug),
+    appendSiteName: false,
   });
 }
 
-export default async function CityPage({
-  params,
-}: {
-  params: Promise<{ city: string }>;
-}) {
-  const { city: slug } = await params;
+export default function CityLandingPage({ slug }: { slug: CitySlug }) {
   const city = SEO_CITIES.find((c) => c.slug === slug);
   if (!city) notFound();
 
+  const urlPath = cityUrlPath(slug);
+
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
-    { name: `Fotobox ${city.name}`, url: `/fotobox/${city.slug}` },
+    { name: `Fotobox ${city.name}`, url: urlPath },
   ]);
 
   const serviceSchema = {
@@ -82,16 +80,14 @@ export default async function CityPage({
       price: String(BASE_PRICE),
       priceCurrency: "EUR",
       availability: "https://schema.org/InStock",
-      url: `${SITE_URL}/fotobox/${city.slug}`,
+      url: `${SITE_URL}${urlPath}`,
     },
   };
 
-  // readonly -> mutable copy, weil SEO_CITIES "as const" ist
   const faqSchema = generateFAQSchema(city.faqs.map((f) => ({ question: f.question, answer: f.answer })));
 
   const otherCities = SEO_CITIES.filter((c) => c.slug !== city.slug);
 
-  // Stadtspezifische Headlines mit Fallback auf generische (fuer Staedte ohne eigene Headlines)
   const headlines = ("headlines" in city ? city.headlines : undefined) as
     | { momente: string; bedienung: string; fotoprops: string; qualitaet: string }
     | undefined;
@@ -117,13 +113,9 @@ export default async function CityPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Wood-Texture-Streifen ohne Titel — verhindert die Doppelung
-          "Fotobox mieten in X" (Streifen + Hero-H1). H1 kommt aus dem Hero. */}
       <PageHeader />
 
-      {/* ========================================================================
-          HERO — Intro + Bild + CTA
-          ======================================================================== */}
+      {/* HERO */}
       <section className="py-14 md:py-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-10 md:gap-12 items-center">
@@ -161,9 +153,7 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ========================================================================
-          MOMENTE — Emotion + Unterhaltung
-          ======================================================================== */}
+      {/* MOMENTE */}
       <section
         className="relative z-10 py-16 md:py-20 rough-top rough-bottom text-white"
         style={{ background: "#666 url('/images/misc/main_back_gr-2.webp') repeat", backgroundSize: "1000px 500px" }}
@@ -197,13 +187,10 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ========================================================================
-          BEDIENUNG + FOTOPROPS — Features in 2 Spalten
-          ======================================================================== */}
+      {/* BEDIENUNG + FOTOPROPS */}
       <section className="py-16 md:py-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-            {/* Einfache Bedienung — Text + Bild als eine Einheit (Mobile-Reihenfolge) */}
             <div className="flex flex-col">
               <div className="text-center md:text-left">
                 <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
@@ -227,7 +214,6 @@ export default async function CityPage({
               </div>
             </div>
 
-            {/* Fotoprops — Text + Bild als eine Einheit */}
             <div className="flex flex-col">
               <div className="text-center md:text-left">
                 <h2 className="text-[28px] md:text-[36px] leading-[1.05] text-[#1a171b] mb-6">
@@ -254,9 +240,7 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ========================================================================
-          QUALITÄT — Technik + Auf-/Abbau
-          ======================================================================== */}
+      {/* QUALITÄT */}
       <section
         className="relative z-10 py-16 md:py-20 rough-top rough-bottom text-white"
         style={{ background: "#1a171b url('/images/misc/main_back_gr-2.webp') repeat", backgroundSize: "1000px 500px" }}
@@ -272,14 +256,12 @@ export default async function CityPage({
             <p>{city.qualitaetP2}</p>
           </div>
 
-          {/* Basispaket Features */}
           <div className="max-w-[900px] mx-auto mt-12">
             <h3 className="text-center text-[20px] md:text-[24px] text-[#F3A300] font-extrabold uppercase mb-6 font-[family-name:var(--font-fira-condensed)] tracking-[0.02em]">
               Das ist im Basispaket ab {BASE_PRICE}&euro; enthalten
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
               {BASE_FEATURES.map((feature, i) => {
-                // Item 0 = generischer Lieferungs-Hinweis → stadtspezifisch ueberschreiben
                 const label = i === 0 ? `Kostenlose Lieferung nach ${city.name}` : feature;
                 return (
                   <div key={feature} className="flex items-start gap-3 text-white/90 text-[15px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
@@ -299,9 +281,7 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ========================================================================
-          FAQ — stadtspezifisch (FAQPage-Schema im <head>)
-          ======================================================================== */}
+      {/* FAQ */}
       <section className="pt-16 md:pt-20 pb-16 md:pb-20">
         <div className="max-w-[900px] mx-auto px-6">
           <div className="text-center mb-10">
@@ -330,9 +310,7 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ========================================================================
-          INQUIRY FORM — 1:1 Startseiten-Pattern
-          ======================================================================== */}
+      {/* INQUIRY FORM */}
       <section id="anfragen" className="py-20 relative z-10 scroll-mt-20">
         <div className="max-w-[1150px] mx-auto px-6">
           <div className="text-center mb-10">
@@ -347,9 +325,7 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ========================================================================
-          CROSS-LINKS — Andere Städte
-          ======================================================================== */}
+      {/* CROSS-LINKS */}
       <section className="py-12 md:py-16">
         <div className="max-w-[1200px] mx-auto px-4 text-center">
           <h2 className="text-[24px] md:text-[32px] leading-[1.05] text-[#1a171b] mb-8">
@@ -359,7 +335,7 @@ export default async function CityPage({
             {otherCities.map((c) => (
               <Link
                 key={c.slug}
-                href={`/fotobox/${c.slug}`}
+                href={cityUrlPath(c.slug)}
                 className="px-5 py-2.5 text-[14px] font-[family-name:var(--font-fira-condensed)] uppercase font-bold tracking-[0.02em] hover:text-[#F3A300] transition-colors"
                 style={{
                   background: "#1a171b url('/images/misc/main_back_gr-2.webp') repeat",
