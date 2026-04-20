@@ -214,14 +214,16 @@ export default async function CityPage({
                   <p>{city.bedienungP2}</p>
                 </div>
               </div>
-              <div className="relative aspect-[4/3] shadow-xl mt-8 md:mt-auto md:pt-10">
-                <Image
-                  src="/images/landing/einfache-bedienung.png"
-                  alt="Einfache Bedienung der Knipserl Fotobox über den 22-Zoll-Touchscreen"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+              <div className="mt-8 md:mt-auto md:pt-10">
+                <div className="relative aspect-[4/3] shadow-xl">
+                  <Image
+                    src="/images/landing/einfache-bedienung.png"
+                    alt="Einfache Bedienung der Knipserl Fotobox über den 22-Zoll-Touchscreen"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
             </div>
 
@@ -236,14 +238,16 @@ export default async function CityPage({
                   <p>{city.fotopropsP2}</p>
                 </div>
               </div>
-              <div className="relative aspect-[4/3] shadow-xl mt-8 md:mt-auto md:pt-10">
-                <Image
-                  src="/images/landing/unsere-fotoprops.webp"
-                  alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+              <div className="mt-8 md:mt-auto md:pt-10">
+                <div className="relative aspect-[4/3] shadow-xl">
+                  <Image
+                    src="/images/landing/unsere-fotoprops.webp"
+                    alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
             </div>
           </div>
