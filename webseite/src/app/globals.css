@@ -54,7 +54,8 @@ h1, h2, h3, h4 {
   content: '';
   position: absolute;
   left: 0;
-  top: -10px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 45px;
   height: 45px;
   background: url('/images/misc/heading-sparks-left.png') no-repeat center;
@@ -64,7 +65,8 @@ h1, h2, h3, h4 {
   content: '';
   position: absolute;
   right: 0;
-  top: -10px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 45px;
   height: 45px;
   background: url('/images/misc/heading-sparks-right.png') no-repeat center;
