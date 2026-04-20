@@ -54,7 +54,7 @@ h1, h2, h3, h4 {
   content: '';
   position: absolute;
   left: 0;
-  top: 50%;
+  top: 0.5lh;
   transform: translateY(-50%);
   width: 45px;
   height: 45px;
@@ -65,7 +65,7 @@ h1, h2, h3, h4 {
   content: '';
   position: absolute;
   right: 0;
-  top: 50%;
+  top: 0.5lh;
   transform: translateY(-50%);
   width: 45px;
   height: 45px;
