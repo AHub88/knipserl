@@ -45,30 +45,26 @@ h1, h2, h3, h4 {
 
 /* ===== SECTION HEADINGS with sparkle decorations ===== */
 .heading-decorated {
-  position: relative;
   display: inline-block;
-  padding: 0 42px;
   text-wrap: balance;
 }
 .heading-decorated::before {
   content: '';
-  position: absolute;
-  left: 0;
-  top: 0.5lh;
-  transform: translateY(-50%);
+  display: inline-block;
+  vertical-align: middle;
   width: 36px;
-  height: 45px;
+  height: 1lh;
+  margin-right: 10px;
   background: url('/images/misc/heading-sparks-left.png') no-repeat center;
   background-size: contain;
 }
 .heading-decorated::after {
   content: '';
-  position: absolute;
-  right: 0;
-  top: 0.5lh;
-  transform: translateY(-50%);
+  display: inline-block;
+  vertical-align: middle;
   width: 36px;
-  height: 45px;
+  height: 1lh;
+  margin-left: 10px;
   background: url('/images/misc/heading-sparks-right.png') no-repeat center;
   background-size: contain;
 }
