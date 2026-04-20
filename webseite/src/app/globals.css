@@ -47,7 +47,7 @@ h1, h2, h3, h4 {
 .heading-decorated {
   position: relative;
   display: inline-block;
-  padding: 0 50px;
+  padding: 0 42px;
   text-wrap: balance;
 }
 .heading-decorated::before {
@@ -56,7 +56,7 @@ h1, h2, h3, h4 {
   left: 0;
   top: 0.5lh;
   transform: translateY(-50%);
-  width: 45px;
+  width: 36px;
   height: 45px;
   background: url('/images/misc/heading-sparks-left.png') no-repeat center;
   background-size: contain;
@@ -67,7 +67,7 @@ h1, h2, h3, h4 {
   right: 0;
   top: 0.5lh;
   transform: translateY(-50%);
-  width: 45px;
+  width: 36px;
   height: 45px;
   background: url('/images/misc/heading-sparks-right.png') no-repeat center;
   background-size: contain;
