@@ -150,6 +150,20 @@ export function CalendarView() {
     });
   }
 
+  // Unique drivers present in the current month's orders (for colour legend)
+  const driversInMonth = data
+    ? Array.from(
+        new Map(
+          data.orders
+            .filter((o) => o.driver)
+            .map((o) => [
+              o.driver!.id,
+              { id: o.driver!.id, name: o.driver!.name, initials: o.driver!.initials },
+            ])
+        ).values()
+      ).sort((a, b) => a.name.localeCompare(b.name, "de"))
+    : [];
+
   // Group orders by day for list view
   function getOrdersByDay(): { day: number; weekday: string; orders: Order[]; vacations: Vacation[] }[] {
     const days: { day: number; weekday: string; orders: Order[]; vacations: Vacation[] }[] = [];
@@ -241,6 +255,31 @@ export function CalendarView() {
           <div className="size-2.5 w-4 rounded bg-yellow-500/20 border border-yellow-500/30" /> Bedingt
         </div>
       </div>
+
+      {/* Driver color legend */}
+      {driversInMonth.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs">
+          <span className="text-muted-foreground mr-1">Fahrer:</span>
+          {driversInMonth.map((d) => {
+            const dc = getDriverColor(d.id);
+            const initials = getDriverInitials(d) ?? "";
+            return (
+              <span
+                key={d.id}
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5"
+                style={{
+                  backgroundColor: dc.bg,
+                  border: `1px solid ${dc.border}`,
+                  color: dc.text,
+                }}
+              >
+                <span className="font-bold">{initials}</span>
+                <span className="text-zinc-300">{d.name}</span>
+              </span>
+            );
+          })}
+        </div>
+      )}
 
       {/* Month View */}
       {view === "month" && (
