@@ -13,12 +13,16 @@ export const metadata: Metadata = generatePageMetadata({
 });
 
 const images = [
+  { src: "/images/gallery/fotobox-2025-neu.jpg", alt: "Knipserl Fotobox im Einsatz 2025" },
   { src: "/images/gallery/fotobox-mieten-5.jpg", alt: "Fotobox im Einsatz bei einer Hochzeit" },
   { src: "/images/gallery/fotobox-mieten-7.jpg", alt: "Gäste mit Requisiten an der Fotobox" },
   { src: "/images/gallery/fotobox-mieten-3.jpg", alt: "Individuelle Fotobox-Ausdrucke" },
   { src: "/images/gallery/fotobox-rosenheim-bild2.jpg", alt: "Knipserl Fotobox auf Firmenfeier in Rosenheim" },
+  { src: "/images/gallery/touchscreen.gif", alt: "Touchscreen-Bedienung der Knipserl Fotobox" },
   { src: "/images/gallery/fotobox-mieten-2.jpg", alt: "Professionelle Fotobox mit Sofortdruck" },
-  { src: "/images/gallery/fotobox-mieten-5-scaled.jpg", alt: "Fotobox mieten für Events in München" },
+  { src: "/images/gallery/fotobox-mieten-1-scaled.jpg", alt: "Fotobox mieten für Events in München" },
+  { src: "/images/gallery/fotobox-mieten-1.gif", alt: "Animation der Knipserl Fotobox" },
+  { src: "/images/gallery/fotobox-mieten-5-scaled.jpg", alt: "Fotobox mieten für Hochzeiten in Oberbayern" },
 ];
 
 export default function ImpressionenPage() {
@@ -37,40 +41,92 @@ export default function ImpressionenPage() {
       <PageHeader title="Die Fotobox" />
 
       {/* Gallery */}
-      <section className="py-16 md:py-20">
+      <section className="pt-12 md:pt-[50px] pb-10 md:pb-[70px]">
         <div className="max-w-[1200px] mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {images.map((img) => (
-              <div
-                key={img.src}
-                className="relative aspect-[4/3] overflow-hidden group"
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-[15px]">
+            {images.map((img, i) => {
+              const isGif = img.src.endsWith(".gif");
+              return (
+                <div
+                  key={img.src}
+                  className="relative aspect-[4/3] overflow-hidden group"
+                >
+                  {isGif ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading={i < 3 ? "eager" : "lazy"}
+                    />
+                  ) : (
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      fill
+                      priority={i === 0}
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* CTA + Form */}
+      {/* Video */}
+      <section className="pb-12 md:pb-[70px]">
+        <div className="max-w-[900px] mx-auto px-4">
+          <div className="relative w-full aspect-video overflow-hidden rounded-md shadow-lg bg-black">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/wlHPKPAO_Bw?rel=0"
+              title="Knipserl Fotobox im Einsatz"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section: Unvergessliche Momente */}
       <section
-        className="relative z-10 py-16 rough-top text-center"
+        className="relative rough-top rough-bottom py-14 md:py-20"
         style={{ background: "#666 url('/images/misc/main_back_gr-2.webp') repeat", backgroundSize: "1000px 500px" }}
       >
-        <div className="max-w-[700px] mx-auto px-4">
-          <h2 className="text-2xl md:text-[40px] leading-[1] text-white mb-3">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-12">
+            <div className="flex-1">
+              <h2 className="text-white font-bold leading-tight text-[32px] md:text-[50px] md:leading-[1.05]">
+                Unvergessliche Momente mit unserer{" "}
+                <span className="whitespace-nowrap">Knipserl Fotobox</span>
+              </h2>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 md:flex-shrink-0">
+              <Link href="/preise" className="btn-brand text-center">
+                Die Preise
+              </Link>
+              <Link href="#buchen" className="btn-outline text-center">
+                Termin frei?
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Inquiry Form */}
+      <section id="buchen" className="py-16 md:py-20 text-center">
+        <div className="max-w-[800px] mx-auto px-4">
+          <h2 className="heading-decorated text-3xl md:text-[45px] leading-tight mb-2">
             Jetzt unverbindlich Anfragen
           </h2>
-          <p className="text-white/80 text-[18px] mb-8">
-            Sichere Dir jetzt die Knipserl Fotobox für Dein Event
-          </p>
-          <div className="bg-white rounded-md p-6 md:p-8">
+          <h3 className="text-[#72777d] text-xl md:text-[25px] font-semibold mb-8">
+            Prüfe jetzt ob eine Fotobox an Deinem Event verfügbar ist
+          </h3>
+          <div className="bg-white rounded-md p-6 md:p-8 shadow-sm text-left">
             <InquiryForm />
           </div>
         </div>

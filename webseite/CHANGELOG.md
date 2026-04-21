@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.1.0] — 2026-04-21
+
+### Added
+- Impressionen-Seite komplett nachgebaut gemäß Live-Version: 10 Gallery-Bilder (3-Spalten-Grid), eingebettetes YouTube-Video (`wlHPKPAO_Bw`) und graue CTA-Section "Unvergessliche Momente mit unserer Knipserl Fotobox" mit zwei Buttons (Die Preise / Termin frei?).
+- Neue Gallery-Assets: `fotobox-2025-neu.jpg` (2025er Event-Foto) und `fotobox-mieten-1-scaled.jpg`.
+
 ## [1.0.0] — 2026-04-21
 
 ### Added
