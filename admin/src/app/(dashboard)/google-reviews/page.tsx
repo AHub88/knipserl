@@ -15,12 +15,12 @@ export default async function GoogleReviewsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-10 rounded-xl bg-[#4285F4]/10 text-[#4285F4]">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-[#4285F4]/10 text-[#4285F4] shrink-0">
             <IconBrandGoogle className="size-5" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
               Google Bewertungen
             </h1>

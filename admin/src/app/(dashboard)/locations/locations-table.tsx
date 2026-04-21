@@ -196,84 +196,132 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
             <p className="text-sm">Keine Locations gefunden</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
-                <SortableHead label="Name" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
-                <SortableHead label="Straße" sortKey="street" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
-                <SortableHead label="PLZ" sortKey="zip" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
-                <SortableHead label="Ort" sortKey="city" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
-                <SortableHead label="KM" sortKey="distanceKm" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
-                <SortableHead label="Kunde" sortKey="customerTravelCost" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
-                <SortableHead label="Vergütung" sortKey="driverCompensation" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
-                <SortableHead label="Aufträge" sortKey="usageCount" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sorted.map((loc) => (
-                  <TableRow
+          <>
+            {/* Mobile: Cards */}
+            <div className="sm:hidden divide-y divide-white/[0.08]">
+              {sorted.map((loc) => {
+                const addressLine = [loc.street, [loc.zip, loc.city].filter(Boolean).join(" ")]
+                  .filter(Boolean)
+                  .join(", ");
+                return (
+                  <button
                     key={loc.id}
                     onClick={() => router.push(`/locations/${loc.id}`)}
-                    className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
+                    className="w-full text-left px-4 py-3 hover:bg-[#1c1d20] transition-colors"
                   >
-                    <TableCell className="font-medium text-zinc-200 max-w-[200px]">
-                      <span className="block truncate" title={loc.name}>
-                        {loc.name}
+                    <div className="flex items-start justify-between gap-3 mb-1">
+                      <span className="font-medium text-zinc-200 text-sm leading-snug break-words">{loc.name}</span>
+                      <span className="shrink-0 rounded bg-white/[0.06] px-2 py-0.5 text-[11px] font-mono tabular-nums text-zinc-400">
+                        {loc.usageCount}&times;
                       </span>
-                    </TableCell>
-                    <TableCell className="text-zinc-400 text-sm max-w-[180px]">
-                      {loc.street ? (
-                        <span className="block truncate" title={loc.street}>
-                          {loc.street}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">–</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-zinc-400 text-sm font-mono tabular-nums">
-                      {loc.zip || <span className="text-muted-foreground">–</span>}
-                    </TableCell>
-                    <TableCell className="text-zinc-400 text-sm max-w-[120px]">
-                      {loc.city ? (
-                        <span className="block truncate" title={loc.city}>
-                          {loc.city}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">–</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums">
-                      {loc.distanceKm != null ? (
-                        loc.distanceKm
-                      ) : (
-                        <span className="text-muted-foreground">–</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-sm tabular-nums">
-                      {loc.customerTravelCost != null ? (
-                        <span className="text-zinc-200">
-                          {loc.customerTravelCost.toFixed(2)}&nbsp;&euro;
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">–</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-sm tabular-nums">
-                      {loc.driverCompensation != null ? (
-                        <span className="text-amber-400">
-                          {loc.driverCompensation.toFixed(2)}&nbsp;&euro;
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">–</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums">
-                      {loc.usageCount}
-                    </TableCell>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-snug">
+                      {addressLine || "–"}
+                    </p>
+                    {(loc.distanceKm != null || loc.customerTravelCost != null || loc.driverCompensation != null) && (
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono tabular-nums">
+                        {loc.distanceKm != null && (
+                          <span className="text-zinc-400">{loc.distanceKm}&nbsp;km</span>
+                        )}
+                        {loc.customerTravelCost != null && (
+                          <span className="text-zinc-200">
+                            Kunde&nbsp;{loc.customerTravelCost.toFixed(2)}&nbsp;&euro;
+                          </span>
+                        )}
+                        {loc.driverCompensation != null && (
+                          <span className="text-amber-400">
+                            Fahrer&nbsp;{loc.driverCompensation.toFixed(2)}&nbsp;&euro;
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Desktop: Table */}
+            <div className="hidden sm:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+                    <SortableHead label="Name" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
+                    <SortableHead label="Straße" sortKey="street" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
+                    <SortableHead label="PLZ" sortKey="zip" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
+                    <SortableHead label="Ort" sortKey="city" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
+                    <SortableHead label="KM" sortKey="distanceKm" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
+                    <SortableHead label="Kunde" sortKey="customerTravelCost" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
+                    <SortableHead label="Vergütung" sortKey="driverCompensation" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
+                    <SortableHead label="Aufträge" sortKey="usageCount" activeKey={sortKey} direction={sortDir} onSort={handleSort} className="text-right" />
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+                </TableHeader>
+                <TableBody>
+                  {sorted.map((loc) => (
+                    <TableRow
+                      key={loc.id}
+                      onClick={() => router.push(`/locations/${loc.id}`)}
+                      className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
+                    >
+                      <TableCell className="font-medium text-zinc-200 max-w-[200px]">
+                        <span className="block truncate" title={loc.name}>
+                          {loc.name}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-zinc-400 text-sm max-w-[180px]">
+                        {loc.street ? (
+                          <span className="block truncate" title={loc.street}>
+                            {loc.street}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">–</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-zinc-400 text-sm font-mono tabular-nums">
+                        {loc.zip || <span className="text-muted-foreground">–</span>}
+                      </TableCell>
+                      <TableCell className="text-zinc-400 text-sm max-w-[120px]">
+                        {loc.city ? (
+                          <span className="block truncate" title={loc.city}>
+                            {loc.city}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">–</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums">
+                        {loc.distanceKm != null ? (
+                          loc.distanceKm
+                        ) : (
+                          <span className="text-muted-foreground">–</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-sm tabular-nums">
+                        {loc.customerTravelCost != null ? (
+                          <span className="text-zinc-200">
+                            {loc.customerTravelCost.toFixed(2)}&nbsp;&euro;
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">–</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-sm tabular-nums">
+                        {loc.driverCompensation != null ? (
+                          <span className="text-amber-400">
+                            {loc.driverCompensation.toFixed(2)}&nbsp;&euro;
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">–</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums">
+                        {loc.usageCount}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </div>
     </div>
