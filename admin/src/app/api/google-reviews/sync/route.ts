@@ -21,6 +21,8 @@ export async function POST() {
           "googleApiKey",
           "googlePlaceId",
           "googleRefreshToken",
+          "googleBusinessAccountName",
+          "googleBusinessLocationName",
         ],
       },
     },
@@ -31,6 +33,21 @@ export async function POST() {
   const hasOAuth = !!map.googleRefreshToken;
   const placeId = map.googlePlaceId;
   const apiKey = map.googleApiKey;
+  const cachedAccountName = map.googleBusinessAccountName;
+  const cachedLocationName = map.googleBusinessLocationName;
+
+  async function cacheGbpIds(accountName: string, locationName: string) {
+    await prisma.appSetting.upsert({
+      where: { key: "googleBusinessAccountName" },
+      update: { value: accountName },
+      create: { key: "googleBusinessAccountName", value: accountName },
+    });
+    await prisma.appSetting.upsert({
+      where: { key: "googleBusinessLocationName" },
+      update: { value: locationName },
+      create: { key: "googleBusinessLocationName", value: locationName },
+    });
+  }
 
   try {
     let reviews: { authorName: string; rating: number; text: string; time: Date }[];
@@ -40,13 +57,37 @@ export async function POST() {
     if (hasOAuth) {
       // ── Google Business Profile API (all reviews) ──
       const accessToken = await getAccessToken();
-      const accountName = await getAccountId(accessToken);
-      const locationName = await getLocationName(accessToken, accountName, placeId);
-      const result = await fetchAllReviews(accessToken, accountName, locationName);
 
-      reviews = result.reviews;
-      totalRatings = result.totalCount;
-      overallRating = result.averageRating;
+      // Use cached IDs if present — die accounts/locations APIs haben
+      // 1 Request/Minute Quota im Free-Tier und aendern sich praktisch nie.
+      let accountName = cachedAccountName;
+      let locationName = cachedLocationName;
+
+      if (!accountName || !locationName) {
+        accountName = await getAccountId(accessToken);
+        locationName = await getLocationName(accessToken, accountName, placeId);
+        await cacheGbpIds(accountName, locationName);
+      }
+
+      try {
+        const result = await fetchAllReviews(accessToken, accountName, locationName);
+        reviews = result.reviews;
+        totalRatings = result.totalCount;
+        overallRating = result.averageRating;
+      } catch (fetchErr: any) {
+        // Cached IDs moeglicherweise veraltet -> einmal neu holen
+        if (cachedAccountName || cachedLocationName) {
+          accountName = await getAccountId(accessToken);
+          locationName = await getLocationName(accessToken, accountName, placeId);
+          await cacheGbpIds(accountName, locationName);
+          const result = await fetchAllReviews(accessToken, accountName, locationName);
+          reviews = result.reviews;
+          totalRatings = result.totalCount;
+          overallRating = result.averageRating;
+        } else {
+          throw fetchErr;
+        }
+      }
     } else if (apiKey && placeId) {
       // ── Fallback: Places API New (max 5 reviews) ──
       const res = await fetch(
@@ -123,9 +164,10 @@ export async function POST() {
       ratingFromGoogle: overallRating,
     });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message ?? "Sync fehlgeschlagen" },
-      { status: 500 }
-    );
+    const msg = err.message ?? "Sync fehlgeschlagen";
+    const friendly = /quota.*exceeded.*requests per minute/i.test(msg)
+      ? "Google API Rate-Limit erreicht (1 Request/Minute im Free-Tier). Bitte ~1 Minute warten und erneut versuchen. Dauerhafte Erhoehung: Google Cloud Console -> APIs -> Quotas."
+      : msg;
+    return NextResponse.json({ error: friendly }, { status: 500 });
   }
 }
