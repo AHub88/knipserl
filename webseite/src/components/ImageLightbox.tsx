@@ -4,7 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 
-type LightboxImage = { src: string; alt: string };
+type LightboxImage = {
+  src: string;
+  alt: string;
+  avif?: string | null;
+  webp?: string | null;
+};
 
 export default function ImageLightbox({
   images,
@@ -79,14 +84,28 @@ export default function ImageLightbox({
             className="relative aspect-[4/3] overflow-hidden group cursor-zoom-in block focus:outline-none focus:ring-2 focus:ring-[#F3A300]"
             aria-label={`Bild ${idx + 1} öffnen: ${img.alt}`}
           >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes={thumbSizes}
-              unoptimized={img.src.endsWith(".gif")}
-            />
+            {img.avif || img.webp ? (
+              <picture>
+                {img.avif && <source type="image/avif" srcSet={img.avif} sizes={thumbSizes} />}
+                {img.webp && <source type="image/webp" srcSet={img.webp} sizes={thumbSizes} />}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </picture>
+            ) : (
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                sizes={thumbSizes}
+                unoptimized={img.src.endsWith(".gif")}
+              />
+            )}
           </button>
         ))}
       </div>
@@ -131,16 +150,33 @@ export default function ImageLightbox({
             </button>
           )}
 
-          <div className="relative w-full max-w-[1400px] h-[80vh] md:h-[85vh] pointer-events-none">
-            <Image
-              src={images[openIdx].src}
-              alt={images[openIdx].alt}
-              fill
-              className="object-contain"
-              sizes="100vw"
-              priority
-              unoptimized={images[openIdx].src.endsWith(".gif")}
-            />
+          <div className="relative w-full max-w-[1400px] h-[80vh] md:h-[85vh] flex items-center justify-center pointer-events-none">
+            {images[openIdx].avif || images[openIdx].webp ? (
+              <picture>
+                {images[openIdx].avif && (
+                  <source type="image/avif" srcSet={images[openIdx].avif ?? undefined} sizes="100vw" />
+                )}
+                {images[openIdx].webp && (
+                  <source type="image/webp" srcSet={images[openIdx].webp ?? undefined} sizes="100vw" />
+                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={images[openIdx].src}
+                  alt={images[openIdx].alt}
+                  className="max-w-full max-h-full w-auto h-auto object-contain"
+                />
+              </picture>
+            ) : (
+              <Image
+                src={images[openIdx].src}
+                alt={images[openIdx].alt}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+                unoptimized={images[openIdx].src.endsWith(".gif")}
+              />
+            )}
           </div>
 
           {images.length > 1 && (

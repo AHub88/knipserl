@@ -24,6 +24,7 @@ import {
   IconPalette,
   IconTypography,
   IconPhoto,
+  IconPhotoScan,
   IconChevronDown,
   IconWorld,
   IconCurrencyEuro,
@@ -108,6 +109,7 @@ const adminNav: NavGroup[] = [
     icon: IconWorld,
     children: [
       { title: "Rechtliche Seiten", href: "/settings/legal-pages", icon: IconFileText },
+      { title: "Impressionen", href: "/impressions", icon: IconPhotoScan },
       { title: "Referenz-Logos", href: "/settings/logos", icon: IconPhoto },
       { title: "Google Bewertungen", href: "/google-reviews", icon: IconBrandGoogle },
     ],

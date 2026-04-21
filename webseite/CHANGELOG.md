@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.3.0] — 2026-04-21
+
+### Added
+- Impressionen-Galerie zieht jetzt Bilder aus der Admin-Datenbank (via `/api/impressions`). Neue Uploads im Admin erscheinen ohne Code-Änderung auf der Webseite.
+- `<picture>`-Rendering mit AVIF + WebP-Srcsets (vom Admin vorberechnet) für deutlich schnellere Ladezeiten.
+- Fallback auf die bisherigen Static-Gallery-Bilder, falls die Admin-API nicht erreichbar ist — die Seite bleibt immer funktional.
+
+### Changed
+- `ImageLightbox` erweitert um optionale `avif` / `webp` Srcsets; rendert dann `<picture>` statt `next/image`. Homepage-Galerie unverändert.
+
 ## [1.2.0] — 2026-04-21
 
 ### Added

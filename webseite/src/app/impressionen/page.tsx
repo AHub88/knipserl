@@ -4,6 +4,7 @@ import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImageLightbox from "@/components/ImageLightbox";
 import PageHeader from "@/components/layout/PageHeader";
+import { fetchImpressions } from "@/lib/impressions";
 
 export const metadata: Metadata = generatePageMetadata({
   title: "Impressionen | Die Knipserl Fotobox im Einsatz",
@@ -12,7 +13,10 @@ export const metadata: Metadata = generatePageMetadata({
   path: "/impressionen",
 });
 
-const images = [
+// Runtime-fetch, damit neue Admin-Uploads sofort sichtbar sind
+export const dynamic = "force-dynamic";
+
+const FALLBACK_IMAGES = [
   { src: "/images/gallery/fotobox-2025-neu.jpg", alt: "Knipserl Fotobox im Einsatz 2025" },
   { src: "/images/gallery/fotobox-mieten-5.jpg", alt: "Fotobox im Einsatz bei einer Hochzeit" },
   { src: "/images/gallery/fotobox-mieten-7.jpg", alt: "Gäste mit Requisiten an der Fotobox" },
@@ -25,11 +29,16 @@ const images = [
   { src: "/images/gallery/fotobox-mieten-5-scaled.jpg", alt: "Fotobox mieten für Hochzeiten in Oberbayern" },
 ];
 
-export default function ImpressionenPage() {
+export default async function ImpressionenPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
     { name: "Impressionen", url: "/impressionen" },
   ]);
+
+  const photos = await fetchImpressions();
+  const images = photos.length > 0
+    ? photos.map((p) => ({ src: p.src, alt: p.alt, avif: p.avif, webp: p.webp }))
+    : FALLBACK_IMAGES;
 
   return (
     <>

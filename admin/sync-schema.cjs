@@ -349,6 +349,32 @@ async function syncSchema() {
     ["google_reviews", "active", "BOOLEAN", false, "true"],
     ["google_reviews", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["google_reviews", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // impression_photos
+    ["impression_photos", "id", "TEXT", false, null],
+    ["impression_photos", "originalFilename", "TEXT", false, "''"],
+    ["impression_photos", "alt", "TEXT", false, "''"],
+    ["impression_photos", "width", "INTEGER", false, "0"],
+    ["impression_photos", "height", "INTEGER", false, "0"],
+    ["impression_photos", "sortOrder", "INTEGER", false, "0"],
+    ["impression_photos", "active", "BOOLEAN", false, "true"],
+    ["impression_photos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+    ["impression_photos", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // impression_collections
+    ["impression_collections", "id", "TEXT", false, null],
+    ["impression_collections", "slug", "TEXT", false, "''"],
+    ["impression_collections", "name", "TEXT", false, "''"],
+    ["impression_collections", "description", "TEXT", false, "''"],
+    ["impression_collections", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+    ["impression_collections", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // impression_collection_photos (join table)
+    ["impression_collection_photos", "id", "TEXT", false, null],
+    ["impression_collection_photos", "collectionId", "TEXT", false, "''"],
+    ["impression_collection_photos", "photoId", "TEXT", false, "''"],
+    ["impression_collection_photos", "sortOrder", "INTEGER", false, "0"],
+    ["impression_collection_photos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table
@@ -375,6 +401,10 @@ async function syncSchema() {
       await q(c, `ALTER TABLE "${table}" ADD COLUMN IF NOT EXISTS "${col}" ${type}${nullClause}${defClause}`);
     }
   }
+
+  // Unique indexes
+  await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "impression_collections_slug_key" ON "impression_collections" ("slug")`);
+  await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "impression_collection_photos_collectionId_photoId_key" ON "impression_collection_photos" ("collectionId", "photoId")`);
 
   await c.end();
   console.log("[sync-schema] Database schema synced successfully");

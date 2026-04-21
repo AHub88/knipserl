@@ -486,6 +486,49 @@ model ClientLogo {
   @@map("client_logos")
 }
 
+model ImpressionPhoto {
+  id               String   @id @default(cuid())
+  originalFilename String
+  alt              String   @default("")
+  width            Int
+  height           Int
+  sortOrder        Int      @default(0)
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  collections ImpressionCollectionPhoto[]
+
+  @@map("impression_photos")
+}
+
+model ImpressionCollection {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  photos ImpressionCollectionPhoto[]
+
+  @@map("impression_collections")
+}
+
+model ImpressionCollectionPhoto {
+  id           String   @id @default(cuid())
+  collectionId String
+  photoId      String
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  collection ImpressionCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  photo      ImpressionPhoto      @relation(fields: [photoId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, photoId])
+  @@map("impression_collection_photos")
+}
+
 model GoogleReview {
   id         String   @id @default(cuid())
   authorName String
