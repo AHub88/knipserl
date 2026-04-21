@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 type Suggestion = {
   label: string;
+  name?: string;
   street: string;
   zip: string;
   city: string;
@@ -33,6 +34,11 @@ export default function NewLocationPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
 
+  // Name (place) autocomplete
+  const [nameSuggestions, setNameSuggestions] = useState<Suggestion[]>([]);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
+  const [nameSearchTimeout, setNameSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+
   function handleAddressSearch(value: string) {
     setAddressQuery(value);
     if (searchTimeout) clearTimeout(searchTimeout);
@@ -42,7 +48,7 @@ export default function NewLocationPage() {
     }
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/geocode?q=${encodeURIComponent(value)}`);
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(value)}&mode=address`);
         if (res.ok) {
           const data = await res.json();
           setSuggestions(data);
@@ -53,7 +59,27 @@ export default function NewLocationPage() {
     setSearchTimeout(timeout);
   }
 
-  async function selectSuggestion(s: Suggestion) {
+  function handleNameSearch(value: string) {
+    setName(value);
+    if (nameSearchTimeout) clearTimeout(nameSearchTimeout);
+    if (value.length < 3) {
+      setNameSuggestions([]);
+      return;
+    }
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(value)}&mode=place`);
+        if (res.ok) {
+          const data = await res.json();
+          setNameSuggestions(data);
+          setShowNameSuggestions(true);
+        }
+      } catch {}
+    }, 300);
+    setNameSearchTimeout(timeout);
+  }
+
+  async function applyLocation(s: Suggestion, fillName: boolean) {
     setStreet(s.street);
     setZip(s.zip);
     setCity(s.city);
@@ -61,13 +87,9 @@ export default function NewLocationPage() {
     setLng(s.lng);
     setAddressQuery(s.label);
     setShowSuggestions(false);
+    setShowNameSuggestions(false);
+    if (fillName && s.name) setName(s.name);
 
-    // Auto-fill name if empty
-    if (!name && s.city) {
-      // Don't override if user already typed a name
-    }
-
-    // Calculate driving distance
     setCalculating(true);
     try {
       const res = await fetch(`/api/distance?toLat=${s.lat}&toLng=${s.lng}`);
@@ -83,6 +105,14 @@ export default function NewLocationPage() {
     } catch {} finally {
       setCalculating(false);
     }
+  }
+
+  function selectSuggestion(s: Suggestion) {
+    applyLocation(s, false);
+  }
+
+  function selectNameSuggestion(s: Suggestion) {
+    applyLocation(s, true);
   }
 
   async function handleSave() {
@@ -141,9 +171,40 @@ export default function NewLocationPage() {
         {/* Location-Name */}
         <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
           <h2 className="text-sm font-semibold text-zinc-300">Location</h2>
-          <div>
+          <div className="relative">
             <label className={labelClass}>Name *</label>
-            <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Gasthaus Bartl" />
+            <input
+              className={inputClass}
+              value={name}
+              onChange={(e) => handleNameSearch(e.target.value)}
+              onFocus={() => nameSuggestions.length > 0 && setShowNameSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowNameSuggestions(false), 200)}
+              placeholder="z.B. Gasthaus Bartl, Mcdonalds Rosenheim"
+              autoComplete="off"
+            />
+            {showNameSuggestions && nameSuggestions.length > 0 && (
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-64 overflow-y-auto">
+                {nameSuggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      selectNameSuggestion(s);
+                    }}
+                  >
+                    <div className="text-zinc-200 font-medium">{s.name ?? s.label}</div>
+                    {s.name && (
+                      <div className="text-xs text-zinc-400 truncate">{s.label}</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-zinc-400 mt-2">
+              Google-Suche: z.B. <span className="text-zinc-300">&bdquo;Gasthaus Bartl&ldquo;</span> oder <span className="text-zinc-300">&bdquo;Mcdonalds Rosenheim&ldquo;</span> &rarr; Adresse wird automatisch bef&uuml;llt.
+            </p>
           </div>
         </div>
 

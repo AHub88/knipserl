@@ -23,6 +23,7 @@ function getOrsKey() {
 
 export type GeocodeSuggestion = {
   label: string;
+  name?: string;
   street: string;
   zip: string;
   city: string;
@@ -30,18 +31,21 @@ export type GeocodeSuggestion = {
   lng: number;
 };
 
+export type GeocodeMode = "address" | "place";
+
 /**
- * Autocomplete address search via Google Places Autocomplete
+ * Autocomplete via Google Places. mode="address" liefert reine Adressen,
+ * mode="place" liefert Betriebsstaetten (Locations, Firmen) inkl. Name.
  */
 export async function geocodeAutocomplete(
-  query: string
+  query: string,
+  mode: GeocodeMode = "address"
 ): Promise<GeocodeSuggestion[]> {
   const key = await getGoogleKey();
 
-  // Use Google Places Autocomplete
   const params = new URLSearchParams({
     input: query,
-    types: "address",
+    types: mode === "place" ? "establishment" : "address",
     components: "country:de",
     language: "de",
     key,
@@ -55,10 +59,10 @@ export async function geocodeAutocomplete(
   const data = await res.json();
   if (data.status !== "OK" || !data.predictions?.length) return [];
 
-  // Get details for each prediction (up to 5)
+  const includeName = mode === "place";
   const results: GeocodeSuggestion[] = [];
   for (const pred of data.predictions.slice(0, 5)) {
-    const detail = await getPlaceDetails(pred.place_id, key);
+    const detail = await getPlaceDetails(pred.place_id, key, includeName);
     if (detail) results.push(detail);
   }
 
@@ -67,11 +71,16 @@ export async function geocodeAutocomplete(
 
 async function getPlaceDetails(
   placeId: string,
-  key: string
+  key: string,
+  includeName = false
 ): Promise<GeocodeSuggestion | null> {
+  const fields = includeName
+    ? "name,formatted_address,address_components,geometry"
+    : "formatted_address,address_components,geometry";
+
   const params = new URLSearchParams({
     place_id: placeId,
-    fields: "formatted_address,address_components,geometry",
+    fields,
     language: "de",
     key,
   });
@@ -96,6 +105,7 @@ async function getPlaceDetails(
 
   return {
     label: result.formatted_address ?? "",
+    name: includeName ? result.name : undefined,
     street,
     zip,
     city,

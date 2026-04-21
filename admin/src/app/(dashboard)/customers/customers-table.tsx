@@ -84,10 +84,24 @@ export function CustomersTable({ customers }: { customers: Customer[] }) {
                   onClick={() => router.push(`/customers/${c.id}`)}
                   className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
                 >
-                  <TableCell className="font-medium text-zinc-200">{c.name}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{c.company || <span className="text-muted-foreground">–</span>}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{c.email || <span className="text-muted-foreground">–</span>}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{c.phone || <span className="text-muted-foreground">–</span>}</TableCell>
+                  <TableCell className="font-medium text-zinc-200 max-w-[220px]">
+                    <span className="block truncate" title={c.name}>{c.name}</span>
+                  </TableCell>
+                  <TableCell className="text-zinc-400 text-sm max-w-[160px]">
+                    {c.company ? (
+                      <span className="block truncate" title={c.company}>{c.company}</span>
+                    ) : (
+                      <span className="text-muted-foreground">–</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-zinc-400 text-sm max-w-[220px]">
+                    {c.email ? (
+                      <span className="block truncate" title={c.email}>{c.email}</span>
+                    ) : (
+                      <span className="text-muted-foreground">–</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-zinc-400 text-sm whitespace-nowrap">{c.phone || <span className="text-muted-foreground">–</span>}</TableCell>
                   <TableCell>
                     <span className={
                       "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold " +
