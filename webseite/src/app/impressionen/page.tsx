@@ -118,17 +118,17 @@ export default function ImpressionenPage() {
       </section>
 
       {/* Inquiry Form */}
-      <section id="buchen" className="py-16 md:py-20 text-center">
-        <div className="max-w-[800px] mx-auto px-4">
-          <h2 className="heading-decorated text-3xl md:text-[45px] leading-tight mb-2">
-            Jetzt unverbindlich Anfragen
-          </h2>
-          <h3 className="text-[#72777d] text-xl md:text-[25px] font-semibold mb-8">
-            Prüfe jetzt ob eine Fotobox an Deinem Event verfügbar ist
-          </h3>
-          <div className="bg-white rounded-md p-6 md:p-8 shadow-sm text-left">
-            <InquiryForm />
+      <section id="buchen" className="py-20 relative z-10" style={{ marginTop: "80px" }}>
+        <div className="max-w-[1150px] mx-auto px-6">
+          <div className="text-center mb-10">
+            <h2 className="heading-decorated text-4xl md:text-[52px] text-[#1a171b] inline-block">
+              Jetzt unverbindlich Anfragen
+            </h2>
+            <p className="text-[23px] text-[#F3A300] font-semibold mt-3 font-[family-name:var(--font-fira-condensed)]">
+              Prüfe jetzt ob eine Fotobox an Deinem Event verfügbar ist
+            </p>
           </div>
+          <InquiryForm />
         </div>
       </section>
     </>

@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.1.1] — 2026-04-21
+
+### Changed
+- Impressionen: "Jetzt unverbindlich Anfragen"-Section auf Startseiten-Look umgestellt (Heading mit Sparkles, orange Fira-Condensed-Subheadline, volle Breite ohne weißen Box-Wrapper).
+
 ## [1.1.0] — 2026-04-21
 
 ### Added
