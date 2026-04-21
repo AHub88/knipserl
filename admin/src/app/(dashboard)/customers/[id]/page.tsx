@@ -89,15 +89,15 @@ export default async function CustomerDetailPage({
 
         <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-white/[0.06]">
           <div>
-            <p className="text-2xl font-bold text-zinc-100 tabular-nums">{customer.orders.length}</p>
+            <p className="text-lg sm:text-2xl font-bold text-zinc-100 tabular-nums whitespace-nowrap">{customer.orders.length}</p>
             <p className="text-[11px] text-zinc-500">Aufträge</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-zinc-100 tabular-nums">{fmtAmt(totalRevenue)}</p>
+            <p className="text-lg sm:text-2xl font-bold text-zinc-100 tabular-nums whitespace-nowrap">{fmtAmt(totalRevenue)}</p>
             <p className="text-[11px] text-zinc-500">Umsatz</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-zinc-100 tabular-nums">{quotes.length + invoices.length}</p>
+            <p className="text-lg sm:text-2xl font-bold text-zinc-100 tabular-nums whitespace-nowrap">{quotes.length + invoices.length}</p>
             <p className="text-[11px] text-zinc-500">Dokumente</p>
           </div>
         </div>
