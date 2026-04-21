@@ -111,16 +111,38 @@ export default async function CustomerDetailPage({
           </h2>
           <div className="space-y-2">
             {customer.orders.map((o) => (
-              <Link key={o.id} href={`/orders/${o.id}`} className="flex items-center justify-between rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xs font-mono text-zinc-500">#{o.orderNumber}</span>
-                  <span className="text-sm text-zinc-200 truncate">{o.eventType}</span>
-                  <span className="text-xs text-zinc-500">{fmtDate(o.eventDate)}</span>
+              <Link
+                key={o.id}
+                href={`/orders/${o.id}`}
+                className="block rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group"
+              >
+                {/* Mobile: stacked card */}
+                <div className="flex flex-col gap-2 sm:hidden">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono text-zinc-500">#{o.orderNumber}</span>
+                    <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[o.status] || "")}>{o.status}</span>
+                  </div>
+                  <div className="text-sm text-zinc-200 leading-snug">{o.eventType}</div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-zinc-500">{fmtDate(o.eventDate)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-mono text-zinc-300 tabular-nums whitespace-nowrap">{fmtAmt(o.price)}</span>
+                      <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-mono text-zinc-300 tabular-nums">{fmtAmt(o.price)}</span>
-                  <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[o.status] || "")}>{o.status}</span>
-                  <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                {/* Desktop: inline row */}
+                <div className="hidden sm:flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-xs font-mono text-zinc-500">#{o.orderNumber}</span>
+                    <span className="text-sm text-zinc-200 truncate">{o.eventType}</span>
+                    <span className="text-xs text-zinc-500">{fmtDate(o.eventDate)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-mono text-zinc-300 tabular-nums">{fmtAmt(o.price)}</span>
+                    <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[o.status] || "")}>{o.status}</span>
+                    <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -136,15 +158,36 @@ export default async function CustomerDetailPage({
           </h2>
           <div className="space-y-2">
             {quotes.map((q) => (
-              <Link key={q.id} href={`/accounting/quotes/${q.id}`} className="flex items-center justify-between rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xs font-mono text-zinc-500">{q.quoteNumber}</span>
-                  <span className="text-xs text-zinc-500">{fmtDate(q.createdAt)}</span>
+              <Link
+                key={q.id}
+                href={`/accounting/quotes/${q.id}`}
+                className="block rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group"
+              >
+                {/* Mobile */}
+                <div className="flex flex-col gap-2 sm:hidden">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono text-zinc-500">{q.quoteNumber}</span>
+                    <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[q.status] || "")}>{q.status}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-zinc-500">{fmtDate(q.createdAt)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-mono text-zinc-300 tabular-nums whitespace-nowrap">{fmtAmt(q.totalAmount)}</span>
+                      <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-mono text-zinc-300 tabular-nums">{fmtAmt(q.totalAmount)}</span>
-                  <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[q.status] || "")}>{q.status}</span>
-                  <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                {/* Desktop */}
+                <div className="hidden sm:flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-xs font-mono text-zinc-500">{q.quoteNumber}</span>
+                    <span className="text-xs text-zinc-500">{fmtDate(q.createdAt)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-mono text-zinc-300 tabular-nums">{fmtAmt(q.totalAmount)}</span>
+                    <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[q.status] || "")}>{q.status}</span>
+                    <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -160,15 +203,36 @@ export default async function CustomerDetailPage({
           </h2>
           <div className="space-y-2">
             {invoices.map((inv) => (
-              <Link key={inv.id} href={`/accounting/invoices/${inv.id}`} className="flex items-center justify-between rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xs font-mono text-zinc-500">{inv.invoiceNumber}</span>
-                  <span className="text-xs text-zinc-500">{fmtDate(inv.createdAt)}</span>
+              <Link
+                key={inv.id}
+                href={`/accounting/invoices/${inv.id}`}
+                className="block rounded-lg border border-white/[0.06] p-3 hover:bg-[#1c1d20] transition-colors group"
+              >
+                {/* Mobile */}
+                <div className="flex flex-col gap-2 sm:hidden">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono text-zinc-500">{inv.invoiceNumber}</span>
+                    <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[inv.status] || "")}>{inv.status}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-zinc-500">{fmtDate(inv.createdAt)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-mono text-zinc-300 tabular-nums whitespace-nowrap">{fmtAmt(inv.totalAmount)}</span>
+                      <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-mono text-zinc-300 tabular-nums">{fmtAmt(inv.totalAmount)}</span>
-                  <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[inv.status] || "")}>{inv.status}</span>
-                  <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                {/* Desktop */}
+                <div className="hidden sm:flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-xs font-mono text-zinc-500">{inv.invoiceNumber}</span>
+                    <span className="text-xs text-zinc-500">{fmtDate(inv.createdAt)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-mono text-zinc-300 tabular-nums">{fmtAmt(inv.totalAmount)}</span>
+                    <span className={"rounded px-1.5 py-0.5 text-[10px] font-semibold " + (sc[inv.status] || "")}>{inv.status}</span>
+                    <IconExternalLink className="size-3.5 text-zinc-600 group-hover:text-zinc-400" />
+                  </div>
                 </div>
               </Link>
             ))}
