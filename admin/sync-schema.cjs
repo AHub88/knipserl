@@ -350,7 +350,7 @@ async function syncSchema() {
     ["google_reviews", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["google_reviews", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
 
-    // impression_photos
+    // impression_photos (legacy, wird migriert nach media_assets — Tabelle bleibt für Rollback)
     ["impression_photos", "id", "TEXT", false, null],
     ["impression_photos", "originalFilename", "TEXT", false, "''"],
     ["impression_photos", "alt", "TEXT", false, "''"],
@@ -361,7 +361,7 @@ async function syncSchema() {
     ["impression_photos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["impression_photos", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
 
-    // impression_collections
+    // impression_collections (legacy)
     ["impression_collections", "id", "TEXT", false, null],
     ["impression_collections", "slug", "TEXT", false, "''"],
     ["impression_collections", "name", "TEXT", false, "''"],
@@ -369,12 +369,48 @@ async function syncSchema() {
     ["impression_collections", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["impression_collections", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
 
-    // impression_collection_photos (join table)
+    // impression_collection_photos (legacy join table)
     ["impression_collection_photos", "id", "TEXT", false, null],
     ["impression_collection_photos", "collectionId", "TEXT", false, "''"],
     ["impression_collection_photos", "photoId", "TEXT", false, "''"],
     ["impression_collection_photos", "sortOrder", "INTEGER", false, "0"],
     ["impression_collection_photos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // ── Mini-CMS: Medienbibliothek + Seiten ────────────────────────────
+    // media_assets (zentrale Bildbibliothek)
+    ["media_assets", "id", "TEXT", false, null],
+    ["media_assets", "originalFilename", "TEXT", false, "''"],
+    ["media_assets", "alt", "TEXT", false, "''"],
+    ["media_assets", "width", "INTEGER", false, "0"],
+    ["media_assets", "height", "INTEGER", false, "0"],
+    ["media_assets", "fileSize", "INTEGER", false, "0"],
+    ["media_assets", "active", "BOOLEAN", false, "true"],
+    ["media_assets", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+    ["media_assets", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // pages
+    ["pages", "id", "TEXT", false, null],
+    ["pages", "slug", "TEXT", false, "''"],
+    ["pages", "title", "TEXT", false, "''"],
+    ["pages", "category", "TEXT", false, "'other'"],
+    ["pages", "sortOrder", "INTEGER", false, "0"],
+    ["pages", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+    ["pages", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // page_image_slots
+    ["page_image_slots", "id", "TEXT", false, null],
+    ["page_image_slots", "pageId", "TEXT", false, "''"],
+    ["page_image_slots", "slotKey", "TEXT", false, "''"],
+    ["page_image_slots", "mediaAssetId", "TEXT", true, null],
+    ["page_image_slots", "altOverride", "TEXT", false, "''"],
+    ["page_image_slots", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // page_impression_photos
+    ["page_impression_photos", "id", "TEXT", false, null],
+    ["page_impression_photos", "pageId", "TEXT", false, "''"],
+    ["page_impression_photos", "mediaAssetId", "TEXT", false, "''"],
+    ["page_impression_photos", "sortOrder", "INTEGER", false, "0"],
+    ["page_impression_photos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table
@@ -402,9 +438,56 @@ async function syncSchema() {
     }
   }
 
-  // Unique indexes
+  // Unique indexes — legacy
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "impression_collections_slug_key" ON "impression_collections" ("slug")`);
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "impression_collection_photos_collectionId_photoId_key" ON "impression_collection_photos" ("collectionId", "photoId")`);
+
+  // Unique indexes — new Mini-CMS
+  await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "pages_slug_key" ON "pages" ("slug")`);
+  await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "page_image_slots_pageId_slotKey_key" ON "page_image_slots" ("pageId", "slotKey")`);
+  await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "page_impression_photos_pageId_mediaAssetId_key" ON "page_impression_photos" ("pageId", "mediaAssetId")`);
+
+  // ── Data migration: impression_photos → media_assets (idempotent, one-shot) ──
+  // Kopiert alle Records aus impression_photos nach media_assets, falls media_assets leer ist
+  // und impression_photos Daten hat. IDs bleiben gleich, damit Foreign-Keys mapbar sind.
+  const migrationCheck = await c.query(
+    `SELECT
+       (SELECT COUNT(*) FROM media_assets)::int AS new_count,
+       (SELECT COUNT(*) FROM impression_photos)::int AS legacy_count`
+  );
+  const { new_count, legacy_count } = migrationCheck.rows[0];
+  if (new_count === 0 && legacy_count > 0) {
+    await q(
+      c,
+      `INSERT INTO media_assets (id, "originalFilename", alt, width, height, "fileSize", active, "createdAt", "updatedAt")
+       SELECT id, "originalFilename", alt, width, height, 0, active, "createdAt", "updatedAt"
+       FROM impression_photos
+       ON CONFLICT (id) DO NOTHING`
+    );
+    console.log(`[sync-schema] Migrated ${legacy_count} records: impression_photos → media_assets`);
+  }
+
+  // ── Data migration: impression_collection_photos → page_impression_photos ──
+  // Jede Collection mit Slug X wird zu Page mit Slug X. Pages werden im Admin-Entrypoint
+  // geseedet; wenn eine Page mit passendem Slug existiert, werden die Zuordnungen rübergezogen.
+  const collMigCheck = await c.query(
+    `SELECT
+       (SELECT COUNT(*) FROM page_impression_photos)::int AS new_count,
+       (SELECT COUNT(*) FROM impression_collection_photos)::int AS legacy_count`
+  );
+  if (collMigCheck.rows[0].new_count === 0 && collMigCheck.rows[0].legacy_count > 0) {
+    await q(
+      c,
+      `INSERT INTO page_impression_photos (id, "pageId", "mediaAssetId", "sortOrder", "createdAt")
+       SELECT icp.id, p.id, icp."photoId", icp."sortOrder", icp."createdAt"
+       FROM impression_collection_photos icp
+       JOIN impression_collections ic ON ic.id = icp."collectionId"
+       JOIN pages p ON p.slug = ic.slug
+       JOIN media_assets ma ON ma.id = icp."photoId"
+       ON CONFLICT ("pageId", "mediaAssetId") DO NOTHING`
+    );
+    console.log(`[sync-schema] Migrated collection photos → page_impression_photos`);
+  }
 
   await c.end();
   console.log("[sync-schema] Database schema synced successfully");

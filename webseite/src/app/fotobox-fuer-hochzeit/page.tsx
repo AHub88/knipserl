@@ -201,9 +201,9 @@ export default function FotoboxHochzeitPage() {
         </div>
       </section>
 
-      {/* IMPRESSIONS — rendert nur, wenn Collection "hochzeit" im Admin gepflegt ist */}
+      {/* IMPRESSIONS — rendert nur, wenn unter /pages/fotobox-fuer-hochzeit Bilder gepflegt sind */}
       <ImpressionSection
-        slug="hochzeit"
+        pageSlug="fotobox-fuer-hochzeit"
         title="Hochzeits-Impressionen"
         subtitle="Unsere Fotobox bei vergangenen Hochzeiten"
       />

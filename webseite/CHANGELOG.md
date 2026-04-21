@@ -4,6 +4,18 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.5.0] — 2026-04-21
+
+### Added
+- Neuer Fetcher `fetchPageData(slug)` (`src/lib/pages.ts`) — holt pro Seite gepflegte Bild-Slots und Impressionen-Bilder aus dem Admin-Mini-CMS.
+- `ImpressionSection` umgestellt auf `pageSlug`-Prop (vorher Collection-Slug). Zeigt die im Admin unter **Seiten > [slug]** gepflegte Liste an.
+
+### Removed
+- `src/lib/impressions.ts` entfernt — ersetzt durch das Page-basierte Slot-System.
+
+### Changed
+- `/impressionen` zieht jetzt die Bilder aus der Page-Impressionen-Liste statt der globalen Impressionen-Tabelle. Pflege über **/pages/impressionen** im Admin.
+
 ## [1.4.0] — 2026-04-21
 
 ### Added

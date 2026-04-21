@@ -4,8 +4,8 @@ import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
 
-// PUT /api/impressions/collections/[slug]/photos — replace membership with ordered list
-// Body: { ids: string[] }  (photo IDs in desired order)
+// PUT /api/pages/[slug]/impressions — replace impression photo list (atomically)
+// Body: { ids: string[] }  (MediaAsset IDs in desired order)
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -21,16 +21,14 @@ export async function PUT(
     return NextResponse.json({ error: "ids muss Array sein" }, { status: 400 });
   }
 
-  const collection = await prisma.impressionCollection.findUnique({ where: { slug } });
-  if (!collection) {
-    return NextResponse.json({ error: "Collection nicht gefunden" }, { status: 404 });
-  }
+  const page = await prisma.page.findUnique({ where: { slug } });
+  if (!page) return NextResponse.json({ error: "Seite nicht gefunden" }, { status: 404 });
 
   await prisma.$transaction([
-    prisma.impressionCollectionPhoto.deleteMany({ where: { collectionId: collection.id } }),
-    ...ids.map((photoId, idx) =>
-      prisma.impressionCollectionPhoto.create({
-        data: { collectionId: collection.id, photoId, sortOrder: idx },
+    prisma.pageImpressionPhoto.deleteMany({ where: { pageId: page.id } }),
+    ...ids.map((mediaAssetId, idx) =>
+      prisma.pageImpressionPhoto.create({
+        data: { pageId: page.id, mediaAssetId, sortOrder: idx },
       })
     ),
   ]);

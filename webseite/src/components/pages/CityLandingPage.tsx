@@ -311,9 +311,9 @@ export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
         </div>
       </section>
 
-      {/* IMPRESSIONS — rendert nur, wenn im Admin eine Collection mit diesem Slug gepflegt ist */}
+      {/* IMPRESSIONS — rendert nur, wenn im Admin unter /pages/[slug] Bilder gepflegt sind */}
       <ImpressionSection
-        slug={slug}
+        pageSlug={urlPath.replace(/^\//, "")}
         title={`Die Fotobox in ${city.name}`}
         subtitle="Eindrücke aus vergangenen Events"
       />

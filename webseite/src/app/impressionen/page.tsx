@@ -4,7 +4,7 @@ import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImageLightbox from "@/components/ImageLightbox";
 import PageHeader from "@/components/layout/PageHeader";
-import { fetchImpressions } from "@/lib/impressions";
+import { fetchPageData } from "@/lib/pages";
 
 export const metadata: Metadata = generatePageMetadata({
   title: "Impressionen | Die Knipserl Fotobox im Einsatz",
@@ -22,8 +22,13 @@ export default async function ImpressionenPage() {
     { name: "Impressionen", url: "/impressionen" },
   ]);
 
-  const photos = await fetchImpressions();
-  const images = photos.map((p) => ({ src: p.src, alt: p.alt, avif: p.avif, webp: p.webp }));
+  const pageData = await fetchPageData("impressionen");
+  const images = (pageData?.impressionPhotos ?? []).map((p) => ({
+    src: p.src,
+    alt: p.alt,
+    avif: p.avif,
+    webp: p.webp,
+  }));
 
   return (
     <>

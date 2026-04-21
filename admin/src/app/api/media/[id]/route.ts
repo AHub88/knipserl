@@ -5,7 +5,6 @@ import { deleteProcessed } from "@/lib/impression-images";
 
 export const runtime = "nodejs";
 
-// PATCH — update alt text, sortOrder, active
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -18,16 +17,14 @@ export async function PATCH(
   const { id } = await params;
   const body = await request.json();
 
-  const data: { alt?: string; sortOrder?: number; active?: boolean } = {};
+  const data: { alt?: string; active?: boolean } = {};
   if (typeof body.alt === "string") data.alt = body.alt.trim();
-  if (typeof body.sortOrder === "number") data.sortOrder = body.sortOrder;
   if (typeof body.active === "boolean") data.active = body.active;
 
-  const photo = await prisma.impressionPhoto.update({ where: { id }, data });
-  return NextResponse.json({ id: photo.id, alt: photo.alt, sortOrder: photo.sortOrder, active: photo.active });
+  const asset = await prisma.mediaAsset.update({ where: { id }, data });
+  return NextResponse.json({ id: asset.id, alt: asset.alt, active: asset.active });
 }
 
-// DELETE — remove photo and all derived files
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -38,11 +35,26 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const photo = await prisma.impressionPhoto.findUnique({ where: { id } });
-  if (!photo) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+  const asset = await prisma.mediaAsset.findUnique({ where: { id } });
+  if (!asset) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
 
-  await prisma.impressionPhoto.delete({ where: { id } });
-  await deleteProcessed(photo.originalFilename);
+  // Check if asset is used anywhere
+  const [slotCount, impressionCount] = await Promise.all([
+    prisma.pageImageSlot.count({ where: { mediaAssetId: id } }),
+    prisma.pageImpressionPhoto.count({ where: { mediaAssetId: id } }),
+  ]);
+
+  if (slotCount > 0 || impressionCount > 0) {
+    return NextResponse.json(
+      {
+        error: `Bild wird noch verwendet: ${slotCount} Bild-Slot${slotCount === 1 ? "" : "s"}, ${impressionCount} Impressionen-Zuordnung${impressionCount === 1 ? "" : "en"}. Bitte erst aus den Seiten entfernen.`,
+      },
+      { status: 409 }
+    );
+  }
+
+  await prisma.mediaAsset.delete({ where: { id } });
+  await deleteProcessed(asset.originalFilename);
 
   return NextResponse.json({ ok: true });
 }

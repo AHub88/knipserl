@@ -1,8 +1,8 @@
-import { fetchCollection } from "@/lib/impressions";
+import { fetchPageData } from "@/lib/pages";
 import ImageLightbox from "@/components/ImageLightbox";
 
 type Props = {
-  slug: string;
+  pageSlug: string;
   title?: string;
   subtitle?: string;
   maxPhotos?: number;
@@ -10,23 +10,22 @@ type Props = {
 };
 
 /**
- * Rendert eine im Admin kuratierte Bildergruppe. Wenn die Collection nicht existiert,
- * keine aktiven Bilder hat oder nicht erreichbar ist, wird nichts gerendert — die
- * Landing-Page behält ihr Layout.
+ * Rendert die im Admin unter "Seiten > [slug]" kuratierte Impressionen-Sektion.
+ * Wenn keine Bilder gepflegt sind, wird nichts gerendert — die Seite behält ihr Layout.
  */
 export default async function ImpressionSection({
-  slug,
+  pageSlug,
   title = "Impressionen",
   subtitle,
   maxPhotos,
   className = "",
 }: Props) {
-  const collection = await fetchCollection(slug);
-  if (!collection || collection.photos.length === 0) return null;
+  const data = await fetchPageData(pageSlug);
+  if (!data || data.impressionPhotos.length === 0) return null;
 
   const photos = typeof maxPhotos === "number"
-    ? collection.photos.slice(0, maxPhotos)
-    : collection.photos;
+    ? data.impressionPhotos.slice(0, maxPhotos)
+    : data.impressionPhotos;
 
   const images = photos.map((p) => ({ src: p.src, alt: p.alt, avif: p.avif, webp: p.webp }));
 

@@ -10,33 +10,38 @@ const ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-// GET /api/impressions — public list (used by webseite)
+// GET /api/media — list all assets
 export async function GET(request: NextRequest) {
-  const activeOnly = request.nextUrl.searchParams.get("active") !== "false";
+  const activeOnly = request.nextUrl.searchParams.get("active") === "true";
+  const search = request.nextUrl.searchParams.get("q")?.trim().toLowerCase() ?? "";
 
-  const photos = await prisma.impressionPhoto.findMany({
-    where: activeOnly ? { active: true } : undefined,
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+  const assets = await prisma.mediaAsset.findMany({
+    where: {
+      ...(activeOnly ? { active: true } : {}),
+      ...(search ? { alt: { contains: search, mode: "insensitive" as const } } : {}),
+    },
+    orderBy: { createdAt: "desc" },
   });
 
   return NextResponse.json({
-    photos: photos.map((p) => {
-      const isAnimated = p.originalFilename.endsWith(".gif");
+    assets: assets.map((a) => {
+      const isAnimated = a.originalFilename.endsWith(".gif");
       return {
-        id: p.id,
-        alt: p.alt,
-        width: p.width,
-        height: p.height,
-        sortOrder: p.sortOrder,
-        active: p.active,
-        originalFilename: p.originalFilename,
-        urls: buildUrls(p.originalFilename, p.width, isAnimated),
+        id: a.id,
+        alt: a.alt,
+        width: a.width,
+        height: a.height,
+        fileSize: a.fileSize,
+        active: a.active,
+        originalFilename: a.originalFilename,
+        createdAt: a.createdAt,
+        urls: buildUrls(a.originalFilename, a.width, isAnimated),
       };
     }),
   });
 }
 
-// POST /api/impressions — upload new photo (admin only)
+// POST /api/media — upload
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
@@ -63,29 +68,27 @@ export async function POST(request: NextRequest) {
 
   const processed = await processUpload(file);
 
-  const maxSort = await prisma.impressionPhoto.aggregate({ _max: { sortOrder: true } });
-  const nextOrder = (maxSort._max.sortOrder ?? -1) + 1;
-
-  const photo = await prisma.impressionPhoto.create({
+  const asset = await prisma.mediaAsset.create({
     data: {
       originalFilename: processed.originalFilename,
       alt,
       width: processed.width,
       height: processed.height,
-      sortOrder: nextOrder,
+      fileSize: file.size,
     },
   });
 
   return NextResponse.json(
     {
-      id: photo.id,
-      alt: photo.alt,
-      width: photo.width,
-      height: photo.height,
-      sortOrder: photo.sortOrder,
-      active: photo.active,
-      originalFilename: photo.originalFilename,
-      urls: buildUrls(photo.originalFilename, photo.width, processed.isAnimated),
+      id: asset.id,
+      alt: asset.alt,
+      width: asset.width,
+      height: asset.height,
+      fileSize: asset.fileSize,
+      active: asset.active,
+      originalFilename: asset.originalFilename,
+      createdAt: asset.createdAt,
+      urls: buildUrls(asset.originalFilename, asset.width, processed.isAnimated),
     },
     { status: 201 }
   );

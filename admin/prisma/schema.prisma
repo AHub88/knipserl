@@ -486,47 +486,73 @@ model ClientLogo {
   @@map("client_logos")
 }
 
-model ImpressionPhoto {
+// ─── Mini-CMS: Medienbibliothek + Seiten-Editor ─────────────────────────────
+// MediaAsset speichert Bilder zentral mit Sharp-Pipeline (Original + AVIF/WebP-Varianten).
+// Files liegen unter admin/uploads/impressions/{originals,optimized}/ (historischer Pfad,
+// nicht umgezogen um keine URLs zu brechen).
+
+model MediaAsset {
   id               String   @id @default(cuid())
   originalFilename String
   alt              String   @default("")
   width            Int
   height           Int
-  sortOrder        Int      @default(0)
+  fileSize         Int      @default(0)
   active           Boolean  @default(true)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  collections ImpressionCollectionPhoto[]
+  imageSlots       PageImageSlot[]
+  impressionUsages PageImpressionPhoto[]
 
-  @@map("impression_photos")
+  @@map("media_assets")
 }
 
-model ImpressionCollection {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  description String   @default("")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// Page = eine Landing-Page der Webseite (Stadt, Produkt, Spezialseite)
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique  // matcht URL-Pfad, z.B. "fotobox-rosenheim" oder "impressionen"
+  title     String             // Klartext im Admin, z.B. "Fotobox Rosenheim"
+  category  String   @default("other") // "city" | "product" | "special"
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  photos ImpressionCollectionPhoto[]
+  imageSlots       PageImageSlot[]
+  impressionPhotos PageImpressionPhoto[]
 
-  @@map("impression_collections")
+  @@map("pages")
 }
 
-model ImpressionCollectionPhoto {
+// Bild-Slot auf einer Seite. Leerer/fehlender Slot → Fallback aus Code.
+model PageImageSlot {
+  id            String   @id @default(cuid())
+  pageId        String
+  slotKey       String              // z.B. "hero", "teaser", "card-1"
+  mediaAssetId  String?
+  altOverride   String   @default("")
+  updatedAt     DateTime @updatedAt
+
+  page       Page         @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  mediaAsset MediaAsset?  @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+
+  @@unique([pageId, slotKey])
+  @@map("page_image_slots")
+}
+
+// Impressionen-Sektion einer Seite (kuratierte Liste von Bildern mit Reihenfolge).
+model PageImpressionPhoto {
   id           String   @id @default(cuid())
-  collectionId String
-  photoId      String
+  pageId       String
+  mediaAssetId String
   sortOrder    Int      @default(0)
   createdAt    DateTime @default(now())
 
-  collection ImpressionCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  photo      ImpressionPhoto      @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  page       Page       @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  mediaAsset MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
 
-  @@unique([collectionId, photoId])
-  @@map("impression_collection_photos")
+  @@unique([pageId, mediaAssetId])
+  @@map("page_impression_photos")
 }
 
 model GoogleReview {
