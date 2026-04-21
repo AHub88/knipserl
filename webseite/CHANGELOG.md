@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.3.1] — 2026-04-21
+
+### Changed
+- Impressionen-Lightbox lädt im Fullscreen-Modal jetzt das Original statt der AVIF-Kompression — sichtbar schärfer bei großen Bildschirmen.
+- Statischer Gallery-Fallback in `/impressionen` entfernt: die Seite zeigt ausschließlich, was im Admin gepflegt ist. Leere DB → leere Gallery (aber Video, CTA, Anfrageformular bleiben).
+
 ## [1.3.0] — 2026-04-21
 
 ### Added

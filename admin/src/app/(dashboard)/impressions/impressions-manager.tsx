@@ -5,13 +5,30 @@ import { useRouter } from "next/navigation";
 import {
   IconUpload,
   IconTrash,
-  IconArrowUp,
-  IconArrowDown,
   IconEye,
   IconEyeOff,
   IconExternalLink,
+  IconGripVertical,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type PhotoUrls = {
   original: string;
@@ -33,12 +50,112 @@ type Photo = {
 const inputClass =
   "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
 
+function PhotoCard({
+  photo,
+  idx,
+  onAltChange,
+  onAltBlur,
+  onToggleActive,
+  onDelete,
+}: {
+  photo: Photo;
+  idx: number;
+  onAltChange: (id: string, alt: string) => void;
+  onAltBlur: (id: string, alt: string) => void;
+  onToggleActive: (id: string, active: boolean) => void;
+  onDelete: (id: string) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: photo.id,
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : undefined,
+    zIndex: isDragging ? 50 : undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`rounded-xl border bg-card overflow-hidden ${
+        photo.active ? "border-white/[0.10]" : "border-white/[0.05] opacity-60"
+      }`}
+    >
+      <div className="relative aspect-[4/3] bg-black">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={photo.urls.original}
+          alt={photo.alt || "Impression"}
+          className="w-full h-full object-cover"
+          draggable={false}
+        />
+        <button
+          type="button"
+          {...attributes}
+          {...listeners}
+          className="absolute top-2 left-2 p-1.5 rounded-md bg-black/70 text-zinc-300 hover:text-white cursor-grab active:cursor-grabbing touch-none"
+          title="Ziehen zum Sortieren"
+          aria-label="Sortier-Griff"
+        >
+          <IconGripVertical className="size-4" />
+        </button>
+        <div className="absolute top-2 left-10 px-2 py-0.5 rounded-md bg-black/70 text-[11px] text-zinc-300 pointer-events-none">
+          #{idx + 1} · {photo.width}×{photo.height}
+        </div>
+        <a
+          href={photo.urls.original}
+          target="_blank"
+          rel="noreferrer"
+          className="absolute top-2 right-2 p-1.5 rounded-md bg-black/70 text-zinc-300 hover:text-white"
+          title="Original öffnen"
+        >
+          <IconExternalLink className="size-3.5" />
+        </a>
+      </div>
+      <div className="p-3 space-y-2">
+        <input
+          className={inputClass}
+          value={photo.alt}
+          placeholder="Alt-Text (SEO)"
+          onChange={(e) => onAltChange(photo.id, e.target.value)}
+          onBlur={(e) => onAltBlur(photo.id, e.target.value)}
+        />
+        <div className="flex items-center justify-end gap-1">
+          <button
+            onClick={() => onToggleActive(photo.id, photo.active)}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06]"
+            title={photo.active ? "Verstecken" : "Veröffentlichen"}
+          >
+            {photo.active ? <IconEye className="size-3.5" /> : <IconEyeOff className="size-3.5" />}
+          </button>
+          <button
+            onClick={() => onDelete(photo.id)}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-400/[0.06]"
+            title="Löschen"
+          >
+            <IconTrash className="size-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ImpressionsManager({ initialPhotos }: { initialPhotos: Photo[] }) {
   const router = useRouter();
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
   async function handleUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -90,7 +207,7 @@ export function ImpressionsManager({ initialPhotos }: { initialPhotos: Photo[] }
     }
   }
 
-  async function handleAltChange(id: string, alt: string) {
+  function handleAltChange(id: string, alt: string) {
     setPhotos((prev) => prev.map((p) => (p.id === id ? { ...p, alt } : p)));
   }
 
@@ -133,11 +250,13 @@ export function ImpressionsManager({ initialPhotos }: { initialPhotos: Photo[] }
     }
   }
 
-  function move(idx: number, delta: number) {
-    const target = idx + delta;
-    if (target < 0 || target >= photos.length) return;
-    const next = [...photos];
-    [next[idx], next[target]] = [next[target], next[idx]];
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIdx = photos.findIndex((p) => p.id === active.id);
+    const newIdx = photos.findIndex((p) => p.id === over.id);
+    if (oldIdx === -1 || newIdx === -1) return;
+    const next = arrayMove(photos, oldIdx, newIdx);
     setPhotos(next);
     void persistOrder(next);
   }
@@ -176,83 +295,23 @@ export function ImpressionsManager({ initialPhotos }: { initialPhotos: Photo[] }
           <p className="text-sm text-zinc-400">Noch keine Impressionen hochgeladen.</p>
         </div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {photos.map((photo, idx) => (
-            <div
-              key={photo.id}
-              className={`rounded-xl border bg-card overflow-hidden ${
-                photo.active ? "border-white/[0.10]" : "border-white/[0.05] opacity-60"
-              }`}
-            >
-              <div className="relative aspect-[4/3] bg-black">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={photo.urls.original}
-                  alt={photo.alt || "Impression"}
-                  className="w-full h-full object-cover"
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={photos.map((p) => p.id)} strategy={rectSortingStrategy}>
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {photos.map((photo, idx) => (
+                <PhotoCard
+                  key={photo.id}
+                  photo={photo}
+                  idx={idx}
+                  onAltChange={handleAltChange}
+                  onAltBlur={handleAltBlur}
+                  onToggleActive={handleToggleActive}
+                  onDelete={handleDelete}
                 />
-                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-[11px] text-zinc-300">
-                  {photo.width}×{photo.height}
-                </div>
-                <a
-                  href={photo.urls.original}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="absolute top-2 right-2 p-1.5 rounded-md bg-black/70 text-zinc-300 hover:text-white"
-                  title="Original öffnen"
-                >
-                  <IconExternalLink className="size-3.5" />
-                </a>
-              </div>
-              <div className="p-3 space-y-2">
-                <input
-                  className={inputClass}
-                  value={photo.alt}
-                  placeholder="Alt-Text (SEO)"
-                  onChange={(e) => handleAltChange(photo.id, e.target.value)}
-                  onBlur={(e) => handleAltBlur(photo.id, e.target.value)}
-                />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => move(idx, -1)}
-                      disabled={idx === 0}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06] disabled:opacity-30 disabled:hover:bg-transparent"
-                      title="Nach oben"
-                    >
-                      <IconArrowUp className="size-3.5" />
-                    </button>
-                    <button
-                      onClick={() => move(idx, 1)}
-                      disabled={idx === photos.length - 1}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06] disabled:opacity-30 disabled:hover:bg-transparent"
-                      title="Nach unten"
-                    >
-                      <IconArrowDown className="size-3.5" />
-                    </button>
-                    <span className="text-xs text-zinc-500 ml-1">#{idx + 1}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handleToggleActive(photo.id, photo.active)}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06]"
-                      title={photo.active ? "Verstecken" : "Veröffentlichen"}
-                    >
-                      {photo.active ? <IconEye className="size-3.5" /> : <IconEyeOff className="size-3.5" />}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(photo.id)}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-400/[0.06]"
-                      title="Löschen"
-                    >
-                      <IconTrash className="size-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       )}
     </div>
   );

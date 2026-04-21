@@ -150,22 +150,17 @@ export default function ImageLightbox({
             </button>
           )}
 
-          <div className="relative w-full max-w-[1400px] h-[80vh] md:h-[85vh] flex items-center justify-center pointer-events-none">
+          <div className="relative w-full max-w-[1600px] h-[85vh] md:h-[90vh] flex items-center justify-center pointer-events-none">
             {images[openIdx].avif || images[openIdx].webp ? (
-              <picture>
-                {images[openIdx].avif && (
-                  <source type="image/avif" srcSet={images[openIdx].avif ?? undefined} sizes="100vw" />
-                )}
-                {images[openIdx].webp && (
-                  <source type="image/webp" srcSet={images[openIdx].webp ?? undefined} sizes="100vw" />
-                )}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={images[openIdx].src}
-                  alt={images[openIdx].alt}
-                  className="max-w-full max-h-full w-auto h-auto object-contain"
-                />
-              </picture>
+              // Modal lädt immer das Original (volle Auflösung, keine Kompression)
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={images[openIdx].src}
+                alt={images[openIdx].alt}
+                className="max-w-full max-h-full w-auto h-auto object-contain"
+                loading="eager"
+                decoding="async"
+              />
             ) : (
               <Image
                 src={images[openIdx].src}

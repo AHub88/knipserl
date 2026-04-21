@@ -16,19 +16,6 @@ export const metadata: Metadata = generatePageMetadata({
 // Runtime-fetch, damit neue Admin-Uploads sofort sichtbar sind
 export const dynamic = "force-dynamic";
 
-const FALLBACK_IMAGES = [
-  { src: "/images/gallery/fotobox-2025-neu.jpg", alt: "Knipserl Fotobox im Einsatz 2025" },
-  { src: "/images/gallery/fotobox-mieten-5.jpg", alt: "Fotobox im Einsatz bei einer Hochzeit" },
-  { src: "/images/gallery/fotobox-mieten-7.jpg", alt: "Gäste mit Requisiten an der Fotobox" },
-  { src: "/images/gallery/fotobox-mieten-3.jpg", alt: "Individuelle Fotobox-Ausdrucke" },
-  { src: "/images/gallery/fotobox-rosenheim-bild2.jpg", alt: "Knipserl Fotobox auf Firmenfeier in Rosenheim" },
-  { src: "/images/gallery/touchscreen.gif", alt: "Touchscreen-Bedienung der Knipserl Fotobox" },
-  { src: "/images/gallery/fotobox-mieten-2.jpg", alt: "Professionelle Fotobox mit Sofortdruck" },
-  { src: "/images/gallery/fotobox-mieten-1-scaled.jpg", alt: "Fotobox mieten für Events in München" },
-  { src: "/images/gallery/fotobox-mieten-1.gif", alt: "Animation der Knipserl Fotobox" },
-  { src: "/images/gallery/fotobox-mieten-5-scaled.jpg", alt: "Fotobox mieten für Hochzeiten in Oberbayern" },
-];
-
 export default async function ImpressionenPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
@@ -36,9 +23,7 @@ export default async function ImpressionenPage() {
   ]);
 
   const photos = await fetchImpressions();
-  const images = photos.length > 0
-    ? photos.map((p) => ({ src: p.src, alt: p.alt, avif: p.avif, webp: p.webp }))
-    : FALLBACK_IMAGES;
+  const images = photos.map((p) => ({ src: p.src, alt: p.alt, avif: p.avif, webp: p.webp }));
 
   return (
     <>
@@ -50,15 +35,17 @@ export default async function ImpressionenPage() {
       <PageHeader title="Die Fotobox" />
 
       {/* Gallery */}
-      <section className="pt-12 md:pt-[50px] pb-10 md:pb-[70px]">
-        <div className="max-w-[1200px] mx-auto px-4">
-          <ImageLightbox
-            images={images}
-            gridClassName="grid grid-cols-2 md:grid-cols-3 gap-[15px]"
-            thumbSizes="(max-width: 768px) 50vw, 33vw"
-          />
-        </div>
-      </section>
+      {images.length > 0 && (
+        <section className="pt-12 md:pt-[50px] pb-10 md:pb-[70px]">
+          <div className="max-w-[1200px] mx-auto px-4">
+            <ImageLightbox
+              images={images}
+              gridClassName="grid grid-cols-2 md:grid-cols-3 gap-[15px]"
+              thumbSizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </div>
+        </section>
+      )}
 
       {/* Video */}
       <section className="pb-12 md:pb-[70px]">
