@@ -29,6 +29,7 @@ import {
   IconCurrencyEuro,
   IconBrush,
   IconBrandGoogle,
+  IconHistory,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -120,6 +121,11 @@ const adminNav: NavGroup[] = [
     title: "Einstellungen",
     icon: IconSettings,
     href: "/settings",
+  },
+  {
+    title: "Changelog",
+    icon: IconHistory,
+    href: "/changelog",
   },
 ];
 
