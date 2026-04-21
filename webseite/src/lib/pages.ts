@@ -87,9 +87,10 @@ export async function fetchPageData(slug: string): Promise<PageData | null> {
 
   for (const baseUrl of fetchUrls) {
     try {
-      const res = await fetch(`${baseUrl}/api/pages/${slug}`, {
-        next: { revalidate: 60 },
-      });
+      // cache: "no-store" — Webseite holt bei jedem Request live Daten aus dem Admin.
+      // Macht die konsumierende Route automatisch dynamisch. Kein ISR-Cache, der hängen bleibt.
+      // Performance OK, weil der Admin per 127.0.0.1:3002 im selben Hetzner-Netzwerk liegt (~ms).
+      const res = await fetch(`${baseUrl}/api/pages/${slug}`, { cache: "no-store" });
       if (res.status === 404) return null;
       if (!res.ok) continue;
       const data = (await res.json()) as ApiPageDetail;
