@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
 import InquiryForm from "@/components/forms/InquiryForm";
+import ImageLightbox from "@/components/ImageLightbox";
 import PageHeader from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = generatePageMetadata({
@@ -43,36 +43,11 @@ export default function ImpressionenPage() {
       {/* Gallery */}
       <section className="pt-12 md:pt-[50px] pb-10 md:pb-[70px]">
         <div className="max-w-[1200px] mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-[15px]">
-            {images.map((img, i) => {
-              const isGif = img.src.endsWith(".gif");
-              return (
-                <div
-                  key={img.src}
-                  className="relative aspect-[4/3] overflow-hidden group"
-                >
-                  {isGif ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading={i < 3 ? "eager" : "lazy"}
-                    />
-                  ) : (
-                    <Image
-                      src={img.src}
-                      alt={img.alt}
-                      fill
-                      priority={i === 0}
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <ImageLightbox
+            images={images}
+            gridClassName="grid grid-cols-2 md:grid-cols-3 gap-[15px]"
+            thumbSizes="(max-width: 768px) 50vw, 33vw"
+          />
         </div>
       </section>
 

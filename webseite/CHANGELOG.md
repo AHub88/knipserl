@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.2.0] — 2026-04-21
+
+### Added
+- Impressionen-Galerie: Bilder öffnen sich jetzt im Lightbox-Modal (Vollbild, Keyboard-Navigation, Swipe auf Mobile, ESC/Swipe-Down zum Schließen) — identisch zur Homepage-Galerie.
+
+### Changed
+- `ImageLightbox` erweitert um `gridClassName` und `thumbSizes` Props, damit unterschiedliche Grid-Layouts möglich sind. GIFs werden via `unoptimized` korrekt durchgereicht.
+
 ## [1.1.1] — 2026-04-21
 
 ### Changed

@@ -6,7 +6,15 @@ import Image from "next/image";
 
 type LightboxImage = { src: string; alt: string };
 
-export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
+export default function ImageLightbox({
+  images,
+  gridClassName = "grid grid-cols-2 md:grid-cols-4 gap-4",
+  thumbSizes = "(max-width: 768px) 50vw, 25vw",
+}: {
+  images: LightboxImage[];
+  gridClassName?: string;
+  thumbSizes?: string;
+}) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
@@ -62,7 +70,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className={gridClassName}>
         {images.map((img, idx) => (
           <button
             key={img.src}
@@ -76,7 +84,8 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
               alt={img.alt}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 50vw, 25vw"
+              sizes={thumbSizes}
+              unoptimized={img.src.endsWith(".gif")}
             />
           </button>
         ))}
@@ -130,6 +139,7 @@ export default function ImageLightbox({ images }: { images: LightboxImage[] }) {
               className="object-contain"
               sizes="100vw"
               priority
+              unoptimized={images[openIdx].src.endsWith(".gif")}
             />
           </div>
 
