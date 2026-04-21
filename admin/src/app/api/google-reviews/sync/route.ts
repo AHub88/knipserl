@@ -49,67 +49,90 @@ export async function POST() {
     });
   }
 
-  try {
-    let reviews: { authorName: string; rating: number; text: string; time: Date }[];
-    let totalRatings: number;
-    let overallRating: number;
-
-    if (hasOAuth) {
-      // ── Google Business Profile API (all reviews) ──
-      const accessToken = await getAccessToken();
-
-      // Use cached IDs if present — die accounts/locations APIs haben
-      // 1 Request/Minute Quota im Free-Tier und aendern sich praktisch nie.
-      let accountName = cachedAccountName;
-      let locationName = cachedLocationName;
-
-      if (!accountName || !locationName) {
-        accountName = await getAccountId(accessToken);
-        locationName = await getLocationName(accessToken, accountName, placeId);
-        await cacheGbpIds(accountName, locationName);
-      }
-
-      try {
-        const result = await fetchAllReviews(accessToken, accountName, locationName);
-        reviews = result.reviews;
-        totalRatings = result.totalCount;
-        overallRating = result.averageRating;
-      } catch (fetchErr: any) {
-        // Cached IDs moeglicherweise veraltet -> einmal neu holen
-        if (cachedAccountName || cachedLocationName) {
-          accountName = await getAccountId(accessToken);
-          locationName = await getLocationName(accessToken, accountName, placeId);
-          await cacheGbpIds(accountName, locationName);
-          const result = await fetchAllReviews(accessToken, accountName, locationName);
-          reviews = result.reviews;
-          totalRatings = result.totalCount;
-          overallRating = result.averageRating;
-        } else {
-          throw fetchErr;
-        }
-      }
-    } else if (apiKey && placeId) {
-      // ── Fallback: Places API New (max 5 reviews) ──
-      const res = await fetch(
-        `https://places.googleapis.com/v1/places/${placeId}?fields=rating,userRatingCount,reviews&languageCode=de`,
-        { headers: { "X-Goog-Api-Key": apiKey } }
-      );
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error?.message ?? `HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
-      totalRatings = data.userRatingCount ?? 0;
-      overallRating = data.rating ?? 0;
-
-      reviews = (data.reviews ?? []).map((r: any) => ({
+  async function fetchFromPlacesApi() {
+    if (!apiKey || !placeId) {
+      throw new Error("Weder OAuth noch API Key + Place ID konfiguriert");
+    }
+    const res = await fetch(
+      `https://places.googleapis.com/v1/places/${placeId}?fields=rating,userRatingCount,reviews&languageCode=de`,
+      { headers: { "X-Goog-Api-Key": apiKey } }
+    );
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error?.message ?? `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return {
+      reviews: (data.reviews ?? []).map((r: any) => ({
         authorName: r.authorAttribution?.displayName ?? "Anonym",
         rating: r.rating ?? 5,
         text: r.text?.text ?? "",
         time: new Date(r.publishTime),
-      }));
+      })) as { authorName: string; rating: number; text: string; time: Date }[],
+      totalRatings: (data.userRatingCount ?? 0) as number,
+      overallRating: (data.rating ?? 0) as number,
+    };
+  }
+
+  try {
+    let reviews: { authorName: string; rating: number; text: string; time: Date }[];
+    let totalRatings: number;
+    let overallRating: number;
+    let source: string;
+    let notice: string | undefined;
+
+    if (hasOAuth) {
+      try {
+        // ── Google Business Profile API (all reviews) ──
+        const accessToken = await getAccessToken();
+        let accountName = cachedAccountName;
+        let locationName = cachedLocationName;
+
+        if (!accountName || !locationName) {
+          accountName = await getAccountId(accessToken);
+          locationName = await getLocationName(accessToken, accountName, placeId);
+          await cacheGbpIds(accountName, locationName);
+        }
+
+        try {
+          const result = await fetchAllReviews(accessToken, accountName, locationName);
+          reviews = result.reviews;
+          totalRatings = result.totalCount;
+          overallRating = result.averageRating;
+          source = "Google Business Profile API";
+        } catch (fetchErr: any) {
+          if (cachedAccountName || cachedLocationName) {
+            accountName = await getAccountId(accessToken);
+            locationName = await getLocationName(accessToken, accountName, placeId);
+            await cacheGbpIds(accountName, locationName);
+            const result = await fetchAllReviews(accessToken, accountName, locationName);
+            reviews = result.reviews;
+            totalRatings = result.totalCount;
+            overallRating = result.averageRating;
+            source = "Google Business Profile API";
+          } else {
+            throw fetchErr;
+          }
+        }
+      } catch (gbpErr: any) {
+        // GBP blockiert (Quota / Fehlende API-Freischaltung) -> Fallback Places API
+        if (apiKey && placeId) {
+          const fallback = await fetchFromPlacesApi();
+          reviews = fallback.reviews;
+          totalRatings = fallback.totalRatings;
+          overallRating = fallback.overallRating;
+          source = "Places API (Fallback, max 5)";
+          notice = `Google Business Profile API nicht verfuegbar: ${gbpErr.message ?? gbpErr}. Auf Places API (max 5 Reviews) zurueckgegriffen.`;
+        } else {
+          throw gbpErr;
+        }
+      }
+    } else if (apiKey && placeId) {
+      const fallback = await fetchFromPlacesApi();
+      reviews = fallback.reviews;
+      totalRatings = fallback.totalRatings;
+      overallRating = fallback.overallRating;
+      source = "Places API (max 5)";
     } else {
       return NextResponse.json(
         { error: "Weder OAuth noch API Key + Place ID konfiguriert" },
@@ -156,7 +179,8 @@ export async function POST() {
 
     return NextResponse.json({
       ok: true,
-      source: hasOAuth ? "Google Business Profile API" : "Places API (max 5)",
+      source,
+      notice,
       imported,
       updated: reviews.length - imported,
       total: reviews.length,
@@ -165,8 +189,9 @@ export async function POST() {
     });
   } catch (err: any) {
     const msg = err.message ?? "Sync fehlgeschlagen";
-    const friendly = /quota.*exceeded.*requests per minute/i.test(msg)
-      ? "Google API Rate-Limit erreicht (1 Request/Minute im Free-Tier). Bitte ~1 Minute warten und erneut versuchen. Dauerhafte Erhoehung: Google Cloud Console -> APIs -> Quotas."
+    const isQuota = /quota.*exceeded/i.test(msg);
+    const friendly = isQuota
+      ? `Google API-Quota aufgebraucht. Die Google Business Profile API hat im Default-Quota meist 0 Requests/Tag, bis sie explizit freigeschaltet wird. Loesung: Google Cloud Console -> APIs & Services -> My Business Account Management API -> Quotas -> Request increase. Als Fallback bitte API Key + Place ID in Einstellungen hinterlegen, dann werden bis zu 5 Reviews ueber die Places API importiert. Roh: ${msg}`
       : msg;
     return NextResponse.json({ error: friendly }, { status: 500 });
   }

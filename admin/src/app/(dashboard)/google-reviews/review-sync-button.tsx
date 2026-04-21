@@ -23,6 +23,9 @@ export function ReviewSyncButton() {
       toast.success(
         `${data.imported} neue, ${data.updated} aktualisierte Bewertungen (${data.totalFromGoogle} gesamt auf Google)`
       );
+      if (data.notice) {
+        toast.warning(data.notice, { duration: 10000 });
+      }
       router.refresh();
     } catch {
       toast.error("Verbindungsfehler");
