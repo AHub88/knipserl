@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.6.0] — 2026-04-21
+
+### Added
+- Impressionen-Sektion auf 4 weiteren Produkt-Pages eingebunden: `/fotobox-fuer-firmenfeier`, `/fotobox-fuer-messe`, `/fotobox-fuer-weihnachtsfeier`, `/love-buchstaben`. Jede pflegt eigene Bildauswahl im Admin.
+
+### Changed
+- Alle Stadt-Landing-Pages zeigen jetzt die zentrale Haupt-Impressionen-Galerie (pageSlug "impressionen") statt pro Stadt eigene Sektion. Pflege an einer Stelle.
+- Temporärer Debug-Endpoint `/api/debug/impressionen` entfernt.
+
 ## [1.5.1] — 2026-04-21
 
 ### Fixed

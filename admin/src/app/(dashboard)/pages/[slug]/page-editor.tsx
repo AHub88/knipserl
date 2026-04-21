@@ -400,6 +400,15 @@ export function PageEditor({
         </section>
       )}
 
+      {/* Hinweis, wenn diese Seite KEINE eigene Impressionen-Sektion hat (z.B. Stadt-Pages, die zentral ziehen) */}
+      {!hasImpressionSection && (
+        <section className="rounded-xl border border-white/[0.08] bg-card/50 p-4 text-sm text-zinc-400">
+          <strong className="text-zinc-300">Impressionen-Sektion:</strong>{" "}
+          Diese Seite zeigt automatisch die Bilder von <em>Impressionen (Hauptseite)</em>.
+          Änderungen dort wirken sich auch hier aus.
+        </section>
+      )}
+
       {/* Impressionen-Sektion */}
       {hasImpressionSection && (
         <section className="space-y-3">

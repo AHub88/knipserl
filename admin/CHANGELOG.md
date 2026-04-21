@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.3.2] — 2026-04-21
+
+### Changed
+- Stadt-Pages (alle 9) haben keine eigene Impressionen-Sektion mehr. Stattdessen zeigt der Editor einen Hinweis, dass die Bilder zentral über "Impressionen (Hauptseite)" laufen. Produkt-Pages (Hochzeit, Firmenfeier, Messe, Weihnachtsfeier, LOVE-Buchstaben, Audio-Gästebuch) behalten eigene Galerien.
+
 ## [1.3.1] — 2026-04-21
 
 ### Fixed

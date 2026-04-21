@@ -43,7 +43,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Rosenheim",
     category: "city",
     sortOrder: 10,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [
       { key: "hero", label: "Hero-Bild", aspectRatio: "16/9" },
     ],
@@ -53,7 +53,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox München",
     category: "city",
     sortOrder: 11,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [
       { key: "hero", label: "Hero-Bild", aspectRatio: "16/9" },
     ],
@@ -63,7 +63,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Ebersberg",
     category: "city",
     sortOrder: 12,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
   {
@@ -71,7 +71,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Miesbach",
     category: "city",
     sortOrder: 13,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
   {
@@ -79,7 +79,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Traunstein",
     category: "city",
     sortOrder: 14,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
   {
@@ -87,7 +87,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Wasserburg am Inn",
     category: "city",
     sortOrder: 15,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
   {
@@ -95,7 +95,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Mühldorf am Inn",
     category: "city",
     sortOrder: 16,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
   {
@@ -103,7 +103,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Erding",
     category: "city",
     sortOrder: 17,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
   {
@@ -111,7 +111,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     title: "Fotobox Kufstein",
     category: "city",
     sortOrder: 18,
-    hasImpressionSection: true,
+    hasImpressionSection: false,
     slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
   },
 

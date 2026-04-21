@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
+import ImpressionSection from "@/components/ImpressionSection";
 import PageHeader from "@/components/layout/PageHeader";
 import { BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
@@ -199,6 +200,13 @@ export default function FotoboxFirmenfeierPage() {
           </div>
         </div>
       </section>
+
+      {/* IMPRESSIONS — wird im Admin unter /pages/fotobox-fuer-firmenfeier gepflegt */}
+      <ImpressionSection
+        pageSlug="fotobox-fuer-firmenfeier"
+        title="Firmenfeier-Impressionen"
+        subtitle="Unsere Fotobox bei Firmenfeiern und Corporate-Events"
+      />
 
       {/* INQUIRY FORM */}
       <section id="anfragen" className="py-20 relative z-10 scroll-mt-20">

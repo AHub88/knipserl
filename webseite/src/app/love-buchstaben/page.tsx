@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
+import ImpressionSection from "@/components/ImpressionSection";
 import PageHeader from "@/components/layout/PageHeader";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
 
@@ -167,6 +168,13 @@ export default function LoveBuchstabenPage() {
           </div>
         </div>
       </section>
+
+      {/* IMPRESSIONS — wird im Admin unter /pages/love-buchstaben gepflegt */}
+      <ImpressionSection
+        pageSlug="love-buchstaben"
+        title="LOVE-Buchstaben Impressionen"
+        subtitle="Unsere XXL-Buchstaben im Einsatz"
+      />
 
       {/* INQUIRY FORM */}
       <section id="anfragen" className="py-20 relative z-10 scroll-mt-20">
