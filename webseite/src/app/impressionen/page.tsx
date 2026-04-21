@@ -13,8 +13,9 @@ export const metadata: Metadata = generatePageMetadata({
   path: "/impressionen",
 });
 
-// ISR: Admin-Uploads erscheinen nach max. 60 s
-export const revalidate = 60;
+// Aktuell force-dynamic, um ISR-Cache-Probleme beim Mini-CMS-Rollout zu vermeiden.
+// Nach Verifikation kann auf `export const revalidate = 60` zurückgestellt werden.
+export const dynamic = "force-dynamic";
 
 export default async function ImpressionenPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
