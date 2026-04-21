@@ -13,8 +13,8 @@ export const metadata: Metadata = generatePageMetadata({
   path: "/impressionen",
 });
 
-// Runtime-fetch, damit neue Admin-Uploads sofort sichtbar sind
-export const dynamic = "force-dynamic";
+// ISR: Admin-Uploads erscheinen nach max. 60 s
+export const revalidate = 60;
 
 export default async function ImpressionenPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([

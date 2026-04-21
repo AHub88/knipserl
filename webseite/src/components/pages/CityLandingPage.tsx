@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
+import ImpressionSection from "@/components/ImpressionSection";
 import PageHeader from "@/components/layout/PageHeader";
 import {
   SEO_CITIES,
@@ -32,7 +33,7 @@ export function generateCityMetadata(slug: CitySlug): Metadata {
   });
 }
 
-export default function CityLandingPage({ slug }: { slug: CitySlug }) {
+export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
   const city = SEO_CITIES.find((c) => c.slug === slug);
   if (!city) notFound();
 
@@ -309,6 +310,13 @@ export default function CityLandingPage({ slug }: { slug: CitySlug }) {
           </div>
         </div>
       </section>
+
+      {/* IMPRESSIONS — rendert nur, wenn im Admin eine Collection mit diesem Slug gepflegt ist */}
+      <ImpressionSection
+        slug={slug}
+        title={`Die Fotobox in ${city.name}`}
+        subtitle="Eindrücke aus vergangenen Events"
+      />
 
       {/* INQUIRY FORM */}
       <section id="anfragen" className="py-20 relative z-10 scroll-mt-20">

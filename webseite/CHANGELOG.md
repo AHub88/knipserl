@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.0] — 2026-04-21
+
+### Added
+- Neue Komponente `<ImpressionSection slug="..." />`, die eine Admin-kuratierte Collection als Galerie-Section rendert (mit Lightbox). Wenn die Collection leer/nicht vorhanden ist, rendert die Komponente nichts — die Landing-Page bleibt unverändert.
+- Alle Stadt-Landing-Pages (`/fotobox-rosenheim`, `/fotobox-fuer-muenchen`, …) zeigen automatisch die Collection, deren Slug dem City-Slug entspricht. Der City-Name steht im Section-Titel (z.B. "Die Fotobox in Rosenheim").
+- Landing-Page `/fotobox-fuer-hochzeit` bindet die Collection mit Slug `hochzeit` ein (Beispiel-Integration für Produkt-Pages; weitere Produkt-Pages können identisch verdrahtet werden).
+
+### Changed
+- Impressionen-Fetches nutzen ISR mit 60 s Revalidation statt no-store — Pages bleiben statisch ausgeliefert, Admin-Änderungen erscheinen nach max. einer Minute.
+
 ## [1.3.1] — 2026-04-21
 
 ### Changed
