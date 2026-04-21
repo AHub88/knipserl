@@ -14,8 +14,21 @@ export async function GET(
   const def = findPageDefinition(slug);
   if (!def) return NextResponse.json({ error: "Unbekannte Seite" }, { status: 404 });
 
-  const page = await prisma.page.findUnique({
+  // Page-Record idempotent anlegen/aktualisieren, damit der Webseiten-Fetch nicht
+  // 404 kriegt, falls niemand vorher im Admin die Pages-Übersicht geöffnet hat.
+  const page = await prisma.page.upsert({
     where: { slug },
+    create: {
+      slug,
+      title: def.title,
+      category: def.category,
+      sortOrder: def.sortOrder,
+    },
+    update: {
+      title: def.title,
+      category: def.category,
+      sortOrder: def.sortOrder,
+    },
     include: {
       imageSlots: { include: { mediaAsset: true } },
       impressionPhotos: {
@@ -24,7 +37,6 @@ export async function GET(
       },
     },
   });
-  if (!page) return NextResponse.json({ error: "Seite nicht in DB" }, { status: 404 });
 
   const slots = def.slots.map((slotDef) => {
     const existing = page.imageSlots.find((s) => s.slotKey === slotDef.key);
