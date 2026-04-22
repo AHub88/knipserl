@@ -15,6 +15,9 @@ export const metadata: Metadata = generatePageMetadata({
   appendSiteName: false,
 });
 
+// Force dynamic: fetch aus Admin bei jedem Request, keine statische Vorberechnung
+export const dynamic = "force-dynamic";
+
 export default function FotoboxMessePage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
