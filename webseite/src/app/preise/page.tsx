@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PriceConfiguratorV3 from "@/components/forms/PriceConfiguratorV3";
+import PriceConfigurator from "@/components/forms/PriceConfigurator";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
 import PageHeader from "@/components/layout/PageHeader";
 
@@ -24,7 +24,7 @@ export default function PreisePage() {
       />
 
       <PageHeader title="Preiskonfigurator" />
-      <PriceConfiguratorV3 />
+      <PriceConfigurator />
     </>
   );
 }

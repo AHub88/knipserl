@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.8.1] — 2026-04-22
+
+### Removed
+- Cleanup nach Migration auf den neuen Preiskonfigurator: Die alten Varianten-Artefakte entfernt — `PriceConfigurator.tsx` (V1, nicht mehr importiert), `PriceConfiguratorV2.tsx`, die Staging-Pages `/preisev2` und `/preisev3`. Die V3-Komponente wurde auf `PriceConfigurator` umbenannt (Namensraum wieder ohne Versionsnummer). `/preise/page.tsx` verwendet nun den schlicht benannten `PriceConfigurator`.
+
 ## [1.8.0] — 2026-04-22
 
 ### Changed

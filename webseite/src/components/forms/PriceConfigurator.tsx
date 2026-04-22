@@ -18,6 +18,81 @@ interface DeliveryInfo {
   routePolyline: string;
 }
 
+const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
+const softShadow = "0 4px 14px rgba(0,0,0,0.08)";
+const darkHeaderBg = "#1a171b url('/images/misc/main_back_gr-2.webp') repeat";
+
+const FEATURE_ICON_PATHS: Record<string, React.ReactNode> = {
+  truck: (
+    <>
+      <rect x="2" y="7" width="11" height="9" rx="1" />
+      <path d="M13 10h5l3 3v3h-8z" />
+      <circle cx="6" cy="17" r="1.5" />
+      <circle cx="17" cy="17" r="1.5" />
+    </>
+  ),
+  tools: (
+    <>
+      <rect x="3" y="8" width="18" height="11" rx="1" />
+      <path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <path d="M3 13h18" />
+    </>
+  ),
+  photoStack: (
+    <>
+      <rect x="3" y="3" width="14" height="14" rx="1" />
+      <rect x="7" y="7" width="14" height="14" rx="1" />
+    </>
+  ),
+  printer: (
+    <>
+      <path d="M7 4h10v5H7z" />
+      <rect x="4" y="9" width="16" height="8" rx="1" />
+      <rect x="7" y="13" width="10" height="7" />
+      <circle cx="17" cy="13" r="0.6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  camera: (
+    <>
+      <path d="M3 7h3l2-3h8l2 3h3v12H3z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </>
+  ),
+  monitor: (
+    <>
+      <rect x="2" y="4" width="20" height="13" rx="1" />
+      <path d="M8 21h8M12 17v4" />
+    </>
+  ),
+  bolt: <path d="m13 2-9 12h7l-1 8 9-12h-7z" />,
+  layout: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="1" />
+      <path d="M3 9h18M9 9v12" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="11" width="14" height="10" rx="1" />
+      <path d="M8 11V7a4 4 0 1 1 8 0v4" />
+    </>
+  ),
+  phone: <path d="M3 5a2 2 0 0 1 2-2h2l2 5-2 1.5a11 11 0 0 0 6 6l1.5-2 5 2v2a2 2 0 0 1-2 2A16 16 0 0 1 3 5Z" />,
+};
+
+const FEATURES_V3: Array<{ label: string; icon: keyof typeof FEATURE_ICON_PATHS }> = [
+  { label: "Kostenlose Lieferung (15 km ab Rosenheim)", icon: "truck" },
+  { label: "Kompletter Auf- & Abbau", icon: "tools" },
+  { label: "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)", icon: "photoStack" },
+  { label: "Profi-Thermosublimationsdrucker", icon: "printer" },
+  { label: "Hochwertige Spiegelreflexkamera (16 MP)", icon: "camera" },
+  { label: "22 Zoll Full-HD Touchscreen", icon: "monitor" },
+  { label: "Studioblitz mit Softbox", icon: "bolt" },
+  { label: "Individuelles Drucklayout", icon: "layout" },
+  { label: "Online-Galerie mit Passwortschutz", icon: "lock" },
+  { label: "24/7 Telefonsupport", icon: "phone" },
+];
+
 function ToggleSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
     <label className="flex flex-col items-center gap-1 cursor-pointer">
@@ -33,7 +108,55 @@ function ToggleSwitch({ label, checked, onChange }: { label: string; checked: bo
   );
 }
 
-const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
+function SectionHeader({ stepLabel, title, subtitle }: { stepLabel?: string; title: string; subtitle?: string }) {
+  return (
+    <div className="text-center mb-6 md:mb-8">
+      {stepLabel && (
+        <p className="text-[13px] md:text-[14px] font-extrabold text-[#F3A300] uppercase tracking-[0.25em] mb-3 font-[family-name:var(--font-fira-condensed)]">
+          {stepLabel}
+        </p>
+      )}
+      <h2 className="heading-decorated text-[26px] sm:text-[32px] md:text-[48px] text-[var(--brand-dark)] inline-block leading-[1.05]">
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="text-[17px] sm:text-[20px] md:text-[23px] text-[#F3A300] font-semibold mt-2 font-[family-name:var(--font-fira-condensed)]">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function FeatureIconCircle({ type }: { type: keyof typeof FEATURE_ICON_PATHS }) {
+  return (
+    <span className="w-8 h-8 rounded-full bg-[#F3A300] flex items-center justify-center flex-shrink-0">
+      <svg
+        className="w-4 h-4 text-white"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        viewBox="0 0 24 24"
+      >
+        {FEATURE_ICON_PATHS[type]}
+      </svg>
+    </span>
+  );
+}
+
+function CheckIconCircle({ size = "md" }: { size?: "sm" | "md" }) {
+  const wrapperClass = size === "sm" ? "w-6 h-6" : "w-8 h-8";
+  const iconClass = size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4";
+  return (
+    <span className={`${wrapperClass} rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0`}>
+      <svg className={`${iconClass} text-[#F3A300]`} fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+    </span>
+  );
+}
 
 export default function PriceConfigurator() {
   const router = useRouter();
@@ -47,9 +170,9 @@ export default function PriceConfigurator() {
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
   const [mapsApiKey, setMapsApiKey] = useState("");
+  const [stickyVisible, setStickyVisible] = useState(false);
   const destinationInputRef = useRef<HTMLInputElement>(null);
 
-  // Inquiry form state
   const [inquiry, setInquiry] = useState({
     vorname: "",
     nachname: "",
@@ -66,7 +189,6 @@ export default function PriceConfigurator() {
 
   const openInquiry = () => {
     setShowInquiry(true);
-    // Nach dem Rendern scrollen
     setTimeout(() => {
       inquiryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
@@ -77,19 +199,12 @@ export default function PriceConfigurator() {
     setDeliveryLoading(true);
     setDeliveryError("");
     setDelivery(null);
-
     try {
       const result = await calculateDeliveryCost(address, coords);
-      if (!result) {
-        setDeliveryError("Adresse konnte nicht gefunden werden. Bitte genauer eingeben.");
-        return;
-      }
+      if (!result) { setDeliveryError("Adresse nicht gefunden. Bitte genauer eingeben."); return; }
       setDelivery(result);
-    } catch {
-      setDeliveryError("Fehler bei der Berechnung. Bitte versuche es erneut.");
-    } finally {
-      setDeliveryLoading(false);
-    }
+    } catch { setDeliveryError("Fehler bei der Berechnung."); }
+    finally { setDeliveryLoading(false); }
   }, []);
 
   const handlePlaceSelect = useCallback((place: PlaceSelection) => {
@@ -104,10 +219,13 @@ export default function PriceConfigurator() {
   useGooglePlacesAutocomplete(destinationInputRef, handlePlaceSelect);
 
   useEffect(() => {
-    fetch("/api/maps-config")
-      .then((r) => r.json())
-      .then((d) => { if (d.apiKey) setMapsApiKey(d.apiKey); })
-      .catch(() => {});
+    fetch("/api/maps-config").then((r) => r.json()).then((d) => { if (d.apiKey) setMapsApiKey(d.apiKey); }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setStickyVisible(window.scrollY > 200);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const toggleAddon = (id: string) => {
@@ -119,22 +237,9 @@ export default function PriceConfigurator() {
     });
   };
 
-  const addonsTotal = ADDONS.filter((a) => selectedAddons.has(a.id)).reduce(
-    (sum, a) => sum + a.price,
-    0
-  );
-
-  const deliveryPrice = delivery?.price ?? 0;
-  const totalPrice = BASE_PRICE + addonsTotal + deliveryPrice;
-
-  const calculateDistance = useCallback(() => {
-    runCalculation(destination);
-  }, [destination, runCalculation]);
-
   const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setDestination(value);
-    // Manuelles Editieren invalidiert die Places-Metadaten
     setLocationName("");
     setLocationAddress("");
     setLocationLat(null);
@@ -150,7 +255,11 @@ export default function PriceConfigurator() {
     setInquiry((prev) => ({ ...prev, eventType: prev.eventType === type ? "" : type }));
   };
 
-  const selectedAddonNames = ADDONS.filter((a) => selectedAddons.has(a.id)).map((a) => a.name);
+  const addonsTotal = ADDONS.filter((a) => selectedAddons.has(a.id)).reduce((sum, a) => sum + a.price, 0);
+  const deliveryPrice = delivery?.price ?? 0;
+  const totalPrice = BASE_PRICE + addonsTotal + deliveryPrice;
+  const selectedAddonsList = ADDONS.filter((a) => selectedAddons.has(a.id));
+  const selectedAddonNames = selectedAddonsList.map((a) => a.name);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,367 +315,426 @@ export default function PriceConfigurator() {
     }
   };
 
+  const mapUrl = (() => {
+    if (!mapsApiKey) return "";
+    const base = "https://maps.googleapis.com/maps/api/staticmap?size=500x300&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4";
+    const key = `&key=${mapsApiKey}`;
+    const markerHome = "&markers=color:0xF3A300|47.8571,12.1181";
+    if (delivery && !delivery.outsideDeliveryArea && delivery.routePolyline) {
+      const markerDest = `&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}`;
+      return `${base}&path=color:0xF3A300ff|weight:5|enc:${encodeURIComponent(delivery.routePolyline)}${markerDest}${markerHome}${key}`;
+    }
+    if (delivery) {
+      const markerDest = `&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}`;
+      return `${base}${markerDest}${markerHome}${key}`;
+    }
+    return `${base}&center=47.8571,12.1181&zoom=8${markerHome}${key}`;
+  })();
+
   return (
-    <div className="space-y-12">
-      {/* ===== ZUBEHÖR ===== */}
-      <div>
-        <div className="text-center mb-10">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
-            Fotobox Zubehör
-          </h2>
-          <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
-            Zusätzlich buchbar
-          </p>
-        </div>
+    <>
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-6 pb-32 overflow-x-clip">
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {ADDONS.map((addon) => (
-            <label
-              key={addon.id}
-              style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
-              className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all ${
-                selectedAddons.has(addon.id)
-                  ? "bg-[var(--brand-dark)] text-white"
-                  : "bg-[#F3F4F6]"
-              }`}
+        {/* ===== STEP 1: BASISPAKET ===== */}
+        <section className="py-8 md:py-10">
+          <SectionHeader stepLabel="Schritt 01" title="Dein Basispaket" subtitle="Alles inklusive zum Festpreis" />
+
+          <div
+            className="bg-white rounded-lg overflow-hidden"
+            style={{ boxShadow: softShadow }}
+          >
+            <div
+              className="px-5 py-4 md:px-8 md:py-5"
+              style={{ background: darkHeaderBg, backgroundSize: "1000px 500px" }}
             >
-              <input
-                type="checkbox"
-                checked={selectedAddons.has(addon.id)}
-                onChange={() => toggleAddon(addon.id)}
-                className="sr-only"
-              />
-
-              {/* Image */}
-              <div className="w-[120px] h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={addon.image}
-                  alt={addon.name}
-                  className={`w-full h-auto ${selectedAddons.has(addon.id) ? "invert" : ""}`}
-                />
-              </div>
-
-              {/* Text */}
-              <div className="flex-1 min-w-0 pt-3">
-                <div className="flex justify-between items-start gap-2">
-                  <h4 className={`font-bold text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
-                    selectedAddons.has(addon.id) ? "text-white" : "text-[var(--brand-dark)]"
-                  }`}>
-                    {addon.name}
-                  </h4>
-                  <span className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
-                    +{addon.price}&euro;
-                  </span>
-                </div>
-                <p className={`text-[13px] mt-3 line-clamp-2 ${
-                  selectedAddons.has(addon.id) ? "text-gray-300" : "text-[var(--brand-dark)]"
-                }`} style={{ fontWeight: 400, textTransform: "none" }}>
-                  {addon.description}
-                </p>
-                {addon.link && (
-                  <a
-                    href={addon.link}
-                    className="text-xs text-[#F3A300] hover:underline mt-1 inline-block"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    mehr Infos &raquo;
-                  </a>
-                )}
-              </div>
-
-              {/* Checkbox indicator — rechts */}
-              <div className="flex-shrink-0 self-center">
-                <div
-                  className={`w-6 h-6 border-2 flex items-center justify-center ${
-                    selectedAddons.has(addon.id)
-                      ? "bg-[#F3A300] border-[#F3A300]"
-                      : "bg-white border-gray-300"
-                  }`}
-                >
-                  {selectedAddons.has(addon.id) && (
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
-              </div>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* ===== FAHRTKOSTEN ===== */}
-      <div className="pt-5">
-        <div className="text-center mb-8">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
-            Fahrtkosten
-          </h2>
-          <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
-            für den Auf- und Abbau
-          </p>
-        </div>
-
-        <p className="text-[#666] text-[15px] mb-8 max-w-[800px] mx-auto text-center" style={{ fontWeight: 400, textTransform: "none" }}>
-          Wir liefern die Fotobox zu Deiner Location und kümmern uns um den kompletten Auf- und Abbau.
-          Da wir daher die Strecke zu Deiner Location insgesamt 4x mal fahren müssen, kommen hier ab 15km Fahrtkosten hinzu.
-        </p>
-
-        <div
-          className="bg-[#F3F4F6] rounded-lg p-6 md:p-8"
-          style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left: Form */}
-            <div className="space-y-5">
-              <div>
-                <label className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-2 font-[family-name:var(--font-fira-condensed)]">
-                  Veranstaltungsort
-                </label>
-                <input
-                  ref={destinationInputRef}
-                  type="text"
-                  value={destination}
-                  onChange={handleDestinationChange}
-                  placeholder="Name/Anschrift eingeben..."
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded text-[var(--brand-dark)] text-base placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:border-[#F3A300] focus:outline-none"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      calculateDistance();
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="border-t border-gray-200 pt-4">
-                <span className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                  Berechnete Distanz
-                </span>
-                <span className="text-[var(--brand-dark)] text-[22px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
-                  {delivery ? `${delivery.distanceKm} km` : "–"}
-                </span>
-              </div>
-
-              {delivery?.outsideDeliveryArea && (
-                <p className="bg-red-600 text-white font-bold text-[14px] px-4 py-2 rounded inline-block uppercase font-[family-name:var(--font-fira-condensed)]">
-                  Außerhalb Liefergebiet!
-                </p>
-              )}
-
-              <div className="border-t border-gray-200 pt-4">
-                <span className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-1 font-[family-name:var(--font-fira-condensed)]">
-                  Fahrtkosten
-                </span>
-                <span className="text-[var(--brand-dark)] text-[22px]" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
-                  {delivery
-                    ? delivery.price === 0 ? "Kostenlos" : `${delivery.price.toFixed(2)} €`
-                    : "–"}
-                </span>
-              </div>
-
-              {deliveryError && (
-                <p className="text-red-600 text-sm">{deliveryError}</p>
-              )}
+              <h3 className="text-white text-[22px] md:text-[28px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
+                Fotobox mit Drucker
+              </h3>
             </div>
-
-            {/* Right: Map */}
-            <div>
-              <span className="block text-[18px] font-bold uppercase text-[var(--brand-dark)] mb-2 font-[family-name:var(--font-fira-condensed)]">
-                Map
-              </span>
-              <div className="bg-gray-200 rounded overflow-hidden" style={{ height: "260px" }}>
-                {mapsApiKey ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={delivery?.routePolyline
-                      ? `https://maps.googleapis.com/maps/api/staticmap?size=600x260&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&path=color:0xF3A300ff|weight:5|enc:${encodeURIComponent(delivery.routePolyline)}&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}&markers=color:0xF3A300|47.8571,12.1181&key=${mapsApiKey}`
-                      : `https://maps.googleapis.com/maps/api/staticmap?center=47.8571,12.1181&zoom=8&size=600x260&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&markers=color:0xF3A300|47.8571,12.1181&key=${mapsApiKey}`
-                    }
-                    alt="Karte mit Route"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                    Karte wird geladen...
+            <div className="p-5 md:p-8 flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-3 flex-1">
+                {FEATURES_V3.map((f) => (
+                  <div key={f.label} className="flex items-start gap-3">
+                    <FeatureIconCircle type={f.icon} />
+                    <span className="text-[14px] text-[var(--brand-dark)] pt-1" style={{ fontWeight: 400, textTransform: "none" }}>{f.label}</span>
                   </div>
-                )}
+                ))}
+              </div>
+              <div className="flex-shrink-0 text-center md:text-right md:pl-8 md:border-l md:border-gray-200">
+                <p className="text-[44px] md:text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+                  {BASE_PRICE}&euro;
+                </p>
+                <p className="text-gray-500 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis</p>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* ===== GESAMTPREIS ===== */}
-      <div className="pt-8 pb-4">
-        <div className="max-w-[560px] mx-auto">
-          <div className="bg-white rounded-lg shadow-[0_2px_20px_rgba(0,0,0,0.08)] border border-gray-100 overflow-hidden">
-            {/* Header */}
-            <div className="bg-[#1a171b] text-white px-6 py-4">
-              <h3 className="text-[18px] uppercase tracking-wide font-[family-name:var(--font-fira-condensed)] font-extrabold">
+        {/* ===== STEP 2: EXTRAS ===== */}
+        <section className="py-8 md:py-10">
+          <SectionHeader stepLabel="Schritt 02" title="Extras hinzufügen" subtitle="Optional — wähle was Du brauchst" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {ADDONS.map((addon) => {
+              const active = selectedAddons.has(addon.id);
+              return (
+                <label
+                  key={addon.id}
+                  style={active
+                    ? { boxShadow: softShadow, background: darkHeaderBg, backgroundSize: "1000px 500px" }
+                    : { boxShadow: softShadow }
+                  }
+                  className={`flex gap-4 sm:gap-6 p-3 sm:p-4 rounded-lg cursor-pointer transition-all ${
+                    active ? "text-white" : "bg-white"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => toggleAddon(addon.id)}
+                    className="sr-only"
+                  />
+
+                  <div className="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={addon.image}
+                      alt={addon.name}
+                      className={`w-full h-auto ${active ? "invert" : ""}`}
+                    />
+                  </div>
+
+                  <div className="flex-1 min-w-0 pt-1 sm:pt-3">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-start sm:gap-2">
+                      <h4
+                        className={`font-bold text-[17px] sm:text-[22px] md:text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
+                          active ? "text-white" : "text-[var(--brand-dark)]"
+                        }`}
+                      >
+                        {addon.name}
+                      </h4>
+                      <span className="text-[#F3A300] font-extrabold whitespace-nowrap text-[20px] sm:text-[22px] font-[family-name:var(--font-fira-condensed)] leading-none">
+                        +{addon.price}&euro;
+                      </span>
+                    </div>
+                    <p
+                      className={`text-[13px] mt-3 line-clamp-2 ${
+                        active ? "text-gray-300" : "text-[#666]"
+                      }`}
+                      style={{ fontWeight: 400, textTransform: "none" }}
+                    >
+                      {addon.description}
+                    </p>
+                  </div>
+
+                  <div className="flex-shrink-0 self-center">
+                    <div
+                      className={`w-6 h-6 border-2 flex items-center justify-center rounded ${
+                        active ? "bg-[#F3A300] border-[#F3A300]" : "bg-white border-gray-300"
+                      }`}
+                    >
+                      {active && (
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ===== STEP 3: LIEFERUNG ===== */}
+        <section className="py-8 md:py-10">
+          <SectionHeader stepLabel="Schritt 03" title="Wohin liefern wir?" subtitle="Fahrtkosten automatisch berechnet" />
+
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              {/* Left: Input + Results */}
+              <div className="md:col-span-3 space-y-4">
+                <div>
+                  <label className="block text-[14px] font-extrabold text-[var(--brand-dark)] uppercase mb-2 font-[family-name:var(--font-fira-condensed)] tracking-wide">
+                    Veranstaltungsort
+                  </label>
+                  <div className="relative">
+                    <input
+                      ref={destinationInputRef}
+                      type="text"
+                      value={destination}
+                      onChange={handleDestinationChange}
+                      placeholder="Location oder Adresse eingeben..."
+                      className="w-full px-5 py-4 bg-white border-2 border-[var(--brand-dark)] rounded-lg text-[var(--brand-dark)] text-[17px] placeholder:text-gray-400 focus:border-[#F3A300] focus:outline-none"
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); runCalculation(destination); } }}
+                    />
+                    {deliveryLoading && (
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#F3A300] text-sm">
+                        Berechne...
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {deliveryError && <p className="text-red-600 text-sm">{deliveryError}</p>}
+
+                {delivery && (
+                  <div
+                    className="rounded-lg p-5 border-2"
+                    style={delivery.outsideDeliveryArea
+                      ? { borderColor: "#dc2626", backgroundColor: "#fef2f2" }
+                      : { borderColor: "#F3A300", backgroundColor: "#FFF8E7" }
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[13px] font-extrabold uppercase text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] tracking-wider">
+                          Entfernung
+                        </span>
+                        <p className="text-[24px] sm:text-[28px] md:text-[32px] font-extrabold text-[var(--brand-dark)] leading-none mt-1 font-[family-name:var(--font-fira-condensed)]">
+                          {delivery.distanceKm} km
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[13px] font-extrabold uppercase text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] tracking-wider">
+                          Fahrtkosten
+                        </span>
+                        <p className={`text-[24px] sm:text-[28px] md:text-[32px] font-extrabold leading-none mt-1 font-[family-name:var(--font-fira-condensed)] ${delivery.price === 0 ? "text-[var(--brand-dark)]" : "text-[#F3A300]"}`}>
+                          {delivery.price === 0 ? "Kostenlos" : `+${delivery.price.toFixed(2)} €`}
+                        </p>
+                      </div>
+                    </div>
+                    {delivery.outsideDeliveryArea && (
+                      <p className="mt-3 text-red-700 font-bold text-[13px] uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
+                        Außerhalb Liefergebiet — bitte kontaktiere uns direkt
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {!delivery && !deliveryLoading && !deliveryError && (
+                  <p className="text-[#666] text-[14px]" style={{ fontWeight: 400, textTransform: "none" }}>
+                    Die ersten 15 km ab Rosenheim sind kostenlos. Gib Deine Location ein, um die Fahrtkosten zu berechnen.
+                  </p>
+                )}
+              </div>
+
+              {/* Right: Map */}
+              <div className="md:col-span-2">
+                <div className="bg-gray-100 rounded-lg overflow-hidden h-[200px] md:h-full md:min-h-[200px]">
+                  {mapUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={mapUrl}
+                      alt="Karte"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Karte</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== STEP 4: ZUSAMMENFASSUNG ===== */}
+        <section className="py-8 md:py-10">
+          <SectionHeader stepLabel="Schritt 04" title="Dein Preis" subtitle="Zusammenfassung Deiner Konfiguration" />
+
+          <div
+            className="bg-white rounded-lg overflow-hidden"
+            style={{ boxShadow: softShadow }}
+          >
+            <div
+              className="px-6 py-4 md:px-8 md:py-5"
+              style={{ background: darkHeaderBg, backgroundSize: "1000px 500px" }}
+            >
+              <h3 className="text-white text-[20px] md:text-[22px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
                 Deine Konfiguration
               </h3>
             </div>
 
-            {/* Line items */}
-            <div className="px-6 py-4 divide-y divide-gray-100" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-              <div className="flex items-center justify-between py-3 text-[15px]">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#F3A300]/15 text-[#F3A300]">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <div className="px-5 md:px-8">
+              <div className="flex items-center justify-between gap-3 py-5 border-b border-gray-200">
+                <div className="flex items-center gap-4">
+                  <CheckIconCircle />
+                  <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
+                    Fotobox mit Drucker
                   </span>
-                  <span className="text-[#1a171b] font-semibold">Fotobox mit Drucker</span>
                 </div>
-                <span className="text-[#1a171b] font-semibold tabular-nums">{BASE_PRICE.toFixed(2)} €</span>
+                <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap tabular-nums">
+                  {BASE_PRICE.toFixed(2)} &euro;
+                </span>
               </div>
 
-              {ADDONS.filter((a) => selectedAddons.has(a.id)).map((addon) => (
-                <div key={addon.id} className="flex items-center justify-between py-3 text-[15px]">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#F3A300]/15 text-[#F3A300]">
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              {selectedAddonsList.map((addon) => (
+                <div key={addon.id} className="flex items-center justify-between gap-3 py-5 border-b border-gray-200">
+                  <div className="flex items-center gap-4">
+                    <CheckIconCircle />
+                    <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
+                      {addon.name}
                     </span>
-                    <span className="text-[#1a171b]">{addon.name}</span>
                   </div>
-                  <span className="text-[#1a171b] tabular-nums">{addon.price.toFixed(2)} €</span>
+                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap tabular-nums">
+                    {addon.price.toFixed(2)} &euro;
+                  </span>
                 </div>
               ))}
 
               {deliveryPrice > 0 && (
-                <div className="flex items-center justify-between py-3 text-[15px]">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-gray-500">
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M3 17h2l2-8h10l2 8h2" strokeLinecap="round" strokeLinejoin="round" />
-                        <circle cx="7" cy="17" r="2" />
-                        <circle cx="17" cy="17" r="2" />
-                      </svg>
-                    </span>
-                    <span className="text-[#1a171b]">
-                      Fahrtkosten
-                      <span className="text-[#999] text-[13px] ml-1">({delivery?.distanceKm} km)</span>
+                <div className="flex items-center justify-between gap-3 py-5 border-b border-gray-200">
+                  <div className="flex items-center gap-4">
+                    <CheckIconCircle />
+                    <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
+                      Fahrtkosten ({delivery?.distanceKm} km)
                     </span>
                   </div>
-                  <span className="text-[#1a171b] tabular-nums">{deliveryPrice.toFixed(2)} €</span>
+                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap tabular-nums">
+                    {deliveryPrice.toFixed(2)} &euro;
+                  </span>
                 </div>
               )}
             </div>
 
-            {/* Total */}
-            <div className="bg-[#f9f9f9] border-t border-gray-200 px-6 py-5 flex items-baseline justify-between">
-              <span className="text-[14px] uppercase tracking-wider text-[#666] font-[family-name:var(--font-fira-condensed)] font-extrabold">
+            <div className="bg-[#F3F4F6] px-5 py-5 md:px-8 md:py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4">
+              <span className="text-[14px] md:text-[15px] font-extrabold text-gray-500 uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]">
                 Gesamtpreis
               </span>
-              <span className="text-[42px] md:text-[52px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)] tabular-nums">
-                {totalPrice.toFixed(2)}&nbsp;€
-              </span>
-            </div>
-          </div>
-
-          {!showInquiry && submitStatus !== "success" && (
-            <div className="mt-8 text-center">
-              <button
-                type="button"
-                onClick={openInquiry}
-                className="px-12 py-5 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors text-2xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
-              >
-                Jetzt unverbindlich anfragen
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ===== INQUIRY FORM ===== */}
-      {(showInquiry || submitStatus === "success") && (
-      <div id="jetzt-reservieren" ref={inquiryRef} className="scroll-mt-28">
-        <div className="text-center mb-8">
-          <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
-            Jetzt reservieren
-          </h2>
-          <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
-            Datum wählen und unverbindlich anfragen
-          </p>
-        </div>
-
-        {submitStatus === "success" ? (
-          <div className="max-w-[700px] mx-auto bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-            <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <h3 className="text-xl font-semibold text-green-800 mb-2">
-              Anfrage erfolgreich gesendet!
-            </h3>
-            <p className="text-green-700">
-              Wir melden uns schnellstmöglich bei Dir. Prüfe auch Deinen Spam-Ordner.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Left: Calendar */}
-              <MiniCalendar
-                selected={inquiry.datum}
-                onSelect={(date) => setInquiry((prev) => ({ ...prev, datum: date }))}
-              />
-
-              {/* Right: Contact fields */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <input type="text" name="vorname" required placeholder="Vorname" value={inquiry.vorname} onChange={handleInquiryChange} className={inputClass} />
-                  <input type="text" name="nachname" required placeholder="Nachname" value={inquiry.nachname} onChange={handleInquiryChange} className={inputClass} />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <input type="tel" name="telefon" required placeholder="Telefon *" value={inquiry.telefon} onChange={handleInquiryChange} className={inputClass} />
-                  <input type="email" name="email" required placeholder="E-Mail *" value={inquiry.email} onChange={handleInquiryChange} className={inputClass} />
-                </div>
-
-                <div className="flex gap-6 py-2">
-                  <ToggleSwitch label="Hochzeit" checked={inquiry.eventType === "Hochzeit"} onChange={() => toggleEventType("Hochzeit")} />
-                  <ToggleSwitch label="Geburtstag" checked={inquiry.eventType === "Geburtstag"} onChange={() => toggleEventType("Geburtstag")} />
-                  <ToggleSwitch label="Firmenevent" checked={inquiry.eventType === "Firmenevent"} onChange={() => toggleEventType("Firmenevent")} />
-                </div>
-
-                <textarea
-                  name="nachricht"
-                  rows={3}
-                  placeholder="Fragen / Anmerkungen"
-                  value={inquiry.nachricht}
-                  onChange={handleInquiryChange}
-                  className={inputClass + " resize-y"}
-                />
-
-                <p className="text-xs text-gray-500">
-                  Veranstaltungsort, Zubehör und Preis werden aus dem Konfigurator übernommen. Detaillierte Informationen zum Umgang mit Nutzerdaten findest Du in unserer{" "}
-                  <a href="/datenschutzerklaerung" className="underline hover:text-[#F3A300]">Datenschutzerklärung</a>.
-                </p>
+              <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center sm:justify-end">
+                <span className="text-[30px] sm:text-[36px] md:text-[44px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+                  {totalPrice.toFixed(2)} &euro;
+                </span>
+                {!showInquiry && submitStatus !== "success" && (
+                  <button
+                    type="button"
+                    onClick={openInquiry}
+                    className="btn-brand text-[15px] sm:text-[16px] px-5 sm:px-6 py-3 whitespace-nowrap"
+                  >
+                    Jetzt reservieren
+                  </button>
+                )}
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="text-center mt-8">
-              <button
-                type="submit"
-                disabled={submitStatus === "loading" || deliveryLoading}
-                className="px-12 py-5 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-2xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
-              >
-                {submitStatus === "loading" ? "Wird gesendet..." : "Jetzt reservieren"}
-              </button>
-            </div>
+        {/* ===== INQUIRY FORM ===== */}
+        {(showInquiry || submitStatus === "success") && (
+          <section ref={inquiryRef} className="py-8 md:py-10 scroll-mt-28">
+            <SectionHeader title="Jetzt reservieren" subtitle="Datum wählen und unverbindlich anfragen" />
 
-            {submitError && (
-              <p className="text-red-600 text-sm text-center mt-4">{submitError}</p>
+            {submitStatus === "success" ? (
+              <div className="max-w-[700px] mx-auto bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <h3 className="text-xl font-semibold text-green-800 mb-2">
+                  Anfrage erfolgreich gesendet!
+                </h3>
+                <p className="text-green-700">
+                  Wir melden uns schnellstmöglich bei Dir. Prüfe auch Deinen Spam-Ordner.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <MiniCalendar
+                      selected={inquiry.datum}
+                      onSelect={(date) => setInquiry((prev) => ({ ...prev, datum: date }))}
+                    />
+
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" name="vorname" required placeholder="Vorname" value={inquiry.vorname} onChange={handleInquiryChange} className={inputClass} />
+                        <input type="text" name="nachname" required placeholder="Nachname" value={inquiry.nachname} onChange={handleInquiryChange} className={inputClass} />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="tel" name="telefon" required placeholder="Telefon *" value={inquiry.telefon} onChange={handleInquiryChange} className={inputClass} />
+                        <input type="email" name="email" required placeholder="E-Mail *" value={inquiry.email} onChange={handleInquiryChange} className={inputClass} />
+                      </div>
+
+                      <div className="flex flex-wrap gap-4 sm:gap-6 py-2 justify-center sm:justify-start">
+                        <ToggleSwitch label="Hochzeit" checked={inquiry.eventType === "Hochzeit"} onChange={() => toggleEventType("Hochzeit")} />
+                        <ToggleSwitch label="Geburtstag" checked={inquiry.eventType === "Geburtstag"} onChange={() => toggleEventType("Geburtstag")} />
+                        <ToggleSwitch label="Firmenevent" checked={inquiry.eventType === "Firmenevent"} onChange={() => toggleEventType("Firmenevent")} />
+                      </div>
+
+                      <textarea
+                        name="nachricht"
+                        rows={3}
+                        placeholder="Fragen / Anmerkungen"
+                        value={inquiry.nachricht}
+                        onChange={handleInquiryChange}
+                        className={inputClass + " resize-y"}
+                      />
+
+                      <p className="text-xs text-gray-500">
+                        Veranstaltungsort, Zubehör und Preis werden aus dem Konfigurator übernommen. Detaillierte Informationen zum Umgang mit Nutzerdaten findest Du in unserer{" "}
+                        <a href="/datenschutzerklaerung" className="underline hover:text-[#F3A300]">Datenschutzerklärung</a>.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="text-center mt-8">
+                    <button
+                      type="submit"
+                      disabled={submitStatus === "loading" || deliveryLoading}
+                      className="btn-brand disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {submitStatus === "loading" ? "Wird gesendet..." : "Jetzt reservieren"}
+                    </button>
+                  </div>
+
+                  {submitError && (
+                    <p className="text-red-600 text-sm text-center mt-4">{submitError}</p>
+                  )}
+
+                  {submitStatus === "error" && (
+                    <p className="text-red-600 text-sm text-center mt-4">
+                      Es gab einen Fehler. Bitte versuche es erneut oder kontaktiere uns direkt.
+                    </p>
+                  )}
+                </form>
+              </div>
             )}
-
-            {submitStatus === "error" && (
-              <p className="text-red-600 text-sm text-center mt-4">
-                Es gab einen Fehler. Bitte versuche es erneut oder kontaktiere uns direkt.
-              </p>
-            )}
-          </form>
+          </section>
         )}
       </div>
-      )}
-    </div>
+
+      {/* ===== STICKY BOTTOM BAR ===== */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 bg-[var(--brand-dark)] border-t border-white/10 transition-transform duration-300 ${
+          stickyVisible && !showInquiry ? "translate-y-0" : "translate-y-full"
+        }`}
+        style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.3)" }}
+      >
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <span className="text-gray-400 text-[14px] hidden sm:inline uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
+              Dein Preis:
+            </span>
+            <span className="text-[24px] sm:text-[32px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)] whitespace-nowrap">
+              {totalPrice.toFixed(2)}&euro;
+            </span>
+            {(selectedAddonsList.length > 0 || deliveryPrice > 0) && (
+              <span className="text-gray-500 text-[12px] hidden md:inline" style={{ fontWeight: 400, textTransform: "none" }}>
+                ({BASE_PRICE}€ Basis{selectedAddonsList.length > 0 ? ` + ${addonsTotal}€ Extras` : ""}{deliveryPrice > 0 ? ` + ${deliveryPrice}€ Fahrt` : ""})
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={openInquiry}
+            className="bg-[#F3A300] hover:bg-[#d99200] text-[var(--brand-dark)] font-bold text-[13px] sm:text-[16px] uppercase px-3 sm:px-6 py-2.5 sm:py-3 rounded-md transition-colors font-[family-name:var(--font-fira-condensed)] tracking-wide whitespace-nowrap flex-shrink-0"
+          >
+            <span className="sm:hidden">Reservieren</span>
+            <span className="hidden sm:inline">Jetzt reservieren</span>
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
