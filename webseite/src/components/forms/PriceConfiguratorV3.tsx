@@ -109,7 +109,7 @@ function ToggleSwitch({ label, checked, onChange }: { label: string; checked: bo
 
 function SectionHeader({ stepLabel, title, subtitle }: { stepLabel?: string; title: string; subtitle?: string }) {
   return (
-    <div className="text-center mb-10 md:mb-12">
+    <div className="text-center mb-6 md:mb-8">
       {stepLabel && (
         <p className="text-[13px] md:text-[14px] font-extrabold text-[#F3A300] uppercase tracking-[0.25em] mb-3 font-[family-name:var(--font-fira-condensed)]">
           {stepLabel}
@@ -335,7 +335,7 @@ export default function PriceConfiguratorV3() {
       <div className="max-w-[1100px] mx-auto px-6 pt-6 pb-32">
 
         {/* ===== STEP 1: BASISPAKET ===== */}
-        <section className="py-12 md:py-16">
+        <section className="py-8 md:py-10">
           <SectionHeader stepLabel="Schritt 01" title="Dein Basispaket" subtitle="Alles inklusive zum Festpreis" />
 
           <div
@@ -370,7 +370,7 @@ export default function PriceConfiguratorV3() {
         </section>
 
         {/* ===== STEP 2: EXTRAS ===== */}
-        <section className="py-12 md:py-16">
+        <section className="py-8 md:py-10">
           <SectionHeader stepLabel="Schritt 02" title="Extras hinzufügen" subtitle="Optional — wähle was Du brauchst" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -446,7 +446,7 @@ export default function PriceConfiguratorV3() {
         </section>
 
         {/* ===== STEP 3: LIEFERUNG ===== */}
-        <section className="py-12 md:py-16">
+        <section className="py-8 md:py-10">
           <SectionHeader stepLabel="Schritt 03" title="Wohin liefern wir?" subtitle="Fahrtkosten automatisch berechnet" />
 
           <div>
@@ -538,7 +538,7 @@ export default function PriceConfiguratorV3() {
         </section>
 
         {/* ===== STEP 4: ZUSAMMENFASSUNG ===== */}
-        <section className="py-12 md:py-16">
+        <section className="py-8 md:py-10">
           <SectionHeader stepLabel="Schritt 04" title="Dein Preis" subtitle="Zusammenfassung Deiner Konfiguration" />
 
           <div
@@ -620,7 +620,7 @@ export default function PriceConfiguratorV3() {
 
         {/* ===== INQUIRY FORM ===== */}
         {(showInquiry || submitStatus === "success") && (
-          <section ref={inquiryRef} className="py-12 md:py-16 scroll-mt-28">
+          <section ref={inquiryRef} className="py-8 md:py-10 scroll-mt-28">
             <SectionHeader title="Jetzt reservieren" subtitle="Datum wählen und unverbindlich anfragen" />
 
             {submitStatus === "success" ? (

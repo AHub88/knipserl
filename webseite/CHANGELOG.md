@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.15] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3: Vertikaler Abstand zwischen den Steps reduziert — Sections von `py-12 md:py-16` auf `py-8 md:py-10`, SectionHeader-Margin von `mb-10 md:mb-12` auf `mb-6 md:mb-8`. Netto etwa 35% weniger Weißraum zwischen Steps, dadurch kompakterer Gesamteindruck ohne dass die Steps zusammenkleben.
+
 ## [1.7.14] — 2026-04-22
 
 ### Changed
