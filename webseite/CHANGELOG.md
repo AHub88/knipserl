@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.4] — 2026-04-22
+
+### Fixed
+- Footer: Die Überschrift "Du hast Fragen?" brach auf Desktop in zwei Zeilen um, weil bei 5 gleich breiten Spalten die letzte Spalte zu schmal war. Grid jetzt mit fraktionalen Spaltenbreiten (`1fr 1fr 2fr 1.4fr`) — Link-Spalte bleibt doppelt so breit, die "Du hast Fragen?"-Spalte bekommt etwas mehr Platz und die Überschrift ist wieder einzeilig.
+
 ## [1.7.3] — 2026-04-22
 
 ### Added

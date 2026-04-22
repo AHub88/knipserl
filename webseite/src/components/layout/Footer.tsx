@@ -77,7 +77,7 @@ export default async function Footer() {
       />
       {/* Main footer content */}
       <div className="pt-20 pb-14">
-        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-white">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr_1.4fr] gap-10 text-white">
           {/* Anschrift */}
           <div>
             <h3
@@ -133,7 +133,7 @@ export default async function Footer() {
           </div>
 
           {/* Mehr Infos */}
-          <div className="lg:col-span-2">
+          <div>
             <h3
               className="text-white text-[28px] font-extrabold mb-5"
               style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif", textTransform: "uppercase" }}
