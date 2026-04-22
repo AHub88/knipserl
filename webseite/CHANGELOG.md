@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.7] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v2, Step 1 (Basispaket): Zur Designentscheidung werden aktuell drei Varianten der "Fotobox mit Drucker"-Box untereinander angezeigt: (A) helle Card mit dunkler Header-Leiste wie die Summary-Box, (B) dunkle Holz-Textur-Box mit gerissenen Papierrändern wie die MOMENTE-Sections, (C) helles Pappschild-Layout mit orange Akzentkante und gedrehtem Preis-Badge. Nach der Entscheidung wird der Vergleich wieder auf eine Variante reduziert.
+
 ## [1.7.6] — 2026-04-22
 
 ### Added

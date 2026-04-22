@@ -253,35 +253,140 @@ export default function PriceConfiguratorV2() {
   return (
     <>
       <div className="max-w-[1100px] mx-auto px-6 pb-32">
-        {/* ===== STEP 1: BASISPAKET ===== */}
+        {/* ===== STEP 1: BASISPAKET — 3 VARIANTEN ZUM VERGLEICHEN ===== */}
         <section id="step-1" className="py-12">
           <StepHeader step={1} title="Dein Basispaket" subtitle="Alles inklusive zum Festpreis" />
 
-          <div
-            className="bg-[var(--brand-dark)] rounded-lg p-6 md:p-8 text-white"
-            style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
-          >
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <div>
-                <h3 className="text-[32px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)]">
-                  Fotobox mit Drucker
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mt-4">
-                  {INCLUDED_FEATURES.map((f) => (
-                    <div key={f} className="flex items-start gap-2">
-                      <CheckIcon />
-                      <span className="text-[14px] text-gray-200" style={{ fontWeight: 400, textTransform: "none" }}>{f}</span>
-                    </div>
-                  ))}
+          <div className="space-y-16">
+
+            {/* ========== VARIANTE A: Helle Card mit dunkler Header-Leiste ========== */}
+            <div>
+              <div className="mb-4 flex flex-wrap items-baseline gap-3">
+                <span className="inline-block bg-[#F3A300] text-white text-[14px] font-extrabold uppercase tracking-wider px-3 py-1 rounded font-[family-name:var(--font-fira-condensed)]">
+                  Variante A
+                </span>
+                <span className="text-[14px] text-gray-500" style={{ fontWeight: 400, textTransform: "none" }}>
+                  Helle Card mit dunkler Header-Leiste — spiegelt die Summary-Box aus Step 4
+                </span>
+              </div>
+
+              <div
+                className="bg-white rounded-lg overflow-hidden"
+                style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
+              >
+                <div className="bg-[var(--brand-dark)] px-6 py-4 md:px-8 md:py-5">
+                  <h3 className="text-white text-[24px] md:text-[28px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
+                    Fotobox mit Drucker
+                  </h3>
+                </div>
+                <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 flex-1">
+                    {INCLUDED_FEATURES.map((f) => (
+                      <div key={f} className="flex items-start gap-3">
+                        <CheckIconCircle />
+                        <span className="text-[14px] text-[var(--brand-dark)] pt-1" style={{ fontWeight: 400, textTransform: "none" }}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex-shrink-0 text-center md:text-right md:pl-8 md:border-l md:border-gray-200">
+                    <p className="text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+                      {BASE_PRICE}&euro;
+                    </p>
+                    <p className="text-gray-500 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex-shrink-0 text-center md:text-right">
-                <p className="text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
-                  {BASE_PRICE}&euro;
-                </p>
-                <p className="text-gray-400 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis</p>
+            </div>
+
+            {/* ========== VARIANTE B: Dunkle Holz-Textur mit rough-Kanten ========== */}
+            <div>
+              <div className="mb-4 flex flex-wrap items-baseline gap-3">
+                <span className="inline-block bg-[#F3A300] text-white text-[14px] font-extrabold uppercase tracking-wider px-3 py-1 rounded font-[family-name:var(--font-fira-condensed)]">
+                  Variante B
+                </span>
+                <span className="text-[14px] text-gray-500" style={{ fontWeight: 400, textTransform: "none" }}>
+                  Dunkle Holz-Textur mit gerissenen Papierrändern — wie die MOMENTE-Sections auf den Landingpages
+                </span>
+              </div>
+
+              <section
+                className="relative z-10 py-12 md:py-14 rough-top rough-bottom text-white"
+                style={{ background: "#1a171b url('/images/misc/main_back_gr-2.webp') repeat", backgroundSize: "1000px 500px" }}
+              >
+                <div className="px-6 md:px-12">
+                  <div className="text-center mb-8">
+                    <h3 className="heading-decorated text-[30px] md:text-[42px] inline-block leading-[1.05]">
+                      Fotobox mit Drucker
+                    </h3>
+                  </div>
+                  <div className="flex flex-col md:flex-row md:items-center gap-10 max-w-[1000px] mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 flex-1">
+                      {INCLUDED_FEATURES.map((f) => (
+                        <div key={f} className="flex items-start gap-2">
+                          <CheckIcon />
+                          <span className="text-[14px] text-gray-200" style={{ fontWeight: 400, textTransform: "none" }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex-shrink-0 text-center md:text-right md:pl-8 md:border-l md:border-white/20">
+                      <p className="text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+                        {BASE_PRICE}&euro;
+                      </p>
+                      <p className="text-gray-400 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* ========== VARIANTE C: Pappschild-Look mit gedrehtem Preis-Badge ========== */}
+            <div>
+              <div className="mb-4 flex flex-wrap items-baseline gap-3">
+                <span className="inline-block bg-[#F3A300] text-white text-[14px] font-extrabold uppercase tracking-wider px-3 py-1 rounded font-[family-name:var(--font-fira-condensed)]">
+                  Variante C
+                </span>
+                <span className="text-[14px] text-gray-500" style={{ fontWeight: 400, textTransform: "none" }}>
+                  Pappschild-Look — helles Papier, orange Akzentkante, gedrehtes Preis-Pappschild
+                </span>
+              </div>
+
+              <div
+                className="relative bg-white rounded-md border-l-[6px] border-[#F3A300] p-6 md:p-10"
+                style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.15), 0 6px 6px rgba(0,0,0,0.20)" }}
+              >
+                <div className="flex flex-col md:flex-row md:items-start gap-8">
+                  <div className="flex-1">
+                    <h3 className="text-[28px] md:text-[36px] text-[var(--brand-dark)] font-extrabold uppercase mb-6 font-[family-name:var(--font-fira-condensed)] leading-[1.05]">
+                      Fotobox mit Drucker
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                      {INCLUDED_FEATURES.map((f) => (
+                        <div key={f} className="flex items-start gap-2">
+                          <svg className="w-5 h-5 text-[#F3A300] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-[14px] text-[var(--brand-dark)]" style={{ fontWeight: 400, textTransform: "none" }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Preis-Pappschild */}
+                  <div
+                    className="flex-shrink-0 self-center md:self-start md:mt-2 bg-[var(--brand-dark)] px-6 py-4 rotate-[-2deg]"
+                    style={{ boxShadow: "0 8px 18px rgba(0,0,0,0.35)" }}
+                  >
+                    <p className="text-[40px] md:text-[48px] leading-none font-extrabold text-[#F3A300] font-[family-name:var(--font-fira-condensed)] tracking-tight">
+                      {BASE_PRICE}&euro;
+                    </p>
+                    <p className="text-[11px] text-gray-400 text-center uppercase tracking-[0.15em] mt-2 font-[family-name:var(--font-fira-condensed)] font-bold">
+                      Festpreis
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </section>
 
