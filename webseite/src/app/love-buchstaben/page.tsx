@@ -3,8 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImpressionSection from "@/components/ImpressionSection";
+import SlotImage from "@/components/SlotImage";
 import PageHeader from "@/components/layout/PageHeader";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
+import { fetchPageData } from "@/lib/pages";
 
 export const metadata: Metadata = generatePageMetadata({
   title: "XXL LOVE Leuchtbuchstaben mieten — Hochzeit, Antrag, Jubiläum",
@@ -17,11 +19,13 @@ export const metadata: Metadata = generatePageMetadata({
 // Force dynamic: fetch aus Admin bei jedem Request, keine statische Vorberechnung
 export const dynamic = "force-dynamic";
 
-export default function LoveBuchstabenPage() {
+export default async function LoveBuchstabenPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
     { name: "XXL LOVE Leuchtbuchstaben", url: "/love-buchstaben" },
   ]);
+  const pageData = await fetchPageData("love-buchstaben");
+  const slots = pageData?.slots ?? {};
 
   return (
     <>
@@ -61,12 +65,12 @@ export default function LoveBuchstabenPage() {
               </div>
             </div>
             <div className="relative aspect-[3/4] w-full max-w-[450px] mx-auto shadow-2xl">
-              <Image
-                src="/images/addons/love-buchstaben.jpg"
+              <SlotImage
+                slot={slots.hero}
+                fallbackSrc="/images/addons/love-buchstaben.jpg"
                 alt="XXL LOVE Leuchtbuchstaben — 120cm hoch, beleuchtet"
                 fill
                 priority
-                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 450px"
               />
             </div>

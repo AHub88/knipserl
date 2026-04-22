@@ -4,6 +4,13 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.0] — 2026-04-22
+
+### Added
+- Neue Komponente `<SlotImage>`: rendert entweder das im Admin unter Seiten gepflegte Bild (`<picture>` mit AVIF/WebP-Srcset) oder einen statischen Fallback aus dem Code — drop-in-replacement für `<Image>`-Tags auf Landing-Pages.
+- CityLandingPage (9 Städte): Hero-, Bedienung- und Fotoprops-Bilder sind jetzt austauschbar über `/pages/fotobox-[stadt]` im Admin.
+- Produkt-Pages (Hochzeit, Firmenfeier, Messe, Weihnachtsfeier, LOVE-Buchstaben): Hero-Bild austauschbar über `/pages/[slug]` im Admin.
+
 ## [1.6.0] — 2026-04-21
 
 ### Added

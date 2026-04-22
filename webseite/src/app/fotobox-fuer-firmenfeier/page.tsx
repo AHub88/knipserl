@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImpressionSection from "@/components/ImpressionSection";
+import SlotImage from "@/components/SlotImage";
 import PageHeader from "@/components/layout/PageHeader";
 import { BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
+import { fetchPageData } from "@/lib/pages";
 
 export const metadata: Metadata = generatePageMetadata({
   title: "Fotobox für Firmenfeier mieten — Unvergessliche Erinnerungen",
@@ -18,11 +20,13 @@ export const metadata: Metadata = generatePageMetadata({
 // Force dynamic: fetch aus Admin bei jedem Request, keine statische Vorberechnung
 export const dynamic = "force-dynamic";
 
-export default function FotoboxFirmenfeierPage() {
+export default async function FotoboxFirmenfeierPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
     { name: "Fotobox für Firmenfeier", url: "/fotobox-fuer-firmenfeier" },
   ]);
+  const pageData = await fetchPageData("fotobox-fuer-firmenfeier");
+  const slots = pageData?.slots ?? {};
 
   return (
     <>
@@ -62,12 +66,12 @@ export default function FotoboxFirmenfeierPage() {
               </div>
             </div>
             <div className="relative aspect-[3/4] w-full max-w-[450px] mx-auto shadow-2xl">
-              <Image
-                src="/images/misc/knipsi-firmenfeier.png"
+              <SlotImage
+                slot={slots.hero}
+                fallbackSrc="/images/misc/knipsi-firmenfeier.png"
                 alt="Knipserl Fotobox für die Firmenfeier"
                 fill
                 priority
-                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 450px"
               />
             </div>

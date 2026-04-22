@@ -26,6 +26,18 @@ export type PageDefinition = {
   slots: SlotDefinition[];
 };
 
+// Städte teilen identisches Seiten-Layout — gleiche Slot-Definitionen überall.
+const CITY_SLOTS: SlotDefinition[] = [
+  { key: "hero", label: "Hero-Bild (oben rechts, hochformat)", aspectRatio: "3/4" },
+  { key: "bedienung", label: "Bedienung (2-Spalter, unten links)", aspectRatio: "4/3" },
+  { key: "fotoprops", label: "Beste Party / Fotoprops (2-Spalter, unten rechts)", aspectRatio: "4/3" },
+];
+
+// Produkt-Pages haben aktuell nur das Hero-Bild aus dem Template.
+const PRODUCT_SLOTS: SlotDefinition[] = [
+  { key: "hero", label: "Hero-Bild (oben rechts, hochformat)", aspectRatio: "3/4" },
+];
+
 export const PAGE_DEFINITIONS: PageDefinition[] = [
   // ── Spezial ────────────────────────────────────────────────
   {
@@ -44,9 +56,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 10,
     hasImpressionSection: false,
-    slots: [
-      { key: "hero", label: "Hero-Bild", aspectRatio: "16/9" },
-    ],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-fuer-muenchen",
@@ -54,9 +64,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 11,
     hasImpressionSection: false,
-    slots: [
-      { key: "hero", label: "Hero-Bild", aspectRatio: "16/9" },
-    ],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-ebersberg",
@@ -64,7 +72,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 12,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-miesbach",
@@ -72,7 +80,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 13,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-traunstein",
@@ -80,7 +88,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 14,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-wasserburg",
@@ -88,7 +96,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 15,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-muehldorf",
@@ -96,7 +104,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 16,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-erding",
@@ -104,7 +112,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 17,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
   {
     slug: "fotobox-kufstein",
@@ -112,7 +120,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "city",
     sortOrder: 18,
     hasImpressionSection: false,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: CITY_SLOTS,
   },
 
   // ── Produkt-Pages ───────────────────────────────────────────
@@ -122,7 +130,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "product",
     sortOrder: 20,
     hasImpressionSection: true,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: PRODUCT_SLOTS,
   },
   {
     slug: "fotobox-fuer-firmenfeier",
@@ -130,7 +138,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "product",
     sortOrder: 21,
     hasImpressionSection: true,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: PRODUCT_SLOTS,
   },
   {
     slug: "fotobox-fuer-messe",
@@ -138,7 +146,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "product",
     sortOrder: 22,
     hasImpressionSection: true,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: PRODUCT_SLOTS,
   },
   {
     slug: "fotobox-fuer-weihnachtsfeier",
@@ -146,7 +154,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "product",
     sortOrder: 23,
     hasImpressionSection: true,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: PRODUCT_SLOTS,
   },
   {
     slug: "love-buchstaben",
@@ -154,7 +162,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "product",
     sortOrder: 30,
     hasImpressionSection: true,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: PRODUCT_SLOTS,
   },
   {
     slug: "audio-gaestebuch",
@@ -162,7 +170,7 @@ export const PAGE_DEFINITIONS: PageDefinition[] = [
     category: "product",
     sortOrder: 31,
     hasImpressionSection: true,
-    slots: [{ key: "hero", label: "Hero-Bild", aspectRatio: "16/9" }],
+    slots: PRODUCT_SLOTS,
   },
 ];
 

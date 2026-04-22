@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImpressionSection from "@/components/ImpressionSection";
+import SlotImage from "@/components/SlotImage";
 import PageHeader from "@/components/layout/PageHeader";
+import { fetchPageData } from "@/lib/pages";
 import {
   SEO_CITIES,
   BASE_PRICE,
@@ -38,6 +40,9 @@ export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
   if (!city) notFound();
 
   const urlPath = cityUrlPath(slug);
+  const pageSlug = urlPath.replace(/^\//, "");
+  const pageData = await fetchPageData(pageSlug);
+  const slots = pageData?.slots ?? {};
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
@@ -141,12 +146,12 @@ export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
               </div>
             </div>
             <div className="relative aspect-[3/4] w-full max-w-[450px] mx-auto shadow-2xl">
-              <Image
-                src="/images/landing/fotobox-mieten.jpg"
+              <SlotImage
+                slot={slots.hero}
+                fallbackSrc="/images/landing/fotobox-mieten.jpg"
                 alt={`Knipserl Fotobox mieten in ${city.name}`}
                 fill
                 priority
-                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 450px"
               />
             </div>
@@ -204,11 +209,11 @@ export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
               </div>
               <div className="mt-8 md:mt-auto md:pt-10">
                 <div className="relative aspect-[4/3] shadow-xl">
-                  <Image
-                    src="/images/landing/einfache-bedienung.png"
+                  <SlotImage
+                    slot={slots.bedienung}
+                    fallbackSrc="/images/landing/einfache-bedienung.png"
                     alt="Einfache Bedienung der Knipserl Fotobox über den 22-Zoll-Touchscreen"
                     fill
-                    className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
@@ -227,11 +232,11 @@ export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
               </div>
               <div className="mt-8 md:mt-auto md:pt-10">
                 <div className="relative aspect-[4/3] shadow-xl">
-                  <Image
-                    src="/images/landing/unsere-fotoprops.webp"
+                  <SlotImage
+                    slot={slots.fotoprops}
+                    fallbackSrc="/images/landing/unsere-fotoprops.webp"
                     alt={`Gäste mit Fotoprops an der Knipserl Fotobox in ${city.name}`}
                     fill
-                    className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>

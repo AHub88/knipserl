@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImpressionSection from "@/components/ImpressionSection";
+import SlotImage from "@/components/SlotImage";
 import PageHeader from "@/components/layout/PageHeader";
 import { BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
+import { fetchPageData } from "@/lib/pages";
 
 export const metadata: Metadata = generatePageMetadata({
   title: "Fotobox für deinen Messestand inkl. Drucker mieten",
@@ -18,11 +20,13 @@ export const metadata: Metadata = generatePageMetadata({
 // Force dynamic: fetch aus Admin bei jedem Request, keine statische Vorberechnung
 export const dynamic = "force-dynamic";
 
-export default function FotoboxMessePage() {
+export default async function FotoboxMessePage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Startseite", url: "/" },
     { name: "Fotobox für Messe", url: "/fotobox-fuer-messe" },
   ]);
+  const pageData = await fetchPageData("fotobox-fuer-messe");
+  const slots = pageData?.slots ?? {};
 
   return (
     <>
@@ -62,12 +66,12 @@ export default function FotoboxMessePage() {
               </div>
             </div>
             <div className="relative aspect-[3/4] w-full max-w-[450px] mx-auto shadow-2xl">
-              <Image
-                src="/images/fotobox/fotobox-setup-venue.jpg"
+              <SlotImage
+                slot={slots.hero}
+                fallbackSrc="/images/fotobox/fotobox-setup-venue.jpg"
                 alt="Knipserl Fotobox am Messestand"
                 fill
                 priority
-                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 450px"
               />
             </div>

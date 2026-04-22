@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.0] — 2026-04-22
+
+### Added
+- Stadt-Pages haben 3 pflegbare Bildslots: **Hero** (oben rechts, Hochformat), **Bedienung** (2-Spalter unten links), **Fotoprops / Beste Party** (2-Spalter unten rechts).
+- Produkt-Pages (Hochzeit, Firmenfeier, Messe, Weihnachtsfeier, LOVE-Buchstaben, Audio-Gästebuch) haben 1 pflegbaren Bildslot: **Hero**.
+- Slot-Labels nennen die Position auf der Seite, damit klar ist wo das Bild landet.
+
+### Changed
+- Pro-Slot-Definitionen in `page-definitions.ts` als `CITY_SLOTS` / `PRODUCT_SLOTS` Konstanten zentralisiert — neue Seiten gleichen Typs übernehmen die Slots automatisch.
+
 ## [1.3.2] — 2026-04-21
 
 ### Changed
