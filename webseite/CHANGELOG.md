@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.11] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3: Aktivierte Addon-Karten (Step 2) bekommen dieselbe `main_back_gr-2.webp` Grunge-Textur als Hintergrund wie die Dark-Header in Step 1 und Step 4. Vorher war der Active-State ein flaches Schwarz — jetzt konsistent im Knipserl-Stoff-Look.
+
 ## [1.7.10] — 2026-04-22
 
 ### Changed

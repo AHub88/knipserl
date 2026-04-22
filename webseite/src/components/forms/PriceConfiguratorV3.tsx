@@ -292,9 +292,12 @@ export default function PriceConfiguratorV3() {
               return (
                 <label
                   key={addon.id}
-                  style={{ boxShadow: softShadow }}
+                  style={active
+                    ? { boxShadow: softShadow, background: darkHeaderBg, backgroundSize: "1000px 500px" }
+                    : { boxShadow: softShadow }
+                  }
                   className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all ${
-                    active ? "bg-[var(--brand-dark)] text-white" : "bg-white"
+                    active ? "text-white" : "bg-white"
                   }`}
                 >
                   <input
