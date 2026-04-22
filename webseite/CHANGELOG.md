@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.13] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3: Einheitliche Preis-Typografie — alle Preis-Highlights nutzen jetzt Fira Condensed Extra-Bold. Vorher liefen die Preise in drei verschiedenen Schriften (Fira Condensed bei Hero/Gesamtpreis, Beyond The Mountains bei Addon-Preisen und Fahrtkosten, default Fira Sans bei Line-Items). Die cursive Beyond-The-Mountains-Schrift wird bei Beträgen wie "23,40 €" schnell unleserlich und ist jetzt den Überschriften vorbehalten. Line-Items in der Summary bekommen `tabular-nums` für saubere Zahlenausrichtung.
+
 ## [1.7.12] — 2026-04-22
 
 ### Changed

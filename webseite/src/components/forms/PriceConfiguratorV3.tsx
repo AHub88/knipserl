@@ -325,10 +325,7 @@ export default function PriceConfiguratorV3() {
                       >
                         {addon.name}
                       </h4>
-                      <span
-                        className="text-[#F3A300] font-bold whitespace-nowrap text-[18px]"
-                        style={{ fontFamily: "'Beyond The Mountains', cursive" }}
-                      >
+                      <span className="text-[#F3A300] font-extrabold whitespace-nowrap text-[22px] font-[family-name:var(--font-fira-condensed)] leading-none">
                         +{addon.price}&euro;
                       </span>
                     </div>
@@ -406,7 +403,7 @@ export default function PriceConfiguratorV3() {
                         <span className="text-[13px] font-extrabold uppercase text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] tracking-wider">
                           Entfernung
                         </span>
-                        <p className="text-[24px] md:text-[28px] font-bold text-[var(--brand-dark)] mt-1" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
+                        <p className="text-[28px] md:text-[32px] font-extrabold text-[var(--brand-dark)] leading-none mt-1 font-[family-name:var(--font-fira-condensed)]">
                           {delivery.distanceKm} km
                         </p>
                       </div>
@@ -414,7 +411,7 @@ export default function PriceConfiguratorV3() {
                         <span className="text-[13px] font-extrabold uppercase text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] tracking-wider">
                           Fahrtkosten
                         </span>
-                        <p className="text-[24px] md:text-[28px] font-bold text-[var(--brand-dark)] mt-1" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
+                        <p className={`text-[28px] md:text-[32px] font-extrabold leading-none mt-1 font-[family-name:var(--font-fira-condensed)] ${delivery.price === 0 ? "text-[var(--brand-dark)]" : "text-[#F3A300]"}`}>
                           {delivery.price === 0 ? "Kostenlos" : `+${delivery.price.toFixed(2)} €`}
                         </p>
                       </div>
@@ -478,7 +475,7 @@ export default function PriceConfiguratorV3() {
                     Fotobox mit Drucker
                   </span>
                 </div>
-                <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap">
+                <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap tabular-nums">
                   {BASE_PRICE.toFixed(2)} &euro;
                 </span>
               </div>
@@ -491,7 +488,7 @@ export default function PriceConfiguratorV3() {
                       {addon.name}
                     </span>
                   </div>
-                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap">
+                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap tabular-nums">
                     {addon.price.toFixed(2)} &euro;
                   </span>
                 </div>
@@ -505,7 +502,7 @@ export default function PriceConfiguratorV3() {
                       Fahrtkosten ({delivery?.distanceKm} km)
                     </span>
                   </div>
-                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap">
+                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap tabular-nums">
                     {deliveryPrice.toFixed(2)} &euro;
                   </span>
                 </div>
