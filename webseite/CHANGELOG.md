@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.12] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3, Location-Input in Step 3: Hellgrauer Borderless-Input durch weißen Input mit dunkler 2px-Border ersetzt. Der Focus-State ändert die Border auf Orange statt einen zusätzlichen Focus-Ring zu setzen — weniger konkurrierende Kontur-Farben.
+
 ## [1.7.11] — 2026-04-22
 
 ### Changed

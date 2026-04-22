@@ -380,7 +380,7 @@ export default function PriceConfiguratorV3() {
                       value={destination}
                       onChange={handleDestinationChange}
                       placeholder="Location oder Adresse eingeben..."
-                      className="w-full px-5 py-4 bg-[#F3F4F6] border-0 rounded-lg text-[var(--brand-dark)] text-[17px] placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none"
+                      className="w-full px-5 py-4 bg-white border-2 border-[var(--brand-dark)] rounded-lg text-[var(--brand-dark)] text-[17px] placeholder:text-gray-400 focus:border-[#F3A300] focus:outline-none"
                       onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); runCalculation(destination); } }}
                     />
                     {deliveryLoading && (
