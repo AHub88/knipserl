@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ADDONS, BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
+import { useGooglePlacesAutocomplete, type PlaceSelection } from "@/lib/use-google-places";
+import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
+import MiniCalendar from "./MiniCalendar";
 
 interface DeliveryInfo {
   distanceKm: number;
@@ -15,57 +18,22 @@ interface DeliveryInfo {
   routePolyline: string;
 }
 
-interface PlaceSelection {
-  address: string;
-  lat: number;
-  lon: number;
-}
-
 const INCLUDED_FEATURES = BASE_FEATURES;
+const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
 
-function useGooglePlacesAutocomplete(
-  inputRef: React.RefObject<HTMLInputElement | null>,
-  onSelect: (place: PlaceSelection) => void
-) {
-  useEffect(() => {
-    let autocomplete: google.maps.places.Autocomplete | null = null;
-    async function init() {
-      if (!inputRef.current) return;
-      try {
-        const res = await fetch("/api/maps-config");
-        const data = await res.json();
-        if (!data.apiKey) return;
-        if (!window.google?.maps?.places) {
-          await new Promise<void>((resolve, reject) => {
-            const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=places&language=de&region=DE`;
-            script.async = true;
-            script.onload = () => resolve();
-            script.onerror = () => reject();
-            document.head.appendChild(script);
-          });
-        }
-        autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-          types: ["establishment", "geocode"],
-          componentRestrictions: { country: ["de", "at"] },
-          fields: ["formatted_address", "name", "geometry"],
-        });
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete?.getPlace();
-          const loc = place?.geometry?.location;
-          if (place?.formatted_address && loc) {
-            onSelect({
-              address: place.name ? `${place.name}, ${place.formatted_address}` : place.formatted_address,
-              lat: loc.lat(),
-              lon: loc.lng(),
-            });
-          }
-        });
-      } catch { /* fallback to manual */ }
-    }
-    init();
-    return () => { if (autocomplete) google.maps.event.clearInstanceListeners(autocomplete); };
-  }, [inputRef, onSelect]);
+function ToggleSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
+  return (
+    <label className="flex flex-col items-center gap-1 cursor-pointer">
+      <button
+        type="button"
+        onClick={onChange}
+        className={`relative w-12 h-6 rounded-full transition-colors ${checked ? "bg-[#F3A300]" : "bg-gray-300"}`}
+      >
+        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? "translate-x-6" : ""}`} />
+      </button>
+      <span className="text-sm text-[#1a171b]">{label}</span>
+    </label>
+  );
 }
 
 function StepHeader({ step, title, subtitle }: { step: number; title: string; subtitle?: string }) {
@@ -96,16 +64,52 @@ function CheckIcon() {
   );
 }
 
+function CheckIconCircle() {
+  return (
+    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
+      <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+    </span>
+  );
+}
+
 export default function PriceConfiguratorV2() {
+  const router = useRouter();
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
   const [destination, setDestination] = useState("");
+  const [locationName, setLocationName] = useState("");
+  const [locationAddress, setLocationAddress] = useState("");
+  const [locationLat, setLocationLat] = useState<number | null>(null);
+  const [locationLng, setLocationLng] = useState<number | null>(null);
   const [delivery, setDelivery] = useState<DeliveryInfo | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
   const [mapsApiKey, setMapsApiKey] = useState("");
   const [stickyVisible, setStickyVisible] = useState(false);
   const destinationInputRef = useRef<HTMLInputElement>(null);
-  const summaryRef = useRef<HTMLDivElement>(null);
+
+  // Inquiry form state
+  const [inquiry, setInquiry] = useState({
+    vorname: "",
+    nachname: "",
+    telefon: "",
+    email: "",
+    eventType: "",
+    datum: "",
+    nachricht: "",
+  });
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [submitError, setSubmitError] = useState("");
+  const [showInquiry, setShowInquiry] = useState(false);
+  const inquiryRef = useRef<HTMLDivElement>(null);
+
+  const openInquiry = () => {
+    setShowInquiry(true);
+    setTimeout(() => {
+      inquiryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
 
   const runCalculation = useCallback(async (address: string, coords?: { lat: number; lon: number }) => {
     if (!address.trim()) return;
@@ -122,6 +126,10 @@ export default function PriceConfiguratorV2() {
 
   const handlePlaceSelect = useCallback((place: PlaceSelection) => {
     setDestination(place.address);
+    setLocationName(place.name || place.formattedAddress);
+    setLocationAddress(place.formattedAddress);
+    setLocationLat(place.lat);
+    setLocationLng(place.lon);
     runCalculation(place.address, { lat: place.lat, lon: place.lon });
   }, [runCalculation]);
 
@@ -131,7 +139,6 @@ export default function PriceConfiguratorV2() {
     fetch("/api/maps-config").then((r) => r.json()).then((d) => { if (d.apiKey) setMapsApiKey(d.apiKey); }).catch(() => {});
   }, []);
 
-  // Show sticky bar after scrolling 200px
   useEffect(() => {
     const onScroll = () => setStickyVisible(window.scrollY > 200);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -147,10 +154,101 @@ export default function PriceConfiguratorV2() {
     });
   };
 
+  const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDestination(value);
+    setLocationName("");
+    setLocationAddress("");
+    setLocationLat(null);
+    setLocationLng(null);
+  };
+
+  const handleInquiryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInquiry((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleEventType = (type: string) => {
+    setInquiry((prev) => ({ ...prev, eventType: prev.eventType === type ? "" : type }));
+  };
+
   const addonsTotal = ADDONS.filter((a) => selectedAddons.has(a.id)).reduce((sum, a) => sum + a.price, 0);
   const deliveryPrice = delivery?.price ?? 0;
   const totalPrice = BASE_PRICE + addonsTotal + deliveryPrice;
   const selectedAddonsList = ADDONS.filter((a) => selectedAddons.has(a.id));
+  const selectedAddonNames = selectedAddonsList.map((a) => a.name);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inquiry.datum) {
+      setSubmitError("Bitte wähle ein Datum im Kalender aus.");
+      return;
+    }
+    if (!destination.trim()) {
+      setSubmitError("Bitte gib Deinen Veranstaltungsort an.");
+      return;
+    }
+    setSubmitError("");
+    setSubmitStatus("loading");
+
+    try {
+      const res = await fetch("/api/anfrage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          art: "Knipserl mit Drucker",
+          vorname: inquiry.vorname,
+          nachname: inquiry.nachname,
+          telefon: inquiry.telefon,
+          email: inquiry.email,
+          eventType: inquiry.eventType,
+          datum: inquiry.datum,
+          location: destination,
+          locationName,
+          locationAddress,
+          locationLat,
+          locationLng,
+          nachricht: inquiry.nachricht,
+          addons: selectedAddonNames,
+          deliveryDistance: delivery?.distanceKm,
+          deliveryPrice: delivery?.price,
+          totalPrice,
+          source: "preiskonfigurator-v2",
+        }),
+      });
+
+      if (!res.ok) throw new Error("Fehler beim Senden");
+      saveInquirySummary({
+        eventDate: inquiry.datum,
+        eventType: inquiry.eventType,
+        location: locationName || destination,
+        addons: selectedAddonNames,
+        totalPrice,
+        deliveryDistance: delivery?.distanceKm,
+      });
+      router.push("/anfrage-erhalten");
+    } catch {
+      setSubmitStatus("error");
+    }
+  };
+
+  // Map URL: bei outsideDeliveryArea Polyline weglassen (Route existiert nicht /
+  // URL sonst zu lang). Stattdessen beide Marker + Auto-Fit.
+  const mapUrl = (() => {
+    if (!mapsApiKey) return "";
+    const base = "https://maps.googleapis.com/maps/api/staticmap?size=500x300&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4";
+    const key = `&key=${mapsApiKey}`;
+    const markerHome = "&markers=color:0xF3A300|47.8571,12.1181";
+    if (delivery && !delivery.outsideDeliveryArea && delivery.routePolyline) {
+      const markerDest = `&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}`;
+      return `${base}&path=color:0xF3A300ff|weight:5|enc:${encodeURIComponent(delivery.routePolyline)}${markerDest}${markerHome}${key}`;
+    }
+    if (delivery) {
+      const markerDest = `&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}`;
+      return `${base}${markerDest}${markerHome}${key}`;
+    }
+    return `${base}&center=47.8571,12.1181&zoom=8${markerHome}${key}`;
+  })();
 
   return (
     <>
@@ -278,7 +376,7 @@ export default function PriceConfiguratorV2() {
                   ref={destinationInputRef}
                   type="text"
                   value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
+                  onChange={handleDestinationChange}
                   placeholder="Location oder Adresse eingeben..."
                   className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-lg text-[var(--brand-dark)] text-[17px] placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:border-[#F3A300] focus:outline-none"
                   onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); runCalculation(destination); } }}
@@ -336,13 +434,10 @@ export default function PriceConfiguratorV2() {
             {/* Right: Map (2 cols) */}
             <div className="md:col-span-2">
               <div className="bg-gray-100 rounded-lg overflow-hidden h-[200px] md:h-full md:min-h-[200px]">
-                {mapsApiKey ? (
+                {mapUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={delivery?.routePolyline
-                      ? `https://maps.googleapis.com/maps/api/staticmap?size=500x300&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&path=color:0xF3A300ff|weight:5|enc:${encodeURIComponent(delivery.routePolyline)}&markers=color:0xF3A300|${delivery.destinationLat},${delivery.destinationLon}&markers=color:0xF3A300|47.8571,12.1181&key=${mapsApiKey}`
-                      : `https://maps.googleapis.com/maps/api/staticmap?center=47.8571,12.1181&zoom=8&size=500x300&scale=2&maptype=roadmap&style=feature:all|saturation:-100&style=feature:water|color:0xd4d4d4&markers=color:0xF3A300|47.8571,12.1181&key=${mapsApiKey}`
-                    }
+                    src={mapUrl}
                     alt="Karte"
                     className="w-full h-full object-cover"
                   />
@@ -355,7 +450,7 @@ export default function PriceConfiguratorV2() {
         </section>
 
         {/* ===== ZUSAMMENFASSUNG ===== */}
-        <section ref={summaryRef} className="py-12 border-t border-gray-200">
+        <section className="py-12 border-t border-gray-200">
           <StepHeader step={4} title="Dein Preis" subtitle="Zusammenfassung Deiner Konfiguration" />
 
           <div
@@ -373,11 +468,7 @@ export default function PriceConfiguratorV2() {
             <div className="px-6 md:px-8">
               <div className="flex items-center justify-between py-5 border-b border-gray-200">
                 <div className="flex items-center gap-4">
-                  <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </span>
+                  <CheckIconCircle />
                   <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
                     Fotobox mit Drucker
                   </span>
@@ -390,11 +481,7 @@ export default function PriceConfiguratorV2() {
               {selectedAddonsList.map((addon) => (
                 <div key={addon.id} className="flex items-center justify-between py-5 border-b border-gray-200">
                   <div className="flex items-center gap-4">
-                    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
+                    <CheckIconCircle />
                     <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
                       {addon.name}
                     </span>
@@ -408,11 +495,7 @@ export default function PriceConfiguratorV2() {
               {deliveryPrice > 0 && (
                 <div className="flex items-center justify-between py-5 border-b border-gray-200">
                   <div className="flex items-center gap-4">
-                    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
+                    <CheckIconCircle />
                     <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
                       Fahrtkosten ({delivery?.distanceKm} km)
                     </span>
@@ -433,22 +516,116 @@ export default function PriceConfiguratorV2() {
                 <span className="text-[36px] md:text-[44px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
                   {totalPrice.toFixed(2)} &euro;
                 </span>
-                <Link
-                  href="/termin-reservieren"
-                  className="btn-brand text-[16px] px-6 py-3 whitespace-nowrap"
-                >
-                  Jetzt reservieren
-                </Link>
+                {!showInquiry && submitStatus !== "success" && (
+                  <button
+                    type="button"
+                    onClick={openInquiry}
+                    className="btn-brand text-[16px] px-6 py-3 whitespace-nowrap"
+                  >
+                    Jetzt reservieren
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </section>
+
+        {/* ===== INQUIRY FORM ===== */}
+        {(showInquiry || submitStatus === "success") && (
+          <section ref={inquiryRef} className="py-12 border-t border-gray-200 scroll-mt-28">
+            <div className="text-center mb-8">
+              <h2 className="heading-decorated text-4xl md:text-[52px] text-[var(--brand-dark)] inline-block">
+                Jetzt reservieren
+              </h2>
+              <p className="text-[23px] text-[#F3A300] font-semibold mt-0 font-[family-name:var(--font-fira-condensed)]">
+                Datum wählen und unverbindlich anfragen
+              </p>
+            </div>
+
+            {submitStatus === "success" ? (
+              <div className="max-w-[700px] mx-auto bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <h3 className="text-xl font-semibold text-green-800 mb-2">
+                  Anfrage erfolgreich gesendet!
+                </h3>
+                <p className="text-green-700">
+                  Wir melden uns schnellstmöglich bei Dir. Prüfe auch Deinen Spam-Ordner.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Left: Calendar */}
+                  <MiniCalendar
+                    selected={inquiry.datum}
+                    onSelect={(date) => setInquiry((prev) => ({ ...prev, datum: date }))}
+                  />
+
+                  {/* Right: Contact fields */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <input type="text" name="vorname" required placeholder="Vorname" value={inquiry.vorname} onChange={handleInquiryChange} className={inputClass} />
+                      <input type="text" name="nachname" required placeholder="Nachname" value={inquiry.nachname} onChange={handleInquiryChange} className={inputClass} />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <input type="tel" name="telefon" required placeholder="Telefon *" value={inquiry.telefon} onChange={handleInquiryChange} className={inputClass} />
+                      <input type="email" name="email" required placeholder="E-Mail *" value={inquiry.email} onChange={handleInquiryChange} className={inputClass} />
+                    </div>
+
+                    <div className="flex gap-6 py-2">
+                      <ToggleSwitch label="Hochzeit" checked={inquiry.eventType === "Hochzeit"} onChange={() => toggleEventType("Hochzeit")} />
+                      <ToggleSwitch label="Geburtstag" checked={inquiry.eventType === "Geburtstag"} onChange={() => toggleEventType("Geburtstag")} />
+                      <ToggleSwitch label="Firmenevent" checked={inquiry.eventType === "Firmenevent"} onChange={() => toggleEventType("Firmenevent")} />
+                    </div>
+
+                    <textarea
+                      name="nachricht"
+                      rows={3}
+                      placeholder="Fragen / Anmerkungen"
+                      value={inquiry.nachricht}
+                      onChange={handleInquiryChange}
+                      className={inputClass + " resize-y"}
+                    />
+
+                    <p className="text-xs text-gray-500">
+                      Veranstaltungsort, Zubehör und Preis werden aus dem Konfigurator übernommen. Detaillierte Informationen zum Umgang mit Nutzerdaten findest Du in unserer{" "}
+                      <a href="/datenschutzerklaerung" className="underline hover:text-[#F3A300]">Datenschutzerklärung</a>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-center mt-8">
+                  <button
+                    type="submit"
+                    disabled={submitStatus === "loading" || deliveryLoading}
+                    className="px-12 py-5 bg-[#F3A300] text-[#1a171b] font-bold rounded-[5px] hover:bg-[#d99200] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-2xl uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]"
+                  >
+                    {submitStatus === "loading" ? "Wird gesendet..." : "Jetzt reservieren"}
+                  </button>
+                </div>
+
+                {submitError && (
+                  <p className="text-red-600 text-sm text-center mt-4">{submitError}</p>
+                )}
+
+                {submitStatus === "error" && (
+                  <p className="text-red-600 text-sm text-center mt-4">
+                    Es gab einen Fehler. Bitte versuche es erneut oder kontaktiere uns direkt.
+                  </p>
+                )}
+              </form>
+            )}
+          </section>
+        )}
       </div>
 
       {/* ===== STICKY BOTTOM BAR ===== */}
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 bg-[var(--brand-dark)] border-t border-white/10 transition-transform duration-300 ${
-          stickyVisible ? "translate-y-0" : "translate-y-full"
+          stickyVisible && !showInquiry ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.3)" }}
       >
@@ -466,12 +643,13 @@ export default function PriceConfiguratorV2() {
               </span>
             )}
           </div>
-          <Link
-            href="/termin-reservieren"
+          <button
+            type="button"
+            onClick={openInquiry}
             className="bg-[#F3A300] hover:bg-[#d99200] text-[var(--brand-dark)] font-bold text-[16px] uppercase px-6 py-3 rounded-md transition-colors font-[family-name:var(--font-fira-condensed)] tracking-wide"
           >
             Jetzt reservieren
-          </Link>
+          </button>
         </div>
       </div>
     </>

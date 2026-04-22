@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.6] — 2026-04-22
+
+### Added
+- Preiskonfigurator v2, Anfrageformular: "Jetzt reservieren" in Summary-Box und Sticky-Bar blendet jetzt (wie auf `/preise`) ein eingebettetes Anfrageformular mit MiniCalendar, Kontaktfeldern und Event-Type-Toggles direkt auf derselben Seite ein, anstatt zu `/termin-reservieren` umzuleiten. Veranstaltungsort, Zubehör und Gesamtpreis werden automatisch übernommen.
+
+### Fixed
+- Preiskonfigurator v2, Karte: Bei Adressen außerhalb des Liefergebiets (z.B. 462 km nach Frankfurt) wurde die Google-Static-Maps-URL durch die sehr lange Route-Polyline zu groß und Google lieferte kein Bild → gebrochener `<img>`-Placeholder. Neu: bei `outsideDeliveryArea` wird die Polyline weggelassen und stattdessen werden nur Rosenheim + Zielort als Marker mit Auto-Fit gerendert.
+- Audio-Gästebuch: "inkl. MwSt." an beiden Stellen (Angebots-Widget und große Preiskarte) entfernt — Kleinunternehmerregelung §19 UStG gilt auch für den Versandpreis.
+
 ## [1.7.5] — 2026-04-22
 
 ### Changed

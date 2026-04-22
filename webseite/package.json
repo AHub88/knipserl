@@ -1,6 +1,6 @@
 {
   "name": "knipserl",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "private": true,
   "scripts": {
     "dev": "next dev",

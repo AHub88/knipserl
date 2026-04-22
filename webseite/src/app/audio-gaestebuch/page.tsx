@@ -296,7 +296,7 @@ export default async function AudioGaestebuchPage() {
                   + 20 € Versand
                 </span>
                 <span className="w-full text-[#999] text-[13px]" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                  inkl. MwSt. · Rücksendeetikett inklusive · bei Fotobox-Kombi versandfrei
+                  Rücksendeetikett inklusive · bei Fotobox-Kombi versandfrei
                 </span>
               </div>
 
@@ -588,7 +588,7 @@ export default async function AudioGaestebuchPage() {
                   </div>
                 </div>
                 <div className="text-[#666] text-[14px] mt-2" style={{ fontFamily: "'Fira Sans', sans-serif", textTransform: "none", fontWeight: 400 }}>
-                  inkl. MwSt. · Rücksendeetikett inklusive
+                  Rücksendeetikett inklusive
                 </div>
               </div>
 
