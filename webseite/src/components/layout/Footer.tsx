@@ -77,7 +77,7 @@ export default async function Footer() {
       />
       {/* Main footer content */}
       <div className="pt-20 pb-14">
-        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-white">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-white">
           {/* Anschrift */}
           <div>
             <h3
@@ -133,14 +133,14 @@ export default async function Footer() {
           </div>
 
           {/* Mehr Infos */}
-          <div>
+          <div className="lg:col-span-2">
             <h3
               className="text-white text-[28px] font-extrabold mb-5"
               style={{ fontFamily: "'Fira Sans Extra Condensed', sans-serif", textTransform: "uppercase" }}
             >
               Mehr Infos
             </h3>
-            <ul className="text-[14px] space-y-1">
+            <ul className="text-[14px] grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
               {footerLinks.map((link) => (
                 <li key={link.href + link.label}>
                   <Link href={link.href} className="hover:text-[#F3A300] transition-colors">

@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.2] — 2026-04-22
+
+### Changed
+- Footer-Layout: "Mehr Infos" rendert die jetzt 14 Link-Einträge (9 Städte + 4 Anlässe + LOVE-Buchstaben) auf Desktop zweispaltig und belegt dafür die doppelte Spaltenbreite (Grid auf `lg:grid-cols-5`, Block `lg:col-span-2`). Der Footer wird dadurch deutlich weniger hoch und die vier Content-Blöcke sind optisch auf einer Linie. Mobile bleibt einspaltig.
+
 ## [1.7.1] — 2026-04-22
 
 ### Changed
