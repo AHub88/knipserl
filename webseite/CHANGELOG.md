@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.1] — 2026-04-22
+
+### Changed
+- Footer: 4 bislang nicht intern verlinkte Stadt-Landingpages (Erding, Wasserburg am Inn, Mühldorf, Kufstein) ergänzt — damit bekommen alle 9 SEO-Städte Link-Juice aus dem globalen Footer, nicht nur 5.
+- Startseite, Liefergebiete-Absatz: Mühldorf am Inn, Erding, Wasserburg am Inn und Kufstein sind jetzt als Links zu den jeweiligen Stadt-Seiten hinterlegt (vorher unverlinkter Fließtext bzw. `<strong>`).
+
 ## [1.7.0] — 2026-04-22
 
 ### Added
