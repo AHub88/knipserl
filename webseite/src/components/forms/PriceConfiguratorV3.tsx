@@ -116,11 +116,11 @@ function SectionHeader({ stepLabel, title, subtitle }: { stepLabel?: string; tit
           {stepLabel}
         </p>
       )}
-      <h2 className="heading-decorated text-[32px] md:text-[48px] text-[var(--brand-dark)] inline-block leading-[1.05]">
+      <h2 className="heading-decorated text-[26px] sm:text-[32px] md:text-[48px] text-[var(--brand-dark)] inline-block leading-[1.05]">
         {title}
       </h2>
       {subtitle && (
-        <p className="text-[20px] md:text-[23px] text-[#F3A300] font-semibold mt-2 font-[family-name:var(--font-fira-condensed)]">
+        <p className="text-[17px] sm:text-[20px] md:text-[23px] text-[#F3A300] font-semibold mt-2 font-[family-name:var(--font-fira-condensed)]">
           {subtitle}
         </p>
       )}
@@ -333,7 +333,7 @@ export default function PriceConfiguratorV3() {
 
   return (
     <>
-      <div className="max-w-[1100px] mx-auto px-6 pt-6 pb-32">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-6 pb-32">
 
         {/* ===== STEP 1: BASISPAKET ===== */}
         <section className="py-8 md:py-10">
@@ -344,15 +344,15 @@ export default function PriceConfiguratorV3() {
             style={{ boxShadow: softShadow }}
           >
             <div
-              className="px-6 py-4 md:px-8 md:py-5"
+              className="px-5 py-4 md:px-8 md:py-5"
               style={{ background: darkHeaderBg, backgroundSize: "1000px 500px" }}
             >
-              <h3 className="text-white text-[24px] md:text-[28px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
+              <h3 className="text-white text-[22px] md:text-[28px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
                 Fotobox mit Drucker
               </h3>
             </div>
-            <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 flex-1">
+            <div className="p-5 md:p-8 flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-3 flex-1">
                 {FEATURES_V3.map((f) => (
                   <div key={f.label} className="flex items-start gap-3">
                     <FeatureIconCircle type={f.icon} />
@@ -361,7 +361,7 @@ export default function PriceConfiguratorV3() {
                 ))}
               </div>
               <div className="flex-shrink-0 text-center md:text-right md:pl-8 md:border-l md:border-gray-200">
-                <p className="text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+                <p className="text-[44px] md:text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
                   {BASE_PRICE}&euro;
                 </p>
                 <p className="text-gray-500 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis</p>
@@ -384,7 +384,7 @@ export default function PriceConfiguratorV3() {
                     ? { boxShadow: softShadow, background: darkHeaderBg, backgroundSize: "1000px 500px" }
                     : { boxShadow: softShadow }
                   }
-                  className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all ${
+                  className={`flex gap-4 sm:gap-6 p-3 sm:p-4 rounded-lg cursor-pointer transition-all ${
                     active ? "text-white" : "bg-white"
                   }`}
                 >
@@ -395,7 +395,7 @@ export default function PriceConfiguratorV3() {
                     className="sr-only"
                   />
 
-                  <div className="w-[120px] h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={addon.image}
@@ -404,16 +404,16 @@ export default function PriceConfiguratorV3() {
                     />
                   </div>
 
-                  <div className="flex-1 min-w-0 pt-3">
-                    <div className="flex justify-between items-start gap-2">
+                  <div className="flex-1 min-w-0 pt-1 sm:pt-3">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-start sm:gap-2">
                       <h4
-                        className={`font-bold text-[22px] md:text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
+                        className={`font-bold text-[17px] sm:text-[22px] md:text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
                           active ? "text-white" : "text-[var(--brand-dark)]"
                         }`}
                       >
                         {addon.name}
                       </h4>
-                      <span className="text-[#F3A300] font-extrabold whitespace-nowrap text-[22px] font-[family-name:var(--font-fira-condensed)] leading-none">
+                      <span className="text-[#F3A300] font-extrabold whitespace-nowrap text-[20px] sm:text-[22px] font-[family-name:var(--font-fira-condensed)] leading-none">
                         +{addon.price}&euro;
                       </span>
                     </div>
@@ -491,7 +491,7 @@ export default function PriceConfiguratorV3() {
                         <span className="text-[13px] font-extrabold uppercase text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] tracking-wider">
                           Entfernung
                         </span>
-                        <p className="text-[28px] md:text-[32px] font-extrabold text-[var(--brand-dark)] leading-none mt-1 font-[family-name:var(--font-fira-condensed)]">
+                        <p className="text-[24px] sm:text-[28px] md:text-[32px] font-extrabold text-[var(--brand-dark)] leading-none mt-1 font-[family-name:var(--font-fira-condensed)]">
                           {delivery.distanceKm} km
                         </p>
                       </div>
@@ -499,7 +499,7 @@ export default function PriceConfiguratorV3() {
                         <span className="text-[13px] font-extrabold uppercase text-[var(--brand-dark)] font-[family-name:var(--font-fira-condensed)] tracking-wider">
                           Fahrtkosten
                         </span>
-                        <p className={`text-[28px] md:text-[32px] font-extrabold leading-none mt-1 font-[family-name:var(--font-fira-condensed)] ${delivery.price === 0 ? "text-[var(--brand-dark)]" : "text-[#F3A300]"}`}>
+                        <p className={`text-[24px] sm:text-[28px] md:text-[32px] font-extrabold leading-none mt-1 font-[family-name:var(--font-fira-condensed)] ${delivery.price === 0 ? "text-[var(--brand-dark)]" : "text-[#F3A300]"}`}>
                           {delivery.price === 0 ? "Kostenlos" : `+${delivery.price.toFixed(2)} €`}
                         </p>
                       </div>
@@ -555,8 +555,8 @@ export default function PriceConfiguratorV3() {
               </h3>
             </div>
 
-            <div className="px-6 md:px-8">
-              <div className="flex items-center justify-between py-5 border-b border-gray-200">
+            <div className="px-5 md:px-8">
+              <div className="flex items-center justify-between gap-3 py-5 border-b border-gray-200">
                 <div className="flex items-center gap-4">
                   <CheckIconCircle />
                   <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
@@ -569,7 +569,7 @@ export default function PriceConfiguratorV3() {
               </div>
 
               {selectedAddonsList.map((addon) => (
-                <div key={addon.id} className="flex items-center justify-between py-5 border-b border-gray-200">
+                <div key={addon.id} className="flex items-center justify-between gap-3 py-5 border-b border-gray-200">
                   <div className="flex items-center gap-4">
                     <CheckIconCircle />
                     <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
@@ -583,7 +583,7 @@ export default function PriceConfiguratorV3() {
               ))}
 
               {deliveryPrice > 0 && (
-                <div className="flex items-center justify-between py-5 border-b border-gray-200">
+                <div className="flex items-center justify-between gap-3 py-5 border-b border-gray-200">
                   <div className="flex items-center gap-4">
                     <CheckIconCircle />
                     <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
@@ -597,19 +597,19 @@ export default function PriceConfiguratorV3() {
               )}
             </div>
 
-            <div className="bg-[#F3F4F6] px-6 py-5 md:px-8 md:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-[#F3F4F6] px-5 py-5 md:px-8 md:py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4">
               <span className="text-[14px] md:text-[15px] font-extrabold text-gray-500 uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]">
                 Gesamtpreis
               </span>
-              <div className="flex items-center gap-6 flex-wrap justify-end">
-                <span className="text-[36px] md:text-[44px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+              <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center sm:justify-end">
+                <span className="text-[30px] sm:text-[36px] md:text-[44px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
                   {totalPrice.toFixed(2)} &euro;
                 </span>
                 {!showInquiry && submitStatus !== "success" && (
                   <button
                     type="button"
                     onClick={openInquiry}
-                    className="btn-brand text-[16px] px-6 py-3 whitespace-nowrap"
+                    className="btn-brand text-[15px] sm:text-[16px] px-5 sm:px-6 py-3 whitespace-nowrap"
                   >
                     Jetzt reservieren
                   </button>
@@ -646,17 +646,17 @@ export default function PriceConfiguratorV3() {
                     />
 
                     <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <input type="text" name="vorname" required placeholder="Vorname" value={inquiry.vorname} onChange={handleInquiryChange} className={inputClass} />
                         <input type="text" name="nachname" required placeholder="Nachname" value={inquiry.nachname} onChange={handleInquiryChange} className={inputClass} />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <input type="tel" name="telefon" required placeholder="Telefon *" value={inquiry.telefon} onChange={handleInquiryChange} className={inputClass} />
                         <input type="email" name="email" required placeholder="E-Mail *" value={inquiry.email} onChange={handleInquiryChange} className={inputClass} />
                       </div>
 
-                      <div className="flex gap-6 py-2">
+                      <div className="flex flex-wrap gap-4 sm:gap-6 py-2 justify-center sm:justify-start">
                         <ToggleSwitch label="Hochzeit" checked={inquiry.eventType === "Hochzeit"} onChange={() => toggleEventType("Hochzeit")} />
                         <ToggleSwitch label="Geburtstag" checked={inquiry.eventType === "Geburtstag"} onChange={() => toggleEventType("Geburtstag")} />
                         <ToggleSwitch label="Firmenevent" checked={inquiry.eventType === "Firmenevent"} onChange={() => toggleEventType("Firmenevent")} />
@@ -711,12 +711,12 @@ export default function PriceConfiguratorV3() {
         }`}
         style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.3)" }}
       >
-        <div className="max-w-[1100px] mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <span className="text-gray-400 text-[14px] hidden sm:inline uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
               Dein Preis:
             </span>
-            <span className="text-[32px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+            <span className="text-[24px] sm:text-[32px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)] whitespace-nowrap">
               {totalPrice.toFixed(2)}&euro;
             </span>
             {(selectedAddonsList.length > 0 || deliveryPrice > 0) && (
@@ -728,9 +728,10 @@ export default function PriceConfiguratorV3() {
           <button
             type="button"
             onClick={openInquiry}
-            className="bg-[#F3A300] hover:bg-[#d99200] text-[var(--brand-dark)] font-bold text-[16px] uppercase px-6 py-3 rounded-md transition-colors font-[family-name:var(--font-fira-condensed)] tracking-wide"
+            className="bg-[#F3A300] hover:bg-[#d99200] text-[var(--brand-dark)] font-bold text-[13px] sm:text-[16px] uppercase px-3 sm:px-6 py-2.5 sm:py-3 rounded-md transition-colors font-[family-name:var(--font-fira-condensed)] tracking-wide whitespace-nowrap flex-shrink-0"
           >
-            Jetzt reservieren
+            <span className="sm:hidden">Reservieren</span>
+            <span className="hidden sm:inline">Jetzt reservieren</span>
           </button>
         </div>
       </div>

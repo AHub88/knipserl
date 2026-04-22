@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.17] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3, Mobile-Optimierung: (1) Container-Padding `px-4 sm:px-6` für mehr nutzbare Breite auf Handys. (2) Section-Header-Größen reduziert (`text-[26px]` statt `32px` auf Mobile). (3) Step 1 Preis `44px` auf Mobile statt `56px`. (4) Step 2 Addon-Karten: Bild auf `80×80` auf Mobile (statt `120×120`), Titel+Preis stackt vertikal wenn zu lang, Titel-Font auf `17px` verkleinert, Padding+Gap enger. (5) Step 3 Entfernung/Fahrtkosten auf `24px` auf Mobile. (6) Step 4 Gesamtpreis auf `30px`. (7) Anfrageformular: Name- und Telefon/E-Mail-Felder auf Mobile einspaltig, Event-Type-Toggles mit `flex-wrap` damit sie bei Platzmangel umbrechen. (8) Sticky-Bar: Preis `24px` auf Mobile, Button-Text auf Mobile "Reservieren" (statt "Jetzt reservieren"), kleineres Padding.
+
 ## [1.7.16] — 2026-04-22
 
 ### Changed
