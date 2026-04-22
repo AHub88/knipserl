@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.8.0] — 2026-04-22
+
+### Changed
+- **`/preise` nutzt jetzt den Preiskonfigurator V3** — neues Design mit einheitlicher Sprache (heading-decorated Section-Titles mit Sparkles, weiße Cards mit Grunge-Texture-Header, feature-spezifische Icons im Basispaket, konsistente Fira-Condensed-Preis-Typografie, Mobile-optimiert). Die separate Intro-Features-Section (6 PNG-Icons) wurde entfernt, da V3 dieselben Informationen in Step 1 (Basispaket) mit integrierter SVG-Icon-Darstellung bereits zeigt. Buchungs-Logik (POST `/api/anfrage` mit allen Feldern inkl. Addons, Location, Fahrtkosten, Gesamtpreis) unverändert → Admin-Verknüpfung funktioniert.
+
+### Fixed
+- **Preiskonfigurator V3, Admin-Weiterleitung:** Bug im `source`-Feld behoben. V3 sendete bisher `source: "preiskonfigurator-v3"`, aber das Admin-API-Zod-Schema akzeptiert nur `["kontakt", "startseite", "preiskonfigurator", "api"]` — die Validierung wäre fehlgeschlagen und Anfragen wären nicht im Admin angekommen. Jetzt `source: "preiskonfigurator"` einheitlich.
+- Preiskonfigurator V3, Mobile: `overflow-x-clip` auf dem Outer-Container gegen gelegentlichen horizontalen Scroll auf schmalen Screens (verursacht durch die `inline-block` `heading-decorated`-Titel bei sehr schmalem Viewport).
+
 ## [1.7.17] — 2026-04-22
 
 ### Changed

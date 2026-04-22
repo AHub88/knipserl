@@ -296,7 +296,7 @@ export default function PriceConfiguratorV3() {
           deliveryDistance: delivery?.distanceKm,
           deliveryPrice: delivery?.price,
           totalPrice,
-          source: "preiskonfigurator-v3",
+          source: "preiskonfigurator",
         }),
       });
 
@@ -333,7 +333,7 @@ export default function PriceConfiguratorV3() {
 
   return (
     <>
-      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-6 pb-32">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-6 pb-32 overflow-x-clip">
 
         {/* ===== STEP 1: BASISPAKET ===== */}
         <section className="py-8 md:py-10">
