@@ -4,6 +4,7 @@ import Link from "next/link";
 import InquiryForm from "@/components/forms/InquiryForm";
 import ImpressionSection from "@/components/ImpressionSection";
 import SlotImage from "@/components/SlotImage";
+import CityCrossLinks from "@/components/CityCrossLinks";
 import PageHeader from "@/components/layout/PageHeader";
 import { BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
 import { generatePageMetadata, generateBreadcrumbSchema } from "@/lib/seo";
@@ -229,6 +230,8 @@ export default async function FotoboxMessePage() {
           <InquiryForm />
         </div>
       </section>
+
+      <CityCrossLinks occasionLabel="Messe" />
 
       {/* CROSS-LINKS */}
       <section className="py-12 md:py-16">

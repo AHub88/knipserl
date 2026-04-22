@@ -338,8 +338,38 @@ export default async function CityLandingPage({ slug }: { slug: CitySlug }) {
         </div>
       </section>
 
-      {/* CROSS-LINKS */}
-      <section className="py-12 md:py-16">
+      {/* CROSS-LINKS zu Anlässen */}
+      <section className="pt-12 md:pt-16 pb-6 md:pb-8">
+        <div className="max-w-[1200px] mx-auto px-4 text-center">
+          <h2 className="text-[24px] md:text-[32px] leading-[1.05] text-[#1a171b] mb-8">
+            Fotobox in {city.name} für Deinen Anlass
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              { href: "/fotobox-fuer-hochzeit", label: "Hochzeit" },
+              { href: "/fotobox-fuer-firmenfeier", label: "Firmenfeier" },
+              { href: "/fotobox-fuer-messe", label: "Messe" },
+              { href: "/fotobox-fuer-weihnachtsfeier", label: "Weihnachtsfeier" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="px-5 py-2.5 text-[14px] font-[family-name:var(--font-fira-condensed)] uppercase font-bold tracking-[0.02em] hover:text-[#F3A300] transition-colors"
+                style={{
+                  background: "#1a171b url('/images/misc/main_back_gr-2.webp') repeat",
+                  backgroundSize: "1000px 500px",
+                  color: "white",
+                }}
+              >
+                Fotobox für {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CROSS-LINKS zu anderen Städten */}
+      <section className="pt-6 md:pt-8 pb-12 md:pb-16">
         <div className="max-w-[1200px] mx-auto px-4 text-center">
           <h2 className="text-[24px] md:text-[32px] leading-[1.05] text-[#1a171b] mb-8">
             Fotobox auch in anderen Regionen

@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.3] — 2026-04-22
+
+### Added
+- Anlass ↔ Stadt Cross-Linking: Jede Stadt-Landingpage zeigt unter den Inhalts-Sections einen neuen Block "Fotobox in [Stadt] für Deinen Anlass" (Hochzeit, Firmenfeier, Messe, Weihnachtsfeier). Jede Anlass-Landingpage zeigt einen Block "Fotobox für [Anlass] in Deiner Region" mit allen 9 Städten. Das baut einen dichten internen Link-Graph zwischen geografischen und thematischen Landingpages auf.
+- Neue Komponente `<CityCrossLinks>` (`src/components/CityCrossLinks.tsx`) — rendert alle 9 SEO-Städte als Link-Chips, wird von allen 4 Anlass-Pages genutzt.
+
 ## [1.7.2] — 2026-04-22
 
 ### Changed
