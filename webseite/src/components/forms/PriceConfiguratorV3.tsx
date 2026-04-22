@@ -20,6 +20,8 @@ interface DeliveryInfo {
 
 const INCLUDED_FEATURES = BASE_FEATURES;
 const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
+const softShadow = "0 4px 14px rgba(0,0,0,0.08)";
+const darkHeaderBg = "#1a171b url('/images/misc/main_back_gr-2.webp') repeat";
 
 function ToggleSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
@@ -249,8 +251,14 @@ export default function PriceConfiguratorV3() {
         <section className="py-12 md:py-16">
           <SectionHeader stepLabel="Schritt 01" title="Dein Basispaket" subtitle="Alles inklusive zum Festpreis" />
 
-          <div className="bg-white rounded-lg overflow-hidden">
-            <div className="bg-[var(--brand-dark)] px-6 py-4 md:px-8 md:py-5">
+          <div
+            className="bg-white rounded-lg overflow-hidden"
+            style={{ boxShadow: softShadow }}
+          >
+            <div
+              className="px-6 py-4 md:px-8 md:py-5"
+              style={{ background: darkHeaderBg, backgroundSize: "1000px 500px" }}
+            >
               <h3 className="text-white text-[24px] md:text-[28px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
                 Fotobox mit Drucker
               </h3>
@@ -284,8 +292,9 @@ export default function PriceConfiguratorV3() {
               return (
                 <label
                   key={addon.id}
-                  className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all border ${
-                    active ? "bg-[var(--brand-dark)] text-white border-transparent" : "bg-white border-gray-200 hover:border-[#F3A300]/40"
+                  style={{ boxShadow: softShadow }}
+                  className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all ${
+                    active ? "bg-[var(--brand-dark)] text-white" : "bg-white"
                   }`}
                 >
                   <input
@@ -445,8 +454,14 @@ export default function PriceConfiguratorV3() {
         <section className="py-12 md:py-16">
           <SectionHeader stepLabel="Schritt 04" title="Dein Preis" subtitle="Zusammenfassung Deiner Konfiguration" />
 
-          <div className="bg-white rounded-lg overflow-hidden">
-            <div className="bg-[var(--brand-dark)] px-6 py-4 md:px-8 md:py-5">
+          <div
+            className="bg-white rounded-lg overflow-hidden"
+            style={{ boxShadow: softShadow }}
+          >
+            <div
+              className="px-6 py-4 md:px-8 md:py-5"
+              style={{ background: darkHeaderBg, backgroundSize: "1000px 500px" }}
+            >
               <h3 className="text-white text-[20px] md:text-[22px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
                 Deine Konfiguration
               </h3>

@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.10] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3: Dezenter Soft-Shadow (`0 4px 14px rgba(0,0,0,0.08)`) auf Step-1-, Step-4- und Addon-Karten — hebt die Cards leicht vom Paper-Hintergrund ab, ohne das Material-Design-Gefühl zurückzubringen.
+- Preiskonfigurator v3: Dunkle Header-Leisten von Step 1 und Step 4 nutzen jetzt die `main_back_gr-2.webp` Grunge-Textur als Hintergrund (statt flach schwarz). Das ist dieselbe Textur, die auf den Landingpages für die dunklen Sections (z.B. "Momente") verwendet wird — dadurch fühlt sich der dunkle Header nicht mehr wie ein UI-Balken, sondern wie ein Stück der Knipserl-Welt an.
+
 ## [1.7.9] — 2026-04-22
 
 ### Changed
