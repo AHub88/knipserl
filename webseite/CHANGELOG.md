@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.8] — 2026-04-22
+
+### Added
+- Neue Staging-Seite `/preisev3` mit einheitlicher Design-Sprache: alle Sections folgen demselben Baukasten (zentrierter `heading-decorated`-Titel mit Sparkles + kleines orange "SCHRITT 0X"-Label drüber, weiße Card mit Knipserl-Shadow, einheitliche Circle-Check-Icons in Orange). Dark-Header-Leiste nur noch bei den beiden Haupt-Infos (Basispaket Step 1 und Zusammenfassung Step 4) — sonst zu viele konkurrierende Highlights. Dient als Design-Referenz zur Entscheidung vor Go-Live auf `/preise`.
+- `robots: noindex` auf `/preisev2` und `/preisev3` — Staging-Seiten sollen nicht in Google erscheinen und nicht als Duplicate Content zu `/preise` zählen.
+
 ## [1.7.7] — 2026-04-22
 
 ### Changed
