@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.5] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v2 (`/preisev2`), Extras-Boxen: Übernahme des Layouts aus `/preise` — Produktbilder jetzt 120×120 statt 64×64, größere Überschriften, aktive Box wechselt auf dunklen Hintergrund mit invertiertem Bild, Checkbox rechts statt links.
+- Preiskonfigurator v2, Preis-Summary-Box: Redesign auf helle Card mit dunklem Header-Balken "Deine Konfiguration", Line-Items mit orangefarbenem Check-Icon-Kreis, Trennlinien zwischen Zeilen, Gesamtpreis in hellgrauem Footer rechts.
+
+### Fixed
+- Preiskonfigurator v2: "inkl. MwSt."-Hinweise am Festpreis (Step 1) und an der Gesamtpreis-Zeile (Step 4) entfernt. Knipserl nutzt die Kleinunternehmerregelung (§ 19 UStG) und weist keine Umsatzsteuer aus — der Hinweis "inkl. MwSt." ist rechtlich irreführend.
+
 ## [1.7.4] — 2026-04-22
 
 ### Fixed

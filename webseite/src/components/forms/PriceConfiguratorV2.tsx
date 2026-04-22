@@ -181,7 +181,7 @@ export default function PriceConfiguratorV2() {
                 <p className="text-[56px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
                   {BASE_PRICE}&euro;
                 </p>
-                <p className="text-gray-400 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis inkl. MwSt.</p>
+                <p className="text-gray-400 text-[13px] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>Festpreis</p>
               </div>
             </div>
           </div>
@@ -197,11 +197,9 @@ export default function PriceConfiguratorV2() {
               return (
                 <label
                   key={addon.id}
-                  style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
-                  className={`flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-all border-2 ${
-                    active
-                      ? "border-[#F3A300] bg-[#FFF8E7]"
-                      : "border-transparent bg-[#F3F4F6] hover:border-gray-300"
+                  style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
+                  className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all ${
+                    active ? "bg-[var(--brand-dark)] text-white" : "bg-[#F3F4F6]"
                   }`}
                 >
                   <input
@@ -211,36 +209,56 @@ export default function PriceConfiguratorV2() {
                     className="sr-only"
                   />
 
-                  {/* Checkbox */}
-                  <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                    active ? "bg-[#F3A300] border-[#F3A300]" : "bg-white border-gray-300"
-                  }`}>
-                    {active && (
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </div>
-
                   {/* Image */}
-                  <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center overflow-hidden rounded">
+                  <div className="w-[120px] h-[120px] flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={addon.image} alt="" className="w-full h-auto" />
+                    <img
+                      src={addon.image}
+                      alt={addon.name}
+                      className={`w-full h-auto ${active ? "invert" : ""}`}
+                    />
                   </div>
 
                   {/* Text */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-baseline gap-2">
-                      <span className="font-bold text-[16px] text-[var(--brand-dark)] uppercase font-[family-name:var(--font-fira-condensed)] leading-tight">
+                  <div className="flex-1 min-w-0 pt-3">
+                    <div className="flex justify-between items-start gap-2">
+                      <h4
+                        className={`font-bold text-[24px] leading-[1.1] uppercase tracking-[-0.5px] font-[family-name:var(--font-fira-condensed)] ${
+                          active ? "text-white" : "text-[var(--brand-dark)]"
+                        }`}
+                      >
                         {addon.name}
-                      </span>
-                      <span className="text-[#F3A300] font-bold text-[15px] whitespace-nowrap" style={{ fontFamily: "'Beyond The Mountains', cursive" }}>
+                      </h4>
+                      <span
+                        className="text-[#F3A300] font-bold whitespace-nowrap text-[15px]"
+                        style={{ fontFamily: "'Beyond The Mountains', cursive" }}
+                      >
                         +{addon.price}&euro;
                       </span>
                     </div>
-                    <p className="text-[13px] text-[#666] mt-1" style={{ fontWeight: 400, textTransform: "none" }}>
+                    <p
+                      className={`text-[13px] mt-3 line-clamp-2 ${
+                        active ? "text-gray-300" : "text-[var(--brand-dark)]"
+                      }`}
+                      style={{ fontWeight: 400, textTransform: "none" }}
+                    >
                       {addon.description}
                     </p>
+                  </div>
+
+                  {/* Checkbox rechts */}
+                  <div className="flex-shrink-0 self-center">
+                    <div
+                      className={`w-6 h-6 border-2 flex items-center justify-center ${
+                        active ? "bg-[#F3A300] border-[#F3A300]" : "bg-white border-gray-300"
+                      }`}
+                    >
+                      {active && (
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
                   </div>
                 </label>
               );
@@ -341,44 +359,87 @@ export default function PriceConfiguratorV2() {
           <StepHeader step={4} title="Dein Preis" subtitle="Zusammenfassung Deiner Konfiguration" />
 
           <div
-            className="bg-[var(--brand-dark)] rounded-lg p-6 md:p-8 text-white"
+            className="bg-white rounded-lg overflow-hidden"
             style={{ boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)" }}
           >
+            {/* Header */}
+            <div className="bg-[var(--brand-dark)] px-6 py-4 md:px-8 md:py-5">
+              <h3 className="text-white text-[20px] md:text-[22px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
+                Deine Konfiguration
+              </h3>
+            </div>
+
             {/* Line items */}
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between items-center text-[16px]">
-                <span className="text-gray-300">Fotobox mit Drucker</span>
-                <span className="font-semibold">{BASE_PRICE.toFixed(2)} &euro;</span>
+            <div className="px-6 md:px-8">
+              <div className="flex items-center justify-between py-5 border-b border-gray-200">
+                <div className="flex items-center gap-4">
+                  <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                  <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
+                    Fotobox mit Drucker
+                  </span>
+                </div>
+                <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap">
+                  {BASE_PRICE.toFixed(2)} &euro;
+                </span>
               </div>
+
               {selectedAddonsList.map((addon) => (
-                <div key={addon.id} className="flex justify-between items-center text-[16px]">
-                  <span className="text-gray-300">{addon.name}</span>
-                  <span className="font-semibold">+{addon.price.toFixed(2)} &euro;</span>
+                <div key={addon.id} className="flex items-center justify-between py-5 border-b border-gray-200">
+                  <div className="flex items-center gap-4">
+                    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </span>
+                    <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
+                      {addon.name}
+                    </span>
+                  </div>
+                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap">
+                    {addon.price.toFixed(2)} &euro;
+                  </span>
                 </div>
               ))}
+
               {deliveryPrice > 0 && (
-                <div className="flex justify-between items-center text-[16px]">
-                  <span className="text-gray-300">Fahrtkosten ({delivery?.distanceKm} km)</span>
-                  <span className="font-semibold">+{deliveryPrice.toFixed(2)} &euro;</span>
+                <div className="flex items-center justify-between py-5 border-b border-gray-200">
+                  <div className="flex items-center gap-4">
+                    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-[#F3A300]" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </span>
+                    <span className="font-bold text-[15px] md:text-[16px] text-[var(--brand-dark)]" style={{ textTransform: "none" }}>
+                      Fahrtkosten ({delivery?.distanceKm} km)
+                    </span>
+                  </div>
+                  <span className="font-semibold text-[15px] md:text-[16px] text-[var(--brand-dark)] whitespace-nowrap">
+                    {deliveryPrice.toFixed(2)} &euro;
+                  </span>
                 </div>
               )}
             </div>
 
-            {/* Total */}
-            <div className="border-t border-white/20 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <span className="text-gray-400 text-[14px] uppercase font-[family-name:var(--font-fira-condensed)]">Gesamtpreis</span>
-                <p className="text-[52px] md:text-[64px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
-                  {totalPrice.toFixed(2)}&euro;
-                </p>
-                <span className="text-gray-500 text-[12px]" style={{ fontWeight: 400, textTransform: "none" }}>inkl. MwSt.</span>
+            {/* Total footer */}
+            <div className="bg-[#F3F4F6] px-6 py-5 md:px-8 md:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-[14px] md:text-[15px] font-extrabold text-gray-500 uppercase tracking-wide font-[family-name:var(--font-fira-condensed)]">
+                Gesamtpreis
+              </span>
+              <div className="flex items-center gap-6 flex-wrap justify-end">
+                <span className="text-[36px] md:text-[44px] font-extrabold text-[#F3A300] leading-none font-[family-name:var(--font-fira-condensed)]">
+                  {totalPrice.toFixed(2)} &euro;
+                </span>
+                <Link
+                  href="/termin-reservieren"
+                  className="btn-brand text-[16px] px-6 py-3 whitespace-nowrap"
+                >
+                  Jetzt reservieren
+                </Link>
               </div>
-              <Link
-                href="/termin-reservieren"
-                className="btn-brand text-[20px] px-10 py-4"
-              >
-                Jetzt reservieren
-              </Link>
             </div>
           </div>
         </section>
