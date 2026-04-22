@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ADDONS, BASE_PRICE, BASE_FEATURES } from "@/lib/constants";
+import { ADDONS, BASE_PRICE } from "@/lib/constants";
 import { calculateDeliveryCost } from "@/lib/distance";
 import { useGooglePlacesAutocomplete, type PlaceSelection } from "@/lib/use-google-places";
 import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
@@ -18,10 +18,79 @@ interface DeliveryInfo {
   routePolyline: string;
 }
 
-const INCLUDED_FEATURES = BASE_FEATURES;
 const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
 const softShadow = "0 4px 14px rgba(0,0,0,0.08)";
 const darkHeaderBg = "#1a171b url('/images/misc/main_back_gr-2.webp') repeat";
+
+const FEATURE_ICON_PATHS: Record<string, React.ReactNode> = {
+  truck: (
+    <>
+      <rect x="2" y="7" width="11" height="9" rx="1" />
+      <path d="M13 10h5l3 3v3h-8z" />
+      <circle cx="6" cy="17" r="1.5" />
+      <circle cx="17" cy="17" r="1.5" />
+    </>
+  ),
+  tools: (
+    <>
+      <path d="M14 7a3 3 0 0 1-4 2.8L3 17l2 2 8-7a3 3 0 0 1 3-5z" />
+      <circle cx="12.3" cy="9.7" r="0.6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  photoStack: (
+    <>
+      <rect x="3" y="3" width="14" height="14" rx="1" />
+      <rect x="7" y="7" width="14" height="14" rx="1" />
+    </>
+  ),
+  printer: (
+    <>
+      <path d="M7 4h10v5H7z" />
+      <rect x="4" y="9" width="16" height="8" rx="1" />
+      <rect x="7" y="13" width="10" height="7" />
+      <circle cx="17" cy="13" r="0.6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  camera: (
+    <>
+      <path d="M3 7h3l2-3h8l2 3h3v12H3z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </>
+  ),
+  monitor: (
+    <>
+      <rect x="2" y="4" width="20" height="13" rx="1" />
+      <path d="M8 21h8M12 17v4" />
+    </>
+  ),
+  bolt: <path d="m13 2-9 12h7l-1 8 9-12h-7z" />,
+  layout: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="1" />
+      <path d="M3 9h18M9 9v12" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="11" width="14" height="10" rx="1" />
+      <path d="M8 11V7a4 4 0 1 1 8 0v4" />
+    </>
+  ),
+  phone: <path d="M3 5a2 2 0 0 1 2-2h2l2 5-2 1.5a11 11 0 0 0 6 6l1.5-2 5 2v2a2 2 0 0 1-2 2A16 16 0 0 1 3 5Z" />,
+};
+
+const FEATURES_V3: Array<{ label: string; icon: keyof typeof FEATURE_ICON_PATHS }> = [
+  { label: "Kostenlose Lieferung (15 km ab Rosenheim)", icon: "truck" },
+  { label: "Kompletter Auf- & Abbau", icon: "tools" },
+  { label: "400 Drucke inklusive (10×15 cm oder Doppel-Streifen 2× 5×15 cm)", icon: "photoStack" },
+  { label: "Profi-Thermosublimationsdrucker", icon: "printer" },
+  { label: "Hochwertige Spiegelreflexkamera (16 MP)", icon: "camera" },
+  { label: "22 Zoll Full-HD Touchscreen", icon: "monitor" },
+  { label: "Studioblitz mit Softbox", icon: "bolt" },
+  { label: "Individuelles Drucklayout", icon: "layout" },
+  { label: "Online-Galerie mit Passwortschutz", icon: "lock" },
+  { label: "24/7 Telefonsupport", icon: "phone" },
+];
 
 function ToggleSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
@@ -55,6 +124,24 @@ function SectionHeader({ stepLabel, title, subtitle }: { stepLabel?: string; tit
         </p>
       )}
     </div>
+  );
+}
+
+function FeatureIconCircle({ type }: { type: keyof typeof FEATURE_ICON_PATHS }) {
+  return (
+    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
+      <svg
+        className="w-4 h-4 text-[#F3A300]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        viewBox="0 0 24 24"
+      >
+        {FEATURE_ICON_PATHS[type]}
+      </svg>
+    </span>
   );
 }
 
@@ -265,10 +352,10 @@ export default function PriceConfiguratorV3() {
             </div>
             <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 flex-1">
-                {INCLUDED_FEATURES.map((f) => (
-                  <div key={f} className="flex items-start gap-3">
-                    <CheckIconCircle />
-                    <span className="text-[14px] text-[var(--brand-dark)] pt-1" style={{ fontWeight: 400, textTransform: "none" }}>{f}</span>
+                {FEATURES_V3.map((f) => (
+                  <div key={f.label} className="flex items-start gap-3">
+                    <FeatureIconCircle type={f.icon} />
+                    <span className="text-[14px] text-[var(--brand-dark)] pt-1" style={{ fontWeight: 400, textTransform: "none" }}>{f.label}</span>
                   </div>
                 ))}
               </div>

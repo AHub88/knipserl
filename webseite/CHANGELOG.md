@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.14] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3, Basispaket-Features in Step 1: Generische Check-Häkchen durch feature-spezifische SVG-Icons ersetzt — Truck für Lieferung, Werkzeug für Auf-/Abbau, Foto-Stack für 400 Drucke, Drucker, Kamera, Monitor, Blitz, Layout-Raster, Schloss für Passwortschutz, Telefon für Support. Der orange Icon-Circle-Wrapper bleibt konsistent, nur das SVG darin ändert sich je nach Feature.
+
 ## [1.7.13] — 2026-04-22
 
 ### Changed
