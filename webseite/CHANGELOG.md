@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.9] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3: Material-Design-Schatten (`0 10px 20px…`) überall entfernt — der "schwebende Card"-Look passte nicht zum flachen, textur-getragenen Stil der Startseite (keine Card-Schatten auf den Landingpages). Step 1 und Step 4 sind weiterhin weiße Cards, aber nur noch durch Dark-Header und Body-Farbkontrast auf der Paper-Textur abgegrenzt. Step 3 (Lieferung) und das Anfrageformular haben keinen Card-Wrapper mehr — Inhalt liegt direkt auf dem Body-Hintergrund wie das "Unverbindlich anfragen"-Formular auf der Startseite. Addon-Karten nutzen statt Schatten eine dezente Border, die beim Hover leicht orange wird.
+
 ## [1.7.8] — 2026-04-22
 
 ### Added

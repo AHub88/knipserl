@@ -20,7 +20,6 @@ interface DeliveryInfo {
 
 const INCLUDED_FEATURES = BASE_FEATURES;
 const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
-const knipserlShadow = "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)";
 
 function ToggleSwitch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
@@ -250,10 +249,7 @@ export default function PriceConfiguratorV3() {
         <section className="py-12 md:py-16">
           <SectionHeader stepLabel="Schritt 01" title="Dein Basispaket" subtitle="Alles inklusive zum Festpreis" />
 
-          <div
-            className="bg-white rounded-lg overflow-hidden"
-            style={{ boxShadow: knipserlShadow }}
-          >
+          <div className="bg-white rounded-lg overflow-hidden">
             <div className="bg-[var(--brand-dark)] px-6 py-4 md:px-8 md:py-5">
               <h3 className="text-white text-[24px] md:text-[28px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
                 Fotobox mit Drucker
@@ -288,9 +284,8 @@ export default function PriceConfiguratorV3() {
               return (
                 <label
                   key={addon.id}
-                  style={{ boxShadow: knipserlShadow }}
-                  className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all ${
-                    active ? "bg-[var(--brand-dark)] text-white" : "bg-white"
+                  className={`flex gap-6 p-4 rounded-lg cursor-pointer transition-all border ${
+                    active ? "bg-[var(--brand-dark)] text-white border-transparent" : "bg-white border-gray-200 hover:border-[#F3A300]/40"
                   }`}
                 >
                   <input
@@ -358,10 +353,7 @@ export default function PriceConfiguratorV3() {
         <section className="py-12 md:py-16">
           <SectionHeader stepLabel="Schritt 03" title="Wohin liefern wir?" subtitle="Fahrtkosten automatisch berechnet" />
 
-          <div
-            className="bg-white rounded-lg p-6 md:p-8"
-            style={{ boxShadow: knipserlShadow }}
-          >
+          <div>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
               {/* Left: Input + Results */}
               <div className="md:col-span-3 space-y-4">
@@ -453,10 +445,7 @@ export default function PriceConfiguratorV3() {
         <section className="py-12 md:py-16">
           <SectionHeader stepLabel="Schritt 04" title="Dein Preis" subtitle="Zusammenfassung Deiner Konfiguration" />
 
-          <div
-            className="bg-white rounded-lg overflow-hidden"
-            style={{ boxShadow: knipserlShadow }}
-          >
+          <div className="bg-white rounded-lg overflow-hidden">
             <div className="bg-[var(--brand-dark)] px-6 py-4 md:px-8 md:py-5">
               <h3 className="text-white text-[20px] md:text-[22px] font-extrabold uppercase font-[family-name:var(--font-fira-condensed)] tracking-wide">
                 Deine Konfiguration
@@ -545,10 +534,7 @@ export default function PriceConfiguratorV3() {
                 </p>
               </div>
             ) : (
-              <div
-                className="bg-white rounded-lg p-6 md:p-8"
-                style={{ boxShadow: knipserlShadow }}
-              >
+              <div>
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <MiniCalendar
