@@ -89,7 +89,7 @@ export default function Header() {
               } ${lightText ? "opacity-0" : "opacity-100"}`}
             />
             <Image
-              src="/images/logo/knipserl_breit_4c_negativ.svg"
+              src="/images/logo/knipserl_breit_4c_negativ-orange.svg"
               alt="Knipserl Fotobox - Fotobox mieten in Oberbayern und Tirol"
               width={1342}
               height={377}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -38,17 +39,20 @@ export default function RootLayout({
   return (
     <html
       lang="de"
-      className={`${inter.variable} ${geistMono.variable} h-full dark`}
+      className={`${inter.variable} ${geistMono.variable} h-full`}
+      suppressHydrationWarning
     >
       <head>
         <meta name="theme-color" content="#18181b" />
         <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body className="min-h-full flex flex-col antialiased">
-        <SessionProvider>
-          {children}
-          <Toaster theme="dark" />
-        </SessionProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
+          <SessionProvider>
+            {children}
+            <Toaster />
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

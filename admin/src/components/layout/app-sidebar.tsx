@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import { useViewMode } from "@/lib/view-mode-context";
 import { SETTINGS_SECTIONS } from "@/lib/settings-nav";
 import {
@@ -32,6 +33,8 @@ import {
   IconBrush,
   IconBrandGoogle,
   IconHistory,
+  IconSun,
+  IconMoon,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -211,11 +214,11 @@ function AccordionNavItem({
         className={
           "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
           (active
-            ? "bg-[#F6A11C]/10 text-[#F6A11C]"
-            : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+            ? "bg-primary/10 text-primary"
+            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground")
         }
       >
-        <group.icon className={"size-[18px] shrink-0 " + (active ? "text-[#F6A11C]" : "text-zinc-400")} />
+        <group.icon className={"size-[18px] shrink-0 " + (active ? "text-primary" : "text-muted-foreground")} />
         <span>{group.title}</span>
       </Link>
     );
@@ -229,19 +232,19 @@ function AccordionNavItem({
         className={
           "flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
           (hasActiveChild
-            ? "bg-[#F6A11C]/10 text-[#F6A11C]"
-            : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+            ? "bg-primary/10 text-primary"
+            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground")
         }
       >
         <group.icon
-          className={"size-[18px] shrink-0 " + (hasActiveChild ? "text-[#F6A11C]" : "text-zinc-400")}
+          className={"size-[18px] shrink-0 " + (hasActiveChild ? "text-primary" : "text-muted-foreground")}
         />
         <span className="flex-1 text-left">{group.title}</span>
         <IconChevronDown
           className={
             "size-4 shrink-0 transition-transform duration-200 " +
             (isOpen ? "rotate-180" : "") + " " +
-            (hasActiveChild ? "text-[#F6A11C]/60" : "text-zinc-500")
+            (hasActiveChild ? "text-primary/60" : "text-muted-foreground/70")
           }
         />
       </button>
@@ -253,7 +256,7 @@ function AccordionNavItem({
           (isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0")
         }
       >
-        <div className="ml-3 border-l border-white/[0.06] pl-3 mt-1 space-y-0.5">
+        <div className="ml-3 border-l border-border/50 pl-3 mt-1 space-y-0.5">
           {group.children?.map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
@@ -264,11 +267,11 @@ function AccordionNavItem({
                 className={
                   "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-150 " +
                   (active
-                    ? "text-[#F6A11C] bg-[#F6A11C]/5"
-                    : "text-zinc-400 hover:bg-[#222326] hover:text-zinc-200")
+                    ? "text-primary bg-primary/5"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground/90")
                 }
               >
-                <item.icon className={"size-4 shrink-0 " + (active ? "text-[#F6A11C]" : "text-zinc-500")} />
+                <item.icon className={"size-4 shrink-0 " + (active ? "text-primary" : "text-muted-foreground/70")} />
                 <span>{item.title}</span>
               </Link>
             );
@@ -301,17 +304,17 @@ function SettingsAccordionItem({
         className={
           "flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 " +
           (hasActiveChild
-            ? "bg-[#F6A11C]/10 text-[#F6A11C]"
-            : "text-zinc-300 hover:bg-[#222326] hover:text-zinc-100")
+            ? "bg-primary/10 text-primary"
+            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground")
         }
       >
-        <IconSettings className={"size-[18px] shrink-0 " + (hasActiveChild ? "text-[#F6A11C]" : "text-zinc-400")} />
+        <IconSettings className={"size-[18px] shrink-0 " + (hasActiveChild ? "text-primary" : "text-muted-foreground")} />
         <span className="flex-1 text-left">Einstellungen</span>
         <IconChevronDown
           className={
             "size-4 shrink-0 transition-transform duration-200 " +
             (isOpen ? "rotate-180 " : "") +
-            (hasActiveChild ? "text-[#F6A11C]/60" : "text-zinc-500")
+            (hasActiveChild ? "text-primary/60" : "text-muted-foreground/70")
           }
         />
       </button>
@@ -322,10 +325,10 @@ function SettingsAccordionItem({
           (isOpen ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0")
         }
       >
-        <div className="ml-3 border-l border-white/[0.06] pl-3 mt-1 space-y-2">
+        <div className="ml-3 border-l border-border/50 pl-3 mt-1 space-y-2">
           {SETTINGS_SECTIONS.map((section) => (
             <div key={section.title}>
-              <div className="px-2.5 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+              <div className="px-2.5 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
                 {section.title}
               </div>
               <div className="space-y-0.5">
@@ -345,11 +348,11 @@ function SettingsAccordionItem({
                       className={
                         "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-150 " +
                         (active
-                          ? "text-[#F6A11C] bg-[#F6A11C]/5"
-                          : "text-zinc-400 hover:bg-[#222326] hover:text-zinc-200")
+                          ? "text-primary bg-primary/5"
+                          : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground/90")
                       }
                     >
-                      <Icon className={`size-4 shrink-0 ${item.iconColor ?? (active ? "text-[#F6A11C]" : "text-zinc-500")}`} />
+                      <Icon className={`size-4 shrink-0 ${item.iconColor ?? (active ? "text-primary" : "text-muted-foreground/70")}`} />
                       <span>{item.title}</span>
                     </Link>
                   );
@@ -360,6 +363,30 @@ function SettingsAccordionItem({
         </div>
       </div>
     </div>
+  );
+}
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  const isDark = theme === "dark";
+
+  return (
+    <button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+    >
+      {isDark ? (
+        <IconSun className="size-[18px] shrink-0 text-muted-foreground" />
+      ) : (
+        <IconMoon className="size-[18px] shrink-0 text-muted-foreground" />
+      )}
+      <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
+    </button>
   );
 }
 
@@ -391,9 +418,9 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar className="border-r border-white/[0.10] bg-sidebar shadow-xl shadow-black/50">
+    <Sidebar className="border-r border-sidebar-border bg-sidebar shadow-xl shadow-black/10 dark:shadow-black/25">
       {/* Brand */}
-      <SidebarHeader className="border-b border-white/[0.10] py-5">
+      <SidebarHeader className="border-b border-sidebar-border py-5">
         <Link href="/" className="flex justify-center w-full">
           <img
             src="/logo.png"
@@ -425,9 +452,10 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      {/* Footer */}
-      <SidebarFooter className="border-t border-white/[0.10] px-5 py-4">
-        <div className="flex items-center justify-between">
+      {/* Theme Toggle + Footer */}
+      <SidebarFooter className="border-t border-sidebar-border px-3 py-3 space-y-2">
+        <ThemeToggle />
+        <div className="flex items-center justify-between px-2">
           <span className="text-[11px] text-muted-foreground">
             Knipserl Dashboard
           </span>
