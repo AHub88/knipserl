@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.16] — 2026-04-22
+
+### Changed
+- Preiskonfigurator v3, Basispaket-Icons in Step 1: Kontrast verbessert — Circle-Hintergrund auf vollfarbenes Orange (`#F3A300`) und Icon auf Weiß umgestellt. Vorher war der Wrapper nur 15% transparentes Orange mit orangefarbenem Icon → blass und kaum lesbar.
+- "Auf- & Abbau"-Icon durch eine klar erkennbare Werkzeugkiste ersetzt. Das abstrakte Werkzeug-Symbol davor war nicht eindeutig genug als "Wir bauen auf".
+
 ## [1.7.15] — 2026-04-22
 
 ### Changed

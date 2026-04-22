@@ -33,8 +33,9 @@ const FEATURE_ICON_PATHS: Record<string, React.ReactNode> = {
   ),
   tools: (
     <>
-      <path d="M14 7a3 3 0 0 1-4 2.8L3 17l2 2 8-7a3 3 0 0 1 3-5z" />
-      <circle cx="12.3" cy="9.7" r="0.6" fill="currentColor" stroke="none" />
+      <rect x="3" y="8" width="18" height="11" rx="1" />
+      <path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <path d="M3 13h18" />
     </>
   ),
   photoStack: (
@@ -129,9 +130,9 @@ function SectionHeader({ stepLabel, title, subtitle }: { stepLabel?: string; tit
 
 function FeatureIconCircle({ type }: { type: keyof typeof FEATURE_ICON_PATHS }) {
   return (
-    <span className="w-8 h-8 rounded-full bg-[#F3A300]/15 border border-[#F3A300]/30 flex items-center justify-center flex-shrink-0">
+    <span className="w-8 h-8 rounded-full bg-[#F3A300] flex items-center justify-center flex-shrink-0">
       <svg
-        className="w-4 h-4 text-[#F3A300]"
+        className="w-4 h-4 text-white"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
