@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.13.0] — 2026-04-23
+
+### Added
+- Auftrag-Detail Header: **Meta-Zeile unter Location** mit drei Info-Bausteinen (Dot-getrennt):
+  - **Countdown zum Event**: „Heute" / „Morgen" / „Gestern" / „In X Tagen" / „Vor X Tagen". Farbe skaliert mit Nähe: `text-primary font-bold` am Eventtag, `primary font-semibold` ≤ 3 Tage, `foreground font-semibold` ≤ 14 Tage, `muted` bei vergangenen Events.
+  - **Gebucht am** (entspricht `createdAt`) im Format `23.04.2026`.
+  - **Geändert am** (entspricht `updatedAt`) — nur gezeigt wenn abweichend vom Buchungsdatum.
+
 ## [1.12.1] — 2026-04-23
 
 ### Changed

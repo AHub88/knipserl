@@ -108,6 +108,8 @@ export default async function OrderDetailPage({
     onSiteContactPhone: (order as { onSiteContactPhone?: string | null }).onSiteContactPhone ?? null,
     onSiteContactNotes: (order as { onSiteContactNotes?: string | null }).onSiteContactNotes ?? null,
     extraPaperRolls: (order as { extraPaperRolls?: number }).extraPaperRolls ?? 0,
+    createdAt: order.createdAt.toISOString(),
+    updatedAt: order.updatedAt.toISOString(),
     graphicUrl: order.graphicUrl,
     confirmationToken: order.confirmationToken,
     confirmedByCustomerAt: order.confirmedByCustomerAt?.toISOString() ?? null,

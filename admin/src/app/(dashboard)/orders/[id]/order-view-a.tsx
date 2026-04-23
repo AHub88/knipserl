@@ -101,6 +101,8 @@ type Order = {
   onSiteContactPhone: string | null;
   onSiteContactNotes: string | null;
   extraPaperRolls: number;
+  createdAt?: string;
+  updatedAt?: string;
   graphicUrl?: string | null;
   confirmationToken?: string | null;
   confirmedByCustomerAt?: string | null;
@@ -119,6 +121,27 @@ type Props = {
 function formatDateShort(iso: string | null) {
   if (!iso) return null;
   return new Date(iso).toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" });
+}
+
+function formatDateDDMMYY(iso: string | null | undefined) {
+  if (!iso) return null;
+  return new Date(iso).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function buildCountdown(eventIso: string): { label: string; tone: "urgent" | "soon" | "future" | "today" | "past" } {
+  const event = new Date(eventIso);
+  const now = new Date();
+  const startOfEvent = new Date(event.getFullYear(), event.getMonth(), event.getDate());
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffDays = Math.round((startOfEvent.getTime() - startOfToday.getTime()) / 86400000);
+  if (diffDays === 0) return { label: "Heute", tone: "today" };
+  if (diffDays === 1) return { label: "Morgen", tone: "urgent" };
+  if (diffDays === -1) return { label: "Gestern", tone: "past" };
+  if (diffDays > 0) {
+    const tone: "urgent" | "soon" | "future" = diffDays <= 3 ? "urgent" : diffDays <= 14 ? "soon" : "future";
+    return { label: `In ${diffDays} Tagen`, tone };
+  }
+  return { label: `Vor ${-diffDays} Tagen`, tone: "past" };
 }
 
 export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props) {
@@ -297,6 +320,38 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 Maps
               </a>
             </div>
+
+            {/* Meta: Countdown + gebucht + letzte Änderung */}
+            {(() => {
+              const cd = buildCountdown(order.eventDate);
+              const toneClass =
+                cd.tone === "today"
+                  ? "text-primary font-bold"
+                  : cd.tone === "urgent"
+                    ? "text-primary font-semibold"
+                    : cd.tone === "soon"
+                      ? "text-foreground font-semibold"
+                      : cd.tone === "past"
+                        ? "text-muted-foreground"
+                        : "text-foreground/80";
+              return (
+                <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                  <span className={toneClass}>{cd.label}</span>
+                  {order.createdAt && (
+                    <>
+                      <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+                      <span>Gebucht {formatDateDDMMYY(order.createdAt)}</span>
+                    </>
+                  )}
+                  {order.updatedAt && order.updatedAt !== order.createdAt && (
+                    <>
+                      <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+                      <span>Geändert {formatDateDDMMYY(order.updatedAt)}</span>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Middle: Workflow */}
