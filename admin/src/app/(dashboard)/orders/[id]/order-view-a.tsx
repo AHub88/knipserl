@@ -282,86 +282,88 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           </div>
 
           {/* Middle: Workflow */}
-          <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <IconFlag className="size-4 text-primary" />
-                <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Workflow</h3>
-                <span className="text-xs font-medium text-muted-foreground tabular-nums">
-                  {doneSteps}/4
-                </span>
-              </div>
-              {isAdmin && !editingStatus && (
-                <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
-                  <IconPencil className="size-4" />
-                </button>
-              )}
-              {editingStatus && (
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => {
-                      saveField(statusState);
-                      setEditingStatus(false);
-                    }}
-                    className="text-emerald-400 hover:text-emerald-300 transition-colors"
-                  >
-                    <IconCheck className="size-5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
-                      setEditingStatus(false);
-                    }}
-                    className="text-muted-foreground hover:text-foreground/80 transition-colors"
-                  >
-                    <IconX className="size-5" />
-                  </button>
+          <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4 flex flex-col gap-2">
+            {/* Header block — matches Fahrer block in rail */}
+            <div className="pb-3 mb-1 border-b border-border">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <IconFlag className="size-4 text-primary shrink-0" />
+                  <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Workflow</h3>
+                  <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                    {doneSteps}/4
+                  </span>
                 </div>
-              )}
-            </div>
-
-            {/* Progress bar */}
-            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mb-3">
-              <div
-                className="h-full bg-emerald-400 transition-all"
-                style={{ width: `${(doneSteps / 4) * 100}%` }}
-              />
-            </div>
-
-            {/* Status pills - 2×2 grid */}
-            <div className="grid grid-cols-2 gap-2">
-              {([
-                { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck, warnIfPast: false },
-                { key: "designReady" as const, label: "Design", icon: IconPalette, warnIfPast: false },
-                { key: "planned" as const, label: "Geplant", icon: IconTruck, warnIfPast: false },
-                { key: "paid" as const, label: "Bezahlt", icon: IconCoin, warnIfPast: true },
-              ]).map((s) => {
-                const done = statusState[s.key];
-                const warn = !done && s.warnIfPast && eventInPast;
-                const baseClass =
-                  "flex items-center justify-center gap-1.5 h-9 px-2 rounded-lg border text-xs font-medium transition-colors " +
-                  (done
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : warn
-                      ? "border-red-500/30 bg-red-500/10 text-red-400"
-                      : "border-border bg-card text-muted-foreground");
-                return editingStatus ? (
-                  <button
-                    key={s.label}
-                    onClick={() => setStatusState((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
-                    className={baseClass + " cursor-pointer hover:opacity-80"}
-                  >
-                    <s.icon className="size-4 shrink-0" />
-                    <span className="truncate">{s.label}</span>
+                {isAdmin && !editingStatus && (
+                  <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                    <IconPencil className="size-4" />
                   </button>
-                ) : (
-                  <div key={s.label} className={baseClass}>
-                    <s.icon className="size-4 shrink-0" />
-                    <span className="truncate">{s.label}</span>
+                )}
+                {editingStatus && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        saveField(statusState);
+                        setEditingStatus(false);
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <IconCheck className="size-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
+                        setEditingStatus(false);
+                      }}
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <IconX className="size-5" />
+                    </button>
                   </div>
-                );
-              })}
+                )}
+              </div>
+              {/* Progress bar */}
+              <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-emerald-400 transition-all"
+                  style={{ width: `${(doneSteps / 4) * 100}%` }}
+                />
+              </div>
             </div>
+
+            {/* Status pills - stacked */}
+            {([
+              { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck, warnIfPast: false },
+              { key: "designReady" as const, label: "Design", icon: IconPalette, warnIfPast: false },
+              { key: "planned" as const, label: "Geplant", icon: IconTruck, warnIfPast: false },
+              { key: "paid" as const, label: "Bezahlt", icon: IconCoin, warnIfPast: true },
+            ]).map((s) => {
+              const done = statusState[s.key];
+              const warn = !done && s.warnIfPast && eventInPast;
+              const baseClass =
+                "flex items-center gap-2 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                (done
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : warn
+                    ? "border-red-500/30 bg-red-500/10 text-red-400"
+                    : "border-border bg-card text-muted-foreground");
+              return editingStatus ? (
+                <button
+                  key={s.label}
+                  onClick={() => setStatusState((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
+                  className={baseClass + " cursor-pointer hover:opacity-80"}
+                >
+                  <s.icon className="size-4 shrink-0" />
+                  <span>{s.label}</span>
+                  {done && <IconCheck className="size-3.5 opacity-70 ml-auto" />}
+                </button>
+              ) : (
+                <div key={s.label} className={baseClass}>
+                  <s.icon className="size-4 shrink-0" />
+                  <span>{s.label}</span>
+                  {done && <IconCheck className="size-3.5 opacity-70 ml-auto" />}
+                </div>
+              );
+            })}
           </div>
 
           {/* Right: Action Rail */}

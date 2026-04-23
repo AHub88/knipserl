@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.8.1] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Workflow-Spalte: Status-Pills jetzt **untereinander** statt 2×2-Grid, mit Icon + Label linksbündig (analog zu den Quick-Action-Buttons). Workflow-Header-Block hat dieselbe Struktur wie der Fahrer-Block in der Rail (`pb-3 mb-1 border-b`), damit der erste Status-Pill auf der exakt gleichen Höhe startet wie der erste Quick-Action-Button daneben.
+
 ## [1.8.0] — 2026-04-23
 
 ### Changed
