@@ -212,21 +212,39 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
   const hasSchedule = order.setupDate || order.setupTime || order.teardownDate || order.teardownTime;
 
+  const eventInPast = new Date(order.eventDate) < new Date();
+  const companyTag = order.companyName.includes("GbR") ? "GbR" : "EU";
+  const paymentLabel = order.paymentMethod === "CASH" ? "Bar" : "Rechnung";
+  const doneSteps = [statusState.confirmed, statusState.designReady, statusState.planned, statusState.paid].filter(Boolean).length;
+
   return (
     <div className="space-y-6">
-      {/* ── Hero Header ── */}
-      <div className="rounded-2xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-4 sm:p-6">
-        {/* Top row */}
-        <div className="flex items-center gap-2 sm:gap-3 mb-4">
+      {/* ── Hero Header (Quiet) ── */}
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+        {/* Topline: back + meta dots + actions */}
+        <div className="flex items-center gap-2 mb-5 text-xs">
           <Link
             href="/orders"
-            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <IconArrowLeft className="size-4" />
           </Link>
-          <span className="text-xs font-mono text-muted-foreground">#{order.orderNumber}</span>
-
-          {/* Actions - right side */}
+          <div className="flex items-center gap-2 flex-wrap text-muted-foreground min-w-0">
+            <span className="font-mono">#{order.orderNumber}</span>
+            <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+            <span>{companyTag}</span>
+            <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+            <span>{paymentLabel}</span>
+            {driverDisplay && (
+              <>
+                <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+                <span className="inline-flex items-center gap-1 truncate">
+                  <IconSteeringWheel className="size-3.5 shrink-0" />
+                  <span className="truncate">{driverDisplay}</span>
+                </span>
+              </>
+            )}
+          </div>
           <div className="flex items-center gap-2 ml-auto shrink-0">
             {isAdmin && (
               <button
@@ -248,109 +266,40 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           </div>
         </div>
 
-        {/* Info badges row */}
-        <div className="flex flex-wrap items-center gap-2 mb-4">
-          {/* Driver */}
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 px-2.5 py-1 text-xs font-medium">
-            <IconSteeringWheel className="size-3.5" />
-            {driverDisplay ?? <span className="italic opacity-50">Kein Fahrer</span>}
-          </span>
-
-          {/* Payment method */}
-          <span className={
-            "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium " +
-            (order.paymentMethod === "CASH"
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-              : "border-purple-500/30 bg-purple-500/10 text-purple-400")
-          }>
-            <IconCash className="size-3.5" />
-            {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
-          </span>
-
-          {/* Confirmation link */}
-          {order.confirmationToken && (
-            <button
-              onClick={() => {
-                const url = `${window.location.origin}/confirm/${order.confirmationToken}`;
-                navigator.clipboard.writeText(url);
-                toast.success("Bestätigungslink kopiert");
-              }}
-              className={
-                "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors " +
-                (order.confirmedByCustomerAt
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "border-border bg-muted text-foreground/80 hover:bg-accent")
-              }
-            >
-              {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
-              {order.confirmedByCustomerAt ? "Bestätigt" : "Link kopieren"}
-            </button>
-          )}
-
-          {/* Design */}
-          <button
-            onClick={async () => {
-              if (order.designToken) {
-                const url = `${window.location.origin}/design/${order.designToken}`;
-                await navigator.clipboard.writeText(url);
-                toast.success("Design-Link kopiert");
-              } else {
-                try {
-                  const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
-                  if (!res.ok) throw new Error();
-                  const { token } = await res.json();
-                  const url = `${window.location.origin}/design/${token}`;
-                  await navigator.clipboard.writeText(url);
-                  toast.success("Design erstellt & Link kopiert");
-                  router.refresh();
-                } catch {
-                  toast.error("Design konnte nicht erstellt werden");
-                }
-              }}
-            }
-            className={
-              "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors " +
-              (order.designReady
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                : order.designToken
-                  ? "border-purple-500/30 bg-purple-500/10 text-purple-400"
-                  : "border-border bg-muted text-foreground/80 hover:bg-accent")
-            }
-          >
-            <IconPalette className="size-3.5" />
-            {order.designReady ? "Design fertig" : order.designToken ? "Design-Link" : "Design"}
-          </button>
-        </div>
-
-        {/* Date */}
-        <div className="flex flex-wrap items-center gap-2 mb-2">
+        {/* Date banner */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
           <IconCalendar className="size-5 text-primary shrink-0" />
           <span className="text-base sm:text-xl text-primary font-semibold">{formattedDate}</span>
-          <span className="inline-flex items-center rounded-md bg-accent px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             {order.eventType}
           </span>
         </div>
 
         {/* Customer Name */}
         {firma ? (
-          <div className="mb-1.5">
+          <div className="mb-2">
             <p className="text-sm sm:text-base text-muted-foreground mb-0.5">{firma}</p>
             <h1 className="text-xl sm:text-3xl font-bold text-foreground">{kontakt}</h1>
           </div>
         ) : (
-          <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-1.5">{kontakt}</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">{kontakt}</h1>
         )}
 
         {/* Location */}
-        <div className="flex items-start gap-2 text-muted-foreground">
-          <IconMapPin className="size-4 shrink-0 mt-0.5" />
-          <span className="text-sm sm:text-base">
-            <span className="text-foreground/80 font-medium">{order.locationName}</span>
-            {ort && <span className="text-muted-foreground"> &middot; {ort}</span>}
-            {order.distanceKm != null && (
-              <span className="text-muted-foreground"> &middot; {order.distanceKm} km</span>
-            )}
-          </span>
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <IconMapPin className="size-4 shrink-0" />
+          <span className="text-foreground/80 font-medium">{order.locationName}</span>
+          {ort && <span>&middot; {ort}</span>}
+          {order.distanceKm != null && <span>&middot; {order.distanceKm} km</span>}
+          <a
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-1 text-primary hover:underline inline-flex items-center gap-0.5"
+          >
+            <IconExternalLink className="size-3" />
+            Maps
+          </a>
         </div>
       </div>
 
@@ -369,80 +318,147 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       <div className="flex flex-col lg:flex-row gap-6">
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
-          {/* Status */}
+          {/* Workflow (Status + Actions) */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
               <div className="flex items-center gap-2">
                 <IconFlag className="size-4 text-primary" />
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</h3>
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Workflow</h3>
               </div>
-              {isAdmin && !editingStatus && (
-                <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
-                  <IconPencil className="size-4.5" />
-                </button>
-              )}
-              {editingStatus && (
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => {
-                      saveField(statusState);
-                      setEditingStatus(false);
-                    }}
-                    className="text-emerald-400 hover:text-emerald-300 transition-colors"
-                  >
-                    <IconCheck className="size-5" />
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                  {doneSteps}/4 erledigt
+                </span>
+                {isAdmin && !editingStatus && (
+                  <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                    <IconPencil className="size-4.5" />
                   </button>
-                  <button
-                    onClick={() => {
-                      setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
-                      setEditingStatus(false);
-                    }}
-                    className="text-muted-foreground hover:text-foreground/80 transition-colors"
-                  >
-                    <IconX className="size-5" />
-                  </button>
+                )}
+                {editingStatus && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        saveField(statusState);
+                        setEditingStatus(false);
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <IconCheck className="size-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
+                        setEditingStatus(false);
+                      }}
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <IconX className="size-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="p-5 space-y-4">
+              {/* Progress bar */}
+              <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-emerald-400 transition-all"
+                  style={{ width: `${(doneSteps / 4) * 100}%` }}
+                />
+              </div>
+
+              {/* Status pills */}
+              <div className="flex flex-wrap gap-2">
+                {([
+                  { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck, warnIfPast: false },
+                  { key: "designReady" as const, label: "Design", icon: IconPalette, warnIfPast: false },
+                  { key: "planned" as const, label: "Geplant", icon: IconTruck, warnIfPast: false },
+                  { key: "paid" as const, label: "Bezahlt", icon: IconCoin, warnIfPast: true },
+                ]).map((s) => {
+                  const done = statusState[s.key];
+                  const warn = !done && s.warnIfPast && eventInPast;
+                  const baseClass =
+                    "inline-flex items-center gap-2 h-9 px-3 rounded-lg border text-sm font-medium transition-colors " +
+                    (done
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                      : warn
+                        ? "border-red-500/30 bg-red-500/10 text-red-400"
+                        : "border-border bg-muted text-muted-foreground");
+                  return editingStatus ? (
+                    <button
+                      key={s.label}
+                      onClick={() => setStatusState((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
+                      className={baseClass + " cursor-pointer hover:opacity-80"}
+                    >
+                      <s.icon className="size-4" />
+                      <span>{s.label}</span>
+                      {done && <IconCheck className="size-3.5 opacity-70" />}
+                    </button>
+                  ) : (
+                    <div key={s.label} className={baseClass}>
+                      <s.icon className="size-4" />
+                      <span>{s.label}</span>
+                      {done && <IconCheck className="size-3.5 opacity-70" />}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Action links */}
+              {(order.confirmationToken || isAdmin) && (
+                <div className="flex flex-wrap gap-2 pt-3 border-t border-border">
+                  {order.confirmationToken && (
+                    <button
+                      onClick={() => {
+                        const url = `${window.location.origin}/confirm/${order.confirmationToken}`;
+                        navigator.clipboard.writeText(url);
+                        toast.success("Bestätigungslink kopiert");
+                      }}
+                      className={
+                        "inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                        (order.confirmedByCustomerAt
+                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15"
+                          : "border-border bg-muted text-foreground/80 hover:bg-accent")
+                      }
+                    >
+                      {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
+                      {order.confirmedByCustomerAt ? "Bestätigungslink erneut kopieren" : "Bestätigungslink kopieren"}
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      onClick={async () => {
+                        if (order.designToken) {
+                          const url = `${window.location.origin}/design/${order.designToken}`;
+                          await navigator.clipboard.writeText(url);
+                          toast.success("Design-Link kopiert");
+                        } else {
+                          try {
+                            const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
+                            if (!res.ok) throw new Error();
+                            const { token } = await res.json();
+                            const url = `${window.location.origin}/design/${token}`;
+                            await navigator.clipboard.writeText(url);
+                            toast.success("Design erstellt & Link kopiert");
+                            router.refresh();
+                          } catch {
+                            toast.error("Design konnte nicht erstellt werden");
+                          }
+                        }
+                      }}
+                      className={
+                        "inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                        (order.designToken
+                          ? "border-border bg-muted text-foreground/80 hover:bg-accent"
+                          : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15")
+                      }
+                    >
+                      <IconPalette className="size-3.5" />
+                      {order.designToken ? "Design-Link kopieren" : "Design-Link erstellen"}
+                    </button>
+                  )}
                 </div>
               )}
-            </div>
-            <div className="p-5">
-            <div className="flex flex-wrap gap-3">
-              {([
-                { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck },
-                { key: "designReady" as const, label: "Design", icon: IconPalette },
-                { key: "planned" as const, label: "Geplant", icon: IconTruck },
-                { key: "paid" as const, label: "Bezahlt", icon: IconCoin },
-              ]).map((s) => {
-                const done = statusState[s.key];
-                return editingStatus ? (
-                  <button
-                    key={s.label}
-                    onClick={() => setStatusState((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
-                    className={
-                      "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 min-w-[90px] cursor-pointer hover:opacity-80 transition-colors " +
-                      (done
-                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                        : "border-red-500/20 bg-red-500/5 text-red-400/60")
-                    }
-                  >
-                    <s.icon className="size-8" />
-                    <span className="text-[11px] font-bold uppercase tracking-wide">{s.label}</span>
-                  </button>
-                ) : (
-                  <div
-                    key={s.label}
-                    className={
-                      "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 min-w-[90px] " +
-                      (done
-                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                        : "border-red-500/20 bg-red-500/5 text-red-400/60")
-                    }
-                  >
-                    <s.icon className="size-8" />
-                    <span className="text-[11px] font-bold uppercase tracking-wide">{s.label}</span>
-                  </div>
-                );
-              })}
-            </div>
             </div>
           </div>
 

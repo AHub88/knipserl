@@ -4,6 +4,13 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.5.0] — 2026-04-23
+
+### Changed
+- Auftrag-Detailseite "Quiet Hero": Der Hero-Header wurde auf 4 schlanke Zeilen reduziert (Topline mit Meta-Dots · Datum · Kunde · Location). Info-Chips für Fahrer/Zahlart/Firma sitzen jetzt als Plain-Text in der Topline, nicht mehr als bunte Pills.
+- Status-Block durch **Workflow-Strip** ersetzt: 4 kompakte Pills statt dicker rot/grün-Kacheln, kleine Progress-Bar ("2/4 erledigt"), Action-Buttons (Bestätigungslink, Design-Link) wandern aus dem Header in den Workflow.
+- "Nicht erledigt"-Pills sind jetzt **neutral grau** statt rot — ein frischer Auftrag sieht nicht mehr aus wie ein Alarm. "Bezahlt" wird nur bei vergangenen Events rot markiert.
+
 ## [1.4.5] — 2026-04-23
 
 ### Changed
