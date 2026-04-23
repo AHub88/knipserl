@@ -16,16 +16,16 @@ export default async function SettingsPage() {
     <div className="space-y-10 max-w-5xl">
       {/* Page Header */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+        <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
           <IconSettings className="size-5" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Einstellungen</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Einstellungen</h1>
       </div>
 
       {/* Stammdaten — Inline-Forms */}
       <section id="stammdaten" className="scroll-mt-24 space-y-4">
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">Stammdaten</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Stammdaten</h2>
           <p className="text-xs text-muted-foreground mt-1">
             Basis-Konfiguration für Adresse und externe APIs.
           </p>
@@ -54,7 +54,7 @@ export default async function SettingsPage() {
       {linkSections.map((section) => (
         <section key={section.title} className="space-y-4">
           <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               {section.title}
             </h2>
           </div>
@@ -65,14 +65,14 @@ export default async function SettingsPage() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group rounded-xl border border-white/[0.10] bg-card p-5 hover:border-[#F6A11C]/40 hover:bg-[#F6A11C]/[0.03] transition-colors flex flex-col"
+                  className="group rounded-xl border border-border bg-card p-5 hover:border-primary/40 hover:bg-primary/[0.03] transition-colors flex flex-col"
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <Icon className={`size-5 ${item.iconColor ?? "text-[#F6A11C]"}`} />
-                    <h3 className="text-sm font-semibold text-zinc-200 group-hover:text-zinc-100 flex-1">
+                    <Icon className={`size-5 ${item.iconColor ?? "text-primary"}`} />
+                    <h3 className="text-sm font-semibold text-foreground group-hover:text-foreground flex-1">
                       {item.title}
                     </h3>
-                    <IconChevronRight className="size-4 text-zinc-600 group-hover:text-[#F6A11C] transition-colors" />
+                    <IconChevronRight className="size-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
                 </Link>

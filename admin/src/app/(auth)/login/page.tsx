@@ -11,7 +11,7 @@ export default async function LoginPage({
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#F6A11C]/[0.08] via-transparent to-transparent" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/[0.08] via-transparent to-transparent" />
 
       <div className="relative w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
@@ -19,7 +19,7 @@ export default async function LoginPage({
           <p className="text-sm text-muted-foreground">Admin Dashboard</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.10] bg-card p-6 backdrop-blur-sm shadow-2xl shadow-black/40">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-sm shadow-2xl shadow-black/5 dark:shadow-black/25">
           <form
             action={async (formData: FormData) => {
               "use server";
@@ -39,7 +39,7 @@ export default async function LoginPage({
             className="space-y-5"
           >
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-zinc-300 block">
+              <label htmlFor="email" className="text-sm font-medium text-foreground/80 block">
                 E-Mail
               </label>
               <input
@@ -50,11 +50,11 @@ export default async function LoginPage({
                 autoFocus
                 autoComplete="email"
                 placeholder="name@knipserl.de"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-card px-3 text-sm text-zinc-100 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/40 focus:ring-2 focus:ring-[#F6A11C]/20"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-zinc-300 block">
+              <label htmlFor="password" className="text-sm font-medium text-foreground/80 block">
                 Passwort
               </label>
               <input
@@ -63,7 +63,7 @@ export default async function LoginPage({
                 type="password"
                 required
                 autoComplete="current-password"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-card px-3 text-sm text-zinc-100 outline-none focus:border-[#F6A11C]/40 focus:ring-2 focus:ring-[#F6A11C]/20"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
@@ -75,7 +75,7 @@ export default async function LoginPage({
 
             <button
               type="submit"
-              className="h-10 w-full rounded-xl bg-[#F6A11C] text-zinc-950 font-semibold hover:bg-[#F6A11C]/90 transition-all duration-200 active:scale-[0.98]"
+              className="h-10 w-full rounded-xl bg-primary text-zinc-950 font-semibold hover:bg-primary/90 transition-all duration-200 active:scale-[0.98]"
             >
               Anmelden
             </button>

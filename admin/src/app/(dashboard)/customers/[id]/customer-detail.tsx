@@ -85,26 +85,26 @@ export function CustomerDetail({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/customers" className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors">
+          <Link href="/customers" className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors">
             <IconArrowLeft className="size-4" />
           </Link>
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+            <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
               <IconUsers className="size-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-zinc-100">{customer.name}</h1>
+              <h1 className="text-xl font-bold text-foreground">{customer.name}</h1>
               <p className="text-sm text-muted-foreground">
                 {customer.company ? `${customer.company} · ` : ""}
                 {customer.customerType === "BUSINESS" ? "Geschäftskunde" : "Privatkunde"}
@@ -115,16 +115,16 @@ export function CustomerDetail({
 
         {editing ? (
           <div className="flex items-center gap-2">
-            <button onClick={handleCancel} className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors">
+            <button onClick={handleCancel} className="h-9 px-4 rounded-lg border border-border bg-muted text-muted-foreground text-sm font-medium hover:text-foreground transition-colors">
               Abbrechen
             </button>
-            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors">
+            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
               <IconDeviceFloppy className="size-4" />
               {saving ? "..." : "Speichern"}
             </button>
           </div>
         ) : (
-          <button onClick={() => setEditing(true)} className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors">
+          <button onClick={() => setEditing(true)} className="flex items-center gap-2 h-9 px-4 rounded-lg border border-border bg-muted text-foreground/80 text-sm font-medium hover:bg-accent transition-colors">
             <IconEdit className="size-4" />
             Bearbeiten
           </button>
@@ -133,28 +133,28 @@ export function CustomerDetail({
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Aufträge</p>
-          <p className="text-2xl font-bold text-[#F6A11C] tabular-nums">{orders.length}</p>
+          <p className="text-2xl font-bold text-primary tabular-nums">{orders.length}</p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Umsatz</p>
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">
             {totalRevenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })} &euro;
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Bezahlt</p>
-          <p className="text-2xl font-bold text-zinc-200 tabular-nums">
-            {paidCount}<span className="text-sm font-normal text-zinc-400">/{orders.length}</span>
+          <p className="text-2xl font-bold text-foreground tabular-nums">
+            {paidCount}<span className="text-sm font-normal text-muted-foreground">/{orders.length}</span>
           </p>
         </div>
       </div>
 
       {/* Kundendaten */}
       {editing ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4 max-w-2xl">
-          <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4 max-w-2xl">
+          <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Name</label>
@@ -186,36 +186,36 @@ export function CustomerDetail({
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-2">
-          <h2 className="text-sm font-semibold text-zinc-300 mb-3">Kontaktdaten</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-2">
+          <h2 className="text-sm font-semibold text-foreground/80 mb-3">Kontaktdaten</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-center gap-3">
               <IconMail className="size-4 text-muted-foreground" />
-              <span className="text-sm text-zinc-300">{customer.email || "–"}</span>
+              <span className="text-sm text-foreground/80">{customer.email || "–"}</span>
             </div>
             <div className="flex items-center gap-3">
               <IconPhoneCall className="size-4 text-muted-foreground" />
-              <span className="text-sm text-zinc-300">{customer.phone || "–"}</span>
+              <span className="text-sm text-foreground/80">{customer.phone || "–"}</span>
             </div>
             <div className="flex items-center gap-3">
               <IconBuildingStore className="size-4 text-muted-foreground" />
-              <span className="text-sm text-zinc-300">{customer.company || "–"}</span>
+              <span className="text-sm text-foreground/80">{customer.company || "–"}</span>
             </div>
           </div>
           {customer.notes && (
             <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
               <p className="text-xs text-amber-400 font-semibold mb-1">Notizen</p>
-              <p className="text-sm text-zinc-400 whitespace-pre-wrap">{customer.notes}</p>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{customer.notes}</p>
             </div>
           )}
         </div>
       )}
 
       {/* Orders */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.10] flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-300">Aufträge</h2>
-          <Link href={`/orders/new`} className="text-xs text-[#F6A11C] hover:underline">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground/80">Aufträge</h2>
+          <Link href={`/orders/new`} className="text-xs text-primary hover:underline">
             + Neuer Auftrag
           </Link>
         </div>
@@ -224,7 +224,7 @@ export function CustomerDetail({
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+              <TableRow className="border-b border-border hover:bg-transparent">
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">#</TableHead>
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Datum</TableHead>
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Event</TableHead>
@@ -239,18 +239,18 @@ export function CustomerDetail({
                 <TableRow
                   key={o.id}
                   onClick={() => router.push(`/orders/${o.id}`)}
-                  className="cursor-pointer border-b border-white/[0.10] hover:bg-[#1c1d20] transition-colors"
+                  className="cursor-pointer border-b border-border hover:bg-muted transition-colors"
                 >
-                  <TableCell className="font-mono text-xs text-zinc-400">{o.orderNumber}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm tabular-nums">
+                  <TableCell className="font-mono text-xs text-muted-foreground">{o.orderNumber}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm tabular-nums">
                     {new Date(o.eventDate).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
                   </TableCell>
-                  <TableCell className="text-zinc-400 text-sm">{o.eventType}</TableCell>
-                  <TableCell className="text-zinc-400 text-sm max-w-[150px]">
+                  <TableCell className="text-muted-foreground text-sm">{o.eventType}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm max-w-[150px]">
                     <span className="block truncate">{o.locationName}</span>
                   </TableCell>
-                  <TableCell className="text-sm text-zinc-300">{o.driverInitials ?? o.driverName ?? <span className="text-zinc-400">–</span>}</TableCell>
-                  <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">{o.price.toFixed(2)}&nbsp;&euro;</TableCell>
+                  <TableCell className="text-sm text-foreground/80">{o.driverInitials ?? o.driverName ?? <span className="text-muted-foreground">–</span>}</TableCell>
+                  <TableCell className="text-right font-mono text-sm text-foreground tabular-nums">{o.price.toFixed(2)}&nbsp;&euro;</TableCell>
                   <TableCell className="text-center">
                     <span className={"inline-block size-2.5 rounded-full " + (o.paid ? "bg-emerald-400" : "bg-red-400/60")} />
                   </TableCell>

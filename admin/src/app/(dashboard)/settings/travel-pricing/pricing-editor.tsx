@@ -89,7 +89,7 @@ export function PricingEditor({
   }
 
   const inputClass =
-    "h-8 w-full rounded-md border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-8 w-full rounded-md border border-border bg-muted px-2 text-sm text-foreground text-right font-mono tabular-nums outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
   return (
     <div className="space-y-4">
@@ -97,7 +97,7 @@ export function PricingEditor({
       <div className="flex items-center justify-between">
         <button
           onClick={addTier}
-          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors"
+          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-border bg-muted text-foreground/80 text-sm font-medium hover:bg-accent transition-colors"
         >
           <IconPlus className="size-4" />
           Stufe hinzufügen
@@ -105,7 +105,7 @@ export function PricingEditor({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
         >
           <IconDeviceFloppy className="size-4" />
           {saving ? "Speichern..." : "Speichern"}
@@ -113,10 +113,10 @@ export function PricingEditor({
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+            <TableRow className="border-b border-border hover:bg-transparent">
               <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-[120px]">
                 KM
               </TableHead>
@@ -135,7 +135,7 @@ export function PricingEditor({
               .map((tier, i) => (
                 <TableRow
                   key={i}
-                  className="border-b border-white/[0.10] hover:bg-card"
+                  className="border-b border-border hover:bg-card"
                 >
                   <TableCell>
                     <div className="flex items-center gap-1">
@@ -185,7 +185,7 @@ export function PricingEditor({
                     <button
                       onClick={() => removeTier(i)}
                       disabled={tiers.length <= 1}
-                      className="text-zinc-400 hover:text-red-400 disabled:opacity-30 transition-colors"
+                      className="text-muted-foreground hover:text-red-400 disabled:opacity-30 transition-colors"
                     >
                       <IconTrash className="size-4" />
                     </button>
@@ -196,7 +196,7 @@ export function PricingEditor({
         </Table>
       </div>
 
-      <p className="text-xs text-zinc-400">
+      <p className="text-xs text-muted-foreground">
         Die Berechnung verwendet die h&ouml;chste Stufe &le; der tats&auml;chlichen Entfernung.
         Beispiel: 25 km → Stufe 20 km.
       </p>

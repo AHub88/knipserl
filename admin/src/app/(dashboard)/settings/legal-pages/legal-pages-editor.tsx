@@ -55,8 +55,8 @@ export function LegalPagesEditor({
   const tabClass = (active: boolean) =>
     `px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
       active
-        ? "bg-[#F6A11C] text-black"
-        : "bg-card text-zinc-300 hover:text-zinc-100 border border-white/[0.10]"
+        ? "bg-primary text-black"
+        : "bg-card text-foreground/80 hover:text-foreground border border-border"
     }`;
 
   return (
@@ -72,16 +72,16 @@ export function LegalPagesEditor({
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Editor */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
+        <div className="rounded-xl border border-border bg-card p-5 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <IconCode className="size-4 text-[#F6A11C]" />
-              <h2 className="text-sm font-semibold text-zinc-300">HTML-Editor</h2>
+              <IconCode className="size-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground/80">HTML-Editor</h2>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={loadDefault}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.10] text-zinc-300 hover:text-zinc-100 text-xs font-semibold transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-foreground/80 hover:text-foreground text-xs font-semibold transition-colors"
                 title="Vordefinierten Standard-Text laden"
               >
                 <IconRefresh className="size-3.5" />
@@ -90,7 +90,7 @@ export function LegalPagesEditor({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
                 <IconDeviceFloppy className="size-3.5" />
                 {saving ? "..." : "Speichern"}
@@ -104,18 +104,18 @@ export function LegalPagesEditor({
             value={currentValue}
             onChange={(e) => setCurrentValue(e.target.value)}
             spellCheck={false}
-            className="w-full min-h-[600px] rounded-lg border border-white/[0.08] bg-[#1c1d20] p-3 text-xs font-mono text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors resize-y"
+            className="w-full min-h-[600px] rounded-lg border border-border bg-muted p-3 text-xs font-mono text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors resize-y"
             placeholder={`<h2>&Uuml;berschrift</h2>\n<p>Text...</p>`}
           />
         </div>
 
         {/* Preview */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
+        <div className="rounded-xl border border-border bg-card p-5 space-y-3">
           <div className="flex items-center gap-2">
-            <IconEye className="size-4 text-[#F6A11C]" />
-            <h2 className="text-sm font-semibold text-zinc-300">Live-Vorschau</h2>
+            <IconEye className="size-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground/80">Live-Vorschau</h2>
           </div>
-          <div className="rounded-lg border border-white/[0.08] bg-white p-6 min-h-[600px] overflow-auto">
+          <div className="rounded-lg border border-border bg-white p-6 min-h-[600px] overflow-auto">
             <div
               className="legal-preview text-[#666] text-[14px] leading-relaxed"
               style={{ fontFamily: "'Fira Sans', sans-serif" }}

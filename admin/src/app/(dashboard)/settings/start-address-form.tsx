@@ -86,21 +86,21 @@ export function StartAddressForm({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
+    <div className="rounded-xl border border-border bg-card p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <IconMapPin className="size-5 text-[#F6A11C]" />
-          <h2 className="text-sm font-semibold text-zinc-300">Startadresse</h2>
+          <IconMapPin className="size-5 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground/80">Startadresse</h2>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
         >
           <IconDeviceFloppy className="size-3.5" />
           {saving ? "..." : "Speichern"}
@@ -123,18 +123,18 @@ export function StartAddressForm({
             placeholder="Adresse eingeben..."
           />
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-48 overflow-y-auto">
+            <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-card shadow-xl max-h-48 overflow-y-auto">
               {suggestions.map((s, i) => (
                 <button
                   key={i}
                   type="button"
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors border-b border-border last:border-0"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     selectSuggestion(s);
                   }}
                 >
-                  <span className="text-zinc-200">{s.label}</span>
+                  <span className="text-foreground">{s.label}</span>
                 </button>
               ))}
             </div>

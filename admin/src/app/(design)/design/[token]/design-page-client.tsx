@@ -51,8 +51,8 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
       <div className="flex items-center justify-center min-h-[60vh] p-6">
         <div className="text-center space-y-8 max-w-lg">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-white">Format wählen</h1>
-            <p className="text-white/60">
+            <h1 className="text-2xl font-bold text-foreground">Format wählen</h1>
+            <p className="text-foreground/60">
               Wähle das gewünschte Format für dein Layout.
             </p>
           </div>
@@ -62,13 +62,13 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
             <button
               onClick={() => selectFormat("2x6")}
               disabled={saving}
-              className="group relative rounded-xl border-2 border-white/10 hover:border-[#F6A11C] transition-all p-6 text-left disabled:opacity-50"
+              className="group relative rounded-xl border-2 border-border hover:border-primary transition-all p-6 text-left disabled:opacity-50"
             >
               <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-48 bg-white/10 rounded-lg border border-white/20 group-hover:border-[#F6A11C] transition-colors" />
+                <div className="w-16 h-48 bg-foreground/10 rounded-lg border border-border group-hover:border-primary transition-colors" />
                 <div className="text-center">
-                  <div className="text-lg font-semibold text-white">5 x 15 cm</div>
-                  <div className="text-sm text-white/50">Fotostreifen</div>
+                  <div className="text-lg font-semibold text-foreground">5 x 15 cm</div>
+                  <div className="text-sm text-foreground/50">Fotostreifen</div>
                 </div>
               </div>
             </button>
@@ -77,20 +77,20 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
             <button
               onClick={() => selectFormat("4x6")}
               disabled={saving}
-              className="group relative rounded-xl border-2 border-white/10 hover:border-[#F6A11C] transition-all p-6 text-left disabled:opacity-50"
+              className="group relative rounded-xl border-2 border-border hover:border-primary transition-all p-6 text-left disabled:opacity-50"
             >
               <div className="flex flex-col items-center gap-4">
-                <div className="w-32 h-48 bg-white/10 rounded-lg border border-white/20 group-hover:border-[#F6A11C] transition-colors" />
+                <div className="w-32 h-48 bg-foreground/10 rounded-lg border border-border group-hover:border-primary transition-colors" />
                 <div className="text-center">
-                  <div className="text-lg font-semibold text-white">10 x 15 cm</div>
-                  <div className="text-sm text-white/50">Fotoprint</div>
+                  <div className="text-lg font-semibold text-foreground">10 x 15 cm</div>
+                  <div className="text-sm text-foreground/50">Fotoprint</div>
                 </div>
               </div>
             </button>
           </div>
 
           {saving && (
-            <p className="text-sm text-white/40">Wird gespeichert...</p>
+            <p className="text-sm text-foreground/40">Wird gespeichert...</p>
           )}
         </div>
       </div>

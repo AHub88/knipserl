@@ -74,9 +74,9 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
     }
   }
 
-  const labelClass = "text-sm font-medium text-zinc-300";
+  const labelClass = "text-sm font-medium text-foreground/80";
   const inputClass =
-    "bg-card border-white/[0.08] text-zinc-200 placeholder:text-zinc-400 focus:border-[#F6A11C]/50 focus:ring-[#F6A11C]/20";
+    "bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -179,7 +179,7 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
             const file = e.target.files?.[0];
             setPdfFilename(file?.name ?? "");
           }}
-          className={`${inputClass} file:mr-3 file:rounded-md file:border-0 file:bg-[#F6A11C]/10 file:px-3 file:py-1 file:text-sm file:font-medium file:text-[#F6A11C] hover:file:bg-[#F6A11C]/20`}
+          className={`${inputClass} file:mr-3 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-sm file:font-medium file:text-primary hover:file:bg-primary/20`}
         />
         {pdfFilename && (
           <p className="text-xs text-muted-foreground">
@@ -189,18 +189,18 @@ export function IncomingForm({ companies }: { companies: Company[] }) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
+      <div className="flex items-center gap-3 pt-4 border-t border-border">
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#F6A11C] px-5 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-[#F6A11C]/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
           {submitting ? "Speichern..." : "Speichern"}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-card px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1c1d20] hover:text-zinc-300"
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground/80"
         >
           Abbrechen
         </button>

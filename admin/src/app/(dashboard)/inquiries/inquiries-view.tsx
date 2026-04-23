@@ -33,8 +33,8 @@ export function InquiriesView({ inquiries }: { inquiries: SerializedInquiry[] })
           className={
             "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
             (view === "kanban"
-              ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-              : "border-white/[0.08] bg-card text-zinc-400 hover:text-zinc-200")
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:text-foreground")
           }
         >
           <IconLayoutKanban className="size-3.5" />
@@ -45,8 +45,8 @@ export function InquiriesView({ inquiries }: { inquiries: SerializedInquiry[] })
           className={
             "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
             (view === "list"
-              ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-              : "border-white/[0.08] bg-card text-zinc-400 hover:text-zinc-200")
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:text-foreground")
           }
         >
           <IconList className="size-3.5" />

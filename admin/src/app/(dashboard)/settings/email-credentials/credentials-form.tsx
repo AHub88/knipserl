@@ -53,13 +53,13 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors font-mono";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors font-mono";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Azure Active Directory</h2>
 
         <div>
@@ -91,11 +91,11 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
             onChange={(e) => update("azure_client_secret", e.target.value)}
             placeholder="Neues Secret eingeben..."
           />
-          <p className="text-[10px] text-zinc-500 mt-1">Wird verschlüsselt gespeichert. Leer lassen um bestehendes beizubehalten.</p>
+          <p className="text-[10px] text-muted-foreground/70 mt-1">Wird verschlüsselt gespeichert. Leer lassen um bestehendes beizubehalten.</p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Absender</h2>
 
         <div>
@@ -107,7 +107,7 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
             onChange={(e) => update("mail_from", e.target.value)}
             placeholder="info@knipserl.de"
           />
-          <p className="text-[10px] text-zinc-500 mt-1">Muss als Postfach in Microsoft 365 existieren.</p>
+          <p className="text-[10px] text-muted-foreground/70 mt-1">Muss als Postfach in Microsoft 365 existieren.</p>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 h-10 px-5 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 h-10 px-5 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
         >
           {saved ? (
             <><IconCheck className="size-4" /> Gespeichert</>
@@ -127,7 +127,7 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
         <button
           onClick={handleTest}
           disabled={testing}
-          className="flex items-center gap-2 h-10 px-4 rounded-lg border border-white/[0.08] bg-card text-zinc-300 text-sm font-medium hover:bg-[#1c1d20] disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 h-10 px-4 rounded-lg border border-border bg-card text-foreground/80 text-sm font-medium hover:bg-muted disabled:opacity-50 transition-colors"
         >
           <IconTestPipe className="size-4" />
           {testing ? "Teste..." : "Test-E-Mail senden"}

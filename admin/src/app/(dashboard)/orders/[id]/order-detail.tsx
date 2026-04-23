@@ -133,8 +133,8 @@ function ExtraIcon({
       className={
         "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-w-[80px] transition-colors " +
         (active
-          ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.10] bg-card text-zinc-400") +
+          ? "border-primary/40 bg-primary/10 text-primary"
+          : "border-border bg-card text-muted-foreground") +
         (editable ? " cursor-pointer hover:opacity-80" : "")
       }
     >
@@ -199,7 +199,7 @@ function DetailRow({
         <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           {label}
         </p>
-        <p className="text-sm text-zinc-200 break-words">{value || "–"}</p>
+        <p className="text-sm text-foreground break-words">{value || "–"}</p>
       </div>
     </div>
   );
@@ -208,8 +208,8 @@ function DetailRow({
 function PriceRow({ label, value }: { label: string; value: number | null }) {
   return (
     <div className="flex items-center justify-between py-1">
-      <span className="text-sm text-zinc-400">{label}</span>
-      <span className="text-sm font-mono tabular-nums text-zinc-300">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-mono tabular-nums text-foreground/80">
         {value != null ? `${value.toFixed(2)} €` : "–"}
       </span>
     </div>
@@ -252,19 +252,19 @@ function LocationAutocomplete({
         placeholder="Location eingeben..."
       />
       {open && suggestions.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-56 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-card shadow-xl max-h-56 overflow-y-auto">
           {suggestions.map((loc) => (
             <button
               key={loc.id}
               type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors border-b border-border last:border-0"
               onMouseDown={(e) => {
                 e.preventDefault();
                 onSelect(loc);
                 setOpen(false);
               }}
             >
-              <span className="text-zinc-200 font-medium">{loc.name}</span>
+              <span className="text-foreground font-medium">{loc.name}</span>
               {loc.city && (
                 <span className="text-muted-foreground ml-2">
                   {loc.street ? `${loc.street}, ` : ""}
@@ -465,11 +465,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   const driverLabel = (() => {
     const d1 = drivers.find((d) => d.id === driverId);
@@ -529,12 +529,12 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           <div className="flex items-center gap-3">
             <Link
               href="/orders"
-              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
             >
               <IconArrowLeft className="size-4" />
             </Link>
             <div>
-              <h1 className="text-xl font-bold text-zinc-100">
+              <h1 className="text-xl font-bold text-foreground">
                 Auftrag #{order.orderNumber}
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -546,7 +546,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           {isAdmin && (
             <button
               onClick={() => setEditing(true)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors"
+              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-border bg-muted text-foreground/80 text-sm font-medium hover:bg-accent transition-colors"
             >
               <IconEdit className="size-4" />
               Bearbeiten
@@ -563,8 +563,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Extras */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
-          <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-foreground/80">Extras</h2>
           <div className="flex flex-wrap gap-2">
             {EXTRAS_CONFIG.map((ext) => (
               <ExtraIcon
@@ -581,8 +581,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Kunde & Event */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-1">
-            <h2 className="text-sm font-semibold text-zinc-300 mb-3">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-1">
+            <h2 className="text-sm font-semibold text-foreground/80 mb-3">
               Kunde &amp; Event
             </h2>
             <DetailRow icon={IconCircleCheck} label="Kunde" value={customerName} />
@@ -593,8 +593,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           {/* Location */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-1">
-            <h2 className="text-sm font-semibold text-zinc-300 mb-3">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-1">
+            <h2 className="text-sm font-semibold text-foreground/80 mb-3">
               Location
             </h2>
             <DetailRow icon={IconMapPin} label="Name" value={locationName} />
@@ -603,8 +603,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           </div>
 
           {/* Zuordnung */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-1">
-            <h2 className="text-sm font-semibold text-zinc-300 mb-3">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-1">
+            <h2 className="text-sm font-semibold text-foreground/80 mb-3">
               Zuordnung
             </h2>
             <DetailRow icon={IconSteeringWheel} label="Fahrer" value={driverLabel} />
@@ -616,8 +616,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         {/* Preiskalkulationen */}
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Kunde */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-2">
-            <h2 className="text-sm font-semibold text-zinc-300 mb-2">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-2">
+            <h2 className="text-sm font-semibold text-foreground/80 mb-2">
               Preiskalkulation Kunde
             </h2>
             <div className="space-y-0.5">
@@ -628,7 +628,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               ))}
               {customerSubtotal > 0 && discountAmount > 0 && (
                 <>
-                  <div className="border-t border-white/[0.10] mt-2 pt-2">
+                  <div className="border-t border-border mt-2 pt-2">
                     <PriceRow label="Zwischensumme" value={customerSubtotal} />
                   </div>
                   <div className="flex items-center justify-between py-1">
@@ -641,9 +641,9 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
                   </div>
                 </>
               )}
-              <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-zinc-200">Kundenpreis</span>
-                <span className="text-base font-bold font-mono tabular-nums text-[#F6A11C]">
+              <div className="border-t border-border mt-2 pt-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">Kundenpreis</span>
+                <span className="text-base font-bold font-mono tabular-nums text-primary">
                   {customerTotal.toFixed(2)} &euro;
                 </span>
               </div>
@@ -658,19 +658,19 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             <div className="space-y-0.5">
               <PriceRow label="Kundenpreis" value={customerTotal} />
               <div className="flex items-center justify-between py-1">
-                <span className="text-sm text-zinc-400">abzgl. Aufbau</span>
+                <span className="text-sm text-muted-foreground">abzgl. Aufbau</span>
                 <span className="text-sm font-mono tabular-nums text-red-400">
                   {order.setupCost ? `−${Math.abs(order.setupCost as number).toFixed(2)} €` : "–"}
                 </span>
               </div>
               <div className="flex items-center justify-between py-1">
-                <span className="text-sm text-zinc-400">abzgl. Material</span>
+                <span className="text-sm text-muted-foreground">abzgl. Material</span>
                 <span className="text-sm font-mono tabular-nums text-red-400">
                   {order.materialCost ? `−${Math.abs(order.materialCost as number).toFixed(2)} €` : "–"}
                 </span>
               </div>
               <div className="border-t border-amber-500/20 mt-2 pt-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-zinc-200">Gewinn</span>
+                <span className="text-sm font-semibold text-foreground">Gewinn</span>
                 <span className={"text-base font-bold font-mono tabular-nums " + (internalProfit >= 0 ? "text-emerald-400" : "text-red-400")}>
                   {internalProfit.toFixed(2)} &euro;
                 </span>
@@ -683,11 +683,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         {(order.notes || order.internalNotes) && (
           <div className="grid gap-6 lg:grid-cols-2">
             {order.notes && (
-              <div className="rounded-xl border border-white/[0.10] bg-card p-5">
-                <h2 className="text-sm font-semibold text-zinc-300 mb-2">
+              <div className="rounded-xl border border-border bg-card p-5">
+                <h2 className="text-sm font-semibold text-foreground/80 mb-2">
                   Kundenkommentar
                 </h2>
-                <p className="text-sm text-zinc-400 whitespace-pre-wrap">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {order.notes}
                 </p>
               </div>
@@ -697,7 +697,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
                 <h2 className="text-sm font-semibold text-amber-400 mb-2">
                   Interner Kommentar
                 </h2>
-                <p className="text-sm text-zinc-400 whitespace-pre-wrap">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {order.internalNotes}
                 </p>
               </div>
@@ -706,8 +706,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         )}
 
         {/* Drucklayouts */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
-          <h2 className="text-sm font-semibold text-zinc-300">Drucklayouts</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-foreground/80">Drucklayouts</h2>
           <ImageGallery
             orderId={order.id}
             images={order.images}
@@ -727,13 +727,13 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           <div className="flex items-center gap-3">
             <button
               onClick={handleCancel}
-              className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
             >
               <IconX className="size-4" />
             </button>
-            <h1 className="text-lg sm:text-xl font-bold text-zinc-100">
+            <h1 className="text-lg sm:text-xl font-bold text-foreground">
               Auftrag #{order.orderNumber}
-              <span className="ml-2 text-sm font-normal text-[#F6A11C]">
+              <span className="ml-2 text-sm font-normal text-primary">
                 Bearbeiten
               </span>
             </h1>
@@ -749,14 +749,14 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             </button>
             <button
               onClick={handleCancel}
-              className="h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 text-sm font-medium hover:text-zinc-200 transition-colors"
+              className="h-9 px-4 rounded-lg border border-border bg-muted text-muted-foreground text-sm font-medium hover:text-foreground transition-colors"
             >
               Abbrechen
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="hidden sm:flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+              className="hidden sm:flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               <IconDeviceFloppy className="size-4" />
               {saving ? "Speichern..." : "Speichern"}
@@ -774,7 +774,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 1: Event & Location */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event &amp; Location</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
@@ -822,7 +822,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 2: Kunde */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kunde</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
@@ -849,7 +849,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 3: Extras */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
@@ -867,7 +867,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 4: Preise */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h2>
 
         {/* Price inputs */}
@@ -902,16 +902,16 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Live calculation summary */}
-        <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
-          <div className="flex justify-between text-xs text-zinc-400">
+        <div className="rounded-lg bg-muted border border-border p-3 space-y-1.5">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Fotobox</span>
             <span className="tabular-nums">{calcBoxPrice.toFixed(2)} &euro;</span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-400">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Fahrt</span>
             <span className="tabular-nums">{calcTravelCost.toFixed(2)} &euro;</span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-400">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Extras</span>
             <span className="tabular-nums">{calcExtrasCost.toFixed(2)} &euro;</span>
           </div>
@@ -921,9 +921,9 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               <span className="tabular-nums">-{calcDiscountAmount.toFixed(2)} &euro;</span>
             </div>
           )}
-          <div className="border-t border-white/[0.10] pt-1.5 flex justify-between text-sm font-semibold">
-            <span className="text-zinc-300">Kalkuliert</span>
-            <span className="text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
+          <div className="border-t border-border pt-1.5 flex justify-between text-sm font-semibold">
+            <span className="text-foreground/80">Kalkuliert</span>
+            <span className="text-primary tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
           </div>
         </div>
 
@@ -931,11 +931,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <div>
           <label className={labelClass}>Gesamtpreis</label>
           <div className="flex gap-2">
-            <input className={inputClass + " font-semibold text-[#F6A11C] text-lg h-11 flex-1"} type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+            <input className={inputClass + " font-semibold text-primary text-lg h-11 flex-1"} type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
             <button
               type="button"
               onClick={recalcPrice}
-              className="h-11 px-3 rounded-lg border border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C] text-xs font-semibold hover:bg-[#F6A11C]/20 transition-colors whitespace-nowrap"
+              className="h-11 px-3 rounded-lg border border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors whitespace-nowrap"
               title="Preis aus Kalkulation übernehmen"
             >
               &#x21BB; Berechnen
@@ -949,7 +949,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
 
         {/* Interne Kosten */}
-        <div className="border-t border-white/[0.10] pt-3">
+        <div className="border-t border-border pt-3">
           <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 space-y-3">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400">Interne Kosten</h3>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -975,7 +975,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 5: Zuordnung & Zahlung */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zuordnung &amp; Zahlung</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
@@ -1007,7 +1007,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 6: Notizen */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
         <div>
           <label className={labelClass}>Kundenkommentar</label>
@@ -1030,7 +1030,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 7: Drucklayouts */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h2>
         <ImageGallery
           orderId={order.id}
@@ -1044,7 +1044,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full h-12 rounded-xl bg-[#F6A11C] text-black font-semibold text-base shadow-lg shadow-[#F6A11C]/20 hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-xl bg-primary text-black font-semibold text-base shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
         >
           <IconDeviceFloppy className="size-5" />
           {saving ? "Speichern..." : "Speichern"}

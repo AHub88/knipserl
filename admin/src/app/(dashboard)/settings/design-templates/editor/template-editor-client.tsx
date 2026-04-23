@@ -85,7 +85,7 @@ export function TemplateEditorClient({
   }
 
   const fieldClass =
-    "h-12 rounded-xl border border-white/[0.08] bg-[#1a1b1e] px-4 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-12 rounded-xl border border-border bg-muted px-4 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
   return (
     <div className="flex flex-col h-[calc(100vh-56px)]">
@@ -109,15 +109,15 @@ export function TemplateEditorClient({
             <div className="flex items-center gap-4">
               <Link
                 href="/settings/design-templates"
-                className="flex items-center gap-2 h-12 px-5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-sm text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-colors"
+                className="flex items-center gap-2 h-12 px-5 rounded-xl border border-border bg-foreground/[0.03] text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/[0.10] transition-colors"
               >
                 <IconArrowLeft className="size-4" />
                 <span>Zurück</span>
               </Link>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10 bg-border" />
               <div className="flex items-center gap-3">
                 <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1 leading-none">Name</label>
+                  <label className="block text-[11px] text-muted-foreground/70 mb-1 leading-none">Name</label>
                   <input
                     className={fieldClass + " w-52"}
                     value={name}
@@ -126,7 +126,7 @@ export function TemplateEditorClient({
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1 leading-none">Format</label>
+                  <label className="block text-[11px] text-muted-foreground/70 mb-1 leading-none">Format</label>
                   <select
                     className={fieldClass + " w-36"}
                     value={format}
@@ -137,7 +137,7 @@ export function TemplateEditorClient({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1 leading-none">Kategorie</label>
+                  <label className="block text-[11px] text-muted-foreground/70 mb-1 leading-none">Kategorie</label>
                   <input
                     className={fieldClass + " w-40"}
                     value={category}
@@ -146,7 +146,7 @@ export function TemplateEditorClient({
                   />
                 </div>
               </div>
-              {saving && <span className="text-sm text-white/40">Speichert...</span>}
+              {saving && <span className="text-sm text-foreground/40">Speichert...</span>}
             </div>
           }
         />

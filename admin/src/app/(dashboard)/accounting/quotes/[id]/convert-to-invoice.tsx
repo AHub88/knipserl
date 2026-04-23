@@ -66,9 +66,9 @@ export function ConvertToInvoice({
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-      <div className="px-6 py-4 border-b border-white/[0.10]">
-        <h2 className="text-sm font-semibold text-zinc-300">
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="px-6 py-4 border-b border-border">
+        <h2 className="text-sm font-semibold text-foreground/80">
           In Rechnung umwandeln
         </h2>
       </div>
@@ -77,7 +77,7 @@ export function ConvertToInvoice({
         {/* Optional items selection */}
         {optionalItems.length > 0 && (
           <div className="space-y-3">
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-muted-foreground">
               Optionale Positionen auswählen, die in die Rechnung übernommen
               werden sollen:
             </p>
@@ -85,7 +85,7 @@ export function ConvertToInvoice({
               {optionalItems.map((item) => (
                 <label
                   key={item.title}
-                  className="flex items-center gap-3 rounded-lg border border-white/[0.10] px-4 py-3 cursor-pointer transition-colors hover:bg-white/[0.03]"
+                  className="flex items-center gap-3 rounded-lg border border-border px-4 py-3 cursor-pointer transition-colors hover:bg-foreground/[0.03]"
                 >
                   <input
                     type="checkbox"
@@ -94,16 +94,16 @@ export function ConvertToInvoice({
                     className="h-4 w-4 rounded border-zinc-600 bg-transparent text-emerald-500 focus:ring-emerald-500/30 focus:ring-offset-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-zinc-200">
+                    <span className="text-sm font-medium text-foreground">
                       {item.title}
                     </span>
                     {item.description && (
-                      <p className="text-xs text-zinc-500 mt-0.5">
+                      <p className="text-xs text-muted-foreground/70 mt-0.5">
                         {item.description}
                       </p>
                     )}
                   </div>
-                  <span className="text-sm text-zinc-400 tabular-nums font-mono">
+                  <span className="text-sm text-muted-foreground tabular-nums font-mono">
                     {formatEUR(item.total)}
                   </span>
                 </label>
@@ -116,7 +116,7 @@ export function ConvertToInvoice({
         <div className="space-y-1.5">
           <label
             htmlFor="dueDate"
-            className="block text-sm font-medium text-zinc-400"
+            className="block text-sm font-medium text-muted-foreground"
           >
             Fälligkeitsdatum
           </label>
@@ -125,7 +125,7 @@ export function ConvertToInvoice({
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="block w-full max-w-xs rounded-lg border border-white/[0.10] bg-[#1c1d20] px-3 py-2 text-sm text-zinc-200 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
+            className="block w-full max-w-xs rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
           />
         </div>
 

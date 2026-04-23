@@ -140,16 +140,16 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       <div className="flex items-start justify-between">
         <Link
           href="/orders"
-          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors mt-1"
+          className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors mt-1"
         >
           <IconArrowLeft className="size-4" />
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-zinc-400">#{order.orderNumber}</span>
+          <span className="text-xs font-mono text-muted-foreground">#{order.orderNumber}</span>
           {isAdmin && (
             <button
               onClick={onEdit}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm font-medium hover:bg-[#222326] transition-colors"
+              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-border bg-muted text-foreground/80 text-sm font-medium hover:bg-accent transition-colors"
             >
               <IconEdit className="size-4" />
               Bearbeiten
@@ -161,30 +161,30 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       {/* ── Hero ── */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-sm">
-          <IconCalendar className="size-4 text-[#F6A11C]" />
-          <span className="text-[#F6A11C] font-medium">{weekday}, {dateStr}</span>
-          <span className="text-zinc-400">&middot;</span>
-          <span className="text-zinc-400">{order.eventType}</span>
+          <IconCalendar className="size-4 text-primary" />
+          <span className="text-primary font-medium">{weekday}, {dateStr}</span>
+          <span className="text-muted-foreground">&middot;</span>
+          <span className="text-muted-foreground">{order.eventType}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-zinc-100 leading-tight">
+        <h1 className="text-3xl sm:text-4xl font-bold text-foreground leading-tight">
           {kontakt}
         </h1>
 
         {firma && (
-          <p className="text-lg text-zinc-400">{firma}</p>
+          <p className="text-lg text-muted-foreground">{firma}</p>
         )}
 
-        <div className="flex items-center gap-2 text-zinc-400">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <IconMapPin className="size-4 shrink-0" />
-          <span className="text-base font-medium text-zinc-300">{order.locationName}</span>
+          <span className="text-base font-medium text-foreground/80">{order.locationName}</span>
           {ort && <span className="text-muted-foreground">&middot; {ort}</span>}
-          {order.distanceKm != null && <span className="text-zinc-400">&middot; {order.distanceKm} km</span>}
+          {order.distanceKm != null && <span className="text-muted-foreground">&middot; {order.distanceKm} km</span>}
         </div>
       </div>
 
       {/* ── Status + Kontakt Bar ── */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
         {/* Status */}
         <div className="flex flex-wrap gap-2">
           {statusFlags.map((s) => (
@@ -204,29 +204,29 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         </div>
 
         {/* Contact chips */}
-        <div className="border-t border-white/[0.10] pt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+        <div className="border-t border-border pt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
           {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
-            <span className="flex items-center gap-1.5 text-zinc-400">
-              <IconMail className="size-3.5 text-zinc-400" />
+            <span className="flex items-center gap-1.5 text-muted-foreground">
+              <IconMail className="size-3.5 text-muted-foreground" />
               {order.customerEmail}
             </span>
           )}
           {order.customerPhone && (
-            <span className="flex items-center gap-1.5 text-zinc-400">
-              <IconPhoneCall className="size-3.5 text-zinc-400" />
+            <span className="flex items-center gap-1.5 text-muted-foreground">
+              <IconPhoneCall className="size-3.5 text-muted-foreground" />
               {order.customerPhone}
             </span>
           )}
-          <span className="flex items-center gap-1.5 text-zinc-400">
-            <IconSteeringWheel className="size-3.5 text-zinc-400" />
-            {driverLabel ?? <span className="text-zinc-400 italic">Kein Fahrer</span>}
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <IconSteeringWheel className="size-3.5 text-muted-foreground" />
+            {driverLabel ?? <span className="text-muted-foreground italic">Kein Fahrer</span>}
           </span>
-          <span className="flex items-center gap-1.5 text-zinc-400">
-            <IconCash className="size-3.5 text-zinc-400" />
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <IconCash className="size-3.5 text-muted-foreground" />
             {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
           </span>
-          <span className="flex items-center gap-1.5 text-zinc-400">
-            <IconBuildingStore className="size-3.5 text-zinc-400" />
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <IconBuildingStore className="size-3.5 text-muted-foreground" />
             {order.companyName.includes("GbR") ? "GbR" : "EU"}
           </span>
         </div>
@@ -238,7 +238,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {activeExtras.map((ext) => (
             <div
               key={ext.key}
-              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-[#F6A11C]/30 bg-[#F6A11C]/10 p-2.5 min-w-[70px] text-[#F6A11C]"
+              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-primary/30 bg-primary/10 p-2.5 min-w-[70px] text-primary"
             >
               <ext.icon className="size-5" />
               <span className="text-[9px] font-bold uppercase tracking-wide">{ext.label}</span>
@@ -250,7 +250,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
       {/* ── Preis Grid ── */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Kundenpreis</h3>
           <div className="space-y-1">
             {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
@@ -264,9 +264,9 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 <span className="text-sm font-mono tabular-nums text-red-400">&minus;{discountAmount.toFixed(2)}&euro;</span>
               </div>
             )}
-            <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
-              <span className="text-sm font-semibold text-zinc-200">Gesamt</span>
-              <span className="text-xl font-bold font-mono tabular-nums text-[#F6A11C]">{customerTotal.toFixed(2)}&euro;</span>
+            <div className="border-t border-border mt-2 pt-2 flex items-center justify-between">
+              <span className="text-sm font-semibold text-foreground">Gesamt</span>
+              <span className="text-xl font-bold font-mono tabular-nums text-primary">{customerTotal.toFixed(2)}&euro;</span>
             </div>
           </div>
         </div>
@@ -278,18 +278,18 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               <PriceRow label="Kundenpreis" value={customerTotal} />
               {order.setupCost != null && (
                 <div className="flex items-center justify-between py-0.5">
-                  <span className="text-sm text-zinc-400">Aufbau</span>
+                  <span className="text-sm text-muted-foreground">Aufbau</span>
                   <span className="text-sm font-mono tabular-nums text-red-400">{Math.abs(order.setupCost).toFixed(2)}&euro;</span>
                 </div>
               )}
               {order.materialCost != null && (
                 <div className="flex items-center justify-between py-0.5">
-                  <span className="text-sm text-zinc-400">Material</span>
+                  <span className="text-sm text-muted-foreground">Material</span>
                   <span className="text-sm font-mono tabular-nums text-red-400">{Math.abs(order.materialCost).toFixed(2)}&euro;</span>
                 </div>
               )}
               <div className="border-t border-amber-500/20 mt-2 pt-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-zinc-200">Gewinn</span>
+                <span className="text-sm font-semibold text-foreground">Gewinn</span>
                 <span className={"text-xl font-bold font-mono tabular-nums " + (internalProfit >= 0 ? "text-emerald-400" : "text-red-400")}>
                   {internalProfit.toFixed(2)}&euro;
                 </span>
@@ -303,22 +303,22 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       {(order.notes || (order.internalNotes && showInternal)) && (
         <div className="grid gap-4 sm:grid-cols-2">
           {order.notes && (
-            <div className="rounded-xl border border-white/[0.10] bg-card p-4">
+            <div className="rounded-xl border border-border bg-card p-4">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Kundenkommentar</h3>
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap">{order.notes}</p>
+              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.notes}</p>
             </div>
           )}
           {order.internalNotes && showInternal && (
             <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-2">Intern</h3>
-              <p className="text-sm text-zinc-400 whitespace-pre-wrap">{order.internalNotes}</p>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internalNotes}</p>
             </div>
           )}
         </div>
       )}
 
       {/* ── Drucklayouts ── */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4">
+      <div className="rounded-xl border border-border bg-card p-4">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Drucklayouts</h3>
         <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} />
       </div>
@@ -329,8 +329,8 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 function PriceRow({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between py-0.5">
-      <span className="text-sm text-zinc-400">{label}</span>
-      <span className="text-sm font-mono tabular-nums text-zinc-300">{value.toFixed(2)}&euro;</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-mono tabular-nums text-foreground/80">{value.toFixed(2)}&euro;</span>
     </div>
   );
 }

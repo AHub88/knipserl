@@ -148,7 +148,7 @@ export default function NewLocationPage() {
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
@@ -156,12 +156,12 @@ export default function NewLocationPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/locations" className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors">
+          <Link href="/locations" className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors">
             <IconArrowLeft className="size-4" />
           </Link>
-          <h1 className="text-xl font-bold text-zinc-100">Neue Location</h1>
+          <h1 className="text-xl font-bold text-foreground">Neue Location</h1>
         </div>
-        <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors">
+        <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
           <IconDeviceFloppy className="size-4" />
           {saving ? "Erstellen..." : "Location erstellen"}
         </button>
@@ -169,8 +169,8 @@ export default function NewLocationPage() {
 
       <div className="grid gap-6 lg:grid-cols-2 max-w-4xl">
         {/* Location-Name */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Location</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Location</h2>
           <div className="relative">
             <label className={labelClass}>Name *</label>
             <input
@@ -183,34 +183,34 @@ export default function NewLocationPage() {
               autoComplete="off"
             />
             {showNameSuggestions && nameSuggestions.length > 0 && (
-              <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-64 overflow-y-auto">
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-card shadow-xl max-h-64 overflow-y-auto">
                 {nameSuggestions.map((s, i) => (
                   <button
                     key={i}
                     type="button"
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors border-b border-border last:border-0"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       selectNameSuggestion(s);
                     }}
                   >
-                    <div className="text-zinc-200 font-medium">{s.name ?? s.label}</div>
+                    <div className="text-foreground font-medium">{s.name ?? s.label}</div>
                     {s.name && (
-                      <div className="text-xs text-zinc-400 truncate">{s.label}</div>
+                      <div className="text-xs text-muted-foreground truncate">{s.label}</div>
                     )}
                   </button>
                 ))}
               </div>
             )}
-            <p className="text-xs text-zinc-400 mt-2">
-              Google-Suche: z.B. <span className="text-zinc-300">&bdquo;Gasthaus Bartl&ldquo;</span> oder <span className="text-zinc-300">&bdquo;Mcdonalds Rosenheim&ldquo;</span> &rarr; Adresse wird automatisch bef&uuml;llt.
+            <p className="text-xs text-muted-foreground mt-2">
+              Google-Suche: z.B. <span className="text-foreground/80">&bdquo;Gasthaus Bartl&ldquo;</span> oder <span className="text-foreground/80">&bdquo;Mcdonalds Rosenheim&ldquo;</span> &rarr; Adresse wird automatisch bef&uuml;llt.
             </p>
           </div>
         </div>
 
         {/* Adresssuche */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Adresse suchen</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Adresse suchen</h2>
           <div className="relative">
             <label className={labelClass}>Adresse eingeben</label>
             <input
@@ -222,31 +222,31 @@ export default function NewLocationPage() {
               placeholder="z.B. Dorfstraße 29, 83052 Bruckmühl"
             />
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-48 overflow-y-auto">
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-card shadow-xl max-h-48 overflow-y-auto">
                 {suggestions.map((s, i) => (
                   <button
                     key={i}
                     type="button"
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors border-b border-border last:border-0"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       selectSuggestion(s);
                     }}
                   >
-                    <span className="text-zinc-200">{s.label}</span>
+                    <span className="text-foreground">{s.label}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-muted-foreground">
             Adresse w&auml;hlen &rarr; Stra&szlig;e, PLZ, Ort und Entfernung werden automatisch ausgef&uuml;llt.
           </p>
         </div>
 
         {/* Adressfelder */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-zinc-300">Adressdaten</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4 lg:col-span-2">
+          <h2 className="text-sm font-semibold text-foreground/80">Adressdaten</h2>
           <div className="grid gap-3 sm:grid-cols-4">
             <div className="sm:col-span-2">
               <label className={labelClass}>Straße</label>
@@ -272,10 +272,10 @@ export default function NewLocationPage() {
                   placeholder="–"
                 />
                 {calculating && (
-                  <IconLoader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-[#F6A11C] animate-spin" />
+                  <IconLoader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-primary animate-spin" />
                 )}
               </div>
-              <p className="text-[10px] text-zinc-400 mt-1">
+              <p className="text-[10px] text-muted-foreground mt-1">
                 Wird automatisch als Wegstrecke berechnet
               </p>
             </div>

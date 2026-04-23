@@ -48,24 +48,24 @@ function YearBar({
   const widthPercent = maxValue > 0 ? (value / maxValue) * 100 : 0;
 
   const barColors = {
-    orange: isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#222326]",
-    blue: isCurrentYear ? "bg-blue-500/30" : "bg-[#222326]",
-    purple: isCurrentYear ? "bg-purple-500/30" : "bg-[#222326]",
-    red: isCurrentYear ? "bg-red-500/30" : "bg-[#222326]",
+    orange: isCurrentYear ? "bg-primary/30" : "bg-accent",
+    blue: isCurrentYear ? "bg-blue-500/30" : "bg-accent",
+    purple: isCurrentYear ? "bg-purple-500/30" : "bg-accent",
+    red: isCurrentYear ? "bg-red-500/30" : "bg-accent",
   };
   const textColors = {
-    orange: isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300",
-    blue: isCurrentYear ? "text-blue-400" : "text-zinc-300",
-    purple: isCurrentYear ? "text-purple-400" : "text-zinc-300",
-    red: isCurrentYear ? "text-red-400" : "text-zinc-300",
+    orange: isCurrentYear ? "text-primary" : "text-foreground/80",
+    blue: isCurrentYear ? "text-blue-400" : "text-foreground/80",
+    purple: isCurrentYear ? "text-purple-400" : "text-foreground/80",
+    red: isCurrentYear ? "text-red-400" : "text-foreground/80",
   };
 
   return (
     <div className="flex items-center gap-3">
-      <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>
+      <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-primary" : "text-muted-foreground")}>
         {year}
       </span>
-      <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden">
+      <div className="flex-1 h-7 bg-muted rounded-md overflow-hidden">
         <div
           className={"h-full rounded-md flex items-center px-2 transition-all " + barColors[color]}
           style={{ width: `${Math.max(widthPercent, 3)}%` }}
@@ -93,9 +93,9 @@ export function YearlyComparisonTabs({ yearlyData, allExtrasKeys, currentYear }:
   const [activeTab, setActiveTab] = useState<TabKey>("revenue");
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30">
+    <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25">
       {/* Tab bar */}
-      <div className="flex items-center gap-0 px-4 border-b border-white/[0.10] overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-0 px-4 border-b border-border overflow-x-auto scrollbar-none">
         {TABS.map((tab) => (
           <button
             key={tab.key}
@@ -103,13 +103,13 @@ export function YearlyComparisonTabs({ yearlyData, allExtrasKeys, currentYear }:
             className={
               "relative px-3 py-3 text-xs font-medium transition-colors whitespace-nowrap " +
               (activeTab === tab.key
-                ? "text-[#F6A11C]"
-                : "text-muted-foreground hover:text-zinc-300")
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground/80")
             }
           >
             {tab.label}
             {activeTab === tab.key && (
-              <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-[#F6A11C]" />
+              <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-primary" />
             )}
           </button>
         ))}
@@ -198,8 +198,8 @@ export function YearlyComparisonTabs({ yearlyData, allExtrasKeys, currentYear }:
                 const isCurrentYear = y.year === currentYear;
                 return (
                   <div key={y.year} className="flex items-center gap-3">
-                    <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-400")}>{y.year}</span>
-                    <div className="flex-1 h-7 bg-[#1c1d20] rounded-md overflow-hidden flex">
+                    <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-primary" : "text-muted-foreground")}>{y.year}</span>
+                    <div className="flex-1 h-7 bg-muted rounded-md overflow-hidden flex">
                       {y.cashCount > 0 && (
                         <div className="h-full bg-emerald-500/30 flex items-center justify-center" style={{ width: `${(y.cashCount / y.count) * 100}%` }}>
                           <span className="text-[10px] font-mono font-semibold text-emerald-400 whitespace-nowrap">{y.cashCount}</span>
@@ -211,7 +211,7 @@ export function YearlyComparisonTabs({ yearlyData, allExtrasKeys, currentYear }:
                         </div>
                       )}
                     </div>
-                    <span className="text-[11px] text-zinc-400 w-20 text-right tabular-nums font-mono">{y.cashPercent}% Bar</span>
+                    <span className="text-[11px] text-muted-foreground w-20 text-right tabular-nums font-mono">{y.cashPercent}% Bar</span>
                   </div>
                 );
               })}
@@ -249,10 +249,10 @@ export function YearlyComparisonTabs({ yearlyData, allExtrasKeys, currentYear }:
               return (
                 <table className="w-full text-[11px]">
                   <thead>
-                    <tr className="border-b border-white/[0.10]">
+                    <tr className="border-b border-border">
                       <th className="text-left py-1.5 font-semibold text-muted-foreground uppercase tracking-wider">Extra</th>
                       {filteredYears.map((y) => (
-                        <th key={y.year} className={"text-right py-1.5 font-semibold tabular-nums px-1.5 " + (y.year === currentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>
+                        <th key={y.year} className={"text-right py-1.5 font-semibold tabular-nums px-1.5 " + (y.year === currentYear ? "text-primary" : "text-muted-foreground")}>
                           {y.year}
                         </th>
                       ))}
@@ -260,14 +260,14 @@ export function YearlyComparisonTabs({ yearlyData, allExtrasKeys, currentYear }:
                   </thead>
                   <tbody>
                     {allExtrasKeys.map((ext) => (
-                      <tr key={ext} className="border-b border-white/[0.10]">
-                        <td className="py-1.5 text-zinc-300 font-medium">{ext}</td>
+                      <tr key={ext} className="border-b border-border">
+                        <td className="py-1.5 text-foreground/80 font-medium">{ext}</td>
                         {filteredYears.map((y) => {
                           const count = y.extras[ext] ?? 0;
                           const pct = y.count > 0 ? Math.round((count / y.count) * 100) : 0;
                           return (
                             <td key={y.year} className="text-right py-1.5 tabular-nums px-1.5">
-                              <span className="text-zinc-300">{count}</span>
+                              <span className="text-foreground/80">{count}</span>
                               <span className="text-muted-foreground ml-1">({pct}%)</span>
                             </td>
                           );

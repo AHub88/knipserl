@@ -65,29 +65,29 @@ function InquiryCard({
       onDragStart={(e) => onDragStart(e, inquiry.id)}
       onClick={onClick}
       className={
-        "rounded-lg border bg-card p-3 cursor-pointer transition-all hover:border-white/[0.15] active:scale-[0.98] " +
+        "rounded-lg border bg-card p-3 cursor-pointer transition-all hover:border-border active:scale-[0.98] " +
         (mobileSelected
-          ? "border-[#F6A11C]/40 ring-1 ring-[#F6A11C]/25"
-          : "border-white/[0.08]")
+          ? "border-primary/40 ring-1 ring-primary/25"
+          : "border-border")
       }
     >
       <div className="flex items-start gap-2">
-        <IconGripVertical className="size-3.5 text-zinc-600 mt-0.5 shrink-0 hidden sm:block" />
+        <IconGripVertical className="size-3.5 text-muted-foreground/50 mt-0.5 shrink-0 hidden sm:block" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-zinc-200 truncate">{inquiry.customerName}</p>
+          <p className="text-sm font-medium text-foreground truncate">{inquiry.customerName}</p>
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-[11px] tabular-nums text-zinc-500">
+            <span className="text-[11px] tabular-nums text-muted-foreground/70">
               {d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" })}
             </span>
-            <span className="text-[10px] text-zinc-600">&middot;</span>
-            <span className="text-[11px] text-zinc-500 truncate">{inquiry.eventType}</span>
+            <span className="text-[10px] text-muted-foreground/50">&middot;</span>
+            <span className="text-[11px] text-muted-foreground/70 truncate">{inquiry.eventType}</span>
           </div>
           {inquiry.locationName && (
             <div className="flex items-center gap-1 mt-1">
-              <IconMapPin className="size-3 text-zinc-600 shrink-0" />
-              <span className="text-[11px] text-zinc-500 truncate">{inquiry.locationName}</span>
+              <IconMapPin className="size-3 text-muted-foreground/50 shrink-0" />
+              <span className="text-[11px] text-muted-foreground/70 truncate">{inquiry.locationName}</span>
               {inquiry.distanceKm != null && (
-                <span className="text-[10px] text-zinc-600 shrink-0">{inquiry.distanceKm.toFixed(0)} km</span>
+                <span className="text-[10px] text-muted-foreground/50 shrink-0">{inquiry.distanceKm.toFixed(0)} km</span>
               )}
             </div>
           )}
@@ -173,7 +173,7 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
     <div>
       {/* Mobile: show selected card hint */}
       {mobileSelected && (
-        <div className="md:hidden mb-3 rounded-lg bg-[#F6A11C]/10 border border-[#F6A11C]/20 px-3 py-2 text-xs text-[#F6A11C]">
+        <div className="md:hidden mb-3 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-xs text-primary">
           Tippe auf eine Spalte um die Karte zu verschieben. Nochmal tippen zum Öffnen.
         </div>
       )}
@@ -192,7 +192,7 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
                 "rounded-xl border transition-colors " +
                 (isDragTarget
                   ? `${colors.border} ${colors.bg}`
-                  : "border-white/[0.06] bg-white/[0.01]")
+                  : "border-border bg-foreground/[0.01]")
               }
               onDragOver={(e) => handleDragOver(e, col.key)}
               onDragLeave={handleDragLeave}
@@ -202,13 +202,13 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
               <button
                 className={
                   "w-full flex items-center gap-2 px-3 py-2.5 rounded-t-xl transition-colors " +
-                  (mobileSelected ? "md:cursor-default cursor-pointer active:bg-white/[0.03]" : "cursor-default")
+                  (mobileSelected ? "md:cursor-default cursor-pointer active:bg-foreground/[0.03]" : "cursor-default")
                 }
                 onClick={() => mobileSelected && handleMobileMove(col.key)}
               >
                 <span className={"size-2 rounded-full shrink-0 " + colors.dot} />
                 <span className={"text-xs font-semibold " + colors.text}>{col.label}</span>
-                <span className="text-[11px] text-zinc-600 tabular-nums ml-auto">
+                <span className="text-[11px] text-muted-foreground/50 tabular-nums ml-auto">
                   {columnItems.length}
                 </span>
               </button>
@@ -216,7 +216,7 @@ export function InquiriesKanban({ inquiries }: { inquiries: SerializedInquiry[] 
               {/* Cards */}
               <div className="p-2 pt-0 space-y-2 min-h-[100px]">
                 {columnItems.length === 0 && (
-                  <div className="flex items-center justify-center h-[80px] text-xs text-zinc-600 border border-dashed border-white/[0.06] rounded-lg">
+                  <div className="flex items-center justify-center h-[80px] text-xs text-muted-foreground/50 border border-dashed border-border rounded-lg">
                     Keine Anfragen
                   </div>
                 )}

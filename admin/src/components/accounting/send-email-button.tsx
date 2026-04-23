@@ -67,8 +67,8 @@ export function SendEmailButton({ type, id, recipientEmail, alreadySent }: SendE
       className={
         "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
         (recipientEmail
-          ? "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]"
-          : "border-white/[0.06] bg-[#1c1d20] text-zinc-600 cursor-not-allowed")
+          ? "border-border bg-card text-foreground/80 hover:bg-accent"
+          : "border-border bg-card text-muted-foreground/50 cursor-not-allowed")
       }
       title={recipientEmail ? `Senden an ${recipientEmail}` : "Keine E-Mail-Adresse"}
     >

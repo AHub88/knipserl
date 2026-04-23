@@ -76,15 +76,15 @@ function LocationAutocomplete({
         placeholder="Location eingeben..."
       />
       {open && suggestions.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-56 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-card shadow-xl max-h-56 overflow-y-auto">
           {suggestions.map((loc) => (
             <button
               key={loc.id}
               type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors border-b border-border last:border-0"
               onMouseDown={(e) => { e.preventDefault(); onSelect(loc); setOpen(false); }}
             >
-              <span className="text-zinc-200 font-medium">{loc.name}</span>
+              <span className="text-foreground font-medium">{loc.name}</span>
               {loc.city && (
                 <span className="text-muted-foreground ml-2">
                   {loc.street ? `${loc.street}, ` : ""}{loc.zip} {loc.city}
@@ -236,30 +236,30 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors [&::-webkit-calendar-picker-indicator]:invert";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors [&::-webkit-calendar-picker-indicator]:invert";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/inquiries" className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors">
+          <Link href="/inquiries" className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors">
             <IconArrowLeft className="size-4" />
           </Link>
-          <h1 className="text-lg sm:text-xl font-bold text-zinc-100">Neue Anfrage</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-foreground">Neue Anfrage</h1>
         </div>
-        <button onClick={handleSave} disabled={saving} className="hidden sm:flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors">
+        <button onClick={handleSave} disabled={saving} className="hidden sm:flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
           <IconDeviceFloppy className="size-4" />
           {saving ? "Erstellen..." : "Anfrage erstellen"}
         </button>
       </div>
 
       {/* Event & Location */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event & Location</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
@@ -290,7 +290,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
               type="button"
               onClick={handleSaveLocation}
               disabled={savingLocation}
-              className="mt-1.5 text-xs text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors disabled:opacity-50"
+              className="mt-1.5 text-xs text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
             >
               {savingLocation ? "Speichern..." : "+ Als neue Location speichern"}
             </button>
@@ -305,14 +305,14 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             <label className={labelClass}>Entfernung</label>
             <div className="relative">
               <input className={inputClass + " pr-10"} type="number" step="0.1" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} disabled={!!selectedLocationId && !isPrivateLocation} placeholder="–" />
-              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">km</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">km</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Kundendaten */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kundendaten</h2>
         <div>
           <label className={labelClass}>Name *</label>
@@ -338,7 +338,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => {
@@ -352,8 +352,8 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
                 className={
                   "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors " +
                   (active
-                    ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border bg-muted text-muted-foreground/70 hover:text-foreground/80")
                 }
               >
                 <ext.icon className="size-4" />
@@ -368,30 +368,30 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       </div>
 
       {/* Kalkulation */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kalkulation</h2>
         <div className="grid gap-3 grid-cols-3">
           <div>
             <label className={labelClass}>Fotobox</label>
             <div className="relative">
               <input className={inputClass + " pr-10"} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
-              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
             </div>
           </div>
           <div>
             <label className={labelClass}>Fahrt</label>
             <div className="relative">
               <input className={inputClass + " pr-10"} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
-              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
             </div>
           </div>
           <div>
             <label className={labelClass}>Extras</label>
             <div className="relative">
-              <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>
+              <div className={inputClass + " flex items-center bg-transparent text-muted-foreground cursor-default pr-10"}>
                 {calculateExtrasTotal(extras).toFixed(2)}
               </div>
-              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
             </div>
           </div>
         </div>
@@ -400,7 +400,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             <label className={labelClass}>Rabatt</label>
             <div className="relative">
               <input className={inputClass + " pr-10"} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
-              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
             </div>
           </div>
           <div>
@@ -420,13 +420,13 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
           const calcDiscAmt = discountType === "PERCENT" ? (calcSubtotal * calcDisc) / 100 : calcDisc;
           const calcTotal = Math.round((calcSubtotal - calcDiscAmt) * 100) / 100;
           return (
-            <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
-              <div className="flex justify-between text-xs text-zinc-400">
+            <div className="rounded-lg bg-muted border border-border p-3 space-y-1.5">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Fotobox</span>
                 <span className="tabular-nums">{calcBox.toFixed(2)} &euro;</span>
               </div>
               {calcTravel > 0 && (
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Fahrt{distanceKm ? ` (${distanceKm} km)` : ""}</span>
                   <span className="tabular-nums">{calcTravel.toFixed(2)} &euro;</span>
                 </div>
@@ -435,7 +435,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
                 const cfg = EXTRAS_CONFIG.find((e) => e.key === key);
                 const price = EXTRAS_PRICES[key] ?? 0;
                 return price > 0 ? (
-                  <div key={key} className="flex justify-between text-xs text-zinc-400">
+                  <div key={key} className="flex justify-between text-xs text-muted-foreground">
                     <span>{cfg?.label ?? key}</span>
                     <span className="tabular-nums">{price.toFixed(2)} &euro;</span>
                   </div>
@@ -447,9 +447,9 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
                   <span className="tabular-nums">-{calcDiscAmt.toFixed(2)} &euro;</span>
                 </div>
               )}
-              <div className="border-t border-white/[0.10] pt-1.5 flex justify-between items-center">
-                <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
-                <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
+              <div className="border-t border-border pt-1.5 flex justify-between items-center">
+                <span className="text-sm font-semibold text-foreground">Gesamtpreis</span>
+                <span className="text-lg font-bold text-primary tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
               </div>
             </div>
           );
@@ -457,7 +457,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       </div>
 
       {/* Notizen */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kommentar</h2>
         <textarea className={inputClass + " h-24 py-2 resize-none"} value={comments} onChange={(e) => setComments(e.target.value)} placeholder="Anmerkungen zur Anfrage..." />
       </div>
@@ -467,7 +467,7 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full h-12 rounded-xl bg-[#F6A11C] text-black font-semibold text-base shadow-lg shadow-black/30 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-xl bg-primary text-black font-semibold text-base shadow-lg shadow-black/5 dark:shadow-black/25 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
         >
           <IconDeviceFloppy className="size-5" />
           {saving ? "Erstellen..." : "Anfrage erstellen"}

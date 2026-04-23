@@ -186,37 +186,37 @@ export function CalendarView() {
         <div className="flex items-center gap-2">
           <button
             onClick={prevMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >
             <IconChevronLeft className="size-4" />
           </button>
           <button
             onClick={nextMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >
             <IconChevronRight className="size-4" />
           </button>
-          <h2 className="text-lg font-semibold text-zinc-100 ml-2">
+          <h2 className="text-lg font-semibold text-foreground ml-2">
             {MONTH_NAMES[month - 1]} {year}
           </h2>
           {!isCurrentMonth && (
             <button
               onClick={goToday}
-              className="ml-2 text-xs text-[#F6A11C] hover:underline"
+              className="ml-2 text-xs text-primary hover:underline"
             >
               Heute
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-white/[0.08] bg-card p-0.5">
+        <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-0.5">
           <button
             onClick={() => setView("month")}
             className={
               "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
               (view === "month"
-                ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                : "text-muted-foreground hover:text-zinc-300")
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground hover:text-foreground/80")
             }
           >
             <IconCalendarMonth className="size-3.5" />
@@ -227,8 +227,8 @@ export function CalendarView() {
             className={
               "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
               (view === "list"
-                ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                : "text-muted-foreground hover:text-zinc-300")
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground hover:text-foreground/80")
             }
           >
             <IconList className="size-3.5" />
@@ -274,7 +274,7 @@ export function CalendarView() {
                 }}
               >
                 <span className="font-bold">{initials}</span>
-                <span className="text-zinc-300">{d.name}</span>
+                <span className="text-foreground/80">{d.name}</span>
               </span>
             );
           })}
@@ -283,9 +283,9 @@ export function CalendarView() {
 
       {/* Month View */}
       {view === "month" && (
-        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 border-b border-white/[0.10]">
+          <div className="grid grid-cols-7 border-b border-border">
             {WEEKDAYS.map((d) => (
               <div
                 key={d}
@@ -301,7 +301,7 @@ export function CalendarView() {
             {Array.from({ length: offset }).map((_, i) => (
               <div
                 key={`e-${i}`}
-                className="min-h-[100px] border-b border-r border-white/[0.10] bg-[#121315]"
+                className="min-h-[100px] border-b border-r border-border bg-muted"
               />
             ))}
             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
@@ -316,16 +316,16 @@ export function CalendarView() {
                 <div
                   key={day}
                   className={
-                    "min-h-[100px] border-b border-r border-white/[0.10] p-1.5 transition-colors " +
-                    (isWeekend ? "bg-[#121315] " : "") +
-                    (isToday ? "bg-[#F6A11C]/5 " : "")
+                    "min-h-[100px] border-b border-r border-border p-1.5 transition-colors " +
+                    (isWeekend ? "bg-muted " : "") +
+                    (isToday ? "bg-primary/5 " : "")
                   }
                 >
                   <div
                     className={
                       "text-xs font-medium mb-1 " +
                       (isToday
-                        ? "text-[#F6A11C] font-bold"
+                        ? "text-primary font-bold"
                         : "text-muted-foreground")
                     }
                   >
@@ -404,14 +404,14 @@ export function CalendarView() {
                               {initials}
                             </span>
                           )}
-                          <span className="truncate text-zinc-300 group-hover:text-zinc-100">
+                          <span className="truncate text-foreground/80 group-hover:text-foreground">
                             {o.customerName}
                           </span>
                         </button>
                       );
                     })}
                     {orders.length > 3 && (
-                      <div className="text-[10px] text-zinc-400 px-1">
+                      <div className="text-[10px] text-muted-foreground px-1">
                         +{orders.length - 3} weitere
                       </div>
                     )}
@@ -427,8 +427,8 @@ export function CalendarView() {
       {view === "list" && (
         <div className="space-y-2">
           {!data || getOrdersByDay().length === 0 ? (
-            <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
-              <IconCalendarMonth className="size-10 mb-3 text-zinc-400" />
+            <div className="rounded-xl border border-border bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <IconCalendarMonth className="size-10 mb-3 text-muted-foreground" />
               <p className="text-sm">Keine Einträge in diesem Monat</p>
             </div>
           ) : (
@@ -440,16 +440,16 @@ export function CalendarView() {
                   className={
                     "rounded-xl border overflow-hidden " +
                     (isToday
-                      ? "border-[#F6A11C]/30 bg-[#F6A11C]/5"
-                      : "border-white/[0.10] bg-card")
+                      ? "border-primary/30 bg-primary/5"
+                      : "border-border bg-card")
                   }
                 >
                   {/* Day header */}
-                  <div className="px-4 py-2 border-b border-white/[0.10] flex items-center gap-3">
+                  <div className="px-4 py-2 border-b border-border flex items-center gap-3">
                     <span
                       className={
                         "text-lg font-bold tabular-nums " +
-                        (isToday ? "text-[#F6A11C]" : "text-zinc-300")
+                        (isToday ? "text-primary" : "text-foreground/80")
                       }
                     >
                       {day}
@@ -457,11 +457,11 @@ export function CalendarView() {
                     <span className="text-xs text-muted-foreground uppercase font-medium">
                       {weekday}
                     </span>
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs text-muted-foreground">
                       {MONTH_NAMES[month - 1]}
                     </span>
                     {isToday && (
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[#F6A11C] bg-[#F6A11C]/15 px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/15 px-2 py-0.5 rounded-md">
                         Heute
                       </span>
                     )}
@@ -471,7 +471,7 @@ export function CalendarView() {
                   </div>
 
                   {/* Orders */}
-                  <div className="divide-y divide-white/[0.04]">
+                  <div className="divide-y divide-border">
                     {orders.map((o) => {
                       const dc = o.driver ? getDriverColor(o.driver.id) : null;
                       const initials = getDriverInitials(o.driver);
@@ -479,7 +479,7 @@ export function CalendarView() {
                         <button
                           key={o.id}
                           onClick={() => router.push(`/orders/${o.id}`)}
-                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-[#1c1d20] transition-colors text-left"
+                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors text-left"
                         >
                           <div
                             className={
@@ -489,7 +489,7 @@ export function CalendarView() {
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-zinc-200 truncate">
+                              <span className="text-sm font-medium text-foreground truncate">
                                 {o.customerName}
                               </span>
                               <span className="text-xs text-muted-foreground">

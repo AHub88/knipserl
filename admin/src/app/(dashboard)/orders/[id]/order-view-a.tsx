@@ -210,23 +210,23 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   return (
     <div className="space-y-6">
       {/* ── Hero Header ── */}
-      <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-4 sm:p-6">
+      <div className="rounded-2xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-4 sm:p-6">
         {/* Top row */}
         <div className="flex items-center gap-2 sm:gap-3 mb-4">
           <Link
             href="/orders"
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
+            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <IconArrowLeft className="size-4" />
           </Link>
-          <span className="text-xs font-mono text-zinc-400">#{order.orderNumber}</span>
+          <span className="text-xs font-mono text-muted-foreground">#{order.orderNumber}</span>
 
           {/* Actions - right side */}
           <div className="flex items-center gap-2 ml-auto shrink-0">
             {isAdmin && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-muted text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
               >
                 <IconEdit className="size-3.5" />
                 <span className="hidden sm:inline">Bearbeiten</span>
@@ -235,7 +235,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             <a
               href={`/api/orders/${order.id}/pdf`}
               target="_blank"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-xs font-medium hover:bg-[#222326] transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-muted text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
             >
               <IconFileDownload className="size-3.5" />
               <span className="hidden sm:inline">PDF</span>
@@ -274,7 +274,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors " +
                 (order.confirmedByCustomerAt
                   ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
+                  : "border-border bg-muted text-foreground/80 hover:bg-accent")
               }
             >
               {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
@@ -309,7 +309,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                 : order.designToken
                   ? "border-purple-500/30 bg-purple-500/10 text-purple-400"
-                  : "border-white/[0.08] bg-[#1c1d20] text-zinc-300 hover:bg-[#222326]")
+                  : "border-border bg-muted text-foreground/80 hover:bg-accent")
             }
           >
             <IconPalette className="size-3.5" />
@@ -319,9 +319,9 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
         {/* Date */}
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <IconCalendar className="size-5 text-[#F6A11C] shrink-0" />
-          <span className="text-base sm:text-xl text-[#F6A11C] font-semibold">{formattedDate}</span>
-          <span className="inline-flex items-center rounded-md bg-[#222326] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
+          <IconCalendar className="size-5 text-primary shrink-0" />
+          <span className="text-base sm:text-xl text-primary font-semibold">{formattedDate}</span>
+          <span className="inline-flex items-center rounded-md bg-accent px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             {order.eventType}
           </span>
         </div>
@@ -329,21 +329,21 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* Customer Name */}
         {firma ? (
           <div className="mb-1.5">
-            <p className="text-sm sm:text-base text-zinc-400 mb-0.5">{firma}</p>
-            <h1 className="text-xl sm:text-3xl font-bold text-zinc-100">{kontakt}</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mb-0.5">{firma}</p>
+            <h1 className="text-xl sm:text-3xl font-bold text-foreground">{kontakt}</h1>
           </div>
         ) : (
-          <h1 className="text-xl sm:text-3xl font-bold text-zinc-100 mb-1.5">{kontakt}</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-1.5">{kontakt}</h1>
         )}
 
         {/* Location */}
-        <div className="flex items-start gap-2 text-zinc-400">
+        <div className="flex items-start gap-2 text-muted-foreground">
           <IconMapPin className="size-4 shrink-0 mt-0.5" />
           <span className="text-sm sm:text-base">
-            <span className="text-zinc-300 font-medium">{order.locationName}</span>
+            <span className="text-foreground/80 font-medium">{order.locationName}</span>
             {ort && <span className="text-muted-foreground"> &middot; {ort}</span>}
             {order.distanceKm != null && (
-              <span className="text-zinc-400"> &middot; {order.distanceKm} km</span>
+              <span className="text-muted-foreground"> &middot; {order.distanceKm} km</span>
             )}
           </span>
         </div>
@@ -354,7 +354,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-4 py-2.5">
           <IconCircleCheckFilled className="size-4 text-emerald-400 shrink-0" />
           <span className="text-sm text-emerald-400 font-medium">Vom Kunden bestätigt</span>
-          <span className="text-xs text-zinc-400 ml-auto">
+          <span className="text-xs text-muted-foreground ml-auto">
             {new Date(order.confirmedByCustomerAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })} um {new Date(order.confirmedByCustomerAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr
           </span>
         </div>
@@ -365,11 +365,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Status */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+          <div className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</h3>
               {isAdmin && !editingStatus && (
-                <button onClick={() => setEditingStatus(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
+                <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                   <IconPencil className="size-4.5" />
                 </button>
               )}
@@ -389,7 +389,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
                       setEditingStatus(false);
                     }}
-                    className="text-zinc-400 hover:text-zinc-300 transition-colors"
+                    className="text-muted-foreground hover:text-foreground/80 transition-colors"
                   >
                     <IconX className="size-5" />
                   </button>
@@ -438,11 +438,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
           {/* Extras */}
           {(activeExtras.length > 0 || editingExtras) && (
-            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Extras</h3>
                 {isAdmin && !editingExtras && (
-                  <button onClick={() => setEditingExtras(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
+                  <button onClick={() => setEditingExtras(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                     <IconPencil className="size-4.5" />
                   </button>
                 )}
@@ -459,7 +459,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     </button>
                     <button
                       onClick={() => { setExtrasState(order.extras); setEditingExtras(false); }}
-                      className="text-zinc-400 hover:text-zinc-300 transition-colors"
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
                     >
                       <IconX className="size-5" />
                     </button>
@@ -477,8 +477,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                           className={
                             "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 min-w-[90px] cursor-pointer hover:opacity-80 transition-colors " +
                             (active
-                              ? "border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C]"
-                              : "border-white/[0.10] bg-card text-zinc-400")
+                              ? "border-primary/30 bg-primary/10 text-primary"
+                              : "border-border bg-card text-muted-foreground")
                           }
                         >
                           <ext.icon className="size-8" />
@@ -492,7 +492,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   : activeExtras.map((ext) => (
                       <div
                         key={ext.key}
-                        className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#F6A11C]/30 bg-[#F6A11C]/10 p-4 min-w-[90px] text-[#F6A11C]"
+                        className="flex flex-col items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 p-4 min-w-[90px] text-primary"
                       >
                         <ext.icon className="size-8" />
                         <span className="text-[11px] font-bold uppercase tracking-wide">{ext.label}</span>
@@ -508,17 +508,17 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {/* Auftraggeber + Location + Lieferung */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Auftraggeber */}
-            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Auftraggeber</h3>
-              <p className="text-base font-semibold text-zinc-100 mb-0.5">{kontakt}</p>
+              <p className="text-base font-semibold text-foreground mb-0.5">{kontakt}</p>
               {firma && (
-                <p className="text-sm text-zinc-400 mb-3">{firma}</p>
+                <p className="text-sm text-muted-foreground mb-3">{firma}</p>
               )}
-              <div className="space-y-2.5 border-t border-white/[0.10] pt-3">
+              <div className="space-y-2.5 border-t border-border pt-3">
                 {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
                   <div className="flex items-center gap-3">
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">E-Mail</span>
-                    <a href={`mailto:${order.customerEmail}`} className="text-sm text-zinc-300 hover:text-[#F6A11C] transition-colors truncate">
+                    <a href={`mailto:${order.customerEmail}`} className="text-sm text-foreground/80 hover:text-primary transition-colors truncate">
                       {order.customerEmail}
                     </a>
                   </div>
@@ -526,34 +526,34 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 {order.customerPhone && (
                   <div className="flex items-center gap-3">
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
-                    <a href={`tel:${order.customerPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-zinc-300 hover:text-[#F6A11C] transition-colors">
+                    <a href={`tel:${order.customerPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-foreground/80 hover:text-primary transition-colors">
                       {order.customerPhone}
                     </a>
                   </div>
                 )}
                 <div className="flex items-center gap-3">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Firma</span>
-                  <span className="text-sm text-zinc-300">{order.companyName.includes("GbR") ? "GbR" : "Einzelunternehmen"}</span>
+                  <span className="text-sm text-foreground/80">{order.companyName.includes("GbR") ? "GbR" : "Einzelunternehmen"}</span>
                 </div>
               </div>
             </div>
 
             {/* Location */}
-            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Location</h3>
               <Link
                 href={order.locationId ? `/locations/${order.locationId}` : `/locations`}
-                className="text-base font-medium text-zinc-200 hover:text-[#F6A11C] transition-colors inline-flex items-center gap-1.5"
+                className="text-base font-medium text-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
               >
                 {order.locationName}
                 <IconExternalLink className="size-3.5 opacity-50" />
               </Link>
-              <p className="text-sm text-zinc-200 mt-1">{order.locationAddress}</p>
+              <p className="text-sm text-foreground mt-1">{order.locationAddress}</p>
               {order.distanceKm != null && (
-                <div className="border-t border-white/[0.10] mt-3 pt-3">
+                <div className="border-t border-border mt-3 pt-3">
                   <p className="text-sm">
                     <span className="text-muted-foreground">Entfernung: </span>
-                    <span className="text-zinc-200 font-mono tabular-nums">{order.distanceKm} km</span>
+                    <span className="text-foreground font-mono tabular-nums">{order.distanceKm} km</span>
                   </p>
                 </div>
               )}
@@ -561,7 +561,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 mt-2 text-xs text-[#F6A11C] hover:underline"
+                className="inline-flex items-center gap-1 mt-2 text-xs text-primary hover:underline"
               >
                 <IconMapPin className="size-3" />
                 In Google Maps anzeigen
@@ -569,7 +569,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
 
             {/* Lieferung */}
-            <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Lieferung</h3>
               {hasSchedule ? (
                 <div className="space-y-4">
@@ -578,7 +578,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       <IconClock className="size-5 text-emerald-400 shrink-0" />
                       <div>
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400">Aufbau</p>
-                        <p className="text-base font-medium text-zinc-100">
+                        <p className="text-base font-medium text-foreground">
                           {formatDateShort(order.setupDate)}
                           {order.setupTime && <><span className="text-muted-foreground mx-2">|</span><span className="font-mono">{order.setupTime}</span></>}
                         </p>
@@ -590,7 +590,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       <IconClock className="size-5 text-red-400 shrink-0" />
                       <div>
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-red-400">Abbau</p>
-                        <p className="text-base font-medium text-zinc-100">
+                        <p className="text-base font-medium text-foreground">
                           {formatDateShort(order.teardownDate)}
                           {order.teardownTime && <><span className="text-muted-foreground mx-2">|</span><span className="font-mono">{order.teardownTime}</span></>}
                         </p>
@@ -608,21 +608,21 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="space-y-3">
             {/* Kundenkommentar */}
             {(order.notes || editingNotes || isAdmin) && (
-              <div className="rounded-xl border border-white/[0.10] bg-card p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <IconMessageCircle className="size-4 text-muted-foreground" />
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenkommentar</h3>
                   </div>
                   {isAdmin && !editingNotes && (
-                    <button onClick={() => setEditingNotes(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
+                    <button onClick={() => setEditingNotes(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                       <IconPencil className="size-4.5" />
                     </button>
                   )}
                   {editingNotes && (
                     <div className="flex items-center gap-1">
                       <button onClick={() => { saveField({ notes: notesState || null }); setEditingNotes(false); }} className="text-emerald-400 hover:text-emerald-300"><IconCheck className="size-4" /></button>
-                      <button onClick={() => { setNotesState(order.notes ?? ""); setEditingNotes(false); }} className="text-zinc-400 hover:text-zinc-300"><IconX className="size-4" /></button>
+                      <button onClick={() => { setNotesState(order.notes ?? ""); setEditingNotes(false); }} className="text-muted-foreground hover:text-foreground/80"><IconX className="size-4" /></button>
                     </div>
                   )}
                 </div>
@@ -630,12 +630,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <textarea
                     value={notesState}
                     onChange={(e) => setNotesState(e.target.value)}
-                    className="w-full h-24 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 resize-none"
+                    className="w-full h-24 rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 resize-none"
                     placeholder="Kommentar..."
                     autoFocus
                   />
                 ) : (
-                  <p className="text-sm text-zinc-300 whitespace-pre-wrap">{order.notes || <span className="text-muted-foreground italic">Kein Kommentar</span>}</p>
+                  <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.notes || <span className="text-muted-foreground italic">Kein Kommentar</span>}</p>
                 )}
               </div>
             )}
@@ -649,14 +649,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
                   </div>
                   {isAdmin && !editingInternal && (
-                    <button onClick={() => setEditingInternal(true)} className="text-zinc-400 hover:text-zinc-300 transition-colors">
+                    <button onClick={() => setEditingInternal(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                       <IconPencil className="size-4.5" />
                     </button>
                   )}
                   {editingInternal && (
                     <div className="flex items-center gap-1">
                       <button onClick={() => { saveField({ internalNotes: internalState || null }); setEditingInternal(false); }} className="text-emerald-400 hover:text-emerald-300"><IconCheck className="size-4" /></button>
-                      <button onClick={() => { setInternalState(order.internalNotes ?? ""); setEditingInternal(false); }} className="text-zinc-400 hover:text-zinc-300"><IconX className="size-4" /></button>
+                      <button onClick={() => { setInternalState(order.internalNotes ?? ""); setEditingInternal(false); }} className="text-muted-foreground hover:text-foreground/80"><IconX className="size-4" /></button>
                     </div>
                   )}
                 </div>
@@ -664,12 +664,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <textarea
                     value={internalState}
                     onChange={(e) => setInternalState(e.target.value)}
-                    className="w-full h-24 rounded-lg border border-amber-500/20 bg-black/20 px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 resize-none"
+                    className="w-full h-24 rounded-lg border border-amber-500/20 bg-black/20 px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 resize-none"
                     placeholder="Interner Kommentar..."
                     autoFocus
                   />
                 ) : (
-                  <p className="text-sm text-zinc-400 whitespace-pre-wrap">{order.internalNotes || <span className="text-muted-foreground italic">Kein interner Kommentar</span>}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internalNotes || <span className="text-muted-foreground italic">Kein interner Kommentar</span>}</p>
                 )}
               </div>
             )}
@@ -679,7 +679,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Right: Sidebar ── */}
         <div className="w-full lg:w-80 shrink-0 space-y-4">
           {/* Drucklayouts - volle Breite */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+          <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Drucklayouts</h3>
             <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
           </div>
@@ -687,15 +687,15 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {/* Kunden-Layout */}
           {order.graphicUrl && (
             <>
-              <div className="rounded-xl border border-white/[0.10] bg-card p-4 space-y-3">
+              <div className="rounded-xl border border-border bg-card p-4 space-y-3">
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
                 <button onClick={() => setLayoutModalOpen(true)} className="block w-full">
-                  <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-white/10 max-h-64 mx-auto hover:opacity-80 transition-opacity cursor-pointer" />
+                  <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-border max-h-64 mx-auto hover:opacity-80 transition-opacity cursor-pointer" />
                 </button>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setLayoutModalOpen(true)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-border bg-muted text-foreground/80 text-sm hover:bg-accent transition-colors"
                   >
                     <IconPhoto className="size-4" />
                     Vorschau
@@ -703,7 +703,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <a
                     href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
                     download={`layout-${order.orderNumber}.png`}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-300 text-sm hover:bg-[#222326] transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-border bg-muted text-foreground/80 text-sm hover:bg-accent transition-colors"
                   >
                     <IconFileDownload className="size-4" />
                     Herunterladen
@@ -712,7 +712,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 {isAdmin && order.designToken && (
                   <a
                     href={`/design/${order.designToken}?admin=1`}
-                    className="flex items-center justify-center gap-2 py-2 rounded-lg border border-[#F6A11C]/30 bg-[#F6A11C]/10 text-[#F6A11C] text-sm font-medium hover:bg-[#F6A11C]/20 transition-colors"
+                    className="flex items-center justify-center gap-2 py-2 rounded-lg border border-primary/30 bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
                   >
                     <IconEdit className="size-4" />
                     Design nachbearbeiten
@@ -726,19 +726,19 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <div className="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => setLayoutModalOpen(false)}
-                      className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-zinc-800 border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:bg-zinc-700 transition-colors z-10"
+                      className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center text-foreground/60 hover:text-foreground hover:bg-accent transition-colors z-10"
                     >
                       ✕
                     </button>
                     <img
                       src={order.graphicUrl}
                       alt="Layout Vorschau"
-                      className="max-w-[85vw] max-h-[80vh] rounded-xl border border-white/10 shadow-2xl object-contain"
+                      className="max-w-[85vw] max-h-[80vh] rounded-xl border border-border shadow-2xl object-contain"
                     />
                     <a
                       href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
                       download={`layout-${order.orderNumber}.png`}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold text-sm transition-colors"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-black font-semibold text-sm transition-colors"
                     >
                       <IconFileDownload className="size-4" />
                       Layout herunterladen (ohne Platzhalter)
@@ -750,7 +750,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           )}
 
           {/* Kundenpreis */}
-          <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+          <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Preiskalkulation</h3>
             <div className="space-y-1">
               {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
@@ -768,9 +768,9 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </span>
                 </div>
               )}
-              <div className="border-t border-white/[0.10] mt-2 pt-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-zinc-200">Gesamt</span>
-                <span className="text-lg font-bold font-mono tabular-nums text-[#F6A11C]">
+              <div className="border-t border-border mt-2 pt-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">Gesamt</span>
+                <span className="text-lg font-bold font-mono tabular-nums text-primary">
                   {customerTotal.toFixed(2)}&euro;
                 </span>
               </div>
@@ -785,7 +785,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 <PriceRow label="Kundenpreis" value={customerTotal} />
                 {order.setupCost != null && (
                   <div className="flex items-center justify-between py-0.5">
-                    <span className="text-sm text-zinc-400">Aufbau</span>
+                    <span className="text-sm text-muted-foreground">Aufbau</span>
                     <span className="text-sm font-mono tabular-nums text-red-400">
                       {Math.abs(order.setupCost).toFixed(2)}&euro;
                     </span>
@@ -793,14 +793,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 )}
                 {order.materialCost != null && (
                   <div className="flex items-center justify-between py-0.5">
-                    <span className="text-sm text-zinc-400">Material</span>
+                    <span className="text-sm text-muted-foreground">Material</span>
                     <span className="text-sm font-mono tabular-nums text-red-400">
                       {Math.abs(order.materialCost).toFixed(2)}&euro;
                     </span>
                   </div>
                 )}
                 <div className="border-t border-amber-500/20 mt-2 pt-2 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-zinc-200">Gewinn</span>
+                  <span className="text-sm font-semibold text-foreground">Gewinn</span>
                   <span className={"text-lg font-bold font-mono tabular-nums " + (internalProfit >= 0 ? "text-emerald-400" : "text-red-400")}>
                     {internalProfit.toFixed(2)}&euro;
                   </span>
@@ -817,8 +817,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 function PriceRow({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between py-0.5">
-      <span className="text-sm text-zinc-400">{label}</span>
-      <span className="text-sm font-mono tabular-nums text-zinc-300">{value.toFixed(2)}&euro;</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-mono tabular-nums text-foreground/80">{value.toFixed(2)}&euro;</span>
     </div>
   );
 }

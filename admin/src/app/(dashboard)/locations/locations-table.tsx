@@ -60,8 +60,8 @@ function SortableHead({
   return (
     <TableHead
       className={
-        "text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none transition-colors hover:text-zinc-300 " +
-        (active ? "text-[#F6A11C]" : "text-muted-foreground") +
+        "text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none transition-colors hover:text-foreground/80 " +
+        (active ? "text-primary" : "text-muted-foreground") +
         (className ? " " + className : "")
       }
       onClick={() => onSort(sortKey)}
@@ -170,12 +170,12 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
           placeholder="Suche nach Name, Ort, Straße, PLZ..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-10 w-full rounded-xl border border-white/[0.08] bg-card pl-9 pr-3 text-sm text-zinc-200 placeholder:text-zinc-400 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
+          className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors"
         />
         {search && (
           <button
             onClick={() => setSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-300"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80"
           >
             <IconX className="size-3.5" />
           </button>
@@ -183,22 +183,22 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.10] flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-300">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground/80">
             {sorted.length} von {locations.length} Locations
           </h2>
         </div>
 
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <IconSearch className="size-10 mb-3 text-zinc-400" />
+            <IconSearch className="size-10 mb-3 text-muted-foreground" />
             <p className="text-sm">Keine Locations gefunden</p>
           </div>
         ) : (
           <>
             {/* Mobile: Cards */}
-            <div className="sm:hidden divide-y divide-white/[0.08]">
+            <div className="sm:hidden divide-y divide-border">
               {sorted.map((loc) => {
                 const addressLine = [loc.street, [loc.zip, loc.city].filter(Boolean).join(" ")]
                   .filter(Boolean)
@@ -207,11 +207,11 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                   <button
                     key={loc.id}
                     onClick={() => router.push(`/locations/${loc.id}`)}
-                    className="w-full text-left px-4 py-3 hover:bg-[#1c1d20] transition-colors"
+                    className="w-full text-left px-4 py-3 hover:bg-accent transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3 mb-1">
-                      <span className="font-medium text-zinc-200 text-sm leading-snug break-words">{loc.name}</span>
-                      <span className="shrink-0 rounded bg-white/[0.06] px-2 py-0.5 text-[11px] font-mono tabular-nums text-zinc-400">
+                      <span className="font-medium text-foreground text-sm leading-snug break-words">{loc.name}</span>
+                      <span className="shrink-0 rounded bg-foreground/[0.06] px-2 py-0.5 text-[11px] font-mono tabular-nums text-muted-foreground">
                         {loc.usageCount}&times;
                       </span>
                     </div>
@@ -221,10 +221,10 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                     {(loc.distanceKm != null || loc.customerTravelCost != null || loc.driverCompensation != null) && (
                       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono tabular-nums">
                         {loc.distanceKm != null && (
-                          <span className="text-zinc-400">{loc.distanceKm}&nbsp;km</span>
+                          <span className="text-muted-foreground">{loc.distanceKm}&nbsp;km</span>
                         )}
                         {loc.customerTravelCost != null && (
-                          <span className="text-zinc-200">
+                          <span className="text-foreground">
                             Kunde&nbsp;{loc.customerTravelCost.toFixed(2)}&nbsp;&euro;
                           </span>
                         )}
@@ -244,7 +244,7 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
             <div className="hidden sm:block">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+                  <TableRow className="border-b border-border hover:bg-transparent">
                     <SortableHead label="Name" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
                     <SortableHead label="Straße" sortKey="street" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
                     <SortableHead label="PLZ" sortKey="zip" activeKey={sortKey} direction={sortDir} onSort={handleSort} />
@@ -260,14 +260,14 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                     <TableRow
                       key={loc.id}
                       onClick={() => router.push(`/locations/${loc.id}`)}
-                      className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
+                      className="cursor-pointer border-b border-border transition-colors hover:bg-accent"
                     >
-                      <TableCell className="font-medium text-zinc-200 max-w-[200px]">
+                      <TableCell className="font-medium text-foreground max-w-[200px]">
                         <span className="block truncate" title={loc.name}>
                           {loc.name}
                         </span>
                       </TableCell>
-                      <TableCell className="text-zinc-400 text-sm max-w-[180px]">
+                      <TableCell className="text-muted-foreground text-sm max-w-[180px]">
                         {loc.street ? (
                           <span className="block truncate" title={loc.street}>
                             {loc.street}
@@ -276,10 +276,10 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                           <span className="text-muted-foreground">–</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-zinc-400 text-sm font-mono tabular-nums">
+                      <TableCell className="text-muted-foreground text-sm font-mono tabular-nums">
                         {loc.zip || <span className="text-muted-foreground">–</span>}
                       </TableCell>
-                      <TableCell className="text-zinc-400 text-sm max-w-[120px]">
+                      <TableCell className="text-muted-foreground text-sm max-w-[120px]">
                         {loc.city ? (
                           <span className="block truncate" title={loc.city}>
                             {loc.city}
@@ -288,7 +288,7 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                           <span className="text-muted-foreground">–</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums">
+                      <TableCell className="text-right font-mono text-sm text-muted-foreground tabular-nums">
                         {loc.distanceKm != null ? (
                           loc.distanceKm
                         ) : (
@@ -297,7 +297,7 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                       </TableCell>
                       <TableCell className="text-right font-mono text-sm tabular-nums">
                         {loc.customerTravelCost != null ? (
-                          <span className="text-zinc-200">
+                          <span className="text-foreground">
                             {loc.customerTravelCost.toFixed(2)}&nbsp;&euro;
                           </span>
                         ) : (
@@ -313,7 +313,7 @@ export function LocationsTable({ locations }: { locations: Location[] }) {
                           <span className="text-muted-foreground">–</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums">
+                      <TableCell className="text-right font-mono text-sm text-muted-foreground tabular-nums">
                         {loc.usageCount}
                       </TableCell>
                     </TableRow>

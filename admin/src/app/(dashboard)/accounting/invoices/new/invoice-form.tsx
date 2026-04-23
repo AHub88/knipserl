@@ -64,16 +64,16 @@ function defaultDueDate() {
 // ---------------------------------------------------------------------------
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
 const labelClass =
   "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
 const selectClass =
-  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors appearance-none";
+  "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors appearance-none";
 
 const cardClass =
-  "rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 space-y-3";
+  "rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3";
 
 const sectionTitle =
   "text-xs font-semibold uppercase tracking-wider text-muted-foreground";
@@ -356,11 +356,11 @@ export function InvoiceForm({ companies, orders }: Props) {
               className={selectClass}
               required
             >
-              <option value="" className="bg-[#1c1d20] text-zinc-400">
+              <option value="" className="bg-muted text-muted-foreground">
                 Firma auswählen...
               </option>
               {companies.map((c) => (
-                <option key={c.id} value={c.id} className="bg-[#1c1d20] text-zinc-200">
+                <option key={c.id} value={c.id} className="bg-muted text-foreground">
                   {c.name}
                 </option>
               ))}
@@ -375,14 +375,14 @@ export function InvoiceForm({ companies, orders }: Props) {
               onChange={(e) => handleOrderChange(e.target.value)}
               className={selectClass}
             >
-              <option value="" className="bg-[#1c1d20] text-zinc-400">
+              <option value="" className="bg-muted text-muted-foreground">
                 Kein Auftrag (eigenständig)
               </option>
               {orders.map((order) => (
                 <option
                   key={order.id}
                   value={order.id}
-                  className="bg-[#1c1d20] text-zinc-200"
+                  className="bg-muted text-foreground"
                   disabled={order.hasInvoice}
                 >
                   #{order.orderNumber} &ndash; {order.customerName} ({formatEUR(order.price)})
@@ -404,7 +404,7 @@ export function InvoiceForm({ companies, orders }: Props) {
         <div ref={customerRef} className="relative">
           <label className={labelClass}>Kundensuche</label>
           <div className="relative">
-            <IconSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+            <IconSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
             <input
               type="text"
               value={customerQuery}
@@ -416,20 +416,20 @@ export function InvoiceForm({ companies, orders }: Props) {
               className={inputClass + " pl-9"}
             />
             {customerLoading && (
-              <IconLoader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-zinc-500" />
+              <IconLoader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground/70" />
             )}
           </div>
           {showCustomerDropdown && customerResults.length > 0 && (
-            <div className="absolute z-50 mt-1 w-full rounded-lg border border-white/[0.10] bg-[#1c1d20] shadow-xl overflow-hidden">
+            <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-muted shadow-xl overflow-hidden">
               {customerResults.map((c) => (
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => selectCustomer(c)}
-                  className="flex w-full flex-col gap-0.5 px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                  className="flex w-full flex-col gap-0.5 px-3 py-2.5 text-left transition-colors hover:bg-foreground/[0.05]"
                 >
-                  <span className="text-sm text-zinc-200">{c.name}</span>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-sm text-foreground">{c.name}</span>
+                  <span className="text-xs text-muted-foreground/70">
                     {c.email}
                     {c.company ? ` · ${c.company}` : ""}
                   </span>
@@ -520,7 +520,7 @@ export function InvoiceForm({ companies, orders }: Props) {
                 type="button"
                 onClick={loadStandardItems}
                 disabled={standardLoading}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-200 hover:border-white/[0.15]"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:border-border"
               >
                 {standardLoading ? (
                   <IconLoader2 className="size-3.5 animate-spin" />
@@ -530,21 +530,21 @@ export function InvoiceForm({ companies, orders }: Props) {
                 Standard-Position
               </button>
               {showStandardDropdown && standardItems.length > 0 && (
-                <div className="absolute right-0 z-50 mt-1 w-72 rounded-lg border border-white/[0.10] bg-[#1c1d20] shadow-xl overflow-hidden">
+                <div className="absolute right-0 z-50 mt-1 w-72 rounded-lg border border-border bg-muted shadow-xl overflow-hidden">
                   {standardItems.map((si) => (
                     <button
                       key={si.id}
                       type="button"
                       onClick={() => addStandardItem(si)}
-                      className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                      className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors hover:bg-foreground/[0.05]"
                     >
                       <div className="min-w-0">
-                        <div className="truncate text-sm text-zinc-200">{si.title}</div>
+                        <div className="truncate text-sm text-foreground">{si.title}</div>
                         {si.description && (
-                          <div className="truncate text-xs text-zinc-500">{si.description}</div>
+                          <div className="truncate text-xs text-muted-foreground/70">{si.description}</div>
                         )}
                       </div>
-                      <span className="shrink-0 text-xs tabular-nums text-zinc-400">
+                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
                         {formatEUR(si.unitPrice)}
                       </span>
                     </button>
@@ -557,7 +557,7 @@ export function InvoiceForm({ companies, orders }: Props) {
             <button
               type="button"
               onClick={addItem}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-200 hover:border-white/[0.15]"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:border-border"
             >
               <IconPlus className="size-3.5" />
               Position hinzufügen
@@ -570,13 +570,13 @@ export function InvoiceForm({ companies, orders }: Props) {
           {items.map((item, index) => (
             <div
               key={index}
-              className="relative rounded-lg border border-white/[0.08] bg-[#1c1d20]/50 p-3 sm:p-4 space-y-3 transition-colors"
+              className="relative rounded-lg border border-border bg-muted/50 p-3 sm:p-4 space-y-3 transition-colors"
             >
               {/* Remove button */}
               <button
                 type="button"
                 onClick={() => removeItem(index)}
-                className="absolute right-2 top-2 flex items-center justify-center size-7 rounded-md text-zinc-500 transition-colors hover:text-red-400 hover:bg-red-500/10"
+                className="absolute right-2 top-2 flex items-center justify-center size-7 rounded-md text-muted-foreground/70 transition-colors hover:text-red-400 hover:bg-red-500/10"
               >
                 <IconX className="size-4" />
               </button>
@@ -623,7 +623,7 @@ export function InvoiceForm({ companies, orders }: Props) {
                 </div>
                 <div>
                   <label className={labelClass}>Gesamt</label>
-                  <div className="flex h-9 items-center justify-end rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 text-sm font-medium tabular-nums text-zinc-300">
+                  <div className="flex h-9 items-center justify-end rounded-lg border border-border/40 bg-foreground/[0.02] px-3 text-sm font-medium tabular-nums text-foreground/80">
                     {formatEUR(item.quantity * item.unitPrice)}
                   </div>
                 </div>
@@ -650,9 +650,9 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
         <h2 className={sectionTitle}>Zusammenfassung</h2>
-        <div className="flex items-center justify-between border-t border-white/[0.10] pt-3">
-          <span className="text-sm font-semibold text-zinc-300">Gesamtbetrag</span>
-          <span className="text-xl font-bold tabular-nums text-zinc-100">
+        <div className="flex items-center justify-between border-t border-border pt-3">
+          <span className="text-sm font-semibold text-foreground/80">Gesamtbetrag</span>
+          <span className="text-xl font-bold tabular-nums text-foreground">
             {formatEUR(total)}
           </span>
         </div>
@@ -675,18 +675,18 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* ------------------------------------------------------------------ */}
       {/* Desktop Save */}
       {/* ------------------------------------------------------------------ */}
-      <div className="hidden sm:flex items-center justify-end gap-3 pt-4 border-t border-white/[0.10]">
+      <div className="hidden sm:flex items-center justify-end gap-3 pt-4 border-t border-border">
         <button
           type="button"
           onClick={() => router.push("/accounting/invoices")}
-          className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-[#1c1d20] hover:text-zinc-200"
+          className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           Abbrechen
         </button>
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#F6A11C] px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#F6A11C]/90 disabled:opacity-50 disabled:pointer-events-none"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
         >
           {submitting ? "Wird erstellt..." : "Rechnung erstellen"}
         </button>
@@ -695,11 +695,11 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* ------------------------------------------------------------------ */}
       {/* Mobile floating save button */}
       {/* ------------------------------------------------------------------ */}
-      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-white/[0.10] bg-card/95 backdrop-blur-sm p-4 sm:hidden">
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-sm p-4 sm:hidden">
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-lg bg-[#F6A11C] py-2.5 text-sm font-semibold text-black transition-colors hover:bg-[#F6A11C]/90 disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-black transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
         >
           {submitting ? "Wird erstellt..." : "Rechnung erstellen"}
         </button>

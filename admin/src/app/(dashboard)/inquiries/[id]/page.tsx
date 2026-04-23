@@ -90,16 +90,16 @@ export default async function InquiryDetailPage({
   return (
     <div className="space-y-6">
       {/* Hero Header */}
-      <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-4 sm:p-6">
+      <div className="rounded-2xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-4 sm:p-6">
         {/* Top row: back + status */}
         <div className="flex items-center gap-2 sm:gap-3 mb-4">
           <Link
             href="/inquiries"
-            className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors shrink-0"
+            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <IconArrowLeft className="size-4" />
           </Link>
-          <span className="text-xs text-zinc-500">Anfrage</span>
+          <span className="text-xs text-muted-foreground/70">Anfrage</span>
           <Badge
             variant="outline"
             className={"ml-auto text-xs px-2.5 py-0.5 " + status.className}
@@ -115,25 +115,25 @@ export default async function InquiryDetailPage({
 
         {/* Date */}
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <IconCalendar className="size-5 text-[#F6A11C] shrink-0" />
-          <span className="text-base sm:text-xl text-[#F6A11C] font-semibold">
+          <IconCalendar className="size-5 text-primary shrink-0" />
+          <span className="text-base sm:text-xl text-primary font-semibold">
             {formattedEventDate}
           </span>
-          <span className="inline-flex items-center rounded-md bg-[#222326] px-2.5 py-0.5 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
+          <span className="inline-flex items-center rounded-md bg-accent px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             {inquiry.eventType}
           </span>
         </div>
 
         {/* Customer Name */}
-        <h1 className="text-xl sm:text-3xl font-bold text-zinc-100 mb-1.5">
+        <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-1.5">
           {inquiry.customerName}
         </h1>
 
         {/* Location */}
-        <div className="flex items-start gap-2 text-zinc-400">
+        <div className="flex items-start gap-2 text-muted-foreground">
           <IconMapPin className="size-4 shrink-0 mt-0.5" />
           <span className="text-sm sm:text-base">
-            <span className="text-zinc-300 font-medium">
+            <span className="text-foreground/80 font-medium">
               {inquiry.locationName}
             </span>
             {inquiry.locationAddress &&
@@ -144,7 +144,7 @@ export default async function InquiryDetailPage({
                 </span>
               )}
             {inquiry.distanceKm != null && (
-              <span className="text-zinc-400">
+              <span className="text-muted-foreground">
                 {" "}
                 &middot; {inquiry.distanceKm} km
               </span>
@@ -153,7 +153,7 @@ export default async function InquiryDetailPage({
         </div>
 
         {/* Created at */}
-        <div className="flex items-center gap-1.5 mt-3 text-xs text-zinc-500">
+        <div className="flex items-center gap-1.5 mt-3 text-xs text-muted-foreground/70">
           <IconClock className="size-3.5" />
           Eingegangen am {formattedCreatedAt}
         </div>
@@ -170,7 +170,7 @@ export default async function InquiryDetailPage({
             <p className="text-sm font-medium text-emerald-400">
               Auftrag #{inquiry.order.orderNumber}
             </p>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-muted-foreground">
               {inquiry.order.company.name} &middot;{" "}
               {inquiry.order.price.toFixed(2)} &euro; &middot;{" "}
               {inquiry.order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
@@ -179,7 +179,7 @@ export default async function InquiryDetailPage({
               )}
             </p>
           </div>
-          <IconExternalLink className="size-4 text-zinc-500 shrink-0" />
+          <IconExternalLink className="size-4 text-muted-foreground/70 shrink-0" />
         </Link>
       )}
 

@@ -47,8 +47,8 @@ export default async function DesignPage({ params, searchParams }: Props) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Link ungültig</h1>
-          <p className="text-white/60">
+          <h1 className="text-2xl font-bold text-foreground">Link ungültig</h1>
+          <p className="text-foreground/60">
             Dieser Design-Link ist ungültig oder abgelaufen.
           </p>
         </div>
@@ -60,15 +60,15 @@ export default async function DesignPage({ params, searchParams }: Props) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Design bereits abgesendet</h1>
-          <p className="text-white/60">
+          <h1 className="text-2xl font-bold text-foreground">Design bereits abgesendet</h1>
+          <p className="text-foreground/60">
             Das Layout für Bestellung #{order.orderNumber} wurde bereits eingereicht.
           </p>
           {order.graphicUrl && (
             <img
               src={order.graphicUrl}
               alt="Fertiges Layout"
-              className="max-w-xs mx-auto rounded-lg border border-white/10"
+              className="max-w-xs mx-auto rounded-lg border border-border"
             />
           )}
         </div>

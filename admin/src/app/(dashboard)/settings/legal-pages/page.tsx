@@ -13,18 +13,18 @@ export default async function LegalPagesSettingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Link href="/settings" className="flex items-center gap-1 hover:text-zinc-300 transition-colors">
+        <Link href="/settings" className="flex items-center gap-1 hover:text-foreground/80 transition-colors">
           <IconChevronLeft className="size-3.5" />
           Einstellungen
         </Link>
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+        <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
           <IconFileText className="size-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Rechtliche Seiten
           </h1>
           <p className="text-sm text-muted-foreground">

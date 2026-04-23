@@ -60,16 +60,16 @@ export function EmailTemplateEditor({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
   return (
     <div className="space-y-6">
       {/* Variables hint */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4">
+      <div className="rounded-xl border border-border bg-card p-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Verfügbare Platzhalter</h3>
         <div className="flex flex-wrap gap-1.5">
           {variables.map((v) => (
-            <code key={v} className="text-xs bg-[#1c1d20] text-[#F6A11C] px-2 py-0.5 rounded font-mono">
+            <code key={v} className="text-xs bg-muted text-primary px-2 py-0.5 rounded font-mono">
               {`{{${v}}}`}
             </code>
           ))}
@@ -90,12 +90,12 @@ export function EmailTemplateEditor({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className={`size-2 rounded-full ${dotColor}`} />
-                <h3 className="text-sm font-semibold text-zinc-200">{config.label}</h3>
+                <h3 className="text-sm font-semibold text-foreground">{config.label}</h3>
               </div>
               <button
                 onClick={() => handleSave(config.key)}
                 disabled={saving === config.key}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
                 {saved === config.key ? (
                   <><IconCheck className="size-3.5" /> Gespeichert</>

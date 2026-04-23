@@ -24,10 +24,10 @@ export function DriversTableBody({ drivers }: { drivers: Driver[] }) {
         <TableRow
           key={driver.id}
           onClick={() => router.push(`/drivers/${driver.id}`)}
-          className="cursor-pointer hover:bg-[#1c1d20]"
+          className="cursor-pointer hover:bg-accent"
         >
           <TableCell className="font-medium">{driver.name}</TableCell>
-          <TableCell className="font-mono text-sm text-zinc-400">
+          <TableCell className="font-mono text-sm text-muted-foreground">
             {driver.initials ?? "–"}
           </TableCell>
           <TableCell>{driver.email}</TableCell>

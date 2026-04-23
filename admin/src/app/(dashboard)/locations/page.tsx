@@ -32,11 +32,11 @@ export default async function LocationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
             <IconMapPin className="size-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Locations
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -44,7 +44,7 @@ export default async function LocationsPage() {
             </p>
           </div>
         </div>
-        <Link href="/locations/new" className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors">
+        <Link href="/locations/new" className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors">
           <IconPlus className="size-4" />
           Neue Location
         </Link>

@@ -34,7 +34,7 @@ export default async function DriversPage() {
           <h1 className="text-2xl font-bold">Fahrer</h1>
           <p className="text-muted-foreground">Fahrer-Übersicht und Verfügbarkeit</p>
         </div>
-        <Link href="/drivers/new" className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors">
+        <Link href="/drivers/new" className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors">
           <IconPlus className="size-4" />
           Neuer Fahrer
         </Link>

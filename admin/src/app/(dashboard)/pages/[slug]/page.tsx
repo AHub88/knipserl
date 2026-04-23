@@ -70,18 +70,18 @@ export default async function PageDetailPage({
     <div className="space-y-6">
       <Link
         href="/pages"
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <IconArrowLeft className="size-4" />
         Alle Seiten
       </Link>
 
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+        <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
           <IconLayoutGrid className="size-5" />
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">{page.title}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{page.title}</h1>
           <code className="text-sm text-muted-foreground">/{page.slug}</code>
         </div>
       </div>

@@ -11,11 +11,11 @@ export default async function DesignFontsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+        <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
           <IconTypography className="size-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Eigene Schriften
           </h1>
           <p className="text-sm text-muted-foreground">

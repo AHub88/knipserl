@@ -38,7 +38,7 @@ const statusConfig: Record<
   DRAFT: {
     label: "Entwurf",
     className:
-      "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
+      "bg-accent/80 text-muted-foreground border border-zinc-500/30",
   },
   SENT: {
     label: "Versendet",
@@ -58,7 +58,7 @@ const statusConfig: Record<
   CANCELLED: {
     label: "Storniert",
     className:
-      "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
+      "bg-accent/80 text-muted-foreground border border-zinc-500/30",
   },
 };
 
@@ -133,7 +133,7 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRow[] }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+        <TableRow className="border-b border-border hover:bg-transparent">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Nummer
           </TableHead>
@@ -170,16 +170,16 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRow[] }) {
               onClick={() =>
                 router.push(`/accounting/invoices/${invoice.id}`)
               }
-              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20] group"
+              className="cursor-pointer border-b border-border transition-colors hover:bg-muted group"
             >
-              <TableCell className="font-mono text-xs text-zinc-400">
+              <TableCell className="font-mono text-xs text-muted-foreground">
                 {invoice.invoiceNumber}
               </TableCell>
-              <TableCell className="font-medium text-zinc-200">
+              <TableCell className="font-medium text-foreground">
                 {invoice.customerName}
               </TableCell>
               <TableCell>{companyTag(invoice.companyName)}</TableCell>
-              <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
+              <TableCell className="text-right font-mono text-sm text-foreground tabular-nums">
                 {formatCurrency(invoice.totalAmount)}
               </TableCell>
               <TableCell>
@@ -239,7 +239,7 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRow[] }) {
                   </span>
                 )}
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm tabular-nums">
+              <TableCell className="text-muted-foreground text-sm tabular-nums">
                 {formatDate(invoice.dueDate)}
               </TableCell>
               <TableCell className="text-sm tabular-nums">
@@ -248,7 +248,7 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRow[] }) {
                     {formatDate(invoice.paidAt)}
                   </span>
                 ) : (
-                  <span className="text-zinc-400 italic">&mdash;</span>
+                  <span className="text-muted-foreground italic">&mdash;</span>
                 )}
               </TableCell>
             </TableRow>

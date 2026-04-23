@@ -70,8 +70,8 @@ function ExtraToggle({
       className={
         "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-w-[80px] transition-colors cursor-pointer hover:opacity-80 " +
         (active
-          ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.10] bg-card text-zinc-400")
+          ? "border-primary/40 bg-primary/10 text-primary"
+          : "border-border bg-card text-muted-foreground")
       }
     >
       <Icon className="size-7" />
@@ -146,15 +146,15 @@ function LocationAutocomplete({
         placeholder="Location eingeben..."
       />
       {open && suggestions.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.1] bg-card shadow-xl max-h-56 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-card shadow-xl max-h-56 overflow-y-auto">
           {suggestions.map((loc) => (
             <button
               key={loc.id}
               type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-[#222326] transition-colors border-b border-white/[0.10] last:border-0"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors border-b border-border last:border-0"
               onMouseDown={(e) => { e.preventDefault(); onSelect(loc); setOpen(false); }}
             >
-              <span className="text-zinc-200 font-medium">{loc.name}</span>
+              <span className="text-foreground font-medium">{loc.name}</span>
               {loc.city && (
                 <span className="text-muted-foreground ml-2">
                   {loc.street ? `${loc.street}, ` : ""}{loc.zip} {loc.city}
@@ -173,8 +173,8 @@ function PriceRow({ label, value }: { label: string; value: number | null }) {
   if (value == null || value === 0) return null;
   return (
     <div className="flex items-center justify-between py-0.5">
-      <span className="text-sm text-zinc-400">{label}</span>
-      <span className="text-sm font-mono tabular-nums text-zinc-300">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-mono tabular-nums text-foreground/80">
         {value.toFixed(2)} &euro;
       </span>
     </div>
@@ -314,11 +314,11 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors [&::-webkit-calendar-picker-indicator]:invert";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors [&::-webkit-calendar-picker-indicator]:invert";
   const labelClass =
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
   const selectClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
+    "h-9 w-full rounded-lg border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50 cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]";
 
   // Active extras with prices for display
   const activeExtrasWithPrices = extras
@@ -333,15 +333,15 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/orders" className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors">
+          <Link href="/orders" className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors">
             <IconArrowLeft className="size-4" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-zinc-100">Neuer Auftrag</h1>
+            <h1 className="text-xl font-bold text-foreground">Neuer Auftrag</h1>
             <p className="text-sm text-muted-foreground">Auftrag manuell anlegen</p>
           </div>
         </div>
-        <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors">
+        <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
           <IconDeviceFloppy className="size-4" />
           {saving ? "Erstellen..." : "Auftrag erstellen"}
         </button>
@@ -356,8 +356,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-zinc-300">Extras</h2>
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-foreground/80">Extras</h2>
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
             <ExtraToggle
@@ -374,8 +374,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Kundendaten */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Kundendaten</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Name *</label>
@@ -401,8 +401,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Event-Details */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Event-Details</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Event-Details</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Eventart *</label>
@@ -428,30 +428,30 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Preiskalkulation */}
-        <div className="rounded-xl border border-[#F6A11C]/20 bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Preiskalkulation</h2>
+        <div className="rounded-xl border border-primary/20 bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Preiskalkulation</h2>
 
           {/* Inputs */}
           <div className="grid gap-3 grid-cols-3">
             <div>
               <label className={labelClass}>Fotobox</label>
               <div className="relative">
-                <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>{boxPrice.toFixed(2)}</div>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+                <div className={inputClass + " flex items-center bg-transparent text-muted-foreground cursor-default pr-10"}>{boxPrice.toFixed(2)}</div>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
               </div>
             </div>
             <div>
               <label className={labelClass}>Fahrt</label>
               <div className="relative">
                 <input className={inputClass + " pr-10"} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
               </div>
             </div>
             <div>
               <label className={labelClass}>Extras</label>
               <div className="relative">
-                <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>{extrasTotal.toFixed(2)}</div>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+                <div className={inputClass + " flex items-center bg-transparent text-muted-foreground cursor-default pr-10"}>{extrasTotal.toFixed(2)}</div>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
               </div>
             </div>
           </div>
@@ -461,7 +461,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               <label className={labelClass}>Rabatt</label>
               <div className="relative">
                 <input className={inputClass + " pr-10"} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
               </div>
             </div>
             <div>
@@ -474,19 +474,19 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
           </div>
 
           {/* Live calculation */}
-          <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
-            <div className="flex justify-between text-xs text-zinc-400">
+          <div className="rounded-lg bg-muted border border-border p-3 space-y-1.5">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>Fotobox</span>
               <span className="tabular-nums">{boxPrice.toFixed(2)} &euro;</span>
             </div>
             {travelCostNum > 0 && (
-              <div className="flex justify-between text-xs text-zinc-400">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Fahrt{distanceKm ? ` (${distanceKm} km)` : ""}</span>
                 <span className="tabular-nums">{travelCostNum.toFixed(2)} &euro;</span>
               </div>
             )}
             {activeExtrasWithPrices.map((e) => (
-              <div key={e.key} className="flex justify-between text-xs text-zinc-400">
+              <div key={e.key} className="flex justify-between text-xs text-muted-foreground">
                 <span>{e.label}</span>
                 <span className="tabular-nums">{e.price.toFixed(2)} &euro;</span>
               </div>
@@ -497,9 +497,9 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
                 <span className="tabular-nums">-{discountAmount.toFixed(2)} &euro;</span>
               </div>
             )}
-            <div className="border-t border-white/[0.10] pt-1.5 flex justify-between items-center">
-              <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
-              <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{customerTotal.toFixed(2)} &euro;</span>
+            <div className="border-t border-border pt-1.5 flex justify-between items-center">
+              <span className="text-sm font-semibold text-foreground">Gesamtpreis</span>
+              <span className="text-lg font-bold text-primary tabular-nums">{customerTotal.toFixed(2)} &euro;</span>
             </div>
           </div>
         </div>
@@ -511,7 +511,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
             <PriceRow label="Kundenpreis" value={customerTotal} />
             {setupCost && (
               <div className="flex items-center justify-between py-0.5">
-                <span className="text-sm text-zinc-400">abzgl. Aufbau (Vergütung)</span>
+                <span className="text-sm text-muted-foreground">abzgl. Aufbau (Vergütung)</span>
                 <span className="text-sm font-mono tabular-nums text-red-400">
                   {Math.abs(Number(setupCost)).toFixed(2)} &euro;
                 </span>
@@ -519,14 +519,14 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
             )}
             {materialCost && (
               <div className="flex items-center justify-between py-0.5">
-                <span className="text-sm text-zinc-400">abzgl. Material</span>
+                <span className="text-sm text-muted-foreground">abzgl. Material</span>
                 <span className="text-sm font-mono tabular-nums text-red-400">
                   {Math.abs(Number(materialCost)).toFixed(2)} &euro;
                 </span>
               </div>
             )}
             <div className="border-t border-amber-500/20 mt-2 pt-2 flex items-center justify-between">
-              <span className="text-sm font-semibold text-zinc-200">Gewinn</span>
+              <span className="text-sm font-semibold text-foreground">Gewinn</span>
               {(() => {
                 const profit = customerTotal - Math.abs(Number(setupCost) || 0) - Math.abs(Number(materialCost) || 0);
                 return (
@@ -551,8 +551,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Zuordnung & Zahlart */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Zuordnung &amp; Zahlung</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Zuordnung &amp; Zahlung</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Fahrer</label>
@@ -583,8 +583,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
         </div>
 
         {/* Notizen */}
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-300">Notizen</h2>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground/80">Notizen</h2>
           <div className="space-y-3">
             <div>
               <label className={labelClass}>Kundenkommentar</label>

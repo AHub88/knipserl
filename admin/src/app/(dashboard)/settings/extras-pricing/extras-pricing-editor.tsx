@@ -61,14 +61,14 @@ export function ExtrasPricingEditor({
   }
 
   const inputClass =
-    "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 text-right font-mono tabular-nums outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground text-right font-mono tabular-nums outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
   return (
     <div className="space-y-4 max-w-lg">
       <div className="flex items-center justify-between">
         <Link
           href="/settings"
-          className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <IconArrowLeft className="size-4" />
           Einstellungen
@@ -76,17 +76,17 @@ export function ExtrasPricingEditor({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
         >
           <IconDeviceFloppy className="size-4" />
           {saving ? "..." : "Speichern"}
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
         {/* Fotobox */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.10]">
-          <span className="text-sm font-semibold text-[#F6A11C]">Fotobox (Grundpreis)</span>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+          <span className="text-sm font-semibold text-primary">Fotobox (Grundpreis)</span>
           <div className="flex items-center gap-1 w-28">
             <input
               className={inputClass}
@@ -103,9 +103,9 @@ export function ExtrasPricingEditor({
         {initialExtras.map((e) => (
           <div
             key={e.key}
-            className="flex items-center justify-between px-5 py-3 border-b border-white/[0.10] last:border-0"
+            className="flex items-center justify-between px-5 py-3 border-b border-border last:border-0"
           >
-            <span className="text-sm text-zinc-300">
+            <span className="text-sm text-foreground/80">
               {EXTRAS_LABELS[e.key] ?? e.key}
             </span>
             <div className="flex items-center gap-1 w-28">
@@ -122,7 +122,7 @@ export function ExtrasPricingEditor({
         ))}
       </div>
 
-      <p className="text-xs text-zinc-400">
+      <p className="text-xs text-muted-foreground">
         Drucker ist im Grundpreis enthalten und hat keinen eigenen Aufpreis.
       </p>
     </div>

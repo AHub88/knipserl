@@ -50,11 +50,11 @@ export default async function QuotesPage() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
             <IconFileInvoice className="size-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Angebote
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -64,7 +64,7 @@ export default async function QuotesPage() {
         </div>
         <Link
           href="/accounting/quotes/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#F6A11C] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#F6A11C]/90"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-primary/90"
         >
           <IconPlus className="size-4" />
           Neues Angebot
@@ -73,23 +73,23 @@ export default async function QuotesPage() {
 
       {/* Quick stats */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Gesamt
           </p>
-          <p className="text-2xl font-bold text-zinc-100 tabular-nums">
+          <p className="text-2xl font-bold text-foreground tabular-nums">
             {totalCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Entwurf
           </p>
-          <p className="text-2xl font-bold text-zinc-400 tabular-nums">
+          <p className="text-2xl font-bold text-muted-foreground tabular-nums">
             {draftCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Versendet
           </p>
@@ -97,7 +97,7 @@ export default async function QuotesPage() {
             {sentCount}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Angenommen
           </p>
@@ -108,15 +108,15 @@ export default async function QuotesPage() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.10]">
-          <h2 className="text-sm font-semibold text-zinc-300">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="text-sm font-semibold text-foreground/80">
             Alle Angebote
           </h2>
         </div>
         {quotes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <IconFileInvoice className="size-10 mb-3 text-zinc-400" />
+            <IconFileInvoice className="size-10 mb-3 text-muted-foreground" />
             <p className="text-sm">Noch keine Angebote vorhanden</p>
           </div>
         ) : (

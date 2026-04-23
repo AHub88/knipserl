@@ -25,7 +25,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   DRAFT: {
     label: "Entwurf",
     className:
-      "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
+      "bg-accent/80 text-muted-foreground border border-zinc-500/30",
   },
   SENT: {
     label: "Versendet",
@@ -81,7 +81,7 @@ export function QuotesTable({ quotes }: { quotes: QuoteRow[] }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+        <TableRow className="border-b border-border hover:bg-transparent">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Nummer
           </TableHead>
@@ -110,16 +110,16 @@ export function QuotesTable({ quotes }: { quotes: QuoteRow[] }) {
             <TableRow
               key={quote.id}
               onClick={() => alert(`Quote ID: ${quote.id}`)}
-              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#F6A11C]/[0.04] group"
+              className="cursor-pointer border-b border-border transition-colors hover:bg-primary/[0.04] group"
             >
-              <TableCell className="font-mono text-xs text-zinc-400">
+              <TableCell className="font-mono text-xs text-muted-foreground">
                 {quote.quoteNumber}
               </TableCell>
-              <TableCell className="font-medium text-zinc-200">
+              <TableCell className="font-medium text-foreground">
                 {quote.customerName}
               </TableCell>
               <TableCell>{companyTag(quote.companyName)}</TableCell>
-              <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
+              <TableCell className="text-right font-mono text-sm text-foreground tabular-nums">
                 {formatEUR(quote.totalAmount)}
               </TableCell>
               <TableCell>
@@ -132,7 +132,7 @@ export function QuotesTable({ quotes }: { quotes: QuoteRow[] }) {
                   {status.label}
                 </span>
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm tabular-nums">
+              <TableCell className="text-muted-foreground text-sm tabular-nums">
                 {formatDate(quote.createdAt)}
               </TableCell>
             </TableRow>

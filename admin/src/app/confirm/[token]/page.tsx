@@ -110,19 +110,19 @@ export default function ConfirmPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0d0e12] flex items-center justify-center">
-        <div className="text-zinc-400">Laden...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Laden...</div>
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="min-h-screen bg-[#0d0e12] flex items-center justify-center p-4">
-        <div className="bg-[#161719] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full text-center">
           <img src="/logo.png" alt="Knipserl" className="h-12 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-white mb-2">Auftrag nicht gefunden</h1>
-          <p className="text-zinc-400 text-sm">Der Bestätigungslink ist ungültig oder abgelaufen.</p>
+          <h1 className="text-xl font-bold text-foreground mb-2">Auftrag nicht gefunden</h1>
+          <p className="text-muted-foreground text-sm">Der Bestätigungslink ist ungültig oder abgelaufen.</p>
         </div>
       </div>
     );
@@ -145,23 +145,23 @@ export default function ConfirmPage() {
   const subtotal = costLines.reduce((s, c) => s + c.amount, 0);
 
   return (
-    <div className="min-h-screen bg-[#0d0e12] p-4 sm:p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <img src="/logo.png" alt="Knipserl Fotobox" className="h-10 sm:h-14 mx-auto mb-3" />
-          <p className="text-zinc-400 text-sm">Bitte prüfen Sie Ihre Event-Details</p>
+          <p className="text-muted-foreground text-sm">Bitte prüfen Sie Ihre Event-Details</p>
         </div>
 
         {/* Card */}
-        <div className="bg-[#161719] border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl shadow-black/5 dark:shadow-black/25">
           {/* Event Header */}
-          <div className="p-6 sm:p-8 border-b border-white/10">
-            <div className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Ihr Event</div>
-            <h1 className="text-xl sm:text-3xl font-bold text-[#F6A11C] mb-1">{formatDate(order.eventDate)}</h1>
+          <div className="p-6 sm:p-8 border-b border-border">
+            <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Ihr Event</div>
+            <h1 className="text-xl sm:text-3xl font-bold text-primary mb-1">{formatDate(order.eventDate)}</h1>
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-              <span className="text-base sm:text-lg font-semibold text-white">{order.customerName}</span>
-              <span className="px-2.5 py-0.5 rounded-md bg-[#222326] text-zinc-400 text-xs font-semibold uppercase">{order.eventType}</span>
+              <span className="text-base sm:text-lg font-semibold text-foreground">{order.customerName}</span>
+              <span className="px-2.5 py-0.5 rounded-md bg-accent text-muted-foreground text-xs font-semibold uppercase">{order.eventType}</span>
             </div>
           </div>
 
@@ -169,42 +169,42 @@ export default function ConfirmPage() {
           <div className="p-6 sm:p-8 space-y-6">
             {/* Location */}
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Location</h3>
-              <div className="text-white font-medium">{order.locationName}</div>
-              <div className="text-zinc-400 text-sm">{order.locationAddress}</div>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Location</h3>
+              <div className="text-foreground font-medium">{order.locationName}</div>
+              <div className="text-muted-foreground text-sm">{order.locationAddress}</div>
             </div>
 
             {/* Auf-/Abbau */}
             {(order.setupDate || order.teardownDate) && (
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Auf- & Abbau</h3>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Auf- & Abbau</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className={"rounded-xl border p-3 sm:p-4 " + (order.setupDate ? "border-emerald-500/30 bg-emerald-500/5" : "border-white/5 bg-white/[0.02] opacity-40")}>
+                  <div className={"rounded-xl border p-3 sm:p-4 " + (order.setupDate ? "border-emerald-500/30 bg-emerald-500/5" : "border-border bg-foreground/[0.02] opacity-40")}>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="size-2 rounded-full bg-emerald-400" />
                       <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Aufbau</span>
                     </div>
                     {order.setupDate ? (
                       <>
-                        <div className="text-white text-sm font-semibold">{formatShortDate(order.setupDate)}</div>
-                        {order.setupTime && <div className="text-zinc-400 text-xs mt-0.5">{order.setupTime}</div>}
+                        <div className="text-foreground text-sm font-semibold">{formatShortDate(order.setupDate)}</div>
+                        {order.setupTime && <div className="text-muted-foreground text-xs mt-0.5">{order.setupTime}</div>}
                       </>
                     ) : (
-                      <div className="text-zinc-600 text-xs">Kein Termin</div>
+                      <div className="text-muted-foreground/50 text-xs">Kein Termin</div>
                     )}
                   </div>
-                  <div className={"rounded-xl border p-3 sm:p-4 " + (order.teardownDate ? "border-red-500/30 bg-red-500/5" : "border-white/5 bg-white/[0.02] opacity-40")}>
+                  <div className={"rounded-xl border p-3 sm:p-4 " + (order.teardownDate ? "border-red-500/30 bg-red-500/5" : "border-border bg-foreground/[0.02] opacity-40")}>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="size-2 rounded-full bg-red-400" />
                       <span className="text-[10px] font-bold uppercase tracking-widest text-red-400">Abbau</span>
                     </div>
                     {order.teardownDate ? (
                       <>
-                        <div className="text-white text-sm font-semibold">{formatShortDate(order.teardownDate)}</div>
-                        {order.teardownTime && <div className="text-zinc-400 text-xs mt-0.5">{order.teardownTime}</div>}
+                        <div className="text-foreground text-sm font-semibold">{formatShortDate(order.teardownDate)}</div>
+                        {order.teardownTime && <div className="text-muted-foreground text-xs mt-0.5">{order.teardownTime}</div>}
                       </>
                     ) : (
-                      <div className="text-zinc-600 text-xs">Kein Termin</div>
+                      <div className="text-muted-foreground/50 text-xs">Kein Termin</div>
                     )}
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export default function ConfirmPage() {
 
             {/* Extras */}
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Zubehör & Extras</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Zubehör & Extras</h3>
               <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {EXTRAS_CONFIG.map((cfg) => {
                   const active = order.extras.includes(cfg.key);
@@ -223,12 +223,12 @@ export default function ConfirmPage() {
                       className={
                         "flex flex-col items-center gap-1.5 py-2.5 px-1.5 rounded-lg border transition-all " +
                         (active
-                          ? "border-[#F6A11C]/40 bg-[#F6A11C]/10"
-                          : "border-white/5 bg-white/[0.02] opacity-30")
+                          ? "border-primary/40 bg-primary/10"
+                          : "border-border bg-foreground/[0.02] opacity-30")
                       }
                     >
                       <svg
-                        className={"size-5 " + (active ? "text-[#F6A11C]" : "text-zinc-500")}
+                        className={"size-5 " + (active ? "text-primary" : "text-muted-foreground/70")}
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -238,7 +238,7 @@ export default function ConfirmPage() {
                       >
                         <path d={cfg.icon} />
                       </svg>
-                      <span className={"text-[10px] font-bold uppercase tracking-wide text-center leading-tight " + (active ? "text-[#F6A11C]" : "text-zinc-500")}>
+                      <span className={"text-[10px] font-bold uppercase tracking-wide text-center leading-tight " + (active ? "text-primary" : "text-muted-foreground/70")}>
                         {cfg.label}
                       </span>
                     </div>
@@ -249,19 +249,19 @@ export default function ConfirmPage() {
 
             {/* Kostenaufstellung */}
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Kostenaufstellung</h3>
-              <div className="bg-[#1c1d20] rounded-xl overflow-hidden">
-                <div className="divide-y divide-white/5">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Kostenaufstellung</h3>
+              <div className="bg-muted rounded-xl overflow-hidden">
+                <div className="divide-y divide-border">
                   {costLines.map((line) => (
                     <div key={line.label} className="flex items-center justify-between px-4 py-2.5">
-                      <span className="text-sm text-zinc-300">{line.label}</span>
-                      <span className="text-sm text-zinc-300 font-medium tabular-nums">{formatAmount(line.amount)} €</span>
+                      <span className="text-sm text-foreground/80">{line.label}</span>
+                      <span className="text-sm text-foreground/80 font-medium tabular-nums">{formatAmount(line.amount)} €</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center justify-between px-4 py-3 border-t border-[#F6A11C]/30 bg-[#F6A11C]/5">
-                  <span className="text-sm sm:text-base font-bold text-white">Gesamtpreis</span>
-                  <span className="text-lg sm:text-xl font-bold text-[#F6A11C] tabular-nums">{formatAmount(order.price)} €</span>
+                <div className="flex items-center justify-between px-4 py-3 border-t border-primary/30 bg-primary/5">
+                  <span className="text-sm sm:text-base font-bold text-foreground">Gesamtpreis</span>
+                  <span className="text-lg sm:text-xl font-bold text-primary tabular-nums">{formatAmount(order.price)} €</span>
                 </div>
               </div>
             </div>
@@ -269,14 +269,14 @@ export default function ConfirmPage() {
             {/* Hinweise */}
             {order.notes && (
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Hinweise</h3>
-                <div className="bg-[#1c1d20] rounded-lg p-3 text-sm text-zinc-300">{order.notes}</div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Hinweise</h3>
+                <div className="bg-muted rounded-lg p-3 text-sm text-foreground/80">{order.notes}</div>
               </div>
             )}
           </div>
 
           {/* Confirm Action */}
-          <div className="p-6 sm:p-8 border-t border-white/10 bg-[#111214]">
+          <div className="p-6 sm:p-8 border-t border-border bg-muted">
             {alreadyConfirmed || justConfirmed ? (
               <div className="text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
@@ -284,34 +284,34 @@ export default function ConfirmPage() {
                   <span className="text-emerald-400 font-semibold">Details bestätigt</span>
                 </div>
                 {order.confirmedByCustomerAt && (
-                  <p className="text-zinc-500 text-xs mt-2">
+                  <p className="text-muted-foreground/70 text-xs mt-2">
                     Bestätigt am {formatShortDate(order.confirmedByCustomerAt)} um {new Date(order.confirmedByCustomerAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr
                   </p>
                 )}
                 {justConfirmed && (
-                  <p className="text-zinc-400 text-sm mt-3">Vielen Dank! Wir kümmern uns um den Rest und freuen uns auf Ihr Event.</p>
+                  <p className="text-muted-foreground text-sm mt-3">Vielen Dank! Wir kümmern uns um den Rest und freuen uns auf Ihr Event.</p>
                 )}
               </div>
             ) : (
               <div>
                 {/* Kommentar */}
                 <div className="mb-5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2 block">
-                    Anmerkungen <span className="font-normal text-zinc-600">(optional)</span>
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 block">
+                    Anmerkungen <span className="font-normal text-muted-foreground/50">(optional)</span>
                   </label>
                   <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Haben Sie Wünsche oder Anmerkungen zu Ihrem Event?"
                     rows={3}
-                    className="w-full bg-[#1c1d20] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/30 transition-colors resize-none"
+                    className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-none"
                   />
                 </div>
-                <p className="text-zinc-400 text-sm mb-4 text-center">Stimmt alles? Dann bestätigen Sie bitte, damit wir Ihr Event perfekt vorbereiten können.</p>
+                <p className="text-muted-foreground text-sm mb-4 text-center">Stimmt alles? Dann bestätigen Sie bitte, damit wir Ihr Event perfekt vorbereiten können.</p>
                 <button
                   onClick={handleConfirm}
                   disabled={confirming}
-                  className="w-full px-8 py-3.5 rounded-xl bg-[#F6A11C] text-black font-bold text-base hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-all active:scale-[0.98]"
+                  className="w-full px-8 py-3.5 rounded-xl bg-primary text-black font-bold text-base hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-[0.98]"
                 >
                   {confirming ? "Wird bestätigt..." : "Alles korrekt – bestätigen"}
                 </button>
@@ -321,7 +321,7 @@ export default function ConfirmPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 text-zinc-600 text-xs">
+        <div className="text-center mt-6 text-muted-foreground/50 text-xs">
           Knipserl Fotobox · info@knipserl.de · www.knipserl.de
         </div>
       </div>

@@ -63,7 +63,7 @@ function MobileInquiryList({
   onRowClick: (id: string) => void;
 }) {
   return (
-    <div className="divide-y divide-white/[0.10]">
+    <div className="divide-y divide-border">
       {inquiries.map((inquiry) => {
         const status = statusConfig[inquiry.status] ?? statusConfig.NEW;
         const d = new Date(inquiry.eventDate);
@@ -72,19 +72,19 @@ function MobileInquiryList({
           <div
             key={inquiry.id}
             onClick={() => onRowClick(inquiry.id)}
-            className="cursor-pointer px-3 py-2.5 transition-colors active:bg-[#1c1d20]"
+            className="cursor-pointer px-3 py-2.5 transition-colors active:bg-accent"
           >
             <div className="flex gap-2.5 min-w-0">
               {/* Date pill - spans both lines */}
               <div className="shrink-0 flex items-center self-stretch">
-                <span className="flex flex-col items-center justify-center rounded-lg bg-white/[0.06] px-2 py-1.5 h-full min-w-[44px]">
-                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300 leading-tight">
+                <span className="flex flex-col items-center justify-center rounded-lg bg-foreground/[0.06] px-2 py-1.5 h-full min-w-[44px]">
+                  <span className="text-[11px] font-semibold tabular-nums text-foreground/80 leading-tight">
                     {d.toLocaleDateString("de-DE", {
                       day: "2-digit",
                       month: "2-digit",
                     })}
                   </span>
-                  <span className="text-[10px] tabular-nums text-zinc-500 leading-tight">
+                  <span className="text-[10px] tabular-nums text-muted-foreground/70 leading-tight">
                     {d.getFullYear()}
                   </span>
                 </span>
@@ -95,7 +95,7 @@ function MobileInquiryList({
                 {/* Line 1: Name + Status badge */}
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span
-                    className="text-sm font-medium text-zinc-200 truncate"
+                    className="text-sm font-medium text-foreground truncate"
                     title={inquiry.customerName}
                   >
                     {inquiry.customerName}
@@ -112,17 +112,17 @@ function MobileInquiryList({
                 {/* Line 2: Location + Event type + Distance */}
                 <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                   <span
-                    className="text-xs text-zinc-500 truncate"
+                    className="text-xs text-muted-foreground/70 truncate"
                     title={inquiry.locationName}
                   >
                     {inquiry.locationName || "\u2013"}
                   </span>
-                  <span className="text-[10px] text-zinc-600">&middot;</span>
-                  <span className="text-xs text-zinc-500 shrink-0">
+                  <span className="text-[10px] text-muted-foreground/50">&middot;</span>
+                  <span className="text-xs text-muted-foreground/70 shrink-0">
                     {inquiry.eventType}
                   </span>
                   {inquiry.distanceKm != null && (
-                    <span className="ml-auto flex items-center gap-0.5 text-[11px] tabular-nums text-zinc-500 shrink-0">
+                    <span className="ml-auto flex items-center gap-0.5 text-[11px] tabular-nums text-muted-foreground/70 shrink-0">
                       <IconMapPin className="size-3" />
                       {inquiry.distanceKm.toFixed(0)} km
                     </span>
@@ -148,7 +148,7 @@ export function InquiriesTable({
   const handleRowClick = (id: string) => router.push(`/inquiries/${id}`);
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-card overflow-x-auto">
+    <div className="rounded-xl border border-border bg-card overflow-x-auto">
       {/* Mobile list */}
       <div className="md:hidden">
         <MobileInquiryList
@@ -160,7 +160,7 @@ export function InquiriesTable({
       {/* Desktop table */}
       <Table className="hidden md:table">
         <TableHeader>
-          <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+          <TableRow className="border-b border-border hover:bg-transparent">
             <TableHead className="pl-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Datum
             </TableHead>
@@ -189,10 +189,10 @@ export function InquiriesTable({
               <TableRow
                 key={inquiry.id}
                 onClick={() => handleRowClick(inquiry.id)}
-                className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
+                className="cursor-pointer border-b border-border transition-colors hover:bg-accent"
               >
                 {/* Date */}
-                <TableCell className="pl-4 text-sm tabular-nums text-zinc-400">
+                <TableCell className="pl-4 text-sm tabular-nums text-muted-foreground">
                   {new Date(inquiry.eventDate).toLocaleDateString("de-DE", {
                     day: "2-digit",
                     month: "2-digit",
@@ -203,7 +203,7 @@ export function InquiriesTable({
                 {/* Customer */}
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="font-medium text-zinc-200">
+                    <span className="font-medium text-foreground">
                       {inquiry.customerName}
                     </span>
                     {inquiry.customerEmail && (
@@ -216,14 +216,14 @@ export function InquiriesTable({
 
                 {/* Event type */}
                 <TableCell>
-                  <span className="text-sm text-zinc-300">
+                  <span className="text-sm text-foreground/80">
                     {inquiry.eventType}
                   </span>
                 </TableCell>
 
                 {/* Location */}
                 <TableCell>
-                  <span className="text-sm text-zinc-300 block max-w-[180px] truncate" title={inquiry.locationName}>
+                  <span className="text-sm text-foreground/80 block max-w-[180px] truncate" title={inquiry.locationName}>
                     {inquiry.locationName || "–"}
                   </span>
                 </TableCell>
@@ -231,7 +231,7 @@ export function InquiriesTable({
                 {/* Distance */}
                 <TableCell className="hidden lg:table-cell">
                   {inquiry.distanceKm != null ? (
-                    <span className="text-sm tabular-nums text-zinc-400">
+                    <span className="text-sm tabular-nums text-muted-foreground">
                       {inquiry.distanceKm.toFixed(0)} km
                     </span>
                   ) : (

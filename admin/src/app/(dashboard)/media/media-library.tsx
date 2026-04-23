@@ -30,7 +30,7 @@ type Asset = {
 };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return "";
@@ -143,9 +143,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
   return (
     <div className="space-y-4">
       {/* Upload + search bar */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-end gap-3">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-end gap-3">
         <div className="flex-1">
-          <label className="block text-xs text-zinc-400 mb-1">
+          <label className="block text-xs text-muted-foreground mb-1">
             Bilder hochladen (Mehrfachauswahl, max. 25 MB je Datei)
           </label>
           <input
@@ -155,13 +155,13 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
             multiple
             onChange={(e) => handleUpload(e.target.files)}
             disabled={uploading}
-            className="h-9 w-full text-sm text-zinc-400 file:mr-3 file:h-9 file:rounded-lg file:border-0 file:bg-[#F6A11C] file:px-4 file:text-sm file:font-semibold file:text-black hover:file:bg-[#F6A11C]/90 transition-colors disabled:opacity-50"
+            className="h-9 w-full text-sm text-muted-foreground file:mr-3 file:h-9 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:text-sm file:font-semibold file:text-black hover:file:bg-primary/90 transition-colors disabled:opacity-50"
           />
         </div>
         <div className="sm:w-64">
-          <label className="block text-xs text-zinc-400 mb-1">Suche</label>
+          <label className="block text-xs text-muted-foreground mb-1">Suche</label>
           <div className="relative">
-            <IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-zinc-500" />
+            <IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/70" />
             <input
               className={inputClass + " pl-8"}
               placeholder="Alt-Text oder Dateiname..."
@@ -171,17 +171,17 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
             {query && (
               <button
                 onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-zinc-500 hover:text-zinc-300"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground/70 hover:text-foreground/80"
               >
                 <IconX className="size-3.5" />
               </button>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3 text-sm text-zinc-500 sm:ml-2">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground/70 sm:ml-2">
           {progress && (
             <span className="flex items-center gap-2">
-              <IconUpload className="size-4 text-[#F6A11C]" />
+              <IconUpload className="size-4 text-primary" />
               {progress.done} / {progress.total}
             </span>
           )}
@@ -193,12 +193,12 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
       </div>
 
       {assets.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-8 text-center">
-          <p className="text-sm text-zinc-400">Medienbibliothek ist noch leer.</p>
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <p className="text-sm text-muted-foreground">Medienbibliothek ist noch leer.</p>
         </div>
       ) : filteredAssets.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-8 text-center">
-          <p className="text-sm text-zinc-400">Keine Treffer für &quot;{query}&quot;.</p>
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <p className="text-sm text-muted-foreground">Keine Treffer für &quot;{query}&quot;.</p>
         </div>
       ) : (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -206,7 +206,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
             <div
               key={asset.id}
               className={`rounded-xl border bg-card overflow-hidden ${
-                asset.active ? "border-white/[0.10]" : "border-white/[0.05] opacity-60"
+                asset.active ? "border-border" : "border-border opacity-60"
               }`}
             >
               <div className="relative aspect-[4/3] bg-black">
@@ -217,7 +217,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
                   className="w-full h-full object-cover"
                   draggable={false}
                 />
-                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-[11px] text-zinc-300 pointer-events-none">
+                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-[11px] text-foreground/80 pointer-events-none">
                   {asset.width}×{asset.height}
                   {asset.fileSize > 0 && ` · ${formatBytes(asset.fileSize)}`}
                 </div>
@@ -225,7 +225,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
                   href={asset.urls.original}
                   target="_blank"
                   rel="noreferrer"
-                  className="absolute top-2 right-2 p-1.5 rounded-md bg-black/70 text-zinc-300 hover:text-white"
+                  className="absolute top-2 right-2 p-1.5 rounded-md bg-black/70 text-foreground/80 hover:text-foreground"
                   title="Original öffnen"
                 >
                   <IconExternalLink className="size-3.5" />
@@ -242,14 +242,14 @@ export function MediaLibrary({ initialAssets }: { initialAssets: Asset[] }) {
                 <div className="flex items-center justify-end gap-1">
                   <button
                     onClick={() => handleToggleActive(asset.id, asset.active)}
-                    className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06]"
+                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]"
                     title={asset.active ? "Verstecken" : "Veröffentlichen"}
                   >
                     {asset.active ? <IconEye className="size-3.5" /> : <IconEyeOff className="size-3.5" />}
                   </button>
                   <button
                     onClick={() => handleDelete(asset.id)}
-                    className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-400/[0.06]"
+                    className="p-1.5 rounded-md text-muted-foreground hover:text-red-400 hover:bg-red-400/[0.06]"
                     title="Löschen"
                   >
                     <IconTrash className="size-3.5" />

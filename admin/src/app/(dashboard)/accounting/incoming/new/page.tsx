@@ -19,11 +19,11 @@ export default async function NewIncomingInvoicePage() {
     <div className="space-y-8 max-w-2xl">
       {/* Page header */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+        <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
           <IconFileInvoice className="size-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Neue Eingangsrechnung
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -32,7 +32,7 @@ export default async function NewIncomingInvoicePage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/[0.10] bg-card p-6">
+      <div className="rounded-xl border border-border bg-card p-6">
         <IncomingForm companies={companies} />
       </div>
     </div>

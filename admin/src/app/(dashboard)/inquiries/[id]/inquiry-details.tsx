@@ -224,7 +224,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
   }
 
   const inputClass =
-    "w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 py-1.5 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+    "w-full rounded-lg border border-border bg-muted px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
   function EditableRow({
     icon,
@@ -244,8 +244,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
     return (
       <div className="group">
         <div className="flex items-start gap-3">
-          <span className="text-zinc-500 shrink-0 mt-0.5">{icon}</span>
-          <span className="text-xs text-zinc-500 w-20 shrink-0 mt-0.5">{label}</span>
+          <span className="text-muted-foreground/70 shrink-0 mt-0.5">{icon}</span>
+          <span className="text-xs text-muted-foreground/70 w-20 shrink-0 mt-0.5">{label}</span>
           <div className="flex-1 min-w-0">
             {isEditing ? (
               <div className="relative">
@@ -281,16 +281,16 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
 
                 {/* Geocode suggestions dropdown */}
                 {type === "location" && geocodeSuggestions.length > 0 && (
-                  <div className="absolute z-10 top-full left-0 right-0 mt-1 rounded-lg border border-white/[0.10] bg-[#1c1d20] shadow-xl overflow-hidden">
+                  <div className="absolute z-10 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-muted shadow-xl overflow-hidden">
                     {geocodeSuggestions.map((s, i) => (
                       <button
                         key={i}
                         type="button"
                         onClick={() => selectSuggestion(s)}
-                        className="w-full text-left px-3 py-2 text-sm text-zinc-300 hover:bg-[#F6A11C]/10 hover:text-[#F6A11C] transition-colors border-b border-white/[0.05] last:border-0"
+                        className="w-full text-left px-3 py-2 text-sm text-foreground/80 hover:bg-primary/10 hover:text-primary transition-colors border-b border-border last:border-0"
                       >
                         <div className="font-medium">{s.street || s.label}</div>
-                        <div className="text-xs text-zinc-500">{s.zip} {s.city}</div>
+                        <div className="text-xs text-muted-foreground/70">{s.zip} {s.city}</div>
                       </button>
                     ))}
                   </div>
@@ -309,7 +309,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
                   <button
                     type="button"
                     onClick={cancelEdit}
-                    className="flex items-center gap-1 rounded-md bg-zinc-700/30 text-zinc-400 px-2 py-0.5 text-xs hover:bg-zinc-700/50 transition-colors"
+                    className="flex items-center gap-1 rounded-md bg-zinc-700/30 text-muted-foreground px-2 py-0.5 text-xs hover:bg-zinc-700/50 transition-colors"
                   >
                     <IconX className="size-3" />
                   </button>
@@ -317,13 +317,13 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
               </div>
             ) : (
               <div
-                className="flex items-center gap-2 cursor-pointer group/edit rounded-md px-1 -mx-1 py-0.5 -my-0.5 hover:bg-white/[0.04] transition-colors"
+                className="flex items-center gap-2 cursor-pointer group/edit rounded-md px-1 -mx-1 py-0.5 -my-0.5 hover:bg-foreground/[0.04] transition-colors"
                 onClick={() => startEdit(field, value)}
               >
-                <span className="text-sm font-medium text-zinc-200 truncate whitespace-pre-wrap">
+                <span className="text-sm font-medium text-foreground truncate whitespace-pre-wrap">
                   {value || "–"}
                 </span>
-                <IconPencil className="size-3 text-zinc-600 opacity-0 group-hover/edit:opacity-100 transition-opacity shrink-0" />
+                <IconPencil className="size-3 text-muted-foreground/50 opacity-0 group-hover/edit:opacity-100 transition-opacity shrink-0" />
               </div>
             )}
           </div>
@@ -343,9 +343,9 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
   }) {
     return (
       <div className="flex items-center gap-3">
-        <span className="text-zinc-500 shrink-0">{icon}</span>
-        <span className="text-xs text-zinc-500 w-20 shrink-0">{label}</span>
-        <span className="text-sm font-medium text-zinc-200 truncate">{value}</span>
+        <span className="text-muted-foreground/70 shrink-0">{icon}</span>
+        <span className="text-xs text-muted-foreground/70 w-20 shrink-0">{label}</span>
+        <span className="text-sm font-medium text-foreground truncate">{value}</span>
       </div>
     );
   }
@@ -353,7 +353,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {/* Customer Info */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
           Kundendaten
         </h3>
@@ -377,8 +377,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
             field="customerPhone"
           />
           <div className="flex items-center gap-3">
-            <span className="text-zinc-500 shrink-0"><IconBriefcase className="size-4" /></span>
-            <span className="text-xs text-zinc-500 w-20 shrink-0">Kundentyp</span>
+            <span className="text-muted-foreground/70 shrink-0"><IconBriefcase className="size-4" /></span>
+            <span className="text-xs text-muted-foreground/70 w-20 shrink-0">Kundentyp</span>
             <div className="flex gap-1">
               {([
                 { value: "PRIVATE", label: "Privat" },
@@ -394,8 +394,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
                     className={
                       "rounded-md px-2.5 py-1 text-xs font-medium transition-colors border " +
                       (active
-                        ? "bg-[#F6A11C]/10 text-[#F6A11C] border-[#F6A11C]/30"
-                        : "bg-transparent text-zinc-400 border-white/[0.08] hover:bg-white/[0.04] hover:text-zinc-200")
+                        ? "bg-primary/10 text-primary border-primary/30"
+                        : "bg-transparent text-muted-foreground border-border hover:bg-foreground/[0.04] hover:text-foreground")
                     }
                   >
                     {opt.label}
@@ -408,7 +408,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
       </div>
 
       {/* Event Info */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
           Event-Details
         </h3>
@@ -440,8 +440,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
             />
             {geocodeLoading && editingField !== "locationAddress" && (
               <div className="flex items-center gap-1.5 mt-1 ml-[calc(16px+12px+80px+12px)]">
-                <IconLoader2 className="size-3 animate-spin text-[#F6A11C]" />
-                <span className="text-xs text-zinc-500">Adresse wird aufgelöst...</span>
+                <IconLoader2 className="size-3 animate-spin text-primary" />
+                <span className="text-xs text-muted-foreground/70">Adresse wird aufgelöst...</span>
               </div>
             )}
           </div>
@@ -457,7 +457,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
 
       {/* Angefragte Extras */}
       {inquiry.extras.length > 0 && (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
             Angefragte Extras
           </h3>
@@ -466,7 +466,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
               <Badge
                 key={extra}
                 variant="outline"
-                className="bg-[#F6A11C]/10 text-[#F6A11C] border-[#F6A11C]/25"
+                className="bg-primary/10 text-primary border-primary/25"
               >
                 {extraLabel(extra)}
               </Badge>
@@ -476,7 +476,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
       )}
 
       {/* Comments */}
-      <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
           Kommentare
         </h3>
@@ -503,7 +503,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
               <button
                 type="button"
                 onClick={cancelEdit}
-                className="flex items-center gap-1 rounded-md bg-zinc-700/30 text-zinc-400 px-2 py-0.5 text-xs hover:bg-zinc-700/50 transition-colors"
+                className="flex items-center gap-1 rounded-md bg-zinc-700/30 text-muted-foreground px-2 py-0.5 text-xs hover:bg-zinc-700/50 transition-colors"
               >
                 <IconX className="size-3" />
               </button>
@@ -511,14 +511,14 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
           </div>
         ) : (
           <div
-            className="flex items-start gap-2 cursor-pointer group/edit rounded-md px-1 -mx-1 py-0.5 -my-0.5 hover:bg-white/[0.04] transition-colors"
+            className="flex items-start gap-2 cursor-pointer group/edit rounded-md px-1 -mx-1 py-0.5 -my-0.5 hover:bg-foreground/[0.04] transition-colors"
             onClick={() => startEdit("comments", inquiry.comments ?? "")}
           >
-            <IconMessageCircle className="size-4 text-zinc-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-zinc-300 whitespace-pre-wrap flex-1">
+            <IconMessageCircle className="size-4 text-muted-foreground/70 shrink-0 mt-0.5" />
+            <p className="text-sm text-foreground/80 whitespace-pre-wrap flex-1">
               {inquiry.comments || "Klicken um Kommentar hinzuzufügen..."}
             </p>
-            <IconPencil className="size-3 text-zinc-600 opacity-0 group-hover/edit:opacity-100 transition-opacity shrink-0 mt-0.5" />
+            <IconPencil className="size-3 text-muted-foreground/50 opacity-0 group-hover/edit:opacity-100 transition-opacity shrink-0 mt-0.5" />
           </div>
         )}
       </div>

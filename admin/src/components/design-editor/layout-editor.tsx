@@ -815,8 +815,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
           <div className="text-5xl">&#10003;</div>
-          <h1 className="text-2xl font-bold text-white">Design abgesendet!</h1>
-          <p className="text-white/60">
+          <h1 className="text-2xl font-bold text-foreground">Design abgesendet!</h1>
+          <p className="text-foreground/60">
             Vielen Dank, {orderInfo.customerName}! Wir haben dein Layout erhalten
             und melden uns bei dir.
           </p>
@@ -832,7 +832,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       {/* Mobile warning */}
       <div className="md:hidden flex items-center justify-center min-h-[60vh] p-6">
         <div className="text-center space-y-4">
-          <p className="text-lg text-white/80">
+          <p className="text-lg text-foreground/80">
             Bitte verwende ein Tablet oder einen Computer für den Layout-Editor.
           </p>
         </div>
@@ -841,19 +841,19 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       {/* Editor (hidden on mobile) */}
       <div className="hidden md:flex flex-col h-[calc(100vh-56px)]">
         {/* Toolbar */}
-        <div className="shrink-0 border-b border-white/10 bg-[#1c1d20]">
+        <div className="shrink-0 border-b border-border bg-card">
           <div className="flex items-center h-20 px-5 gap-4">
             {/* Left: template meta or customer info */}
             {templateMeta || (
               <div className="flex items-center gap-3 shrink-0">
                 {mode === "customer" && (
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-[#F6A11C]/15 flex items-center justify-center text-[#F6A11C] text-xs font-bold">
+                    <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center text-primary text-xs font-bold">
                       {orderInfo.customerName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
                     </div>
                     <div className="leading-tight">
-                      <div className="text-sm font-medium text-white/80">{orderInfo.customerName}</div>
-                      <div className="text-[11px] text-white/40">{orderInfo.eventType}{orderInfo.eventDate ? ` · ${orderInfo.eventDate}` : ""}</div>
+                      <div className="text-sm font-medium text-foreground/80">{orderInfo.customerName}</div>
+                      <div className="text-[11px] text-foreground/40">{orderInfo.eventType}{orderInfo.eventDate ? ` · ${orderInfo.eventDate}` : ""}</div>
                     </div>
                   </div>
                 )}
@@ -865,37 +865,37 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                         onFormatChange(newFmt);
                       }
                     }}
-                    className="h-8 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-xs text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-colors"
+                    className="h-8 px-3 rounded-lg border border-border bg-foreground/[0.03] text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                   >
                     {format === "4x6" ? "10×15 cm" : "5×15 cm"} ✎
                   </button>
                 ) : (
-                  <span className="text-sm text-white/50 font-medium">Format: {format === "4x6" ? "10×15 cm" : "5×15 cm"}</span>
+                  <span className="text-sm text-foreground/50 font-medium">Format: {format === "4x6" ? "10×15 cm" : "5×15 cm"}</span>
                 )}
               </div>
             )}
 
-            <div className="w-px h-10 bg-white/10" />
+            <div className="w-px h-10 bg-foreground/10" />
 
             {/* Undo / Redo / Delete — large icon buttons with labels underneath */}
             <div className="flex items-center gap-2.5">
               <button onClick={undo} title="Rückgängig (Strg+Z)"
-                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-foreground hover:bg-accent hover:border-border transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h10a5 5 0 0 1 0 10H9"/><path d="M3 10l4-4M3 10l4 4"/></svg>
                 <span className="text-[10px] leading-none whitespace-nowrap">Rückgängig</span>
               </button>
               <button onClick={redo} title="Wiederherstellen (Strg+Shift+Z)"
-                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-foreground hover:bg-accent hover:border-border transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
                 <span className="text-[10px] leading-none whitespace-nowrap">Wiederherstellen</span>
               </button>
               <button onClick={duplicateSelected} title="Duplizieren (Strg+D)"
-                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/15 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-foreground hover:bg-accent hover:border-border transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 <span className="text-[10px] leading-none whitespace-nowrap">Duplizieren</span>
               </button>
               <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
-                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 <span className="text-[10px] leading-none whitespace-nowrap">Löschen</span>
               </button>
@@ -903,22 +903,22 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
             {/* Center: Zoom */}
             <div className="flex-1 flex justify-center">
-              <div className="flex items-center h-12 rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
+              <div className="flex items-center h-12 rounded-xl border border-border bg-foreground/[0.03] overflow-hidden">
                 <button onClick={() => setZoom(z => Math.max(0.25, z * 0.8))} title="Herauszoomen"
-                  className="w-12 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">&minus;</button>
-                <span className="text-sm text-white/60 w-16 text-center select-none font-medium border-x border-white/[0.08]">{Math.round(zoom * 100)}%</span>
+                  className="w-12 h-full flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-accent transition-colors text-lg">&minus;</button>
+                <span className="text-sm text-foreground/60 w-16 text-center select-none font-medium border-x border-border">{Math.round(zoom * 100)}%</span>
                 <button onClick={() => setZoom(z => Math.min(3, z * 1.25))} title="Hineinzoomen"
-                  className="w-12 h-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors text-lg">+</button>
+                  className="w-12 h-full flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-accent transition-colors text-lg">+</button>
               </div>
             </div>
 
             {/* Right: Status + Save/Submit */}
             <div className="flex items-center gap-4">
               <span className="text-sm">
-                {saveStatus === "saving" && <span className="text-white/40">Speichert...</span>}
+                {saveStatus === "saving" && <span className="text-foreground/40">Speichert...</span>}
                 {saveStatus === "error" && <span className="text-red-400">Fehler beim Speichern</span>}
                 {saveStatus !== "saving" && saveStatus !== "error" && lastSavedAt && (
-                  <span className="text-white/40">Zuletzt gespeichert um {lastSavedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr</span>
+                  <span className="text-foreground/40">Zuletzt gespeichert um {lastSavedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr</span>
                 )}
               </span>
               {mode === "admin" ? (
@@ -929,7 +929,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                     const thumb = canvas.toDataURL({ format: "png", multiplier: 0.25 });
                     onSaveTemplate(canvas.toObject(["isPhotoPlaceholder", "selectable", "evented", "hasControls"]), thumb);
                   }}
-                  className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors"
+                  className="h-12 px-7 text-sm font-semibold rounded-xl bg-primary hover:bg-primary/90 text-black transition-colors"
                 >
                   Vorlage speichern
                 </button>
@@ -938,14 +938,14 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   <button
                     onClick={handleSaveNow}
                     disabled={submitting}
-                    className="h-12 px-5 text-sm font-semibold rounded-xl border border-white/[0.12] bg-white/[0.06] text-white hover:bg-white/[0.12] transition-colors disabled:opacity-50"
+                    className="h-12 px-5 text-sm font-semibold rounded-xl border border-border bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.12] transition-colors disabled:opacity-50"
                   >
                     Speichern
                   </button>
                   <button
                     onClick={handleAdminUpdate}
                     disabled={submitting}
-                    className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                    className="h-12 px-7 text-sm font-semibold rounded-xl bg-primary hover:bg-primary/90 text-black transition-colors disabled:opacity-50"
                   >
                     {submitting ? "Wird aktualisiert..." : "Fertig"}
                   </button>
@@ -955,14 +955,14 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                   <button
                     onClick={handleSaveNow}
                     disabled={submitting}
-                    className="h-12 px-5 text-sm font-semibold rounded-xl border border-white/[0.12] bg-white/[0.06] text-white hover:bg-white/[0.12] transition-colors disabled:opacity-50"
+                    className="h-12 px-5 text-sm font-semibold rounded-xl border border-border bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.12] transition-colors disabled:opacity-50"
                   >
                     Speichern
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="h-12 px-7 text-sm font-semibold rounded-xl bg-[#F6A11C] hover:bg-[#e5950f] text-black transition-colors disabled:opacity-50"
+                    className="h-12 px-7 text-sm font-semibold rounded-xl bg-primary hover:bg-primary/90 text-black transition-colors disabled:opacity-50"
                   >
                     {submitting ? "Wird gesendet..." : "Design absenden"}
                   </button>
@@ -979,9 +979,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         <div className="flex flex-1 min-h-0">
 
           {/* LEFT SIDEBAR: Add elements */}
-          <div className="w-[220px] shrink-0 border-r border-white/10 bg-[#222326] flex flex-col overflow-y-auto">
-            <div className="px-3 py-2 border-b border-white/10">
-              <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Hinzufügen</h3>
+          <div className="w-[220px] shrink-0 border-r border-border bg-accent flex flex-col overflow-y-auto">
+            <div className="px-3 py-2 border-b border-border">
+              <h3 className="text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">Hinzufügen</h3>
             </div>
 
             <SidebarButton
@@ -1001,8 +1001,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
               onClick={addText}
             />
 
-            <div className="px-3 py-2 border-t border-b border-white/10 mt-1">
-              <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Bibliothek</h3>
+            <div className="px-3 py-2 border-t border-b border-border mt-1">
+              <h3 className="text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">Bibliothek</h3>
             </div>
 
             <SidebarButton
@@ -1020,9 +1020,9 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           {/* CANVAS AREA */}
           <div
             ref={wrapperRef}
-            className="flex-1 flex items-start justify-center overflow-auto bg-[#1a1b1e] p-4"
+            className="flex-1 flex items-start justify-center overflow-auto bg-muted p-4"
           >
-            <div ref={canvasWrapRef} className="shadow-2xl shadow-black/50 border border-white/20" style={{ transformOrigin: "top center", backgroundImage: "repeating-conic-gradient(#808080 0% 25%, #fff 0% 50%)", backgroundSize: "16px 16px" }}>
+            <div ref={canvasWrapRef} className="shadow-2xl shadow-black/5 dark:shadow-black/25 border border-border" style={{ transformOrigin: "top center", backgroundImage: "repeating-conic-gradient(#808080 0% 25%, #fff 0% 50%)", backgroundSize: "16px 16px" }}>
               <canvas ref={canvasRef} />
             </div>
           </div>
@@ -1048,10 +1048,10 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         {/* Modals for Elements + Templates */}
         {openModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setOpenModal(null)}>
-            <div className="bg-[#222326] border border-white/10 rounded-xl shadow-2xl w-[600px] max-h-[70vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-                <h2 className="text-sm font-semibold text-white">{openModal === "elements" ? "Elemente" : "Vorlagen"}</h2>
-                <button onClick={() => setOpenModal(null)} className="text-white/40 hover:text-white"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <div className="bg-accent border border-border rounded-xl shadow-2xl w-[600px] max-h-[70vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+                <h2 className="text-sm font-semibold text-foreground">{openModal === "elements" ? "Elemente" : "Vorlagen"}</h2>
+                <button onClick={() => setOpenModal(null)} className="text-foreground/40 hover:text-foreground"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
               </div>
               <div className="flex-1 overflow-y-auto p-5">
                 {openModal === "elements" && <ElementsPanel elements={designElements} onSelect={(el) => { addDesignElement(el); setOpenModal(null); }} />}
@@ -1090,7 +1090,7 @@ function ToolbarButton({
       title={title}
       className={`
         w-7 h-7 flex items-center justify-center text-sm rounded-md transition-colors
-        ${active ? "bg-[#F6A11C]/15 text-[#F6A11C]" : "text-white/50 hover:text-white hover:bg-white/10"}
+        ${active ? "bg-primary/15 text-primary" : "text-foreground/50 hover:text-foreground hover:bg-accent"}
         ${disabled ? "opacity-30 cursor-not-allowed" : ""}
       `}
     >
@@ -1102,10 +1102,10 @@ function ToolbarButton({
 function PropSection({ title, children, action, collapsible, defaultOpen }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void }; collapsible?: boolean; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen ?? !collapsible);
   return (
-    <div className="space-y-1.5 py-2 border-b border-white/10">
+    <div className="space-y-1.5 py-2 border-b border-border">
       <div className="flex items-center justify-between">
         <h4
-          className={`text-[10px] font-semibold text-white/50 uppercase tracking-wider ${collapsible ? "cursor-pointer select-none hover:text-white/70" : ""}`}
+          className={`text-[10px] font-semibold text-foreground/50 uppercase tracking-wider ${collapsible ? "cursor-pointer select-none hover:text-foreground/70" : ""}`}
           onClick={collapsible ? () => setOpen(!open) : undefined}
         >
           {collapsible && <span className="inline-block w-3 text-[8px]">{open ? "▾" : "▸"}</span>}
@@ -1125,9 +1125,9 @@ function SidebarButton({ icon, label, onClick, disabled }: { icon: React.ReactNo
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white transition-colors ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
+      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-foreground/70 hover:bg-accent hover:text-foreground transition-colors ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
     >
-      <span className="text-white/50 shrink-0">{icon}</span>
+      <span className="text-foreground/50 shrink-0">{icon}</span>
       <span className="truncate">{label}</span>
     </button>
   );
@@ -1145,32 +1145,32 @@ function TemplatesPanel({
   onSelect: (t: Template) => void;
 }) {
   if (templates.length === 0) {
-    return <p className="text-white/40 text-sm">Keine Vorlagen verfügbar.</p>;
+    return <p className="text-foreground/40 text-sm">Keine Vorlagen verfügbar.</p>;
   }
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-white/80">Vorlagen</h3>
+      <h3 className="text-sm font-semibold text-foreground/80">Vorlagen</h3>
       <div className="grid grid-cols-2 gap-2">
         {templates.map((t) => (
           <button
             key={t.id}
             onClick={() => onSelect(t)}
-            className="rounded-lg border border-white/10 hover:border-[#F6A11C] transition-colors overflow-hidden text-left"
+            className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left"
           >
             {t.thumbnail ? (
               <img
                 src={t.thumbnail}
                 alt={t.name}
-                className="w-full h-28 object-contain bg-white/5"
+                className="w-full h-28 object-contain bg-foreground/5"
               />
             ) : (
-              <div className="w-full h-28 bg-white/5 flex items-center justify-center">
-                <span className="text-xs text-white/30">Vorschau</span>
+              <div className="w-full h-28 bg-foreground/5 flex items-center justify-center">
+                <span className="text-xs text-foreground/30">Vorschau</span>
               </div>
             )}
             <div className="p-1.5">
-              <span className="text-xs text-white/60 truncate block">{t.name}</span>
+              <span className="text-xs text-foreground/60 truncate block">{t.name}</span>
             </div>
           </button>
         ))}
@@ -1237,18 +1237,18 @@ function TextPanel({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-white/80">Text</h3>
+      <h3 className="text-sm font-semibold text-foreground/80">Text</h3>
 
       <button
         onClick={onAdd}
-        className="w-full py-2 rounded-lg bg-[#F6A11C] hover:bg-[#e5950f] text-black font-semibold text-sm transition-colors"
+        className="w-full py-2 rounded-lg bg-primary hover:bg-primary/90 text-black font-semibold text-sm transition-colors"
       >
         Text hinzufügen
       </button>
 
       {/* Font picker with live preview */}
       <div>
-        <label className="text-xs text-white/50 block mb-1">Schriftart</label>
+        <label className="text-xs text-foreground/50 block mb-1">Schriftart</label>
         <div className="flex gap-1 flex-wrap mb-2">
           <FilterChip active={filterCat === null} onClick={() => setFilterCat(null)}>
             Alle
@@ -1263,15 +1263,15 @@ function TextPanel({
             </FilterChip>
           ))}
         </div>
-        <div className="max-h-48 overflow-y-auto rounded-lg border border-white/10 bg-[#1a1b1e]">
+        <div className="max-h-48 overflow-y-auto rounded-lg border border-border bg-muted">
           {filtered.map((f) => (
             <button
               key={f.family}
               onClick={() => onFontChange(f.family)}
-              className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-white/5 last:border-0 ${
+              className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-border last:border-0 ${
                 selectedFont === f.family
-                  ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
+                  ? "bg-primary/15 text-primary"
+                  : "text-foreground/70 hover:bg-accent hover:text-foreground"
               }`}
               style={{ fontFamily: `"${f.family}", sans-serif` }}
             >
@@ -1283,7 +1283,7 @@ function TextPanel({
 
       {/* Font size */}
       <div>
-        <label className="text-xs text-white/50 block mb-1">
+        <label className="text-xs text-foreground/50 block mb-1">
           Schriftgröße: {fontSize}px
         </label>
         <div className="flex items-center gap-2">
@@ -1301,14 +1301,14 @@ function TextPanel({
             max={400}
             value={fontSize}
             onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
-            className="w-14 rounded bg-[#1a1b1e] border border-white/10 text-white text-xs text-center px-1 py-1"
+            className="w-14 rounded bg-muted border border-border text-foreground text-xs text-center px-1 py-1"
           />
         </div>
       </div>
 
       {/* Colors with picker + hex input */}
       <div>
-        <label className="text-xs text-white/50 block mb-1">Farbe</label>
+        <label className="text-xs text-foreground/50 block mb-1">Farbe</label>
         <div className="flex flex-wrap gap-2 mb-2">
           {PRESET_COLORS.map((c) => (
             <button
@@ -1316,7 +1316,7 @@ function TextPanel({
               onClick={() => onColorChange(c.value)}
               title={c.label}
               className={`w-7 h-7 rounded-full border-2 transition-all ${
-                textColor === c.value ? "border-[#F6A11C] scale-110" : "border-white/20"
+                textColor === c.value ? "border-primary scale-110" : "border-border"
               }`}
               style={{ backgroundColor: c.value }}
             />
@@ -1327,7 +1327,7 @@ function TextPanel({
             type="color"
             value={textColor}
             onChange={(e) => onColorChange(e.target.value)}
-            className="w-8 h-8 rounded cursor-pointer border border-white/10 bg-transparent"
+            className="w-8 h-8 rounded cursor-pointer border border-border bg-transparent"
           />
           <input
             type="text"
@@ -1337,14 +1337,14 @@ function TextPanel({
               if (/^#[0-9a-fA-F]{0,6}$/.test(v)) onColorChange(v);
             }}
             placeholder="#000000"
-            className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-xs px-2 py-1.5 font-mono"
+            className="flex-1 rounded bg-muted border border-border text-foreground text-xs px-2 py-1.5 font-mono"
           />
         </div>
       </div>
 
       {/* Letter spacing + Line height */}
       <div>
-        <label className="text-xs text-white/50 block mb-1">Zeichenabstand</label>
+        <label className="text-xs text-foreground/50 block mb-1">Zeichenabstand</label>
         <input
           type="range"
           min={-200}
@@ -1367,7 +1367,7 @@ function TextPanel({
       </div>
 
       <div>
-        <label className="text-xs text-white/50 block mb-1">Zeilenabstand</label>
+        <label className="text-xs text-foreground/50 block mb-1">Zeilenabstand</label>
         <input
           type="range"
           min={50}
@@ -1406,8 +1406,8 @@ function FilterChip({
       onClick={onClick}
       className={`px-2 py-0.5 rounded text-xs transition-colors ${
         active
-          ? "bg-[#F6A11C] text-black"
-          : "bg-white/5 text-white/50 hover:text-white/70"
+          ? "bg-primary text-black"
+          : "bg-foreground/5 text-foreground/50 hover:text-foreground/70"
       }`}
     >
       {children}
@@ -1437,12 +1437,12 @@ function ElementsPanel({
     : elements;
 
   if (elements.length === 0) {
-    return <p className="text-white/40 text-sm">Keine Elemente verfügbar.</p>;
+    return <p className="text-foreground/40 text-sm">Keine Elemente verfügbar.</p>;
   }
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-white/80">Elemente</h3>
+      <h3 className="text-sm font-semibold text-foreground/80">Elemente</h3>
       {categories.length > 0 && (
         <div className="flex gap-1 flex-wrap">
           <FilterChip active={filterCat === null} onClick={() => setFilterCat(null)}>
@@ -1464,9 +1464,9 @@ function ElementsPanel({
           <button
             key={el.id}
             onClick={() => onSelect(el)}
-            className="rounded-lg border border-white/10 hover:border-[#F6A11C] transition-colors overflow-hidden text-left"
+            className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left"
           >
-            <div className="aspect-square bg-white/5 flex items-center justify-center p-2">
+            <div className="aspect-square bg-foreground/5 flex items-center justify-center p-2">
               <img
                 src={el.imageUrl}
                 alt={el.name}
@@ -1474,7 +1474,7 @@ function ElementsPanel({
               />
             </div>
             <div className="p-1.5">
-              <span className="text-xs text-white/60 truncate block">{el.name}</span>
+              <span className="text-xs text-foreground/60 truncate block">{el.name}</span>
             </div>
           </button>
         ))}
@@ -1494,12 +1494,12 @@ function UploadPanel({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-white/80">Bild hochladen</h3>
-      <p className="text-xs text-white/40">
+      <h3 className="text-sm font-semibold text-foreground/80">Bild hochladen</h3>
+      <p className="text-xs text-foreground/40">
         PNG, JPG oder WebP, max. 10 MB. Bild wird maßstabsgetreu eingefügt.
       </p>
-      <label className="block w-full py-8 rounded-lg border-2 border-dashed border-white/20 hover:border-[#F6A11C] transition-colors cursor-pointer text-center">
-        <span className="text-sm text-white/60">Klicke hier oder ziehe eine Datei</span>
+      <label className="block w-full py-8 rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer text-center">
+        <span className="text-sm text-foreground/60">Klicke hier oder ziehe eine Datei</span>
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp"
@@ -1711,16 +1711,16 @@ function RightPanel({
   }
 
   const reversed = [...objects].reverse();
-  const lbl = "text-[10px] text-white/40";
-  const inp = "w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5";
+  const lbl = "text-[10px] text-foreground/40";
+  const inp = "w-full rounded bg-muted border border-border text-foreground text-[11px] text-center px-1 py-0.5";
 
   return (
-    <div className="w-[280px] shrink-0 border-l border-white/10 bg-[#222326] flex flex-col">
+    <div className="w-[280px] shrink-0 border-l border-border bg-accent flex flex-col">
       {/* Layers list */}
-      <div className="px-3 py-1.5 border-b border-white/10 shrink-0">
-        <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Ebenen</h3>
+      <div className="px-3 py-1.5 border-b border-border shrink-0">
+        <h3 className="text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">Ebenen</h3>
       </div>
-      <div className="max-h-[40%] overflow-y-auto shrink-0 border-b border-white/10">
+      <div className="max-h-[40%] overflow-y-auto shrink-0 border-b border-border">
         {reversed.map((obj: any, revIdx: number) => {
           const isActive = activeObjects.includes(obj);
           const isVisible = obj.visible !== false;
@@ -1728,8 +1728,8 @@ function RightPanel({
           return (
             <div
               key={revIdx}
-              className={`flex items-center gap-1.5 px-2 py-1.5 text-[11px] cursor-pointer border-b border-white/5 transition-colors ${
-                isActive ? "bg-white/10" : "hover:bg-white/5"
+              className={`flex items-center gap-1.5 px-2 py-1.5 text-[11px] cursor-pointer border-b border-border transition-colors ${
+                isActive ? "bg-foreground/10" : "hover:bg-accent"
               } ${!isVisible ? "opacity-30" : ""}`}
               onClick={(e) => {
                 const fabric = fabricModRef.current;
@@ -1758,7 +1758,7 @@ function RightPanel({
               }}
             >
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
-              <span className={`flex-1 truncate ${isActive ? "text-white font-medium" : "text-white/60"}`}>
+              <span className={`flex-1 truncate ${isActive ? "text-foreground font-medium" : "text-foreground/60"}`}>
                 {getLayerName(obj)}
               </span>
               <div className="flex items-center gap-px shrink-0">
@@ -1771,43 +1771,43 @@ function RightPanel({
                     if (locked) canvas.discardActiveObject();
                     canvas.renderAll(); refresh();
                   }}
-                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title={obj.selectable === false ? "Entsperren" : "Sperren"}>
-                  <svg className={`w-3 h-3 ${obj.selectable === false ? "text-[#F6A11C]" : "text-white/40"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-accent" title={obj.selectable === false ? "Entsperren" : "Sperren"}>
+                  <svg className={`w-3 h-3 ${obj.selectable === false ? "text-primary" : "text-foreground/40"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     {obj.selectable === false
                       ? <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>
                       : <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></>}
                   </svg>
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); obj.set("visible", !isVisible); onUpdate(); refresh(); }}
-                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title={isVisible ? "Ausblenden" : "Einblenden"}>
-                  <svg className={`w-3 h-3 ${isVisible ? "text-white/40" : "text-white/20"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-accent" title={isVisible ? "Ausblenden" : "Einblenden"}>
+                  <svg className={`w-3 h-3 ${isVisible ? "text-foreground/40" : "text-foreground/20"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     {isVisible ? <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></> : <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><line x1="1" y1="1" x2="23" y2="23"/></>}
                   </svg>
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); const objs = canvas._objects; const idx = objs.indexOf(obj); if (idx >= 0 && idx < objs.length - 1) { objs.splice(idx, 1); objs.splice(idx + 1, 0, obj); canvas.setActiveObject(obj); canvas.renderAll(); onUpdate(); refresh(); } }}
-                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title="Nach oben">
-                  <svg className="w-3 h-3 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-accent" title="Nach oben">
+                  <svg className="w-3 h-3 text-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 15l-6-6-6 6"/></svg>
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); const objs = canvas._objects; const idx = objs.indexOf(obj); if (idx > 0) { objs.splice(idx, 1); objs.splice(idx - 1, 0, obj); canvas.setActiveObject(obj); canvas.renderAll(); onUpdate(); refresh(); } }}
-                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" title="Nach unten">
-                  <svg className="w-3 h-3 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-accent" title="Nach unten">
+                  <svg className="w-3 h-3 text-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); canvas.remove(obj); onDelete(); refresh(); }}
                   className="w-5 h-5 flex items-center justify-center rounded hover:bg-red-500/20" title="Löschen">
-                  <svg className="w-3 h-3 text-white/30 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <svg className="w-3 h-3 text-foreground/30 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 </button>
               </div>
             </div>
           );
         })}
-        {objects.length === 0 && <p className="text-[10px] text-white/30 p-3 text-center">Keine Ebenen</p>}
+        {objects.length === 0 && <p className="text-[10px] text-foreground/30 p-3 text-center">Keine Ebenen</p>}
       </div>
 
       {/* Object Properties */}
       <div className="flex-1 overflow-y-auto p-3 space-y-1">
         {isMultiSelect ? (
           <>
-            <p className="text-[10px] text-white/50 mb-2">{activeObjects.length} Elemente ausgewählt {hasTextInSelection && `(${textObjects.length} Text)`}</p>
+            <p className="text-[10px] text-foreground/50 mb-2">{activeObjects.length} Elemente ausgewählt {hasTextInSelection && `(${textObjects.length} Text)`}</p>
 
             {/* ── BULK TEXT ── */}
             {hasTextInSelection && (
@@ -1822,7 +1822,7 @@ function RightPanel({
                     }}
                     className="flex-1 accent-[#F6A11C] h-1" />
                   <input type="number" min={8} max={400}
-                    className="w-14 shrink-0 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5"
+                    className="w-14 shrink-0 rounded bg-muted border border-border text-foreground text-[11px] text-center px-1 py-0.5"
                     value={Math.round((textObjects[0] as any).fontSize ?? 40)}
                     onChange={(e) => {
                       const size = Number(e.target.value) || 40;
@@ -1841,11 +1841,11 @@ function RightPanel({
                         canvas.renderAll(); onUpdate(); refresh();
                       }}
                       title={c.label}
-                      className="w-6 h-6 rounded-full border-2 border-white/10 hover:border-white/30 transition-all"
+                      className="w-6 h-6 rounded-full border-2 border-border hover:border-border transition-all"
                       style={{ backgroundColor: c.value }}
                     />
                   ))}
-                  <label className="w-6 h-6 rounded-full border-2 border-white/10 hover:border-white/30 cursor-pointer overflow-hidden relative" title="Eigene Farbe">
+                  <label className="w-6 h-6 rounded-full border-2 border-border hover:border-border cursor-pointer overflow-hidden relative" title="Eigene Farbe">
                     <input type="color" value={(textObjects[0] as any).fill ?? "#000000"}
                       onChange={(e) => {
                         textObjects.forEach((o: any) => { o.set("fill", e.target.value); o.set("dirty", true); });
@@ -1856,11 +1856,11 @@ function RightPanel({
                   </label>
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-[10px] text-white/40">#</span>
+                  <span className="text-[10px] text-foreground/40">#</span>
                   <input
                     type="text"
                     maxLength={6}
-                    className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-0.5 font-mono uppercase"
+                    className="flex-1 rounded bg-muted border border-border text-foreground text-[11px] px-2 py-0.5 font-mono uppercase"
                     value={hexFocused ? hexInput : ((textObjects[0] as any).fill ?? "#000000").replace("#", "").toUpperCase()}
                     onFocus={() => {
                       setHexInput(((textObjects[0] as any).fill ?? "#000000").replace("#", "").toUpperCase());
@@ -1891,7 +1891,7 @@ function RightPanel({
                     textObjects.forEach((o: any) => { o.set("fontFamily", family); o.set("dirty", true); o.initDimensions?.(); });
                     canvas.renderAll(); onUpdate(); refresh();
                   }}
-                  className="w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-1"
+                  className="w-full rounded bg-muted border border-border text-foreground text-[11px] px-2 py-1"
                 >
                   {fonts.map((f) => <option key={f.family} value={f.family} style={{ fontFamily: f.family }}>{f.family}</option>)}
                 </select>
@@ -1909,7 +1909,7 @@ function RightPanel({
                   });
                   canvas.renderAll(); onUpdate(); refresh();
                 }}
-                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+                className="w-full h-6 rounded cursor-pointer border border-border bg-transparent" />
 
               <label className={lbl}>Stärke: {getStrokeWidth(activeObjects[0])}px</label>
               <input type="range" min={0} max={30} value={getStrokeWidth(activeObjects[0])}
@@ -1932,7 +1932,7 @@ function RightPanel({
                   activeObjects.forEach((o: any) => applyShadowLive(o, e.target.value, shadowBlur, shadowOffsetX, shadowOffsetY));
                   canvas.renderAll(); onUpdate(); refresh();
                 }}
-                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+                className="w-full h-6 rounded cursor-pointer border border-border bg-transparent" />
 
               <label className={lbl}>Weichheit: {shadowBlur}px</label>
               <input type="range" min={0} max={50} value={shadowBlur}
@@ -1972,7 +1972,7 @@ function RightPanel({
                   activeObjects.forEach((o: any) => applyShadow(o, null));
                   canvas.renderAll(); onUpdate(); refresh();
                 }}
-                className="w-full py-1 rounded text-[10px] bg-white/5 text-white/50 hover:text-white/70 transition-colors mt-1"
+                className="w-full py-1 rounded text-[10px] bg-foreground/5 text-foreground/50 hover:text-foreground/70 transition-colors mt-1"
               >
                 Schatten entfernen
               </button>
@@ -1995,7 +1995,7 @@ function RightPanel({
                     activeObjects.forEach((o: any) => o.set("opacity", v));
                     canvas.renderAll(); onUpdate(); refresh();
                   }} />
-                <span className="text-[10px] text-white/30">%</span>
+                <span className="text-[10px] text-foreground/30">%</span>
               </div>
             </PropSection>
           </>
@@ -2008,7 +2008,7 @@ function RightPanel({
                 <select
                   value={(activeObj as any).fontFamily ?? selectedFont}
                   onChange={(e) => onFontChange(e.target.value)}
-                  className="w-full rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-1"
+                  className="w-full rounded bg-muted border border-border text-foreground text-[11px] px-2 py-1"
                 >
                   {fonts.map((f) => <option key={f.family} value={f.family} style={{ fontFamily: f.family }}>{f.family}</option>)}
                 </select>
@@ -2034,7 +2034,7 @@ function RightPanel({
                           onUpdate(); refresh();
                         }}
                         className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${style} ${
-                          active ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
+                          active ? "bg-primary text-black" : "bg-foreground/5 text-foreground/50 hover:text-foreground/70"
                         }`}
                       >
                         {label}
@@ -2050,7 +2050,7 @@ function RightPanel({
                     }}
                     className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
                       (() => { const t = (activeObj as any).text || ""; return t === t.toUpperCase() && t !== t.toLowerCase(); })()
-                        ? "bg-[#F6A11C] text-black" : "bg-white/5 text-white/50 hover:text-white/70"
+                        ? "bg-primary text-black" : "bg-foreground/5 text-foreground/50 hover:text-foreground/70"
                     }`}
                   >
                     AB
@@ -2063,7 +2063,7 @@ function RightPanel({
                     onChange={(e) => onSizeChange(Number(e.target.value) || 40)}
                     className="flex-1 accent-[#F6A11C] h-1" />
                   <input type="number" min={8} max={400}
-                    className="w-14 shrink-0 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] text-center px-1 py-0.5"
+                    className="w-14 shrink-0 rounded bg-muted border border-border text-foreground text-[11px] text-center px-1 py-0.5"
                     value={Math.round((activeObj as any).fontSize ?? fontSize)}
                     onChange={(e) => onSizeChange(Number(e.target.value) || 40)} />
                 </div>
@@ -2079,13 +2079,13 @@ function RightPanel({
                         onClick={() => onColorChange(c.value)}
                         title={c.label}
                         className={`w-6 h-6 rounded-full border-2 transition-all ${
-                          isActive ? "border-[#F6A11C] scale-110" : "border-white/10 hover:border-white/30"
+                          isActive ? "border-primary scale-110" : "border-border hover:border-border"
                         }`}
                         style={{ backgroundColor: c.value }}
                       />
                     );
                   })}
-                  <label className="w-6 h-6 rounded-full border-2 border-white/10 hover:border-white/30 cursor-pointer overflow-hidden relative" title="Eigene Farbe">
+                  <label className="w-6 h-6 rounded-full border-2 border-border hover:border-border cursor-pointer overflow-hidden relative" title="Eigene Farbe">
                     <input type="color" value={(activeObj as any).fill ?? textColor}
                       onChange={(e) => onColorChange(e.target.value)}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
@@ -2093,11 +2093,11 @@ function RightPanel({
                   </label>
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-[10px] text-white/40">#</span>
+                  <span className="text-[10px] text-foreground/40">#</span>
                   <input
                     type="text"
                     maxLength={6}
-                    className="flex-1 rounded bg-[#1a1b1e] border border-white/10 text-white text-[11px] px-2 py-0.5 font-mono uppercase"
+                    className="flex-1 rounded bg-muted border border-border text-foreground text-[11px] px-2 py-0.5 font-mono uppercase"
                     value={hexFocused ? hexInput : ((activeObj as any).fill ?? textColor).replace("#", "").toUpperCase()}
                     onFocus={() => {
                       setHexInput(((activeObj as any).fill ?? textColor).replace("#", "").toUpperCase());
@@ -2128,8 +2128,8 @@ function RightPanel({
                       onClick={() => { (activeObj as any).set("textAlign", align); onUpdate(); refresh(); }}
                       className={`flex-1 py-1 rounded text-[10px] font-semibold transition-colors ${
                         (activeObj as any).textAlign === align
-                          ? "bg-[#F6A11C] text-black"
-                          : "bg-white/5 text-white/50 hover:text-white/70"
+                          ? "bg-primary text-black"
+                          : "bg-foreground/5 text-foreground/50 hover:text-foreground/70"
                       }`}
                     >
                       {align === "left" ? "Links" : align === "center" ? "Mitte" : "Rechts"}
@@ -2141,7 +2141,7 @@ function RightPanel({
                   <label className={lbl}>Zeichenabstand</label>
                   {((activeObj as any).charSpacing ?? 0) !== 0 && (
                     <button onClick={() => { (activeObj as any).set("charSpacing", 0); onUpdate(); refresh(); }}
-                      className="text-[9px] text-white/40 hover:text-white">Reset</button>
+                      className="text-[9px] text-foreground/40 hover:text-foreground">Reset</button>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -2157,7 +2157,7 @@ function RightPanel({
                   <label className={lbl}>Zeilenabstand</label>
                   {Math.round(((activeObj as any).lineHeight ?? 1.16) * 100) !== 116 && (
                     <button onClick={() => { (activeObj as any).set("lineHeight", 1.16); onUpdate(); refresh(); }}
-                      className="text-[9px] text-white/40 hover:text-white">Reset</button>
+                      className="text-[9px] text-foreground/40 hover:text-foreground">Reset</button>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -2168,7 +2168,7 @@ function RightPanel({
                     <input type="number" min={50} max={300} className={`${inp} w-12`}
                       value={Math.round(((activeObj as any).lineHeight ?? 1.16) * 100)}
                       onChange={(e) => { (activeObj as any).set("lineHeight", Number(e.target.value) / 100); onUpdate(); refresh(); }} />
-                    <span className="text-[9px] text-white/30">%</span>
+                    <span className="text-[9px] text-foreground/30">%</span>
                   </div>
                 </div>
               </PropSection>
@@ -2207,7 +2207,7 @@ function RightPanel({
               <label className="flex items-center gap-1.5 cursor-pointer mt-1">
                 <input type="checkbox" checked={lockRatio} onChange={() => setLockRatio(!lockRatio)}
                   className="accent-[#F6A11C] w-3 h-3" />
-                <span className="text-[10px] text-white/50">Seitenverhältnis beibehalten</span>
+                <span className="text-[10px] text-foreground/50">Seitenverhältnis beibehalten</span>
               </label>
             </PropSection>
 
@@ -2219,7 +2219,7 @@ function RightPanel({
                   onChange={(e) => setObjProp("angle", Number(e.target.value))} className="flex-1 accent-[#F6A11C] h-1" />
                 <input type="number" className={`${inp} w-12`} value={getObjProp("angle")}
                   onChange={(e) => setObjProp("angle", Number(e.target.value) || 0)} />
-                <span className="text-[10px] text-white/30">°</span>
+                <span className="text-[10px] text-foreground/30">°</span>
               </div>
 
               <label className={lbl}>Deckkraft</label>
@@ -2230,7 +2230,7 @@ function RightPanel({
                 <input type="number" min={0} max={100} className={`${inp} w-12`}
                   value={Math.round((activeObj.opacity ?? 1) * 100)}
                   onChange={(e) => { activeObj.set("opacity", Math.min(100, Math.max(0, Number(e.target.value) || 0)) / 100); onUpdate(); refresh(); }} />
-                <span className="text-[10px] text-white/30">%</span>
+                <span className="text-[10px] text-foreground/30">%</span>
               </div>
             </PropSection>
 
@@ -2243,7 +2243,7 @@ function RightPanel({
                   if (!((activeObj as any).strokeWidth > 0)) applyStroke(activeObj, e.target.value, 2);
                   canvas.renderAll(); onUpdate(); refresh();
                 }}
-                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+                className="w-full h-6 rounded cursor-pointer border border-border bg-transparent" />
 
               <label className={lbl}>Stärke: {getStrokeWidth(activeObj)}px</label>
               <input type="range" min={0} max={30} value={getStrokeWidth(activeObj)}
@@ -2276,7 +2276,7 @@ function RightPanel({
                   applyShadowLive(activeObj, e.target.value, shadowBlur, shadowOffsetX, shadowOffsetY);
                   canvas.renderAll(); onUpdate(); refresh();
                 }}
-                className="w-full h-6 rounded cursor-pointer border border-white/10 bg-transparent" />
+                className="w-full h-6 rounded cursor-pointer border border-border bg-transparent" />
 
               <label className={lbl}>Weichheit: {shadowBlur}px</label>
               <input type="range" min={0} max={50} value={shadowBlur}
@@ -2313,7 +2313,7 @@ function RightPanel({
             </PropSection>
           </>
         ) : (
-          <p className="text-[10px] text-white/30 text-center mt-4">Wähle ein Element aus</p>
+          <p className="text-[10px] text-foreground/30 text-center mt-4">Wähle ein Element aus</p>
         )}
       </div>
     </div>

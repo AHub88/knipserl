@@ -171,18 +171,18 @@ export function InquiryActions({
     }
   }
 
-  const inputClass = "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  const inputClass = "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
   const labelClass = "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
-    <div className="rounded-xl border border-[#F6A11C]/20 bg-card p-4 sm:p-5 space-y-5">
+    <div className="rounded-xl border border-primary/20 bg-card p-4 sm:p-5 space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-zinc-200">Anfrage bearbeiten</h2>
+        <h2 className="text-sm font-semibold text-foreground">Anfrage bearbeiten</h2>
         <span className={
           "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold border transition-colors " +
           (paymentMethod === "INVOICE"
             ? "bg-blue-500/10 text-blue-400 border-blue-500/25"
-            : "bg-zinc-500/10 text-zinc-400 border-zinc-500/25")
+            : "bg-zinc-500/10 text-muted-foreground border-zinc-500/25")
         }>
           {paymentMethod === "INVOICE" ? <IconBriefcase className="size-3" /> : <IconUser className="size-3" />}
           {companyLabel}
@@ -204,8 +204,8 @@ export function InquiryActions({
                 className={
                   "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-3 min-w-[90px] text-xs font-medium transition-colors " +
                   (active
-                    ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                    : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border bg-muted text-muted-foreground/70 hover:text-foreground/80")
                 }
               >
                 <ext.icon className="size-5" />
@@ -225,23 +225,23 @@ export function InquiryActions({
           <label className={labelClass}>Fotobox</label>
           <div className="relative">
             <input className={inputClass + " pr-10"} type="number" step="0.01" value={boxPrice} onChange={(e) => setBoxPrice(e.target.value)} />
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
           </div>
         </div>
         <div>
           <label className={labelClass}>Fahrt</label>
           <div className="relative">
             <input className={inputClass + " pr-10"} type="number" step="0.01" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} placeholder="–" />
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
           </div>
         </div>
         <div>
           <label className={labelClass}>Extras</label>
           <div className="relative">
-            <div className={inputClass + " flex items-center bg-transparent text-zinc-400 cursor-default pr-10"}>
+            <div className={inputClass + " flex items-center bg-transparent text-muted-foreground cursor-default pr-10"}>
               {calcExtras.toFixed(2)}
             </div>
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
           </div>
         </div>
       </div>
@@ -252,7 +252,7 @@ export function InquiryActions({
           <label className={labelClass}>Rabatt</label>
           <div className="relative">
             <input className={inputClass + " pr-10"} type="number" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0" />
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-zinc-500">EUR</span>
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground/70">EUR</span>
           </div>
         </div>
         <div>
@@ -265,20 +265,20 @@ export function InquiryActions({
       </div>
 
       {/* Live calculation */}
-      <div className="rounded-lg bg-[#1c1d20] border border-white/[0.06] p-3 space-y-1.5">
-        <div className="flex justify-between text-xs text-zinc-400">
+      <div className="rounded-lg bg-muted border border-border p-3 space-y-1.5">
+        <div className="flex justify-between text-xs text-muted-foreground">
           <span>Fotobox</span>
           <span className="tabular-nums">{calcBox.toFixed(2)} &euro;</span>
         </div>
         {calcTravel > 0 && (
-          <div className="flex justify-between text-xs text-zinc-400">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Fahrt{distanceKm ? ` (${distanceKm} km)` : ""}</span>
             <span className="tabular-nums">{calcTravel.toFixed(2)} &euro;</span>
           </div>
         )}
         {activeExtrasWithPrices.map((ext) => (
           ext.price > 0 && (
-            <div key={ext.label} className="flex justify-between text-xs text-zinc-400">
+            <div key={ext.label} className="flex justify-between text-xs text-muted-foreground">
               <span>{ext.label}</span>
               <span className="tabular-nums">{ext.price.toFixed(2)} &euro;</span>
             </div>
@@ -290,16 +290,16 @@ export function InquiryActions({
             <span className="tabular-nums">-{calcDiscountAmount.toFixed(2)} &euro;</span>
           </div>
         )}
-        <div className="border-t border-white/[0.10] pt-1.5 flex justify-between items-center">
-          <span className="text-sm font-semibold text-zinc-200">Gesamtpreis</span>
-          <span className="text-lg font-bold text-[#F6A11C] tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
+        <div className="border-t border-border pt-1.5 flex justify-between items-center">
+          <span className="text-sm font-semibold text-foreground">Gesamtpreis</span>
+          <span className="text-lg font-bold text-primary tabular-nums">{calcTotal.toFixed(2)} &euro;</span>
         </div>
 
         {/* Copy button */}
         <button
           type="button"
           onClick={copyCalc}
-          className="w-full flex items-center justify-center gap-1.5 mt-1.5 pt-1.5 border-t border-white/[0.06] text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 mt-1.5 pt-1.5 border-t border-border text-[11px] text-muted-foreground/70 hover:text-foreground/80 transition-colors"
         >
           <IconCopy className="size-3" />
           Kalkulation kopieren
@@ -317,7 +317,7 @@ export function InquiryActions({
               "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
               (paymentMethod === "INVOICE"
                 ? "border-purple-500/40 bg-purple-500/10 text-purple-400"
-                : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
+                : "border-border bg-muted text-muted-foreground/70 hover:text-foreground/80")
             }
           >
             <div className="flex items-center gap-2">
@@ -333,7 +333,7 @@ export function InquiryActions({
               "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors " +
               (paymentMethod === "CASH"
                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                : "border-white/[0.08] bg-[#1c1d20] text-zinc-500 hover:text-zinc-300")
+                : "border-border bg-muted text-muted-foreground/70 hover:text-foreground/80")
             }
           >
             <div className="flex items-center gap-2">

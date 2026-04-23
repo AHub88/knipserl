@@ -9,7 +9,7 @@ const statusConfig: Record<
 > = {
   DRAFT: {
     label: "Entwurf",
-    className: "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
+    className: "bg-accent/80 text-muted-foreground border border-zinc-500/30",
   },
   SENT: {
     label: "Versendet",
@@ -26,7 +26,7 @@ const statusConfig: Record<
   },
   CANCELLED: {
     label: "Storniert",
-    className: "bg-[#2a2b30]/80 text-zinc-400 border border-zinc-500/30",
+    className: "bg-accent/80 text-muted-foreground border border-zinc-500/30",
   },
 };
 
@@ -89,17 +89,17 @@ export default async function InvoiceDetailPage({
   return (
     <div className="space-y-8">
       {/* Hero Header */}
-      <div className="rounded-2xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-4 sm:p-6">
+      <div className="rounded-2xl border border-border bg-card shadow-black/5 dark:shadow-black/25 p-4 sm:p-6">
         {/* Top Row */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <Link
               href="/accounting/invoices"
-              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-zinc-300 transition-colors"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground/80 transition-colors"
             >
               &larr; Zur&uuml;ck
             </Link>
-            <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
+            <h1 className="text-xl font-bold tracking-tight text-foreground font-mono">
               {inv.invoiceNumber}
             </h1>
             <span
@@ -124,7 +124,7 @@ export default async function InvoiceDetailPage({
               href={`/api/accounting/pdf?type=invoice&id=${inv.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg border border-white/[0.10] bg-card px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-[#1c1d20] hover:text-zinc-100"
+              className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
             >
               PDF
             </a>
@@ -158,10 +158,10 @@ export default async function InvoiceDetailPage({
         </div>
 
         {/* Info Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-white/[0.10] pt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-border pt-6">
           <div className="space-y-3">
             <div>
-              <p className="text-lg font-semibold text-zinc-100">
+              <p className="text-lg font-semibold text-foreground">
                 {inv.order?.customerName ?? "–"}
               </p>
             </div>
@@ -181,14 +181,14 @@ export default async function InvoiceDetailPage({
 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-zinc-400">F&auml;llig am</span>
-              <span className="text-zinc-200 tabular-nums">
+              <span className="text-muted-foreground">F&auml;llig am</span>
+              <span className="text-foreground tabular-nums">
                 {formatDate(inv.dueDate)}
               </span>
             </div>
             {inv.paidAt && (
               <div className="flex justify-between">
-                <span className="text-zinc-400">Bezahlt am</span>
+                <span className="text-muted-foreground">Bezahlt am</span>
                 <span className="text-emerald-400 tabular-nums">
                   {formatDate(inv.paidAt)}
                 </span>
@@ -196,25 +196,25 @@ export default async function InvoiceDetailPage({
             )}
             {inv.order && (
               <div className="flex justify-between">
-                <span className="text-zinc-400">Auftrag</span>
+                <span className="text-muted-foreground">Auftrag</span>
                 <Link
                   href={`/orders/${inv.order.id}`}
-                  className="text-[#F6A11C] hover:text-[#F6A11C]/80 transition-colors"
+                  className="text-primary hover:text-primary/80 transition-colors"
                 >
                   #{inv.order.orderNumber}
                 </Link>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-zinc-400">Erstellt am</span>
-              <span className="text-zinc-200 tabular-nums">
+              <span className="text-muted-foreground">Erstellt am</span>
+              <span className="text-foreground tabular-nums">
                 {formatDate(inv.createdAt)}
               </span>
             </div>
             {inv.sentAt && (
               <div className="flex justify-between">
-                <span className="text-zinc-400">Gesendet am</span>
-                <span className="text-zinc-200 tabular-nums">
+                <span className="text-muted-foreground">Gesendet am</span>
+                <span className="text-foreground tabular-nums">
                   {formatDate(inv.sentAt)}
                 </span>
               </div>
@@ -224,14 +224,14 @@ export default async function InvoiceDetailPage({
       </div>
 
       {/* Line Items Table */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.10]">
-          <h2 className="text-sm font-semibold text-zinc-300">Positionen</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="text-sm font-semibold text-foreground/80">Positionen</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.10]">
+              <tr className="border-b border-border">
                 <th className="px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-12">
                   Pos
                 </th>
@@ -253,28 +253,28 @@ export default async function InvoiceDetailPage({
               {items.map((item, index) => (
                 <tr
                   key={index}
-                  className="border-b border-white/[0.10] last:border-b-0"
+                  className="border-b border-border last:border-b-0"
                 >
-                  <td className="px-6 py-3 text-zinc-400 tabular-nums">
+                  <td className="px-6 py-3 text-muted-foreground tabular-nums">
                     {index + 1}
                   </td>
                   <td className="px-6 py-3">
-                    <span className="text-zinc-200 font-medium">
+                    <span className="text-foreground font-medium">
                       {item.title}
                     </span>
                     {item.description && (
-                      <p className="text-xs text-zinc-500 mt-0.5">
+                      <p className="text-xs text-muted-foreground/70 mt-0.5">
                         {item.description}
                       </p>
                     )}
                   </td>
-                  <td className="px-6 py-3 text-right text-zinc-300 tabular-nums">
+                  <td className="px-6 py-3 text-right text-foreground/80 tabular-nums">
                     {item.quantity}
                   </td>
-                  <td className="px-6 py-3 text-right text-zinc-300 tabular-nums font-mono text-xs">
+                  <td className="px-6 py-3 text-right text-foreground/80 tabular-nums font-mono text-xs">
                     {formatEUR(item.unitPrice)}
                   </td>
-                  <td className="px-6 py-3 text-right text-zinc-200 tabular-nums font-mono text-xs font-medium">
+                  <td className="px-6 py-3 text-right text-foreground tabular-nums font-mono text-xs font-medium">
                     {formatEUR(item.total)}
                   </td>
                 </tr>
@@ -284,12 +284,12 @@ export default async function InvoiceDetailPage({
         </div>
 
         {/* Totals */}
-        <div className="border-t border-white/[0.10] px-6 py-4">
+        <div className="border-t border-border px-6 py-4">
           <div className="flex items-center justify-end gap-6">
-            <span className="text-sm font-medium text-zinc-400">
+            <span className="text-sm font-medium text-muted-foreground">
               Gesamtbetrag
             </span>
-            <span className="text-xl font-bold text-zinc-100 tabular-nums font-mono">
+            <span className="text-xl font-bold text-foreground tabular-nums font-mono">
               {formatEUR(inv.totalAmount)}
             </span>
           </div>
@@ -310,31 +310,31 @@ export default async function InvoiceDetailPage({
 
       {/* Bank info */}
       {(inv.company.bankIban || inv.company.bankBic || inv.company.bankName) && (
-        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/[0.10]">
-            <h2 className="text-sm font-semibold text-zinc-300">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-sm font-semibold text-foreground/80">
               Bankverbindung
             </h2>
           </div>
           <div className="px-6 py-4 space-y-2 text-sm">
             {inv.company.bankName && (
               <div className="flex justify-between">
-                <span className="text-zinc-400">Bank</span>
-                <span className="text-zinc-200">{inv.company.bankName}</span>
+                <span className="text-muted-foreground">Bank</span>
+                <span className="text-foreground">{inv.company.bankName}</span>
               </div>
             )}
             {inv.company.bankIban && (
               <div className="flex justify-between">
-                <span className="text-zinc-400">IBAN</span>
-                <span className="text-zinc-200 font-mono text-xs tracking-wider">
+                <span className="text-muted-foreground">IBAN</span>
+                <span className="text-foreground font-mono text-xs tracking-wider">
                   {inv.company.bankIban}
                 </span>
               </div>
             )}
             {inv.company.bankBic && (
               <div className="flex justify-between">
-                <span className="text-zinc-400">BIC</span>
-                <span className="text-zinc-200 font-mono text-xs tracking-wider">
+                <span className="text-muted-foreground">BIC</span>
+                <span className="text-foreground font-mono text-xs tracking-wider">
                   {inv.company.bankBic}
                 </span>
               </div>

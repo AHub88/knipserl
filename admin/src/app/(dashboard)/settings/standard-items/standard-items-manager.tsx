@@ -24,7 +24,7 @@ type StandardItem = {
 };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
 export function StandardItemsManager({
   initialItems,
@@ -164,7 +164,7 @@ export function StandardItemsManager({
       <div className="flex items-center justify-between">
         <Link
           href="/settings"
-          className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <IconArrowLeft className="size-4" />
           Einstellungen
@@ -173,7 +173,7 @@ export function StandardItemsManager({
           {inactiveItems.length > 0 && (
             <button
               onClick={() => setShowInactive((v) => !v)}
-              className="h-9 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="h-9 px-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {showInactive
                 ? "Inaktive ausblenden"
@@ -182,7 +182,7 @@ export function StandardItemsManager({
           )}
           <button
             onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors"
+            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors"
           >
             <IconPlus className="size-4" />
             Neue Position
@@ -191,13 +191,13 @@ export function StandardItemsManager({
       </div>
 
       {showAdd && (
-        <div className="rounded-xl border border-[#F6A11C]/30 bg-card p-4 sm:p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-zinc-200">
+        <div className="rounded-xl border border-primary/30 bg-card p-4 sm:p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
             Neue Position erstellen
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">
+              <label className="block text-xs text-muted-foreground mb-1">
                 Titel *
               </label>
               <input
@@ -210,7 +210,7 @@ export function StandardItemsManager({
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">
+              <label className="block text-xs text-muted-foreground mb-1">
                 Einzelpreis *
               </label>
               <input
@@ -225,7 +225,7 @@ export function StandardItemsManager({
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">
+              <label className="block text-xs text-muted-foreground mb-1">
                 Beschreibung
               </label>
               <input
@@ -238,7 +238,7 @@ export function StandardItemsManager({
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">
+              <label className="block text-xs text-muted-foreground mb-1">
                 Kategorie
               </label>
               <input
@@ -255,14 +255,14 @@ export function StandardItemsManager({
             <button
               onClick={handleAdd}
               disabled={saving}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               <IconCheck className="size-3.5" />
               Erstellen
             </button>
             <button
               onClick={() => setShowAdd(false)}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <IconX className="size-3.5" />
               Abbrechen
@@ -272,8 +272,8 @@ export function StandardItemsManager({
       )}
 
       {displayItems.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-8 text-center">
-          <p className="text-sm text-zinc-400">
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <p className="text-sm text-muted-foreground">
             Noch keine Standard-Positionen vorhanden.
           </p>
         </div>
@@ -284,15 +284,15 @@ export function StandardItemsManager({
               key={item.id}
               className={`rounded-xl border bg-card p-4 sm:p-5 space-y-3 ${
                 !item.active
-                  ? "border-white/[0.05] opacity-50"
-                  : "border-white/[0.10]"
+                  ? "border-border/50 opacity-50"
+                  : "border-border"
               }`}
             >
               {editingId === item.id ? (
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">
+                      <label className="block text-xs text-muted-foreground mb-1">
                         Titel
                       </label>
                       <input
@@ -304,7 +304,7 @@ export function StandardItemsManager({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">
+                      <label className="block text-xs text-muted-foreground mb-1">
                         Einzelpreis
                       </label>
                       <input
@@ -321,7 +321,7 @@ export function StandardItemsManager({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">
+                      <label className="block text-xs text-muted-foreground mb-1">
                         Beschreibung
                       </label>
                       <input
@@ -336,7 +336,7 @@ export function StandardItemsManager({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">
+                      <label className="block text-xs text-muted-foreground mb-1">
                         Kategorie
                       </label>
                       <input
@@ -355,14 +355,14 @@ export function StandardItemsManager({
                     <button
                       onClick={saveEdit}
                       disabled={saving}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
                     >
                       <IconCheck className="size-3.5" />
                       Speichern
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <IconX className="size-3.5" />
                       Abbrechen
@@ -373,23 +373,23 @@ export function StandardItemsManager({
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-zinc-200 truncate">
+                      <h3 className="text-sm font-semibold text-foreground truncate">
                         {item.title}
                       </h3>
                       {item.category && (
-                        <span className="shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400">
+                        <span className="shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground/[0.06] text-muted-foreground">
                           {item.category}
                         </span>
                       )}
                     </div>
                     {item.description && (
-                      <p className="text-xs text-zinc-400 mt-0.5 truncate">
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {item.description}
                       </p>
                     )}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-mono font-semibold text-zinc-200 tabular-nums">
+                    <span className="text-sm font-mono font-semibold text-foreground tabular-nums">
                       {formatPrice(item.unitPrice)} &euro;
                     </span>
                     <div className="flex items-center gap-1">
@@ -397,14 +397,14 @@ export function StandardItemsManager({
                         <>
                           <button
                             onClick={() => startEdit(item)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
+                            className="p-1.5 rounded-lg text-muted-foreground/70 hover:text-foreground hover:bg-foreground/[0.06] transition-colors"
                             title="Bearbeiten"
                           >
                             <IconPencil className="size-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-400/[0.06] transition-colors"
+                            className="p-1.5 rounded-lg text-muted-foreground/70 hover:text-red-400 hover:bg-red-400/[0.06] transition-colors"
                             title="Deaktivieren"
                           >
                             <IconTrash className="size-3.5" />
@@ -413,7 +413,7 @@ export function StandardItemsManager({
                       ) : (
                         <button
                           onClick={() => handleReactivate(item.id)}
-                          className="h-7 px-2.5 rounded-lg border border-white/[0.08] text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+                          className="h-7 px-2.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground transition-colors"
                         >
                           Reaktivieren
                         </button>

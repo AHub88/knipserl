@@ -21,7 +21,7 @@ export default async function GoogleReviewsPage() {
             <IconBrandGoogle className="size-5" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Google Bewertungen
             </h1>
             {map.googleReviewsTotalCount && (
@@ -35,9 +35,9 @@ export default async function GoogleReviewsPage() {
       </div>
 
       {reviews.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-10 text-center">
-          <IconBrandGoogle className="size-12 mx-auto text-zinc-600 mb-3" />
-          <p className="text-zinc-400">
+        <div className="rounded-xl border border-border bg-card p-10 text-center">
+          <IconBrandGoogle className="size-12 mx-auto text-muted-foreground/50 mb-3" />
+          <p className="text-muted-foreground">
             Noch keine Bewertungen importiert.
           </p>
           <p className="text-sm text-muted-foreground mt-1">
@@ -50,7 +50,7 @@ export default async function GoogleReviewsPage() {
             <div
               key={review.id}
               className={`rounded-xl border bg-card p-5 ${
-                review.active ? "border-white/[0.10]" : "border-red-500/20 opacity-50"
+                review.active ? "border-border" : "border-red-500/20 opacity-50"
               }`}
             >
               <div className="flex items-center gap-3 mb-3">
@@ -58,7 +58,7 @@ export default async function GoogleReviewsPage() {
                   {review.authorName.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-zinc-200 truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {review.authorName}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -75,13 +75,13 @@ export default async function GoogleReviewsPage() {
                   <IconStar
                     key={i}
                     className={`size-4 ${
-                      i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-zinc-600"
+                      i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/50"
                     }`}
                   />
                 ))}
               </div>
               {review.text && (
-                <p className="text-sm text-zinc-400 line-clamp-4">
+                <p className="text-sm text-muted-foreground line-clamp-4">
                   {review.text}
                 </p>
               )}

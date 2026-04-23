@@ -46,11 +46,11 @@ export default async function NewQuotePage() {
       {/* Page header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
             <IconFileInvoice className="size-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Neues Angebot
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -63,7 +63,7 @@ export default async function NewQuotePage() {
       {/* Back link */}
       <Link
         href="/accounting/quotes"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-zinc-300 transition-colors"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground/80 transition-colors"
       >
         &larr; Zur&uuml;ck zur &Uuml;bersicht
       </Link>

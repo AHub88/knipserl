@@ -27,7 +27,7 @@ type Template = {
 };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
 export function DesignTemplatesManager({
   initialTemplates,
@@ -138,7 +138,7 @@ export function DesignTemplatesManager({
       <div className="flex items-center justify-between">
         <Link
           href="/settings"
-          className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <IconArrowLeft className="size-4" />
           Einstellungen
@@ -147,7 +147,7 @@ export function DesignTemplatesManager({
           {inactiveItems.length > 0 && (
             <button
               onClick={() => setShowInactive((v) => !v)}
-              className="h-9 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="h-9 px-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {showInactive
                 ? "Inaktive ausblenden"
@@ -156,14 +156,14 @@ export function DesignTemplatesManager({
           )}
           <Link
             href="/settings/design-templates/editor"
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors"
+            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors"
           >
             <IconPlus className="size-4" />
             Neue Vorlage erstellen
           </Link>
           <button
             onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center gap-2 h-9 px-4 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <IconPlus className="size-4" />
             Schnell-Upload
@@ -172,13 +172,13 @@ export function DesignTemplatesManager({
       </div>
 
       {showAdd && (
-        <div className="rounded-xl border border-[#F6A11C]/30 bg-card p-4 sm:p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-zinc-200">
+        <div className="rounded-xl border border-primary/30 bg-card p-4 sm:p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
             Neue Vorlage erstellen
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+              <label className="block text-xs text-muted-foreground mb-1">Name *</label>
               <input
                 className={inputClass}
                 value={addForm.name}
@@ -189,7 +189,7 @@ export function DesignTemplatesManager({
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Format</label>
+              <label className="block text-xs text-muted-foreground mb-1">Format</label>
               <select
                 className={inputClass}
                 value={addForm.format}
@@ -202,7 +202,7 @@ export function DesignTemplatesManager({
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Kategorie</label>
+              <label className="block text-xs text-muted-foreground mb-1">Kategorie</label>
               <input
                 className={inputClass}
                 value={addForm.category}
@@ -213,14 +213,14 @@ export function DesignTemplatesManager({
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">
+              <label className="block text-xs text-muted-foreground mb-1">
                 Hintergrund-Bild (PNG)
               </label>
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
-                className="h-9 w-full text-sm text-zinc-400 file:mr-3 file:h-9 file:rounded-lg file:border-0 file:bg-white/[0.06] file:px-3 file:text-sm file:text-zinc-300 hover:file:bg-white/[0.10] transition-colors"
+                className="h-9 w-full text-sm text-muted-foreground file:mr-3 file:h-9 file:rounded-lg file:border-0 file:bg-foreground/[0.06] file:px-3 file:text-sm file:text-foreground/80 hover:file:bg-foreground/[0.10] transition-colors"
               />
             </div>
           </div>
@@ -228,14 +228,14 @@ export function DesignTemplatesManager({
             <button
               onClick={handleAdd}
               disabled={saving}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               <IconCheck className="size-3.5" />
               Erstellen
             </button>
             <button
               onClick={() => setShowAdd(false)}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/[0.08] text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <IconX className="size-3.5" />
               Abbrechen
@@ -245,8 +245,8 @@ export function DesignTemplatesManager({
       )}
 
       {displayItems.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card p-8 text-center">
-          <p className="text-sm text-zinc-400">
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <p className="text-sm text-muted-foreground">
             Noch keine Design-Vorlagen vorhanden.
           </p>
         </div>
@@ -257,8 +257,8 @@ export function DesignTemplatesManager({
               key={template.id}
               className={`group rounded-xl border bg-card overflow-hidden ${
                 !template.active
-                  ? "border-white/[0.05] opacity-50"
-                  : "border-white/[0.10]"
+                  ? "border-border/50 opacity-50"
+                  : "border-border"
               }`}
             >
               <div className="relative">
@@ -266,25 +266,25 @@ export function DesignTemplatesManager({
                   <img
                     src={template.thumbnail}
                     alt={template.name}
-                    className="w-full h-48 object-contain bg-white/[0.03]"
+                    className="w-full h-48 object-contain bg-foreground/[0.03]"
                   />
                 ) : (
-                  <div className="w-full h-48 bg-white/[0.03] flex items-center justify-center">
-                    <span className="text-xs text-zinc-500">Kein Bild</span>
+                  <div className="w-full h-48 bg-foreground/[0.03] flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground/70">Kein Bild</span>
                   </div>
                 )}
                 {/* Overlay: mobil immer sichtbar, desktop nur bei hover */}
                 <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/60 backdrop-blur-sm transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
                   <Link
                     href={`/settings/design-templates/editor?id=${template.id}`}
-                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/[0.10] transition-colors"
                   >
                     <IconEdit className="size-5" />
                     <span className="text-[10px] font-medium">Bearbeiten</span>
                   </Link>
                   <button
                     onClick={() => handleDuplicate(template.id)}
-                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/[0.10] transition-colors"
                   >
                     <IconCopy className="size-5" />
                     <span className="text-[10px] font-medium">Duplizieren</span>
@@ -293,7 +293,7 @@ export function DesignTemplatesManager({
                     onClick={() =>
                       handleToggleActive(template.id, template.active)
                     }
-                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/[0.10] transition-colors"
                   >
                     {template.active ? (
                       <IconToggleRight className="size-5 text-green-400" />
@@ -306,7 +306,7 @@ export function DesignTemplatesManager({
                   </button>
                   <button
                     onClick={() => handleDelete(template.id)}
-                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-zinc-300 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-foreground/80 hover:text-red-400 hover:bg-red-400/10 transition-colors"
                   >
                     <IconTrash className="size-5" />
                     <span className="text-[10px] font-medium">Löschen</span>
@@ -315,15 +315,15 @@ export function DesignTemplatesManager({
               </div>
               <div className="p-3 space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-zinc-200 truncate flex-1">
+                  <h3 className="text-sm font-semibold text-foreground truncate flex-1">
                     {template.name}
                   </h3>
-                  <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-zinc-400">
+                  <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded bg-foreground/[0.06] text-muted-foreground">
                     {template.format === "4x6" ? "10×15 cm" : "5×15 cm"}
                   </span>
                 </div>
                 {template.category && (
-                  <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400">
+                  <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground/[0.06] text-muted-foreground">
                     {template.category}
                   </span>
                 )}

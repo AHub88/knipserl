@@ -82,16 +82,16 @@ export function LocationDetailView({
       <div className="flex items-center gap-3">
         <Link
           href="/locations"
-          className="flex items-center justify-center size-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
         >
           <IconArrowLeft className="size-4" />
         </Link>
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C]">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
             <IconMapPin className="size-5" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-100">
+            <h1 className="text-xl font-bold text-foreground">
               {location.name}
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -105,19 +105,19 @@ export function LocationDetailView({
 
       {/* Info cards */}
       <div className="grid gap-4 sm:grid-cols-5">
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Entfernung
           </p>
-          <p className="text-2xl font-bold text-zinc-200 tabular-nums">
+          <p className="text-2xl font-bold text-foreground tabular-nums">
             {location.distanceKm != null ? `${location.distanceKm} km` : "–"}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Fahrtkosten Kunde
           </p>
-          <p className="text-2xl font-bold text-zinc-200 tabular-nums">
+          <p className="text-2xl font-bold text-foreground tabular-nums">
             {location.customerTravelCost != null ? `${location.customerTravelCost.toFixed(2)} €` : "–"}
           </p>
         </div>
@@ -129,15 +129,15 @@ export function LocationDetailView({
             {location.driverCompensation != null ? `${location.driverCompensation.toFixed(2)} €` : "–"}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Aufträge
           </p>
-          <p className="text-2xl font-bold text-[#F6A11C] tabular-nums">
+          <p className="text-2xl font-bold text-primary tabular-nums">
             {orders.length}
           </p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Umsatz
           </p>
@@ -157,7 +157,7 @@ export function LocationDetailView({
           <button
             onClick={handleSaveNotes}
             disabled={saving}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
           >
             <IconDeviceFloppy className="size-3.5" />
             {saving ? "..." : "Speichern"}
@@ -167,14 +167,14 @@ export function LocationDetailView({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="z.B. Anfahrt über Hintereingang, Aufbau ab 14 Uhr möglich, Ansprechpartner vor Ort..."
-          className="w-full h-28 rounded-lg border border-amber-500/20 bg-black/20 px-3 py-2 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors resize-none placeholder:text-zinc-400"
+          className="w-full h-28 rounded-lg border border-amber-500/20 bg-black/20 px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors resize-none placeholder:text-muted-foreground"
         />
       </div>
 
       {/* Aufträge */}
-      <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/[0.10] flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-300">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground/80">
             Aufträge an dieser Location
           </h2>
           <span className="text-xs text-muted-foreground">
@@ -189,7 +189,7 @@ export function LocationDetailView({
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+              <TableRow className="border-b border-border hover:bg-transparent">
                 <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   #
                 </TableHead>
@@ -218,30 +218,30 @@ export function LocationDetailView({
                 <TableRow
                   key={o.id}
                   onClick={() => router.push(`/orders/${o.id}`)}
-                  className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20]"
+                  className="cursor-pointer border-b border-border transition-colors hover:bg-muted"
                 >
-                  <TableCell className="font-mono text-xs text-zinc-400">
+                  <TableCell className="font-mono text-xs text-muted-foreground">
                     {o.orderNumber}
                   </TableCell>
-                  <TableCell className="text-zinc-400 text-sm tabular-nums">
+                  <TableCell className="text-muted-foreground text-sm tabular-nums">
                     {new Date(o.eventDate).toLocaleDateString("de-DE", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",
                     })}
                   </TableCell>
-                  <TableCell className="font-medium text-zinc-200 max-w-[180px]">
+                  <TableCell className="font-medium text-foreground max-w-[180px]">
                     <span className="block truncate">{o.customerName}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-400 text-sm">
+                  <TableCell className="text-muted-foreground text-sm">
                     {o.eventType}
                   </TableCell>
-                  <TableCell className="text-sm text-zinc-300">
+                  <TableCell className="text-sm text-foreground/80">
                     {o.driverInitials ?? o.driverName ?? (
-                      <span className="text-zinc-400 italic">–</span>
+                      <span className="text-muted-foreground italic">–</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
+                  <TableCell className="text-right font-mono text-sm text-foreground tabular-nums">
                     {o.price.toFixed(2)}&nbsp;&euro;
                   </TableCell>
                   <TableCell className="text-center">

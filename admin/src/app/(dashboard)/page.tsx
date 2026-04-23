@@ -292,8 +292,8 @@ export default async function DashboardPage() {
       icon: IconInbox,
       sparkline: [3, 5, 2, 8, 6, newInquiries],
       color: "#F6A11C",
-      bgClass: "bg-[#F6A11C]/10",
-      iconClass: "text-[#F6A11C]",
+      bgClass: "bg-primary/10",
+      iconClass: "text-primary",
     },
     {
       label: "Offene Auftr\u00e4ge",
@@ -328,7 +328,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Dashboard
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -339,7 +339,7 @@ export default async function DashboardPage() {
       {/* ── Standpunkt heute + KPIs side by side ── */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Standpunkt heute - takes 2 cols */}
-        <div className="lg:col-span-2 rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+        <div className="lg:col-span-2 rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-5">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
             Standpunkt heute ({ytdDateLabel})
           </h3>
@@ -358,10 +358,10 @@ export default async function DashboardPage() {
                     const change = prev && prev.revenue > 0 ? Math.round(((y.revenue - prev.revenue) / prev.revenue) * 100) : null;
                     return (
                       <div key={y.year} className="flex items-center gap-3">
-                        <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>{y.year}</span>
-                        <div className="flex-1 h-8 bg-[#1c1d20] rounded-md overflow-hidden">
-                          <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-[#F6A11C]/30" : "bg-[#222326]")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
-                            <span className={"text-[11px] font-mono font-bold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-[#F6A11C]" : "text-zinc-300")}>{y.revenue.toLocaleString("de-DE", { minimumFractionDigits: 0 })}&nbsp;&euro;</span>
+                        <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-primary" : "text-muted-foreground")}>{y.year}</span>
+                        <div className="flex-1 h-8 bg-muted rounded-md overflow-hidden">
+                          <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-primary/30" : "bg-accent")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
+                            <span className={"text-[11px] font-mono font-bold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-primary" : "text-foreground/80")}>{y.revenue.toLocaleString("de-DE", { minimumFractionDigits: 0 })}&nbsp;&euro;</span>
                           </div>
                         </div>
                         <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-muted-foreground" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "\u2013" : `${change >= 0 ? "+" : ""}${change}%`}</span>
@@ -382,10 +382,10 @@ export default async function DashboardPage() {
                     const change = prev && prev.count > 0 ? Math.round(((y.count - prev.count) / prev.count) * 100) : null;
                     return (
                       <div key={y.year} className="flex items-center gap-3">
-                        <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-[#F6A11C]" : "text-muted-foreground")}>{y.year}</span>
-                        <div className="flex-1 h-8 bg-[#1c1d20] rounded-md overflow-hidden">
-                          <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-[#222326]")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
-                            <span className={"text-[11px] font-mono font-bold tabular-nums " + (isCurrentYear ? "text-blue-400" : "text-zinc-300")}>{y.count}</span>
+                        <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-primary" : "text-muted-foreground")}>{y.year}</span>
+                        <div className="flex-1 h-8 bg-muted rounded-md overflow-hidden">
+                          <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-accent")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
+                            <span className={"text-[11px] font-mono font-bold tabular-nums " + (isCurrentYear ? "text-blue-400" : "text-foreground/80")}>{y.count}</span>
                           </div>
                         </div>
                         <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-muted-foreground" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "\u2013" : `${change >= 0 ? "+" : ""}${change}%`}</span>
@@ -405,13 +405,13 @@ export default async function DashboardPage() {
             return (
               <div
                 key={kpi.label}
-                className="flex items-center gap-3 rounded-xl border border-white/10 bg-card p-3.5"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5"
               >
                 <div className={`flex items-center justify-center rounded-lg p-2 ${kpi.bgClass}`}>
                   <Icon className={`h-4 w-4 ${kpi.iconClass}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xl font-bold tracking-tight text-zinc-100 tabular-nums leading-tight">
+                  <p className="text-xl font-bold tracking-tight text-foreground tabular-nums leading-tight">
                     {kpi.value}
                   </p>
                   <p className="text-[11px] text-muted-foreground truncate">
@@ -439,12 +439,12 @@ export default async function DashboardPage() {
       {/* (old KPI grid + yearly charts replaced by above) */}
 
       {/* Monthly Comparison: This Year vs Last Year */}
-      <div className="rounded-xl border border-white/[0.10] bg-card shadow-lg shadow-black/30 p-5">
+      <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Monatsvergleich Aufträge</h3>
           <div className="flex items-center gap-4 text-[10px]">
-            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#F6A11C]" />{now.getFullYear()}</span>
-            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#3a3b40]" />{now.getFullYear() - 1}</span>
+            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-primary" />{now.getFullYear()}</span>
+            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-accent" />{now.getFullYear() - 1}</span>
           </div>
         </div>
         <div className="flex items-end gap-1 sm:gap-2 h-44">
@@ -458,25 +458,25 @@ export default async function DashboardPage() {
                   {/* Last year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
                     {m.lastYear > 0 && (
-                      <span className="text-[9px] font-mono text-zinc-400 mb-0.5 hidden sm:block">{m.lastYear}</span>
+                      <span className="text-[9px] font-mono text-muted-foreground mb-0.5 hidden sm:block">{m.lastYear}</span>
                     )}
                     <div
-                      className="w-full bg-[#222326] rounded-t-sm"
+                      className="w-full bg-accent rounded-t-sm"
                       style={{ height: `${(m.lastYear / maxVal) * 100}%`, minHeight: m.lastYear > 0 ? "4px" : "0" }}
                     />
                   </div>
                   {/* This year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
                     {m.thisYear > 0 && (
-                      <span className={"text-[9px] font-mono mb-0.5 hidden sm:block " + (isCurrentMonth ? "text-[#F6A11C]" : "text-muted-foreground")}>{m.thisYear}</span>
+                      <span className={"text-[9px] font-mono mb-0.5 hidden sm:block " + (isCurrentMonth ? "text-primary" : "text-muted-foreground")}>{m.thisYear}</span>
                     )}
                     <div
-                      className={"w-full rounded-t-sm " + (isFuture ? "bg-[#F6A11C]/15" : isCurrentMonth ? "bg-[#F6A11C]" : "bg-[#F6A11C]/50")}
+                      className={"w-full rounded-t-sm " + (isFuture ? "bg-primary/15" : isCurrentMonth ? "bg-primary" : "bg-primary/50")}
                       style={{ height: `${(m.thisYear / maxVal) * 100}%`, minHeight: m.thisYear > 0 ? "4px" : "0" }}
                     />
                   </div>
                 </div>
-                <span className={"text-[10px] " + (isCurrentMonth ? "text-[#F6A11C] font-semibold" : "text-zinc-400")}>{m.month}</span>
+                <span className={"text-[10px] " + (isCurrentMonth ? "text-primary font-semibold" : "text-muted-foreground")}>{m.month}</span>
               </div>
             );
           })}
@@ -494,9 +494,9 @@ export default async function DashboardPage() {
       </div>
 
       {/* Upcoming Orders */}
-      <Card className="border-white/10 bg-card">
+      <Card className="border-border bg-card">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-zinc-100">
+          <CardTitle className="text-base font-semibold text-foreground">
             N&auml;chste Auftr&auml;ge
           </CardTitle>
           <p className="text-sm text-muted-foreground">

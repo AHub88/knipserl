@@ -73,9 +73,9 @@ export function MonthlyOrdersChart({
   data = defaultMonthlyData,
 }: MonthlyOrdersChartProps) {
   return (
-    <Card className="border-white/10 bg-[#1c1d20]">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold text-zinc-100">
+        <CardTitle className="text-base font-semibold text-foreground">
           Auftr&auml;ge pro Monat
         </CardTitle>
       </CardHeader>
@@ -88,41 +88,41 @@ export function MonthlyOrdersChart({
             >
               <defs>
                 <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#F6A11C" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#F6A11C" stopOpacity={0} />
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="rgba(255,255,255,0.06)"
+                stroke="hsl(var(--border))"
                 vertical={false}
               />
               <XAxis
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#a1a1aa", fontSize: 12 }}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#a1a1aa", fontSize: 12 }}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
                 allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#18181b",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  backgroundColor: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
                   borderRadius: "8px",
-                  color: "#fafafa",
+                  color: "hsl(var(--foreground))",
                   fontSize: 13,
                 }}
-                labelStyle={{ color: "#a1a1aa" }}
+                labelStyle={{ color: "hsl(var(--muted-foreground))" }}
               />
               <Area
                 type="monotone"
                 dataKey="orders"
-                stroke="#F6A11C"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2.5}
                 fill="url(#areaGrad)"
                 name="Aufträge"
@@ -160,9 +160,9 @@ export function EventTypesPieChart({
   data = defaultEventData,
 }: EventTypesPieChartProps) {
   return (
-    <Card className="border-white/10 bg-[#1c1d20]">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold text-zinc-100">
+        <CardTitle className="text-base font-semibold text-foreground">
           Eventarten
         </CardTitle>
       </CardHeader>
@@ -209,8 +209,8 @@ export function EventTypesPieChart({
                     backgroundColor: PIE_COLORS[idx % PIE_COLORS.length],
                   }}
                 />
-                <span className="text-zinc-400">{entry.name}</span>
-                <span className="ml-auto font-medium text-zinc-200 tabular-nums">
+                <span className="text-muted-foreground">{entry.name}</span>
+                <span className="ml-auto font-medium text-foreground tabular-nums">
                   {entry.value}
                 </span>
               </div>
@@ -275,10 +275,10 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
           <div
             key={order.id}
             onClick={() => router.push(`/orders/${order.id}`)}
-            className="group flex cursor-pointer items-center justify-between rounded-lg border border-white/10 bg-[#1c1d20] p-4 transition-all hover:border-[#F6A11C]/20 hover:bg-[#F6A11C]/[0.04]"
+            className="group flex cursor-pointer items-center justify-between rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/20 hover:bg-primary/[0.04]"
           >
             <div className="min-w-0 flex-1 space-y-1">
-              <p className="font-medium text-zinc-100 group-hover:text-[#F6A11C] transition-colors">
+              <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                 {order.customerName}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -292,11 +292,11 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
             </div>
             <div className="flex items-center gap-3 pl-4">
               {order.driverName ? (
-                <span className="text-sm text-zinc-400">
+                <span className="text-sm text-muted-foreground">
                   {order.driverName}
                 </span>
               ) : (
-                <span className="text-sm text-zinc-400 italic">
+                <span className="text-sm text-muted-foreground italic">
                   Kein Fahrer
                 </span>
               )}

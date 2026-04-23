@@ -108,7 +108,7 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+        <TableRow className="border-b border-border hover:bg-transparent">
           <TableHead className={thClass}>Lieferant</TableHead>
           <TableHead className={thClass}>Rechnungsnr</TableHead>
           <TableHead className={`${thClass} text-right`}>Betrag</TableHead>
@@ -125,18 +125,18 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
           return (
             <TableRow
               key={inv.id}
-              className="cursor-pointer border-b border-white/[0.10] transition-colors hover:bg-[#1c1d20] group"
+              className="cursor-pointer border-b border-border transition-colors hover:bg-muted group"
             >
-              <TableCell className="font-medium text-zinc-200">
+              <TableCell className="font-medium text-foreground">
                 {inv.vendor}
               </TableCell>
-              <TableCell className="font-mono text-xs text-zinc-400">
+              <TableCell className="font-mono text-xs text-muted-foreground">
                 {inv.invoiceNumber ?? "\u2014"}
               </TableCell>
-              <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
+              <TableCell className="text-right font-mono text-sm text-foreground tabular-nums">
                 {formatAmount(inv.amount)}&nbsp;&euro;
               </TableCell>
-              <TableCell className="text-sm text-zinc-400">
+              <TableCell className="text-sm text-muted-foreground">
                 {inv.category
                   ? categoryLabels[inv.category] ?? inv.category
                   : "\u2014"}
@@ -166,7 +166,7 @@ export function IncomingTable({ invoices }: { invoices: IncomingRow[] }) {
                   </span>
                 )}
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm tabular-nums">
+              <TableCell className="text-muted-foreground text-sm tabular-nums">
                 {inv.dueDate ? formatDate(inv.dueDate) : "\u2014"}
               </TableCell>
             </TableRow>

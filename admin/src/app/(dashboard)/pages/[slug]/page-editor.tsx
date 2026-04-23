@@ -52,7 +52,7 @@ type Slot = {
 };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors";
+  "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
 function SortableImpressionCard({
   asset,
@@ -76,7 +76,7 @@ function SortableImpressionCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#F6A11C]/40"
+      className="relative aspect-[4/3] rounded-lg overflow-hidden border border-primary/40"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={asset.thumbUrl} alt={asset.alt} className="w-full h-full object-cover" draggable={false} />
@@ -84,18 +84,18 @@ function SortableImpressionCard({
         type="button"
         {...attributes}
         {...listeners}
-        className="absolute top-1.5 left-1.5 p-1 rounded-md bg-black/70 text-zinc-300 hover:text-white cursor-grab active:cursor-grabbing touch-none"
+        className="absolute top-1.5 left-1.5 p-1 rounded-md bg-black/70 text-foreground/80 hover:text-foreground cursor-grab active:cursor-grabbing touch-none"
         aria-label="Ziehen"
       >
         <IconGripVertical className="size-3.5" />
       </button>
-      <div className="absolute top-1.5 left-10 px-1.5 py-0.5 rounded-md bg-black/70 text-[10px] text-zinc-300 pointer-events-none">
+      <div className="absolute top-1.5 left-10 px-1.5 py-0.5 rounded-md bg-black/70 text-[10px] text-foreground/80 pointer-events-none">
         #{idx + 1}
       </div>
       <button
         type="button"
         onClick={() => onRemove(asset.id)}
-        className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/70 text-zinc-300 hover:text-red-400"
+        className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/70 text-foreground/80 hover:text-red-400"
         title="Entfernen"
       >
         <IconMinus className="size-3.5" />
@@ -136,18 +136,18 @@ function MediaPicker({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[1100px] max-h-[90vh] rounded-2xl bg-[#1a1b1e] border border-white/[0.10] flex flex-col overflow-hidden"
+        className="w-full max-w-[1100px] max-h-[90vh] rounded-2xl bg-card border border-border flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/[0.08]">
-          <h2 className="text-base font-semibold text-zinc-100">Bild aus Medienbibliothek wählen</h2>
-          <button onClick={onClose} className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06]">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-base font-semibold text-foreground">Bild aus Medienbibliothek wählen</h2>
+          <button onClick={onClose} className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06]">
             <IconX className="size-4" />
           </button>
         </div>
-        <div className="p-4 border-b border-white/[0.08]">
+        <div className="p-4 border-b border-border">
           <div className="relative">
-            <IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-zinc-500" />
+            <IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/70" />
             <input
               className={inputClass + " pl-8"}
               placeholder="Nach Alt-Text oder Dateiname suchen..."
@@ -159,7 +159,7 @@ function MediaPicker({
         </div>
         <div className="flex-1 overflow-y-auto p-4">
           {filtered.length === 0 ? (
-            <div className="py-12 text-center text-sm text-zinc-500">
+            <div className="py-12 text-center text-sm text-muted-foreground/70">
               {assets.length === 0
                 ? "Medienbibliothek ist noch leer."
                 : "Keine Treffer."}
@@ -174,20 +174,20 @@ function MediaPicker({
                     onPick(a.id);
                     onClose();
                   }}
-                  className={`relative aspect-[4/3] rounded-lg overflow-hidden border border-white/[0.08] hover:border-[#F6A11C]/60 transition-colors group ${
+                  className={`relative aspect-[4/3] rounded-lg overflow-hidden border border-border hover:border-primary/60 transition-colors group ${
                     !a.active ? "opacity-50" : ""
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={a.thumbUrl} alt={a.alt} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-black text-xs font-semibold">
                       <IconPlus className="size-3.5" />
                       Auswählen
                     </span>
                   </div>
                   {a.alt && (
-                    <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-black/70 text-[10px] text-zinc-200 truncate">
+                    <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-black/70 text-[10px] text-foreground truncate">
                       {a.alt}
                     </div>
                   )}
@@ -336,24 +336,24 @@ export function PageEditor({
       {/* Bild-Slots */}
       {slots.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">
             Bilder auf der Seite
           </h2>
           <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {slots.map((slot) => (
-              <div key={slot.key} className="rounded-xl border border-white/[0.10] bg-card p-3 space-y-2">
+              <div key={slot.key} className="rounded-xl border border-border bg-card p-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-zinc-100">{slot.label}</h3>
+                    <h3 className="text-sm font-semibold text-foreground">{slot.label}</h3>
                     {slot.description && (
-                      <p className="text-[11px] text-zinc-500">{slot.description}</p>
+                      <p className="text-[11px] text-muted-foreground/70">{slot.description}</p>
                     )}
                   </div>
-                  <code className="text-[10px] text-zinc-600">{slot.key}</code>
+                  <code className="text-[10px] text-muted-foreground/50">{slot.key}</code>
                 </div>
 
                 <div
-                  className="relative rounded-lg bg-black/40 border border-white/[0.06] overflow-hidden"
+                  className="relative rounded-lg bg-black/40 border border-border overflow-hidden"
                   style={{ aspectRatio: slot.aspectRatio ?? "16/9" }}
                 >
                   {slot.assetThumb ? (
@@ -362,14 +362,14 @@ export function PageEditor({
                       <img src={slot.assetThumb} alt={slot.assetAlt} className="w-full h-full object-cover" />
                       <button
                         onClick={() => handleClearSlot(slot.key)}
-                        className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/70 text-zinc-300 hover:text-red-400"
+                        className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/70 text-foreground/80 hover:text-red-400"
                         title="Zurück auf Fallback"
                       >
                         <IconTrash className="size-3.5" />
                       </button>
                     </>
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-xs gap-1">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/70 text-xs gap-1">
                       <IconPhoto className="size-6" />
                       <span>Fallback aus Code</span>
                     </div>
@@ -378,7 +378,7 @@ export function PageEditor({
 
                 <button
                   onClick={() => setPickerTarget({ kind: "slot", slotKey: slot.key })}
-                  className="w-full h-8 rounded-md bg-white/[0.06] text-xs text-zinc-300 hover:bg-white/[0.10] transition-colors"
+                  className="w-full h-8 rounded-md bg-foreground/[0.06] text-xs text-foreground/80 hover:bg-foreground/[0.10] transition-colors"
                 >
                   {slot.assetThumb ? "Bild austauschen" : "Bild wählen"}
                 </button>
@@ -402,8 +402,8 @@ export function PageEditor({
 
       {/* Hinweis, wenn diese Seite KEINE eigene Impressionen-Sektion hat (z.B. Stadt-Pages, die zentral ziehen) */}
       {!hasImpressionSection && (
-        <section className="rounded-xl border border-white/[0.08] bg-card/50 p-4 text-sm text-zinc-400">
-          <strong className="text-zinc-300">Impressionen-Sektion:</strong>{" "}
+        <section className="rounded-xl border border-border bg-card/50 p-4 text-sm text-muted-foreground">
+          <strong className="text-foreground/80">Impressionen-Sektion:</strong>{" "}
           Diese Seite zeigt automatisch die Bilder von <em>Impressionen (Hauptseite)</em>.
           Änderungen dort wirken sich auch hier aus.
         </section>
@@ -414,22 +414,22 @@ export function PageEditor({
         <section className="space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+              <h2 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">
                 Impressionen-Sektion
               </h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-muted-foreground/70 mt-0.5">
                 Bilder aus der Medienbibliothek für die Galerie auf dieser Seite.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-muted-foreground/70">
                 {impressionIds.length} Bild{impressionIds.length === 1 ? "" : "er"}
-                {impressionsDirty && <span className="ml-1.5 text-[#F6A11C]">· ungespeichert</span>}
+                {impressionsDirty && <span className="ml-1.5 text-primary">· ungespeichert</span>}
               </span>
               <button
                 onClick={saveImpressions}
                 disabled={!impressionsDirty || savingImpressions}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#F6A11C] text-black text-xs font-semibold hover:bg-[#F6A11C]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 <IconDeviceFloppy className="size-3.5" />
                 {savingImpressions ? "Speichere..." : "Speichern"}
@@ -448,14 +448,14 @@ export function PageEditor({
               </SortableContext>
             </DndContext>
           ) : (
-            <div className="rounded-xl border border-dashed border-white/[0.10] bg-card/50 p-6 text-center">
-              <p className="text-sm text-zinc-500">Noch keine Bilder in der Impressionen-Sektion.</p>
+            <div className="rounded-xl border border-dashed border-border bg-card/50 p-6 text-center">
+              <p className="text-sm text-muted-foreground/70">Noch keine Bilder in der Impressionen-Sektion.</p>
             </div>
           )}
 
           <button
             onClick={() => setPickerTarget({ kind: "impression" })}
-            className="w-full sm:w-auto flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg border border-white/[0.10] bg-card text-sm text-zinc-300 hover:text-zinc-100 hover:bg-white/[0.06] transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg border border-border bg-card text-sm text-foreground/80 hover:text-foreground hover:bg-foreground/[0.06] transition-colors"
           >
             <IconPlus className="size-4" />
             Bild aus Medienbibliothek hinzufügen

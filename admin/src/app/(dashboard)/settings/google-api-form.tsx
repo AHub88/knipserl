@@ -53,10 +53,10 @@ export function GoogleApiForm({
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-card p-5">
+    <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex items-center gap-3 mb-4">
         <IconBrandGoogle className="size-5 text-[#4285F4]" />
-        <h2 className="text-sm font-semibold text-zinc-300">
+        <h2 className="text-sm font-semibold text-foreground/80">
           Google API
         </h2>
       </div>
@@ -72,12 +72,12 @@ export function GoogleApiForm({
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               placeholder="AIza..."
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-100 pr-10"
+              className="w-full rounded-lg border border-border bg-foreground/[0.05] px-3 py-2 text-sm text-foreground pr-10"
             />
             <button
               type="button"
               onClick={() => setShowKey(!showKey)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-foreground/80"
             >
               {showKey ? <IconEyeOff className="size-4" /> : <IconEye className="size-4" />}
             </button>
@@ -96,17 +96,17 @@ export function GoogleApiForm({
             value={placeId}
             onChange={(e) => setPlaceId(e.target.value)}
             placeholder="ChIJ..."
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-100"
+            className="w-full rounded-lg border border-border bg-foreground/[0.05] px-3 py-2 text-sm text-foreground"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
             F&uuml;r den automatischen Import von Google Bewertungen (Places API: max. 5 Reviews)
           </p>
         </div>
 
-        <hr className="border-white/10" />
+        <hr className="border-border" />
 
-        <p className="text-xs text-zinc-400">
-          <strong className="text-zinc-300">Google Business Profile</strong> — F&uuml;r alle Bewertungen (nicht nur 5) wird eine OAuth-Verbindung ben&ouml;tigt.
+        <p className="text-xs text-muted-foreground">
+          <strong className="text-foreground/80">Google Business Profile</strong> — F&uuml;r alle Bewertungen (nicht nur 5) wird eine OAuth-Verbindung ben&ouml;tigt.
         </p>
 
         <div>
@@ -118,7 +118,7 @@ export function GoogleApiForm({
             value={oauthClientId}
             onChange={(e) => setOAuthClientId(e.target.value)}
             placeholder="123456789.apps.googleusercontent.com"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-100"
+            className="w-full rounded-lg border border-border bg-foreground/[0.05] px-3 py-2 text-sm text-foreground"
           />
         </div>
 
@@ -132,12 +132,12 @@ export function GoogleApiForm({
               value={oauthClientSecret}
               onChange={(e) => setOAuthClientSecret(e.target.value)}
               placeholder="GOCSPX-..."
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-100 pr-10"
+              className="w-full rounded-lg border border-border bg-foreground/[0.05] px-3 py-2 text-sm text-foreground pr-10"
             />
             <button
               type="button"
               onClick={() => setShowSecret(!showSecret)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-foreground/80"
             >
               {showSecret ? <IconEyeOff className="size-4" /> : <IconEye className="size-4" />}
             </button>
@@ -148,7 +148,7 @@ export function GoogleApiForm({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#F6A11C] px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-[#F6A11C]/90 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-primary/90 disabled:opacity-50"
           >
             <IconDeviceFloppy className="size-4" />
             {saving ? "Speichert..." : "Speichern"}

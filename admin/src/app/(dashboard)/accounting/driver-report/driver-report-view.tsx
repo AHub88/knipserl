@@ -110,7 +110,7 @@ export function DriverReportView({
           <IconTruck className="size-5" />
         </div>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Fahrer-Vergütungen
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
@@ -122,14 +122,14 @@ export function DriverReportView({
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Month selector */}
-        <div className="flex items-center gap-1 rounded-xl border border-white/[0.10] bg-card">
-          <button onClick={prevMonth} className="p-2 text-zinc-400 hover:text-zinc-200 transition-colors">
+        <div className="flex items-center gap-1 rounded-xl border border-border bg-card">
+          <button onClick={prevMonth} className="p-2 text-muted-foreground hover:text-foreground transition-colors">
             <IconChevronLeft className="size-4" />
           </button>
-          <span className="px-3 py-1.5 text-sm font-semibold text-zinc-200 min-w-[140px] text-center">
+          <span className="px-3 py-1.5 text-sm font-semibold text-foreground min-w-[140px] text-center">
             {MONTHS[month]} {year}
           </span>
-          <button onClick={nextMonth} className="p-2 text-zinc-400 hover:text-zinc-200 transition-colors">
+          <button onClick={nextMonth} className="p-2 text-muted-foreground hover:text-foreground transition-colors">
             <IconChevronRight className="size-4" />
           </button>
         </div>
@@ -138,7 +138,7 @@ export function DriverReportView({
         <select
           value={selectedDriverId}
           onChange={(e) => setSelectedDriverId(e.target.value)}
-          className="h-9 rounded-lg border border-white/[0.08] bg-[#1c1d20] px-3 text-sm text-zinc-200 outline-none cursor-pointer"
+          className="h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none cursor-pointer"
         >
           <option value="all">Alle Fahrer</option>
           {drivers.map((d) => (
@@ -147,7 +147,7 @@ export function DriverReportView({
         </select>
 
         {/* Payment filter */}
-        <div className="flex rounded-lg border border-white/[0.08] overflow-hidden">
+        <div className="flex rounded-lg border border-border overflow-hidden">
           {[
             { key: "INVOICE", label: "Rechnung" },
             { key: "CASH", label: "Bar" },
@@ -159,8 +159,8 @@ export function DriverReportView({
               className={
                 "px-3 py-1.5 text-xs font-medium transition-colors " +
                 (paymentFilter === opt.key
-                  ? "bg-[#F6A11C]/15 text-[#F6A11C]"
-                  : "text-zinc-400 hover:text-zinc-200")
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground")
               }
             >
               {opt.label}
@@ -171,7 +171,7 @@ export function DriverReportView({
         {/* Copy button */}
         <button
           onClick={copyReport}
-          className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] bg-card text-zinc-400 text-xs font-medium hover:text-zinc-200 transition-colors ml-auto"
+          className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-muted-foreground text-xs font-medium hover:text-foreground transition-colors ml-auto"
         >
           <IconCopy className="size-3.5" />
           Kopieren
@@ -180,39 +180,39 @@ export function DriverReportView({
 
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="rounded-xl border border-white/[0.10] bg-card px-4 py-3">
-          <p className="text-2xl font-bold text-zinc-100 tabular-nums">{filtered.length}</p>
-          <p className="text-[11px] text-zinc-500">Fahrten</p>
+        <div className="rounded-xl border border-border bg-card px-4 py-3">
+          <p className="text-2xl font-bold text-foreground tabular-nums">{filtered.length}</p>
+          <p className="text-[11px] text-muted-foreground/70">Fahrten</p>
         </div>
-        <div className="rounded-xl border border-white/[0.10] bg-card px-4 py-3">
-          <p className="text-2xl font-bold text-zinc-100 tabular-nums">{driverGroups.length}</p>
-          <p className="text-[11px] text-zinc-500">Fahrer</p>
+        <div className="rounded-xl border border-border bg-card px-4 py-3">
+          <p className="text-2xl font-bold text-foreground tabular-nums">{driverGroups.length}</p>
+          <p className="text-[11px] text-muted-foreground/70">Fahrer</p>
         </div>
         <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 col-span-2 sm:col-span-1">
           <p className="text-2xl font-bold text-emerald-400 tabular-nums">{grandTotal.toFixed(2)} €</p>
-          <p className="text-[11px] text-zinc-500">Gesamtvergütung</p>
+          <p className="text-[11px] text-muted-foreground/70">Gesamtvergütung</p>
         </div>
       </div>
 
       {/* Driver groups */}
       {driverGroups.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
-          <IconTruck className="size-10 mb-3 text-zinc-400" />
+        <div className="rounded-xl border border-border bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
+          <IconTruck className="size-10 mb-3 text-muted-foreground" />
           <p className="text-sm">Keine Fahrten in diesem Monat</p>
         </div>
       ) : (
         <div className="space-y-4">
           {driverGroups.map((group) => (
-            <div key={group.driver.id} className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+            <div key={group.driver.id} className="rounded-xl border border-border bg-card overflow-hidden">
               {/* Driver header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-[#1c1d20]">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center justify-center size-8 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold">
                     {group.driver.initials || group.driver.name.charAt(0)}
                   </span>
                   <div>
-                    <span className="text-sm font-semibold text-zinc-200">{group.driver.name}</span>
-                    <span className="text-xs text-zinc-500 ml-2">{group.orders.length} Fahrten</span>
+                    <span className="text-sm font-semibold text-foreground">{group.driver.name}</span>
+                    <span className="text-xs text-muted-foreground/70 ml-2">{group.orders.length} Fahrten</span>
                   </div>
                 </div>
                 <span className="text-base font-bold text-emerald-400 tabular-nums">
@@ -221,25 +221,25 @@ export function DriverReportView({
               </div>
 
               {/* Orders */}
-              <div className="divide-y divide-white/[0.06]">
+              <div className="divide-y divide-border">
                 {group.orders.map((order) => (
                   <Link
                     key={order.id}
                     href={`/orders/${order.id}`}
-                    className="flex items-center justify-between px-4 py-2.5 hover:bg-[#1c1d20] transition-colors group"
+                    className="flex items-center justify-between px-4 py-2.5 hover:bg-muted transition-colors group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-xs font-mono text-zinc-500 shrink-0">#{order.orderNumber}</span>
-                      <span className="text-xs text-zinc-500 tabular-nums shrink-0">{fmtDate(order.eventDate)}</span>
-                      <span className="text-sm text-zinc-300 truncate">{order.customerName}</span>
-                      <span className="text-xs text-zinc-500 truncate hidden sm:inline">{order.locationName}</span>
+                      <span className="text-xs font-mono text-muted-foreground/70 shrink-0">#{order.orderNumber}</span>
+                      <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">{fmtDate(order.eventDate)}</span>
+                      <span className="text-sm text-foreground/80 truncate">{order.customerName}</span>
+                      <span className="text-xs text-muted-foreground/70 truncate hidden sm:inline">{order.locationName}</span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className={"text-[10px] rounded px-1.5 py-0.5 font-semibold " + (order.paymentMethod === "INVOICE" ? "bg-purple-500/15 text-purple-400" : "bg-emerald-500/15 text-emerald-400")}>
                         {order.paymentMethod === "INVOICE" ? "RE" : "BAR"}
                       </span>
-                      <span className="text-sm font-mono text-zinc-300 tabular-nums">{Math.abs(order.setupCost).toFixed(2)} €</span>
-                      <IconExternalLink className="size-3 text-zinc-600 group-hover:text-zinc-400" />
+                      <span className="text-sm font-mono text-foreground/80 tabular-nums">{Math.abs(order.setupCost).toFixed(2)} €</span>
+                      <IconExternalLink className="size-3 text-muted-foreground/50 group-hover:text-muted-foreground" />
                     </div>
                   </Link>
                 ))}

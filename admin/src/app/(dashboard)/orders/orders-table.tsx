@@ -142,11 +142,11 @@ function FilterChip({
   onRemove: () => void;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-md bg-[#F6A11C]/15 text-[#F6A11C] border border-[#F6A11C]/30 px-2 py-0.5 text-[11px] font-semibold">
+    <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 text-primary border border-primary/30 px-2 py-0.5 text-[11px] font-semibold">
       {label}
       <button
         onClick={onRemove}
-        className="hover:text-white transition-colors ml-0.5"
+        className="hover:text-foreground transition-colors ml-0.5"
       >
         <IconX className="size-3" />
       </button>
@@ -378,12 +378,12 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             placeholder="Suche..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-card pl-9 pr-3 text-sm text-zinc-200 placeholder:text-muted-foreground outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors"
+            className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80"
             >
               <IconX className="size-3.5" />
             </button>
@@ -409,14 +409,14 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             className={
               "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
               (showFilters || activeFilterCount > 0
-                ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                : "border-white/[0.08] bg-card text-zinc-400 hover:text-zinc-200")
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-card text-muted-foreground hover:text-foreground")
             }
           >
             <IconFilter className="size-3.5" />
             Filter
             {activeFilterCount > 0 && (
-              <span className="flex items-center justify-center size-4 rounded-full bg-[#F6A11C] text-[10px] font-bold text-black">
+              <span className="flex items-center justify-center size-4 rounded-full bg-primary text-[10px] font-bold text-black">
                 {activeFilterCount}
               </span>
             )}
@@ -428,8 +428,8 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             className={
               "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
               (groupByMonth
-                ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-                : "border-white/[0.08] bg-card text-zinc-400 hover:text-zinc-200")
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-card text-muted-foreground hover:text-foreground")
             }
           >
             {groupByMonth ? (
@@ -444,7 +444,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
 
       {/* Filter dropdowns */}
       {showFilters && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.10] bg-card px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-4 py-3">
           <FilterSelect
             label="Bestätigt"
             value={confirmedFilter}
@@ -469,7 +469,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             onChange={setPaidFilter}
             options={yesNoOptions}
           />
-          <span className="w-px h-5 bg-[#222326]" />
+          <span className="w-px h-5 bg-accent" />
           <FilterSelect
             label="Zahlart"
             value={paymentFilter}
@@ -503,7 +503,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
               { value: "GBR", label: "GbR" },
             ]}
           />
-          <span className="w-px h-5 bg-[#222326]" />
+          <span className="w-px h-5 bg-accent" />
           <FilterSelect
             label="Jahr"
             value={yearFilter}
@@ -526,7 +526,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
           {activeFilterCount > 0 && (
             <button
               onClick={clearAllFilters}
-              className="flex items-center gap-1 h-7 px-2.5 rounded-md text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="flex items-center gap-1 h-7 px-2.5 rounded-md text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <IconX className="size-3" />
               Alle zurücksetzen
@@ -602,7 +602,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
           )}
           <button
             onClick={clearAllFilters}
-            className="text-xs text-muted-foreground hover:text-zinc-300 ml-1 transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground/80 ml-1 transition-colors"
           >
             Alle löschen
           </button>
@@ -614,10 +614,10 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
         <select
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as Tab)}
-          className="w-full h-10 rounded-xl border border-white/[0.08] bg-card px-3 text-sm text-zinc-200 outline-none focus:border-[#F6A11C]/50 focus:ring-1 focus:ring-[#F6A11C]/25 transition-colors appearance-none bg-[length:12px] bg-[right_12px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+          className="w-full h-10 rounded-xl border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors appearance-none bg-[length:12px] bg-[right_12px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
         >
           {tabs.map((tab) => (
-            <option key={tab.key} value={tab.key} className="bg-card text-zinc-300">
+            <option key={tab.key} value={tab.key} className="bg-card text-foreground/80">
               {tab.label} ({tab.count})
             </option>
           ))}
@@ -627,7 +627,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
       {/* Desktop tabs + content */}
       <div className="hidden md:block">
         {/* Tabs bar */}
-        <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-0 px-6">
           {tabs.map((tab) => (
             <button
@@ -638,8 +638,8 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                 (activeTab === tab.key
                   ? tab.warn
                     ? "text-red-400"
-                    : "text-[#F6A11C]"
-                  : "text-muted-foreground hover:text-zinc-300")
+                    : "text-primary"
+                  : "text-muted-foreground hover:text-foreground/80")
               }
             >
               <span className="flex items-center gap-1.5">
@@ -653,7 +653,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                     (activeTab === tab.key
                       ? tab.warn
                         ? "bg-red-500/15 text-red-400"
-                        : "bg-[#F6A11C]/15 text-[#F6A11C]"
+                        : "bg-primary/15 text-primary"
                       : "bg-card text-muted-foreground")
                   }
                 >
@@ -664,7 +664,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
                 <span
                   className={
                     "absolute bottom-0 left-4 right-4 h-0.5 rounded-full " +
-                    (tab.warn ? "bg-red-400" : "bg-[#F6A11C]")
+                    (tab.warn ? "bg-red-400" : "bg-primary")
                   }
                 />
               )}
@@ -676,7 +676,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             <span>
               {filtered.length} von {orders.length}
             </span>
-            <span className="font-mono tabular-nums text-zinc-400">
+            <span className="font-mono tabular-nums text-muted-foreground">
               {totalRevenue.toLocaleString("de-DE", {
                 minimumFractionDigits: 2,
               })}
@@ -689,12 +689,12 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
         {/* Desktop table content */}
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <IconSearch className="size-10 mb-3 text-zinc-400" />
+            <IconSearch className="size-10 mb-3 text-muted-foreground" />
             <p className="text-sm">Keine Aufträge gefunden</p>
             {(search || activeFilterCount > 0) && (
               <button
                 onClick={clearAllFilters}
-                className="mt-2 text-xs text-[#F6A11C] hover:underline"
+                className="mt-2 text-xs text-primary hover:underline"
               >
                 Filter zurücksetzen
               </button>
@@ -714,7 +714,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden mt-4">
+          <div className="rounded-xl border border-border bg-card overflow-hidden mt-4">
             <OrderTable
               orders={filtered}
               onRowClick={(id) => router.push(`/orders/${id}`)}
@@ -729,12 +729,12 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
       <div className="md:hidden">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <IconSearch className="size-10 mb-3 text-zinc-400" />
+            <IconSearch className="size-10 mb-3 text-muted-foreground" />
             <p className="text-sm">Keine Aufträge gefunden</p>
             {(search || activeFilterCount > 0) && (
               <button
                 onClick={clearAllFilters}
-                className="mt-2 text-xs text-[#F6A11C] hover:underline"
+                className="mt-2 text-xs text-primary hover:underline"
               >
                 Filter zurücksetzen
               </button>
@@ -754,7 +754,7 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-white/[0.10] bg-card overflow-hidden">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
             <OrderTable
               orders={filtered}
               onRowClick={(id) => router.push(`/orders/${id}`)}
@@ -788,18 +788,18 @@ function FilterSelect({
         "h-7 rounded-md border px-2 pr-7 text-xs font-medium outline-none cursor-pointer transition-colors appearance-none bg-[length:12px] bg-[right_6px_center] bg-no-repeat " +
         "bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] " +
         (value
-          ? "border-[#F6A11C]/40 bg-[#F6A11C]/10 text-[#F6A11C]"
-          : "border-white/[0.08] bg-[#1c1d20] text-zinc-400")
+          ? "border-primary/40 bg-primary/10 text-primary"
+          : "border-border bg-muted text-muted-foreground")
       }
     >
-      <option value="" className="bg-card text-zinc-300">
+      <option value="" className="bg-card text-foreground/80">
         {label}
       </option>
       {options.map((opt) => (
         <option
           key={opt.value}
           value={opt.value}
-          className="bg-card text-zinc-300"
+          className="bg-card text-foreground/80"
         >
           {opt.label}
         </option>
@@ -837,7 +837,7 @@ function MonthGroup({
         onClick={() => setCollapsed(!collapsed)}
         className={
           "w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 rounded-t-xl transition-colors " +
-          (hasNext ? "bg-[#F6A11C]/10" : "bg-[#1c1d20]")
+          (hasNext ? "bg-primary/10" : "bg-muted")
         }
       >
         <div className="flex items-center gap-2 md:gap-3">
@@ -846,12 +846,12 @@ function MonthGroup({
           ) : (
             <IconChevronDown className="size-4 text-muted-foreground" />
           )}
-          <span className="text-sm md:text-base font-semibold text-zinc-100">{label}</span>
+          <span className="text-sm md:text-base font-semibold text-foreground">{label}</span>
           <span className="text-[11px] md:text-xs text-muted-foreground bg-card px-2 py-0.5 rounded-md">
             {orders.length}
           </span>
         </div>
-        <span className="font-mono text-xs md:text-sm font-semibold tabular-nums text-zinc-300">
+        <span className="font-mono text-xs md:text-sm font-semibold tabular-nums text-foreground/80">
           {revenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })}
           &nbsp;&euro;
         </span>
@@ -876,7 +876,7 @@ function MobileOrderList({
   nextOrderId?: string | null;
 }) {
   return (
-    <div className="divide-y divide-white/[0.10]">
+    <div className="divide-y divide-border">
       {orders.map((order) => {
         const { firma, kontakt } = splitCustomerName(order.customerName);
         const displayName = firma || kontakt;
@@ -891,9 +891,9 @@ function MobileOrderList({
             data-next-order={isNext ? "true" : undefined}
             onClick={() => onRowClick(order.id)}
             className={
-              "cursor-pointer px-3 py-2.5 transition-colors active:bg-[#1c1d20] " +
+              "cursor-pointer px-3 py-2.5 transition-colors active:bg-accent " +
               (isNext
-                ? "border-l-2 border-l-[#F6A11C] bg-[#F6A11C]/8"
+                ? "border-l-2 border-l-primary bg-primary/8"
                 : "") +
               (isPast && !isNext ? " opacity-50" : "")
             }
@@ -901,11 +901,11 @@ function MobileOrderList({
             <div className="flex gap-2.5 min-w-0">
               {/* Date pill – spans both lines */}
               <div className="shrink-0 flex items-center self-stretch">
-                <span className="flex flex-col items-center justify-center rounded-lg bg-white/[0.06] px-2 py-1.5 h-full min-w-[44px]">
-                  <span className="text-[11px] font-semibold tabular-nums text-zinc-300 leading-tight">
+                <span className="flex flex-col items-center justify-center rounded-lg bg-foreground/[0.06] px-2 py-1.5 h-full min-w-[44px]">
+                  <span className="text-[11px] font-semibold tabular-nums text-foreground/80 leading-tight">
                     {d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}
                   </span>
-                  <span className="text-[10px] tabular-nums text-zinc-500 leading-tight">
+                  <span className="text-[10px] tabular-nums text-muted-foreground/70 leading-tight">
                     {d.getFullYear()}
                   </span>
                 </span>
@@ -915,13 +915,13 @@ function MobileOrderList({
               <div className="flex-1 min-w-0">
                 {/* Line 1: Name – Fahrerkürzel – Zahlart */}
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-sm font-medium text-zinc-200 truncate" title={displayName}>
+                  <span className="text-sm font-medium text-foreground truncate" title={displayName}>
                     {displayName}
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 shrink-0">
                     {order.driverInitials && (
                       <span
-                        className="text-[11px] font-medium text-zinc-400 bg-white/[0.06] rounded px-1.5 py-0.5"
+                        className="text-[11px] font-medium text-muted-foreground bg-foreground/[0.06] rounded px-1.5 py-0.5"
                         title={
                           order.secondDriverName
                             ? `${order.driverName} / ${order.secondDriverName}`
@@ -946,7 +946,7 @@ function MobileOrderList({
                 </div>
                 {/* Line 2: Location – Status Icons */}
                 <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
-                  <span className="text-xs text-zinc-500 truncate" title={order.locationName}>
+                  <span className="text-xs text-muted-foreground/70 truncate" title={order.locationName}>
                     {order.locationName || "–"}
                   </span>
                   <span className="ml-auto flex items-center gap-1 shrink-0">
@@ -1008,7 +1008,7 @@ function OrderTable({
       {/* Desktop table */}
       <Table className="hidden md:table">
       <TableHeader>
-        <TableRow className="border-b border-white/[0.10] hover:bg-transparent">
+        <TableRow className="border-b border-border hover:bg-transparent">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Datum
           </TableHead>
@@ -1068,49 +1068,49 @@ function OrderTable({
               data-next-order={isNext ? "true" : undefined}
               onClick={() => onRowClick(order.id)}
               className={
-                "cursor-pointer border-b transition-colors hover:bg-[#1c1d20] group " +
+                "cursor-pointer border-b transition-colors hover:bg-accent group " +
                 (isNext
-                  ? "border-[#F6A11C]/30 bg-[#F6A11C]/8 border-l-2 border-l-[#F6A11C]"
-                  : "border-white/[0.10]") +
+                  ? "border-primary/30 bg-primary/8 border-l-2 border-l-primary"
+                  : "border-border") +
                 (isPast && !isNext ? " opacity-50" : "")
               }
             >
-              <TableCell className="text-zinc-400 text-sm tabular-nums">
+              <TableCell className="text-muted-foreground text-sm tabular-nums">
                 {new Date(order.eventDate).toLocaleDateString("de-DE", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
                 })}
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm max-w-[140px] hidden lg:table-cell">
+              <TableCell className="text-muted-foreground text-sm max-w-[140px] hidden lg:table-cell">
                 {firma ? (
                   <span className="block truncate" title={firma}>{firma}</span>
                 ) : (
                   <span className="text-muted-foreground">–</span>
                 )}
               </TableCell>
-              <TableCell className="font-medium text-zinc-200 max-w-[140px]">
+              <TableCell className="font-medium text-foreground max-w-[140px]">
                 <span className="block truncate" title={kontakt}>{kontakt}</span>
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm">
+              <TableCell className="text-muted-foreground text-sm">
                 {order.eventType}
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm max-w-[140px] hidden lg:table-cell">
+              <TableCell className="text-muted-foreground text-sm max-w-[140px] hidden lg:table-cell">
                 <span className="block truncate" title={order.locationName}>{order.locationName}</span>
               </TableCell>
-              <TableCell className="text-zinc-400 text-sm max-w-[100px] hidden xl:table-cell">
+              <TableCell className="text-muted-foreground text-sm max-w-[100px] hidden xl:table-cell">
                 {ort ? (
                   <span className="block truncate" title={ort}>{ort}</span>
                 ) : (
                   <span className="text-muted-foreground">–</span>
                 )}
               </TableCell>
-              <TableCell className="text-right font-mono text-sm text-zinc-400 tabular-nums hidden xl:table-cell">
+              <TableCell className="text-right font-mono text-sm text-muted-foreground tabular-nums hidden xl:table-cell">
                 {order.distanceKm != null ? order.distanceKm : (
                   <span className="text-muted-foreground">–</span>
                 )}
               </TableCell>
-              <TableCell className="text-right font-mono text-sm text-zinc-200 tabular-nums">
+              <TableCell className="text-right font-mono text-sm text-foreground tabular-nums">
                 {order.price.toFixed(2)}&nbsp;&euro;
               </TableCell>
               <TableCell>
@@ -1127,7 +1127,7 @@ function OrderTable({
               <TableCell>
                 {order.driverName ? (
                   <span
-                    className="text-sm font-medium text-zinc-300"
+                    className="text-sm font-medium text-foreground/80"
                     title={
                       order.secondDriverName
                         ? `${order.driverName} / ${order.secondDriverName}`

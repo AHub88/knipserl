@@ -66,11 +66,11 @@ export default async function OrdersPage() {
       {/* Page header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex items-center justify-center size-10 rounded-xl bg-[#F6A11C]/10 text-[#F6A11C] shrink-0">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary shrink-0">
             <IconFileText className="size-5" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               Auftr&auml;ge
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
@@ -80,7 +80,7 @@ export default async function OrdersPage() {
         </div>
         <Link
           href="/orders/new"
-          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-[#F6A11C] text-black text-sm font-semibold hover:bg-[#F6A11C]/90 transition-colors"
+          className="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors"
         >
           <IconPlus className="size-4" />
           Neuer Auftrag
@@ -88,8 +88,8 @@ export default async function OrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.10] bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
-          <IconFileText className="size-10 mb-3 text-zinc-400" />
+        <div className="rounded-xl border border-border bg-card flex flex-col items-center justify-center py-16 text-muted-foreground">
+          <IconFileText className="size-10 mb-3 text-muted-foreground" />
           <p className="text-sm">Noch keine Auftr&auml;ge vorhanden</p>
         </div>
       ) : (

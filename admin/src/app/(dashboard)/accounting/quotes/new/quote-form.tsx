@@ -83,10 +83,10 @@ const labelClass =
   "text-[10px] font-semibold text-gray-400 uppercase tracking-wide";
 
 const docInputClass =
-  "w-full border-0 border-b border-gray-200 bg-transparent px-0 py-1.5 text-sm text-gray-900 outline-none placeholder:text-gray-300 focus:border-[#F6A11C] focus:ring-0 transition-colors";
+  "w-full border-0 border-b border-gray-200 bg-transparent px-0 py-1.5 text-sm text-gray-900 outline-none placeholder:text-gray-300 focus:border-primary focus:ring-0 transition-colors";
 
 const docSelectClass =
-  "w-full border-0 border-b border-gray-200 bg-transparent px-0 py-1.5 text-sm text-gray-900 outline-none focus:border-[#F6A11C] focus:ring-0 transition-colors appearance-none cursor-pointer";
+  "w-full border-0 border-b border-gray-200 bg-transparent px-0 py-1.5 text-sm text-gray-900 outline-none focus:border-primary focus:ring-0 transition-colors appearance-none cursor-pointer";
 
 // ---------------------------------------------------------------------------
 // Component
@@ -388,23 +388,23 @@ export function QuoteForm({ companies, orders }: Props) {
   // ---------------------------------------------------------------------------
 
   return (
-    <form onSubmit={handleSubmit} className="min-h-screen bg-[#f0f1f3]">
+    <form onSubmit={handleSubmit} className="min-h-screen bg-muted">
       {/* ================================================================== */}
       {/* TOP BAR - sticky */}
       {/* ================================================================== */}
-      <div className="sticky top-0 z-50 bg-[#2b2d31] shadow-md">
+      <div className="sticky top-0 z-50 bg-card shadow-md">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => router.push("/accounting/quotes")}
-              className="flex items-center gap-1.5 text-sm text-gray-300 transition-colors hover:text-white"
+              className="flex items-center gap-1.5 text-sm text-gray-300 transition-colors hover:text-foreground"
             >
               <IconArrowLeft className="size-4" />
               <span className="hidden sm:inline">Zurück</span>
             </button>
             <div className="hidden h-5 w-px bg-gray-600 sm:block" />
-            <h1 className="text-sm font-semibold text-white sm:text-base">
+            <h1 className="text-sm font-semibold text-foreground sm:text-base">
               Neues Angebot
             </h1>
           </div>
@@ -412,14 +412,14 @@ export function QuoteForm({ companies, orders }: Props) {
             <button
               type="button"
               onClick={() => router.push("/accounting/quotes")}
-              className="rounded-md border border-gray-500 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:border-gray-400 hover:text-white sm:text-sm"
+              className="rounded-md border border-gray-500 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:border-gray-400 hover:text-foreground sm:text-sm"
             >
               Abbrechen
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 rounded-md bg-[#F6A11C] px-4 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-[#e5950f] disabled:opacity-50 sm:text-sm"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-primary/90 disabled:opacity-50 sm:text-sm"
             >
               {submitting ? (
                 <IconLoader2 className="size-4 animate-spin" />
@@ -551,7 +551,7 @@ export function QuoteForm({ companies, orders }: Props) {
                       type="date"
                       value={quoteDate}
                       onChange={(e) => setQuoteDate(e.target.value)}
-                      className="border-0 border-b border-gray-200 bg-transparent py-1 text-sm text-gray-900 outline-none focus:border-[#F6A11C] focus:ring-0"
+                      className="border-0 border-b border-gray-200 bg-transparent py-1 text-sm text-gray-900 outline-none focus:border-primary focus:ring-0"
                     />
                   </div>
                   <div className="flex items-center gap-3">
@@ -562,7 +562,7 @@ export function QuoteForm({ companies, orders }: Props) {
                       type="date"
                       value={validUntil}
                       onChange={(e) => setValidUntil(e.target.value)}
-                      className="border-0 border-b border-gray-200 bg-transparent py-1 text-sm text-gray-900 outline-none focus:border-[#F6A11C] focus:ring-0"
+                      className="border-0 border-b border-gray-200 bg-transparent py-1 text-sm text-gray-900 outline-none focus:border-primary focus:ring-0"
                       required
                     />
                   </div>
@@ -693,7 +693,7 @@ export function QuoteForm({ companies, orders }: Props) {
                               parseInt(e.target.value) || 1
                             )
                           }
-                          className="w-full border-0 border-b border-transparent bg-transparent py-0.5 text-center text-sm tabular-nums text-gray-900 outline-none hover:border-gray-200 focus:border-[#F6A11C] focus:ring-0"
+                          className="w-full border-0 border-b border-transparent bg-transparent py-0.5 text-center text-sm tabular-nums text-gray-900 outline-none hover:border-gray-200 focus:border-primary focus:ring-0"
                         />
 
                         {/* Unit */}
@@ -702,7 +702,7 @@ export function QuoteForm({ companies, orders }: Props) {
                           onChange={(e) =>
                             updateItem(index, "unit", e.target.value)
                           }
-                          className="w-full border-0 border-b border-transparent bg-transparent py-0.5 text-sm text-gray-900 outline-none hover:border-gray-200 focus:border-[#F6A11C] focus:ring-0 appearance-none cursor-pointer"
+                          className="w-full border-0 border-b border-transparent bg-transparent py-0.5 text-sm text-gray-900 outline-none hover:border-gray-200 focus:border-primary focus:ring-0 appearance-none cursor-pointer"
                         >
                           <option value="Stunden">Stunden</option>
                           <option value="Pauschal">Pauschal</option>
@@ -723,7 +723,7 @@ export function QuoteForm({ companies, orders }: Props) {
                             )
                           }
                           placeholder="0,00"
-                          className="w-full border-0 border-b border-transparent bg-transparent py-0.5 text-right text-sm tabular-nums text-gray-900 outline-none hover:border-gray-200 focus:border-[#F6A11C] focus:ring-0"
+                          className="w-full border-0 border-b border-transparent bg-transparent py-0.5 text-right text-sm tabular-nums text-gray-900 outline-none hover:border-gray-200 focus:border-primary focus:ring-0"
                         />
 
                         {/* MwSt */}
@@ -832,7 +832,7 @@ export function QuoteForm({ companies, orders }: Props) {
                                   parseInt(e.target.value) || 1
                                 )
                               }
-                              className="w-full border-0 border-b border-gray-200 bg-transparent py-0.5 text-center text-sm tabular-nums text-gray-900 outline-none focus:border-[#F6A11C] focus:ring-0"
+                              className="w-full border-0 border-b border-gray-200 bg-transparent py-0.5 text-center text-sm tabular-nums text-gray-900 outline-none focus:border-primary focus:ring-0"
                             />
                           </div>
                           <div className="w-20">
@@ -844,7 +844,7 @@ export function QuoteForm({ companies, orders }: Props) {
                               onChange={(e) =>
                                 updateItem(index, "unit", e.target.value)
                               }
-                              className="w-full border-0 border-b border-gray-200 bg-transparent py-0.5 text-sm text-gray-900 outline-none focus:border-[#F6A11C] focus:ring-0 appearance-none"
+                              className="w-full border-0 border-b border-gray-200 bg-transparent py-0.5 text-sm text-gray-900 outline-none focus:border-primary focus:ring-0 appearance-none"
                             >
                               <option value="Stunden">Stunden</option>
                               <option value="Pauschal">Pauschal</option>
@@ -868,7 +868,7 @@ export function QuoteForm({ companies, orders }: Props) {
                                 )
                               }
                               placeholder="0,00"
-                              className="w-full border-0 border-b border-gray-200 bg-transparent py-0.5 text-right text-sm tabular-nums text-gray-900 outline-none focus:border-[#F6A11C] focus:ring-0"
+                              className="w-full border-0 border-b border-gray-200 bg-transparent py-0.5 text-right text-sm tabular-nums text-gray-900 outline-none focus:border-primary focus:ring-0"
                             />
                           </div>
                           <div className="w-24 text-right">
@@ -991,7 +991,7 @@ export function QuoteForm({ companies, orders }: Props) {
                     <span className="text-sm font-semibold text-gray-700">
                       Gesamtbetrag
                     </span>
-                    <span className="text-xl font-bold tabular-nums text-[#F6A11C]">
+                    <span className="text-xl font-bold tabular-nums text-primary">
                       {formatEUR(subtotal)}
                     </span>
                   </div>
@@ -1044,7 +1044,7 @@ export function QuoteForm({ companies, orders }: Props) {
         <button
           type="submit"
           disabled={submitting}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-[#F6A11C] py-2.5 text-sm font-semibold text-black transition-colors hover:bg-[#e5950f] disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-primary py-2.5 text-sm font-semibold text-black transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
           {submitting ? (
             <IconLoader2 className="size-4 animate-spin" />

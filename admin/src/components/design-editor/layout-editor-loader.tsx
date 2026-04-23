@@ -8,7 +8,7 @@ const LayoutEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex items-center justify-center min-h-[60vh] text-white/60">
+      <div className="flex items-center justify-center min-h-[60vh] text-foreground/60">
         Editor wird geladen…
       </div>
     ),
