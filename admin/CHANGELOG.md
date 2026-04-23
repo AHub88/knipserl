@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.2] — 2026-04-23
+
+### Changed
+- Dark-Mode `muted-foreground` von `#7c7f8a` auf `#969aaa` aufgehellt — sekundärer Text (z. B. Firmennamen, Locations, Spaltenköpfe, Platzhalter) ist jetzt besser lesbar.
+
 ## [1.4.1] — 2026-04-23
 
 ### Changed
