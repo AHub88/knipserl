@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.10.1] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Header auf Mobile (<640px): Firmenname und Kontaktname stehen jetzt **untereinander** statt in einer Zeile mit Bindestrich. Auf Desktop (≥640px) bleibt die Inline-Darstellung „Firma – Name".
+
 ## [1.10.0] — 2026-04-23
 
 ### Added

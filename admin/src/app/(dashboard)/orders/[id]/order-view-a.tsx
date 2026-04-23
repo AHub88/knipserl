@@ -257,13 +257,13 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </span>
             </div>
 
-            {/* Customer Name - Firma und Name in einer Zeile */}
+            {/* Customer Name - Desktop: Firma – Name inline / Mobile: untereinander */}
             <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">
               {firma ? (
                 <>
-                  <span className="text-muted-foreground font-semibold">{firma}</span>
-                  <span className="text-muted-foreground mx-2 font-normal">&ndash;</span>
-                  <span>{kontakt}</span>
+                  <span className="block sm:inline text-muted-foreground font-semibold">{firma}</span>
+                  <span className="hidden sm:inline text-muted-foreground mx-2 font-normal">&ndash;</span>
+                  <span className="block sm:inline">{kontakt}</span>
                 </>
               ) : (
                 kontakt
