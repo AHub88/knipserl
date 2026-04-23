@@ -19,6 +19,12 @@ import {
   IconWorldWww,
   IconPrinter,
   IconPhone,
+  IconStar,
+  IconUser,
+  IconCalendarEvent,
+  IconCurrencyEuro,
+  IconCreditCard,
+  IconNotes,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
@@ -357,7 +363,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
       {/* Extras */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-5 py-3">
+        <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+          <IconStar className="size-4 text-primary" />
           <h2 className="text-sm font-semibold text-foreground/80">Extras</h2>
         </div>
         <div className="p-5 space-y-3">
@@ -379,7 +386,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Kundendaten */}
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconUser className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -410,7 +418,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
         {/* Event-Details */}
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconCalendarEvent className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Event-Details</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -441,7 +450,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
         {/* Preiskalkulation */}
         <div className="rounded-xl border border-primary/20 bg-card overflow-hidden">
-          <div className="border-b border-primary/20 px-5 py-3">
+          <div className="border-b border-primary/20 px-5 py-3 flex items-center gap-2">
+            <IconCurrencyEuro className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Preiskalkulation</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -572,7 +582,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
         {/* Zuordnung & Zahlart */}
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconCreditCard className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Zuordnung &amp; Zahlung</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -608,7 +619,8 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
 
         {/* Notizen */}
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconNotes className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Notizen</h2>
           </div>
           <div className="p-5 space-y-4">

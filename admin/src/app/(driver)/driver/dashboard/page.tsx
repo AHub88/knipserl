@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { IconMapPin, IconCalendar, IconClock } from "@tabler/icons-react";
+import { IconMapPin, IconCalendar, IconClock, IconRoute, IconBeach } from "@tabler/icons-react";
 
 export default async function DriverDashboardPage() {
   const session = await auth();
@@ -47,7 +47,8 @@ export default async function DriverDashboardPage() {
       </div>
 
       <Card>
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconRoute className="size-4 text-primary" />
           <CardTitle className="text-base">Meine nächsten Fahrten</CardTitle>
         </CardHeader>
         <CardContent>
@@ -93,7 +94,8 @@ export default async function DriverDashboardPage() {
 
       {vacations.length > 0 && (
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader className="border-b flex-row items-center gap-2">
+            <IconBeach className="size-4 text-primary" />
             <CardTitle className="text-base">Mein Urlaub</CardTitle>
           </CardHeader>
           <CardContent>

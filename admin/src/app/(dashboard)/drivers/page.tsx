@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconUsers } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { DriversTableBody } from "./drivers-table-body";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,7 +41,8 @@ export default async function DriversPage() {
       </div>
 
       <Card>
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconUsers className="size-4 text-primary" />
           <CardTitle>Alle Fahrer ({drivers.length})</CardTitle>
         </CardHeader>
         <CardContent>

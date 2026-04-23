@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { IconFileText } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 interface OrderActionsProps {
@@ -60,7 +61,8 @@ export function OrderActions({
 
   return (
     <Card>
-      <CardHeader className="border-b">
+      <CardHeader className="border-b flex-row items-center gap-2">
+        <IconFileText className="size-4 text-primary" />
         <CardTitle>Auftrag bearbeiten</CardTitle>
       </CardHeader>
       <CardContent>

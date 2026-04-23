@@ -10,6 +10,7 @@ import {
   IconCurrencyEuro,
   IconTrendingUp,
   IconTrendingDown,
+  IconChartBar,
 } from "@tabler/icons-react";
 import {
   Sparkline,
@@ -340,7 +341,8 @@ export default async function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Standpunkt heute - takes 2 cols */}
         <div className="lg:col-span-2 rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconTrendingUp className="size-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">
               Standpunkt heute ({ytdDateLabel})
             </h3>
@@ -445,7 +447,10 @@ export default async function DashboardPage() {
       {/* Monthly Comparison: This Year vs Last Year */}
       <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
-          <h3 className="text-sm font-semibold text-foreground">Monatsvergleich Aufträge</h3>
+          <div className="flex items-center gap-2">
+            <IconChartBar className="size-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Monatsvergleich Aufträge</h3>
+          </div>
           <div className="flex items-center gap-4 text-[10px]">
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-primary" />{now.getFullYear()}</span>
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-accent" />{now.getFullYear() - 1}</span>
@@ -501,7 +506,8 @@ export default async function DashboardPage() {
 
       {/* Upcoming Orders */}
       <Card className="border-border bg-card">
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconCalendarEvent className="size-4 text-primary" />
           <CardTitle className="text-base font-semibold text-foreground">
             N&auml;chste Auftr&auml;ge
           </CardTitle>

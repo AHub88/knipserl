@@ -6,10 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import {
   IconMapPin,
   IconCalendar,
+  IconCalendarEvent,
   IconUser,
   IconPhone,
   IconMail,
   IconExternalLink,
+  IconStar,
+  IconNotes,
 } from "@tabler/icons-react";
 
 export default async function DriverOrderDetailPage({
@@ -43,7 +46,8 @@ export default async function DriverOrderDetailPage({
       </div>
 
       <Card>
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconCalendarEvent className="size-4 text-primary" />
           <CardTitle className="text-base">Event</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -76,7 +80,8 @@ export default async function DriverOrderDetailPage({
       </Card>
 
       <Card>
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconUser className="size-4 text-primary" />
           <CardTitle className="text-base">Kunde</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -103,7 +108,8 @@ export default async function DriverOrderDetailPage({
 
       {order.extras.length > 0 && (
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader className="border-b flex-row items-center gap-2">
+            <IconStar className="size-4 text-primary" />
             <CardTitle className="text-base">Extras</CardTitle>
           </CardHeader>
           <CardContent>
@@ -120,7 +126,8 @@ export default async function DriverOrderDetailPage({
 
       {order.notes && (
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader className="border-b flex-row items-center gap-2">
+            <IconNotes className="size-4 text-primary" />
             <CardTitle className="text-base">Notizen</CardTitle>
           </CardHeader>
           <CardContent>

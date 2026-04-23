@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { IconDeviceFloppy, IconCheck, IconX } from "@tabler/icons-react";
+import { IconDeviceFloppy, IconCheck, IconX, IconCode } from "@tabler/icons-react";
 
 const TEMPLATE_CONFIG = [
   {
@@ -66,7 +66,8 @@ export function EmailTemplateEditor({
     <div className="space-y-6">
       {/* Variables hint */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 py-2.5">
+        <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+          <IconCode className="size-4 text-primary" />
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Verfügbare Platzhalter</h3>
         </div>
         <div className="p-4">

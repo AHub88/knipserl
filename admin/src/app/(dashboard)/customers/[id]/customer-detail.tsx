@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   IconArrowLeft, IconDeviceFloppy, IconUsers, IconEdit, IconX,
-  IconMail, IconPhoneCall, IconBuildingStore,
+  IconMail, IconPhoneCall, IconBuildingStore, IconUser, IconFileText,
 } from "@tabler/icons-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -154,7 +154,8 @@ export function CustomerDetail({
       {/* Kundendaten */}
       {editing ? (
         <div className="rounded-xl border border-border bg-card overflow-hidden max-w-2xl">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconUser className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -191,7 +192,8 @@ export function CustomerDetail({
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconUser className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Kontaktdaten</h2>
           </div>
           <div className="p-5 space-y-2">
@@ -222,7 +224,10 @@ export function CustomerDetail({
       {/* Orders */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-foreground/80">Aufträge</h2>
+          <div className="flex items-center gap-2">
+            <IconFileText className="size-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground/80">Aufträge</h2>
+          </div>
           <Link href={`/orders/new`} className="text-xs text-primary hover:underline">
             + Neuer Auftrag
           </Link>

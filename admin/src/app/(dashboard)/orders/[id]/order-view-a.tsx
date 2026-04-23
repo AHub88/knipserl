@@ -36,6 +36,11 @@ import {
   IconFileDownload,
   IconLink,
   IconCircleCheckFilled,
+  IconFlag,
+  IconStar,
+  IconUser,
+  IconCurrencyEuro,
+  IconLayout,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { EXTRAS_PRICES } from "@/lib/extras-pricing";
@@ -367,7 +372,10 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {/* Status */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</h3>
+              <div className="flex items-center gap-2">
+                <IconFlag className="size-4 text-primary" />
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</h3>
+              </div>
               {isAdmin && !editingStatus && (
                 <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                   <IconPencil className="size-4.5" />
@@ -442,7 +450,10 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {(activeExtras.length > 0 || editingExtras) && (
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="flex items-center justify-between border-b border-border px-5 py-3">
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Extras</h3>
+                <div className="flex items-center gap-2">
+                  <IconStar className="size-4 text-primary" />
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Extras</h3>
+                </div>
                 {isAdmin && !editingExtras && (
                   <button onClick={() => setEditingExtras(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                     <IconPencil className="size-4.5" />
@@ -513,7 +524,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Auftraggeber */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-5 py-3">
+              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+                <IconUser className="size-4 text-primary" />
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Auftraggeber</h3>
               </div>
               <div className="p-5">
@@ -548,7 +560,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
             {/* Location */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-5 py-3">
+              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+                <IconMapPin className="size-4 text-primary" />
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Location</h3>
               </div>
               <div className="p-5">
@@ -582,7 +595,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
             {/* Lieferung */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-5 py-3">
+              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+                <IconTruck className="size-4 text-primary" />
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Lieferung</h3>
               </div>
               <div className="p-5">
@@ -700,7 +714,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="w-full lg:w-80 shrink-0 space-y-4">
           {/* Drucklayouts - volle Breite */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className="border-b border-border px-5 py-3">
+            <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+              <IconPrinter className="size-4 text-primary" />
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h3>
             </div>
             <div className="p-5">
@@ -712,7 +727,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           {order.graphicUrl && (
             <>
               <div className="rounded-xl border border-border bg-card overflow-hidden">
-                <div className="border-b border-border px-4 py-2.5">
+                <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+                  <IconLayout className="size-4 text-primary" />
                   <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
                 </div>
                 <div className="p-4 space-y-3">
@@ -779,7 +795,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
           {/* Kundenpreis */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className="border-b border-border px-5 py-3">
+            <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+              <IconCurrencyEuro className="size-4 text-primary" />
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h3>
             </div>
             <div className="p-5">

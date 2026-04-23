@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconCalendarPlus, IconCalendar } from "@tabler/icons-react";
 import { VacationForm } from "./vacation-form";
 import { VacationList } from "./vacation-list";
 
@@ -18,7 +19,8 @@ export default async function DriverVacationPage() {
       <h1 className="text-xl font-bold">Urlaubsverwaltung</h1>
 
       <Card>
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconCalendarPlus className="size-4 text-primary" />
           <CardTitle className="text-base">Neuen Urlaub eintragen</CardTitle>
         </CardHeader>
         <CardContent>
@@ -27,7 +29,8 @@ export default async function DriverVacationPage() {
       </Card>
 
       <Card>
-        <CardHeader className="border-b">
+        <CardHeader className="border-b flex-row items-center gap-2">
+          <IconCalendar className="size-4 text-primary" />
           <CardTitle className="text-base">Meine Urlaubszeiten</CardTitle>
         </CardHeader>
         <CardContent>

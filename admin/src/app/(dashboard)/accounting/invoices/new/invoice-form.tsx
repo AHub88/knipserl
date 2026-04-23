@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { IconPlus, IconX, IconLoader2, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconX, IconLoader2, IconSearch, IconBuilding, IconUser, IconCalendar, IconList, IconCalculator, IconMessage } from "@tabler/icons-react";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -345,7 +345,8 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Company & Order */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconBuilding className="size-4 text-primary" />
           <h2 className={sectionTitle}>Firma &amp; Auftrag</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -402,7 +403,8 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Customer search & Recipient */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconUser className="size-4 text-primary" />
           <h2 className={sectionTitle}>Empfänger</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -491,7 +493,8 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Dates */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCalendar className="size-4 text-primary" />
           <h2 className={sectionTitle}>Datum</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -524,7 +527,10 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
         <div className="flex items-center justify-between border-b border-border px-4 sm:px-5 py-3">
-          <h2 className={sectionTitle}>Positionen</h2>
+          <div className="flex items-center gap-2">
+            <IconList className="size-4 text-primary" />
+            <h2 className={sectionTitle}>Positionen</h2>
+          </div>
           <div className="flex items-center gap-2">
             {/* Standard item button */}
             <div ref={standardRef} className="relative">
@@ -663,7 +669,8 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Totals */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCalculator className="size-4 text-primary" />
           <h2 className={sectionTitle}>Zusammenfassung</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -680,7 +687,8 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Notes */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconMessage className="size-4 text-primary" />
           <h2 className={sectionTitle}>Anmerkungen</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">

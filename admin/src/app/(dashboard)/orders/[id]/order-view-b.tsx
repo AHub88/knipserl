@@ -32,6 +32,8 @@ import {
   IconWorldWww,
   IconPrinter,
   IconPhone,
+  IconCurrencyEuro,
+  IconNotes,
 } from "@tabler/icons-react";
 import { EXTRAS_PRICES } from "@/lib/extras-pricing";
 import { ImageGallery } from "./image-gallery";
@@ -251,7 +253,8 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       {/* ── Preis Grid ── */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconCurrencyEuro className="size-4 text-primary" />
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenpreis</h3>
           </div>
           <div className="p-5">
@@ -312,7 +315,8 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         <div className="grid gap-4 sm:grid-cols-2">
           {order.notes && (
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-4 py-2.5">
+              <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+                <IconNotes className="size-4 text-primary" />
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenkommentar</h3>
               </div>
               <div className="p-4">
@@ -335,7 +339,8 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
       {/* ── Drucklayouts ── */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 py-2.5">
+        <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+          <IconPrinter className="size-4 text-primary" />
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h3>
         </div>
         <div className="p-4">

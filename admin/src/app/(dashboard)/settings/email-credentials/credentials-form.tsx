@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { IconDeviceFloppy, IconCheck, IconTestPipe } from "@tabler/icons-react";
+import { IconDeviceFloppy, IconCheck, IconTestPipe, IconKey, IconMail } from "@tabler/icons-react";
 
 export function CredentialsForm({ initial }: { initial: Record<string, string> }) {
   const [values, setValues] = useState(initial);
@@ -60,7 +60,8 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconKey className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Azure Active Directory</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-4">
@@ -100,7 +101,8 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
       </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconMail className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Absender</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-4">

@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { IconChartBar, IconChartPie } from "@tabler/icons-react";
 
 // --- Mini Sparkline for KPI cards ---
 
@@ -74,7 +75,8 @@ export function MonthlyOrdersChart({
 }: MonthlyOrdersChartProps) {
   return (
     <Card className="border-border bg-card">
-      <CardHeader className="border-b">
+      <CardHeader className="border-b flex-row items-center gap-2">
+        <IconChartBar className="size-4 text-primary" />
         <CardTitle className="text-base font-semibold text-foreground">
           Auftr&auml;ge pro Monat
         </CardTitle>
@@ -161,7 +163,8 @@ export function EventTypesPieChart({
 }: EventTypesPieChartProps) {
   return (
     <Card className="border-border bg-card">
-      <CardHeader className="border-b">
+      <CardHeader className="border-b flex-row items-center gap-2">
+        <IconChartPie className="size-4 text-primary" />
         <CardTitle className="text-base font-semibold text-foreground">
           Eventarten
         </CardTitle>

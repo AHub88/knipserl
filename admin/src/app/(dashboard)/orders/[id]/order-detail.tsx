@@ -29,6 +29,12 @@ import {
   IconBuildingStore,
   IconCash,
   IconSteeringWheel,
+  IconCalendarEvent,
+  IconUser,
+  IconStar,
+  IconCurrencyEuro,
+  IconCreditCard,
+  IconNotes,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
@@ -775,7 +781,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 1: Event & Location */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCalendarEvent className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event &amp; Location</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -827,7 +834,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 2: Kunde */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconUser className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kunde</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -858,7 +866,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 3: Extras */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconStar className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -880,7 +889,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 4: Preise */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCurrencyEuro className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-4">
@@ -992,7 +1002,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 5: Zuordnung & Zahlung */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCreditCard className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zuordnung &amp; Zahlung</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -1028,7 +1039,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 6: Notizen */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconNotes className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -1055,7 +1067,8 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
 
       {/* Section 7: Drucklayouts */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconPrinter className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">

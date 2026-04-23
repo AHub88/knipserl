@@ -15,6 +15,11 @@ import {
   IconBook,
   IconDeviceTv,
   IconPhone,
+  IconCalendarEvent,
+  IconUser,
+  IconStar,
+  IconCurrencyEuro,
+  IconNotes,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
@@ -260,7 +265,8 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
 
       {/* Event & Location */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCalendarEvent className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event & Location</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -317,7 +323,8 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
 
       {/* Kundendaten */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconUser className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kundendaten</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -347,7 +354,8 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
 
       {/* Extras */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconStar className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -381,7 +389,8 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
 
       {/* Kalkulation */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconCurrencyEuro className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kalkulation</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">
@@ -474,7 +483,8 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
 
       {/* Notizen */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconNotes className="size-4 text-primary" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kommentar</h2>
         </div>
         <div className="p-4 sm:p-5 space-y-3">

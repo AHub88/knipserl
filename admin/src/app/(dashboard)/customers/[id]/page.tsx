@@ -10,6 +10,7 @@ import {
   IconFileInvoice,
   IconReceipt,
   IconExternalLink,
+  IconNotes,
 } from "@tabler/icons-react";
 
 export default async function CustomerDetailPage({
@@ -108,7 +109,7 @@ export default async function CustomerDetailPage({
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="border-b border-border px-4 sm:px-5 py-3">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <IconFileText className="size-4" /> Aufträge ({customer.orders.length})
+              <IconFileText className="size-4 text-primary" /> Aufträge ({customer.orders.length})
             </h2>
           </div>
           <div className="p-4 sm:p-5">
@@ -159,7 +160,7 @@ export default async function CustomerDetailPage({
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="border-b border-border px-4 sm:px-5 py-3">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <IconFileInvoice className="size-4" /> Angebote ({quotes.length})
+              <IconFileInvoice className="size-4 text-primary" /> Angebote ({quotes.length})
             </h2>
           </div>
           <div className="p-4 sm:p-5">
@@ -208,7 +209,7 @@ export default async function CustomerDetailPage({
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="border-b border-border px-4 sm:px-5 py-3">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <IconReceipt className="size-4" /> Rechnungen ({invoices.length})
+              <IconReceipt className="size-4 text-primary" /> Rechnungen ({invoices.length})
             </h2>
           </div>
           <div className="p-4 sm:p-5">
@@ -254,7 +255,8 @@ export default async function CustomerDetailPage({
 
       {customer.notes && (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-4 sm:px-5 py-3">
+          <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+            <IconNotes className="size-4 text-primary" />
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
           </div>
           <div className="p-4 sm:p-5">

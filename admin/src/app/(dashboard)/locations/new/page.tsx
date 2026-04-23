@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { IconArrowLeft, IconDeviceFloppy, IconLoader2 } from "@tabler/icons-react";
+import { IconArrowLeft, IconDeviceFloppy, IconLoader2, IconMapPin, IconSearch } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 type Suggestion = {
@@ -170,7 +170,8 @@ export default function NewLocationPage() {
       <div className="grid gap-6 lg:grid-cols-2 max-w-4xl">
         {/* Location-Name */}
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconMapPin className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Location</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -214,7 +215,8 @@ export default function NewLocationPage() {
 
         {/* Adresssuche */}
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconSearch className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Adresse suchen</h2>
           </div>
           <div className="p-5 space-y-4">
@@ -254,7 +256,8 @@ export default function NewLocationPage() {
 
         {/* Adressfelder */}
         <div className="rounded-xl border border-border bg-card overflow-hidden lg:col-span-2">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconMapPin className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Adressdaten</h2>
           </div>
           <div className="p-5 space-y-4">

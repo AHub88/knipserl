@@ -11,9 +11,12 @@ import {
   IconBriefcase,
   IconConfetti,
   IconCalendar,
+  IconCalendarEvent,
   IconMapPin,
   IconRuler,
   IconMessageCircle,
+  IconNotes,
+  IconStar,
   IconPencil,
   IconCheck,
   IconX,
@@ -354,7 +357,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
     <div className="grid gap-4 sm:grid-cols-2">
       {/* Customer Info */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-5 py-3">
+        <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+          <IconUser className="size-4 text-primary" />
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundendaten</h3>
         </div>
         <div className="p-5">
@@ -411,7 +415,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
 
       {/* Event Info */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-5 py-3">
+        <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+          <IconCalendarEvent className="size-4 text-primary" />
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Event-Details</h3>
         </div>
         <div className="p-5">
@@ -462,7 +467,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
       {/* Angefragte Extras */}
       {inquiry.extras.length > 0 && (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-5 py-3">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconStar className="size-4 text-primary" />
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Angefragte Extras</h3>
           </div>
           <div className="p-5">
@@ -483,7 +489,8 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
 
       {/* Comments */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-5 py-3">
+        <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+          <IconNotes className="size-4 text-primary" />
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kommentare</h3>
         </div>
         <div className="p-5">
