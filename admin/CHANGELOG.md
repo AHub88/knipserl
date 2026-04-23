@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.10.0] — 2026-04-23
+
+### Added
+- Auftrag-Detail: Fahrer im Header-Rail ist jetzt **inline editierbar** (Pencil-Icon → zwei Dropdowns für 1. und 2. Fahrer → Save/Cancel). Gleiches UX-Muster wie bei Workflow, Extras, Notizen.
+
+### Changed
+- Auftrag-Detail Header: **Workflow- und Fahrer-Header haben jetzt exakt dieselbe interne Struktur** (Header-Zeile `h-5` + Content-Zeile `h-5` + `pb-3 mb-1 border-b`). Dadurch starten der erste Status-Pill ("Bestätigt") und der erste Quick-Action-Button ("Bestätigungslink") auf exakt derselben Horizontalen.
+- Auftrag-Detail: Bei **zwei Fahrern** wird jetzt nur noch die **Initialen-Variante** gezeigt (z. B. "JD / AK") statt "Johann Darscht (JD) / Andreas ..." — spart Platz im schmalen Rail und vermeidet Truncation. Bei einem Fahrer bleibt der volle Name.
+
 ## [1.9.0] — 2026-04-23
 
 ### Added

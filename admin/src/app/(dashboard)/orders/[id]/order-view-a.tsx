@@ -124,6 +124,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [editingExtras, setEditingExtras] = useState(false);
   const [editingNotes, setEditingNotes] = useState(false);
   const [editingInternal, setEditingInternal] = useState(false);
+  const [editingDriver, setEditingDriver] = useState(false);
 
   const [statusState, setStatusState] = useState({
     confirmed: order.confirmed,
@@ -134,6 +135,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [extrasState, setExtrasState] = useState<string[]>(order.extras);
   const [notesState, setNotesState] = useState(order.notes ?? "");
   const [internalState, setInternalState] = useState(order.internalNotes ?? "");
+  const [driverIdState, setDriverIdState] = useState(order.driverId ?? "");
+  const [secondDriverIdState, setSecondDriverIdState] = useState(order.secondDriverId ?? "");
   const [layoutModalOpen, setLayoutModalOpen] = useState(false);
 
   async function saveField(data: Record<string, unknown>) {
@@ -182,9 +185,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const driver2 = drivers.find((d) => d.id === order.secondDriverId);
   const driverDisplay = (() => {
     if (!driver1) return null;
-    const d1 = `${driver1.name}${driver1.initials ? ` (${driver1.initials})` : ""}`;
-    if (!driver2) return d1;
-    return `${d1} / ${driver2.name}${driver2.initials ? ` (${driver2.initials})` : ""}`;
+    // 1 Fahrer: voller Name mit Initialen
+    if (!driver2) {
+      return `${driver1.name}${driver1.initials ? ` (${driver1.initials})` : ""}`;
+    }
+    // 2 Fahrer: nur Initialen (Fallback auf Name falls keine Initialen gepflegt sind)
+    return `${driver1.initials ?? driver1.name} / ${driver2.initials ?? driver2.name}`;
   })();
 
   const activeExtras = extrasState
@@ -286,7 +292,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4 flex flex-col gap-2">
             {/* Header block — matches Fahrer block in rail */}
             <div className="pb-3 mb-1 border-b border-border">
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between h-5">
                 <div className="flex items-center gap-2">
                   <IconFlag className="size-4 text-primary shrink-0" />
                   <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Workflow</h3>
@@ -322,12 +328,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </div>
                 )}
               </div>
-              {/* Progress bar */}
-              <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full bg-emerald-400 transition-all"
-                  style={{ width: `${(doneSteps / 4) * 100}%` }}
-                />
+              {/* Progress bar — centered in h-5 row to match Fahrer name row height */}
+              <div className="mt-1.5 h-5 flex items-center">
+                <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400 transition-all"
+                    style={{ width: `${(doneSteps / 4) * 100}%` }}
+                  />
+                </div>
               </div>
             </div>
 
@@ -369,18 +377,83 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
           {/* Right: Action Rail */}
           <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/30 p-4 flex flex-col gap-2">
-            {/* Fahrer */}
+            {/* Fahrer — inline editable */}
             <div className="pb-3 mb-1 border-b border-border">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Fahrer</p>
-              {driverDisplay ? (
-                <div className="flex items-center gap-1.5">
-                  <IconSteeringWheel className="size-4 text-primary shrink-0" />
-                  <span className="text-sm font-semibold text-foreground truncate">{driverDisplay}</span>
+              <div className="flex items-center justify-between h-5">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Fahrer</p>
+                {isAdmin && !editingDriver && (
+                  <button onClick={() => setEditingDriver(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                    <IconPencil className="size-4" />
+                  </button>
+                )}
+                {editingDriver && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={async () => {
+                        await saveField({
+                          driverId: driverIdState || null,
+                          secondDriverId: secondDriverIdState || null,
+                        });
+                        setEditingDriver(false);
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <IconCheck className="size-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDriverIdState(order.driverId ?? "");
+                        setSecondDriverIdState(order.secondDriverId ?? "");
+                        setEditingDriver(false);
+                      }}
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <IconX className="size-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {!editingDriver ? (
+                <div className="mt-1.5 h-5 flex items-center gap-1.5">
+                  <IconSteeringWheel
+                    className={
+                      "size-4 shrink-0 " + (driverDisplay ? "text-primary" : "text-muted-foreground")
+                    }
+                  />
+                  {driverDisplay ? (
+                    <span className="text-sm font-semibold text-foreground truncate">{driverDisplay}</span>
+                  ) : (
+                    <span className="text-sm text-muted-foreground italic">Nicht zugewiesen</span>
+                  )}
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5">
-                  <IconSteeringWheel className="size-4 text-muted-foreground shrink-0" />
-                  <span className="text-sm text-muted-foreground italic">Nicht zugewiesen</span>
+                <div className="mt-1.5 space-y-1.5">
+                  <select
+                    value={driverIdState}
+                    onChange={(e) => setDriverIdState(e.target.value)}
+                    className="h-8 w-full rounded-md border border-border bg-card px-2 text-xs text-foreground outline-none focus:border-primary/50 cursor-pointer"
+                  >
+                    <option value="">– Kein Fahrer –</option>
+                    {drivers.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                        {d.initials ? ` (${d.initials})` : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={secondDriverIdState}
+                    onChange={(e) => setSecondDriverIdState(e.target.value)}
+                    className="h-8 w-full rounded-md border border-border bg-card px-2 text-xs text-foreground outline-none focus:border-primary/50 cursor-pointer"
+                  >
+                    <option value="">– Kein 2. Fahrer –</option>
+                    {drivers.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                        {d.initials ? ` (${d.initials})` : ""}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               )}
             </div>
