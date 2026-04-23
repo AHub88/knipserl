@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.6.0] — 2026-04-23
+
+### Added
+- Dashboard: **Standpunkt heute als Verlaufsgraph** (neue Sektion zusätzlich unter den Balken). Zwei Area-Charts (Umsatz orange, Aufträge blau) mit permanent sichtbaren Werte-Labels über jedem Jahres-Datenpunkt — keine Hover nötig.
+
+### Changed
+- Aufträge-Tabelle: Trennstrich zwischen Future und Past jetzt in vollem Primary statt primary/60.
+
 ## [1.5.3] — 2026-04-23
 
 ### Changed

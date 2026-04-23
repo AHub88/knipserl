@@ -908,7 +908,7 @@ function MobileOrderList({
             onClick={() => onRowClick(order.id)}
             className={
               "cursor-pointer px-3 py-2.5 transition-colors active:bg-accent " +
-              (isDivider ? "border-t-[3px] border-t-primary/60 " : "") +
+              (isDivider ? "border-t-[3px] border-t-primary " : "") +
               (isPast ? "opacity-60" : "")
             }
           >
@@ -1087,7 +1087,7 @@ function OrderTable({
               onClick={() => onRowClick(order.id)}
               className={
                 "cursor-pointer border-b border-border/50 transition-colors odd:bg-foreground/[0.02] hover:bg-foreground/[0.05] " +
-                (isDivider ? "border-t-[3px] border-t-primary/60 " : "") +
+                (isDivider ? "border-t-[3px] border-t-primary " : "") +
                 (isPast ? "opacity-60" : "")
               }
             >

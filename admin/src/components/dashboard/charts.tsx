@@ -11,11 +11,12 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  LabelList,
 } from "recharts";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { IconChartBar, IconChartPie } from "@tabler/icons-react";
+import { IconChartBar, IconChartPie, IconTrendingUp } from "@tabler/icons-react";
 
 // --- Mini Sparkline for KPI cards ---
 
@@ -310,6 +311,109 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// --- YTD Trend Chart (Standpunkt heute als Verlaufsgraph) ---
+
+interface YtdYearRow {
+  year: number;
+  revenue: number;
+  count: number;
+}
+
+interface YtdTrendChartProps {
+  ytdYears: YtdYearRow[];
+  ytdDateLabel: string;
+}
+
+function YtdMiniArea({
+  data,
+  valueKey,
+  color,
+  formatter,
+}: {
+  data: YtdYearRow[];
+  valueKey: "revenue" | "count";
+  color: string;
+  formatter: (v: number) => string;
+}) {
+  return (
+    <div className="h-[200px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 30, right: 30, bottom: 10, left: 20 }}>
+          <defs>
+            <linearGradient id={`ytd-grad-${valueKey}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity={0.4} />
+              <stop offset="100%" stopColor={color} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis
+            dataKey="year"
+            tick={{ fontSize: 13, fill: "var(--muted-foreground)", fontWeight: 600 }}
+            axisLine={false}
+            tickLine={false}
+            padding={{ left: 20, right: 20 }}
+          />
+          <Area
+            type="monotone"
+            dataKey={valueKey}
+            stroke={color}
+            strokeWidth={2.5}
+            fill={`url(#ytd-grad-${valueKey})`}
+            dot={{ r: 5, fill: color, strokeWidth: 2, stroke: "var(--card)" }}
+            activeDot={{ r: 6 }}
+            isAnimationActive={false}
+          >
+            <LabelList
+              dataKey={valueKey}
+              position="top"
+              offset={14}
+              formatter={(v: unknown) => formatter(Number(v))}
+              style={{ fontSize: 12, fontWeight: 700, fill: color }}
+            />
+          </Area>
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+export function YtdTrendChart({ ytdYears, ytdDateLabel }: YtdTrendChartProps) {
+  return (
+    <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
+      <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+        <IconTrendingUp className="size-4 text-primary" />
+        <h3 className="text-sm font-semibold text-foreground">
+          Verlauf Standpunkt bis {ytdDateLabel}
+        </h3>
+        <p className="text-xs text-muted-foreground mt-0.5">(Test: Linienverlauf)</p>
+      </div>
+      <div className="p-5 grid gap-6 sm:grid-cols-2">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+            Umsatz
+          </p>
+          <YtdMiniArea
+            data={ytdYears}
+            valueKey="revenue"
+            color="#F6A11C"
+            formatter={(v) => `${v.toLocaleString("de-DE", { maximumFractionDigits: 0 })} €`}
+          />
+        </div>
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+            Aufträge
+          </p>
+          <YtdMiniArea
+            data={ytdYears}
+            valueKey="count"
+            color="#3b82f6"
+            formatter={(v) => String(v)}
+          />
+        </div>
+      </div>
     </div>
   );
 }

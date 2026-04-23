@@ -17,6 +17,7 @@ import {
   MonthlyOrdersChart,
   EventTypesPieChart,
   UpcomingOrdersList,
+  YtdTrendChart,
 } from "@/components/dashboard/charts";
 import { YearlyComparisonTabs } from "@/components/dashboard/yearly-tabs";
 
@@ -432,6 +433,9 @@ export default async function DashboardPage() {
           })}
         </div>
       </div>
+
+      {/* ── Standpunkt heute als Verlaufsgraph (testweise) ── */}
+      <YtdTrendChart ytdYears={ytdYears} ytdDateLabel={ytdDateLabel} />
 
       {/* ── Yearly Comparison (tabbed) ── */}
       {yearlyData.length > 0 && (
