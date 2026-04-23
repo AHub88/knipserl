@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.5.1] — 2026-04-23
+
+### Changed
+- Dashboard Yearly-Tabs: Balken deutlich besser erkennbar — Non-Current-Year-Balken in `bg-*/25` statt fast-unsichtbarem `bg-accent`, Current-Year-Balken **voll Primary/Blue/etc.** statt `/30`.
+- Zahlen aus dem Balken raus auf eine eigene Spalte rechts — in `text-sm` statt 11px, besser scanbar über alle Jahre hinweg.
+- Jahr-Labels für das aktuelle Jahr in `text-base font-bold text-primary` statt gleich-klein.
+- Change-Prozente prominenter (`text-sm font-bold`).
+- Bar/Rechnung-Tab: Zellen-Zahlen auf `text-sm font-bold`, current year voll gefüllt.
+- **Extras-Tab als Heatmap**: Zell-Intensität zeigt Häufigkeit (Primary-Gradient), Trends über Jahre auf einen Blick sichtbar.
+
 ## [1.5.0] — 2026-04-23
 
 ### Changed
