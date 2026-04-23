@@ -140,6 +140,7 @@ async function syncSchema() {
     ["orders", "paid", "BOOLEAN", false, "false"],
     ["orders", "graphicUrl", "TEXT", true, null],
     ["orders", "images", "TEXT[]", false, "'{}'"],
+    ["orders", "startscreenImages", "TEXT[]", false, "'{}'"],
     ["orders", "confirmationToken", "TEXT", true, null],
     ["orders", "confirmedByCustomerAt", "TIMESTAMPTZ", true, null],
     ["orders", "completedAt", "TIMESTAMPTZ", true, null],

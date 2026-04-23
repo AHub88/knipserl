@@ -97,6 +97,7 @@ export default async function OrderDetailPage({
     teardownDate: order.teardownDate?.toISOString() ?? null,
     teardownTime: order.teardownTime,
     images: order.images,
+    startscreenImages: (order as { startscreenImages?: string[] }).startscreenImages ?? [],
     graphicUrl: order.graphicUrl,
     confirmationToken: order.confirmationToken,
     confirmedByCustomerAt: order.confirmedByCustomerAt?.toISOString() ?? null,

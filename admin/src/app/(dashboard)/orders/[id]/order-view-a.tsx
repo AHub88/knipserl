@@ -95,6 +95,7 @@ type Order = {
   teardownDate: string | null;
   teardownTime: string | null;
   images: string[];
+  startscreenImages: string[];
   graphicUrl?: string | null;
   confirmationToken?: string | null;
   confirmedByCustomerAt?: string | null;
@@ -737,14 +738,27 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
         {/* ── Right: Sidebar ── */}
         <div className="w-full lg:w-80 shrink-0 space-y-4">
-          {/* Drucklayouts - volle Breite */}
+          {/* Drucklayouts ODER Kunden-Layout — entweder/oder */}
+          {!order.graphicUrl && (
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+                <IconPrinter className="size-4 text-primary" />
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h3>
+              </div>
+              <div className="p-5">
+                <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
+              </div>
+            </div>
+          )}
+
+          {/* Startscreen-Layout (immer anzeigen) */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
             <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-              <IconPrinter className="size-4 text-primary" />
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h3>
+              <IconDeviceTv className="size-4 text-primary" />
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Startscreen-Layout</h3>
             </div>
             <div className="p-5">
-              <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
+              <ImageGallery orderId={order.id} images={order.startscreenImages} isAdmin={isAdmin} singleColumn type="startscreen" />
             </div>
           </div>
 

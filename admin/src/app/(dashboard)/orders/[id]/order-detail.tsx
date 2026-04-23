@@ -81,6 +81,7 @@ type Order = {
   teardownDate: string | null;
   teardownTime: string | null;
   images: string[];
+  startscreenImages: string[];
   graphicUrl: string | null;
   confirmationToken: string | null;
   confirmedByCustomerAt: string | null;

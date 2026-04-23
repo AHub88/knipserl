@@ -203,6 +203,7 @@ model Order {
   paid            Boolean       @default(false)
   graphicUrl      String?
   images          String[]      @default([])
+  startscreenImages String[]    @default([])
   confirmationToken String?     @unique @default(cuid())
   confirmedByCustomerAt DateTime?
   completedAt     DateTime?

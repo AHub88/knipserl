@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.9.0] — 2026-04-23
+
+### Added
+- Auftrag-Detail Sidebar: **Neues Drag-Feld "Startscreen-Layout"** — eigenes Upload/Delete für Startscreen-Bilder, selbe Funktionsweise wie Drucklayouts. Eigene API-Route `/api/orders/[id]/startscreen-images` und neue DB-Spalte `startscreenImages TEXT[]` (via `sync-schema.cjs` synchronisiert).
+
+### Changed
+- Auftrag-Detail Sidebar: **Drucklayouts und Kunden-Layout sind jetzt entweder/oder**. Sobald der Kunde ein Layout via Design-Link erstellt hat (`graphicUrl` gesetzt), verschwindet die Drucklayouts-Sektion. Vorher wurden beide parallel angezeigt, was nie ein valider Zustand war.
+- `ImageGallery`-Komponente hat einen neuen `type`-Prop (`"prints" | "startscreen"`), der den API-Endpoint steuert. Alter Call-Site bleibt abwärtskompatibel (Default `"prints"`).
+
 ## [1.8.1] — 2026-04-23
 
 ### Changed

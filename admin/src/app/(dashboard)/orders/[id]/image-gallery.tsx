@@ -16,14 +16,21 @@ type Props = {
   images: string[];
   isAdmin: boolean;
   singleColumn?: boolean;
+  /** Which image bucket: "prints" (default) or "startscreen". Controls the API endpoint. */
+  type?: "prints" | "startscreen";
 };
 
-export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) {
+export function ImageGallery({ orderId, images, isAdmin, singleColumn, type = "prints" }: Props) {
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const endpoint = type === "startscreen"
+    ? `/api/orders/${orderId}/startscreen-images`
+    : `/api/orders/${orderId}/images`;
+  const emptyLabel = type === "startscreen" ? "Keine Startscreen-Layouts vorhanden" : "Keine Drucklayouts vorhanden";
 
   const uploadFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -42,7 +49,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
           formData.append("files", file);
         }
 
-        const res = await fetch(`/api/orders/${orderId}/images`, {
+        const res = await fetch(endpoint, {
           method: "POST",
           body: formData,
         });
@@ -58,12 +65,12 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
         setUploading(false);
       }
     },
-    [orderId, router]
+    [endpoint, router]
   );
 
   async function handleDelete(imageUrl: string) {
     try {
-      const res = await fetch(`/api/orders/${orderId}/images`, {
+      const res = await fetch(endpoint, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageUrl }),
@@ -175,7 +182,7 @@ export function ImageGallery({ orderId, images, isAdmin, singleColumn }: Props) 
       {images.length === 0 && !isAdmin && (
         <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
           <IconPhoto className="size-8 mb-2" />
-          <p className="text-sm">Keine Drucklayouts vorhanden</p>
+          <p className="text-sm">{emptyLabel}</p>
         </div>
       )}
 
