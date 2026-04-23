@@ -91,10 +91,13 @@ export default async function OrderDetailPage({
     designReady: order.designReady,
     planned: order.planned,
     paid: order.paid,
-    distanceKm:
-      (order as unknown as { distanceKm?: number | null }).distanceKm ??
-      order.inquiry?.distanceKm ??
-      null,
+    distanceKm: (() => {
+      const direct = (order as unknown as { distanceKm?: number | null }).distanceKm;
+      if (direct != null && direct > 0) return direct;
+      const fromInquiry = order.inquiry?.distanceKm;
+      if (fromInquiry != null && fromInquiry > 0) return fromInquiry;
+      return null;
+    })(),
     setupDate: order.setupDate?.toISOString() ?? null,
     setupTime: order.setupTime,
     teardownDate: order.teardownDate?.toISOString() ?? null,
@@ -115,7 +118,11 @@ export default async function OrderDetailPage({
   });
   if (matchingLocation) {
     serialized.locationId = matchingLocation.id;
-    if (serialized.distanceKm == null && matchingLocation.distanceKm != null) {
+    if (
+      serialized.distanceKm == null &&
+      matchingLocation.distanceKm != null &&
+      matchingLocation.distanceKm > 0
+    ) {
       serialized.distanceKm = matchingLocation.distanceKm;
     }
   }

@@ -125,6 +125,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [editingNotes, setEditingNotes] = useState(false);
   const [editingInternal, setEditingInternal] = useState(false);
   const [editingDriver, setEditingDriver] = useState(false);
+  const [editingDelivery, setEditingDelivery] = useState(false);
 
   const [statusState, setStatusState] = useState({
     confirmed: order.confirmed,
@@ -137,6 +138,10 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [internalState, setInternalState] = useState(order.internalNotes ?? "");
   const [driverIdState, setDriverIdState] = useState(order.driverId ?? "");
   const [secondDriverIdState, setSecondDriverIdState] = useState(order.secondDriverId ?? "");
+  const [setupDateState, setSetupDateState] = useState(order.setupDate ? order.setupDate.slice(0, 10) : "");
+  const [setupTimeState, setSetupTimeState] = useState(order.setupTime ?? "");
+  const [teardownDateState, setTeardownDateState] = useState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
+  const [teardownTimeState, setTeardownTimeState] = useState(order.teardownTime ?? "");
   const [layoutModalOpen, setLayoutModalOpen] = useState(false);
 
   async function saveField(data: Record<string, unknown>) {
@@ -694,12 +699,88 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
             {/* Lieferung */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-                <IconTruck className="size-4 text-primary" />
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Lieferung</h3>
+              <div className="flex items-center justify-between border-b border-border px-5 py-3">
+                <div className="flex items-center gap-2">
+                  <IconTruck className="size-4 text-primary" />
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Lieferung</h3>
+                </div>
+                {isAdmin && !editingDelivery && (
+                  <button onClick={() => setEditingDelivery(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                    <IconPencil className="size-4.5" />
+                  </button>
+                )}
+                {editingDelivery && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={async () => {
+                        await saveField({
+                          setupDate: setupDateState || null,
+                          setupTime: setupTimeState || null,
+                          teardownDate: teardownDateState || null,
+                          teardownTime: teardownTimeState || null,
+                        });
+                        setEditingDelivery(false);
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <IconCheck className="size-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSetupDateState(order.setupDate ? order.setupDate.slice(0, 10) : "");
+                        setSetupTimeState(order.setupTime ?? "");
+                        setTeardownDateState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
+                        setTeardownTimeState(order.teardownTime ?? "");
+                        setEditingDelivery(false);
+                      }}
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <IconX className="size-5" />
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="p-5">
-              {hasSchedule ? (
+              {editingDelivery ? (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400 mb-1.5">Aufbau</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="date"
+                        value={setupDateState}
+                        onChange={(e) => setSetupDateState(e.target.value)}
+                        className="h-9 rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                      />
+                      <input
+                        type="text"
+                        value={setupTimeState}
+                        onChange={(e) => setSetupTimeState(e.target.value)}
+                        placeholder="z. B. 14:30 / Vormittags"
+                        className="h-9 rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-red-400 mb-1.5">Abbau</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="date"
+                        value={teardownDateState}
+                        onChange={(e) => setTeardownDateState(e.target.value)}
+                        className="h-9 rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                      />
+                      <input
+                        type="text"
+                        value={teardownTimeState}
+                        onChange={(e) => setTeardownTimeState(e.target.value)}
+                        placeholder="z. B. 18:00 / vor Ort klären"
+                        className="h-9 rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : hasSchedule ? (
                 <div className="space-y-4">
                   {(order.setupDate || order.setupTime) && (
                     <div className="flex items-center gap-3">

@@ -859,7 +859,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             </div>
             <div>
               <label className={labelClass}>Aufbau Zeit</label>
-              <input className={inputClass} type="time" value={setupTime} onChange={(e) => setSetupTime(e.target.value)} />
+              <input className={inputClass} type="text" value={setupTime} onChange={(e) => setSetupTime(e.target.value)} placeholder="14:30 · Vormittags · vor Ort klären" />
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -869,7 +869,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             </div>
             <div>
               <label className={labelClass}>Abbau Zeit</label>
-              <input className={inputClass} type="time" value={teardownTime} onChange={(e) => setTeardownTime(e.target.value)} />
+              <input className={inputClass} type="text" value={teardownTime} onChange={(e) => setTeardownTime(e.target.value)} placeholder="18:00 · Abends · vor Ort klären" />
             </div>
           </div>
         </div>

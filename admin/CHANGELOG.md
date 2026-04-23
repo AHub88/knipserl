@@ -4,6 +4,17 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.11.1] — 2026-04-23
+
+### Added
+- Auftrag-Detail Lieferung-Box: **Inline-Edit-Pencil** — klicken öffnet Edit-Modus mit 2× Datum + 2× Zeit-Textfeldern für Aufbau und Abbau, Save/Cancel. Kein Sprung mehr ins Edit-Formular nötig.
+
+### Changed
+- Lieferung Zeit-Felder sind jetzt **Freitext** statt `type="time"` — erlaubt Einträge wie "vor Ort klären", "Vormittags", "18:30".
+
+### Fixed
+- Location-Entfernung wurde trotz vorherigem Fix immer noch `0 km` angezeigt. Ursache: Die `?? null`-Fallback-Kette scheitert an der Zahl `0` (nullish coalescing behandelt nur `null`/`undefined`). Jetzt expliziter `> 0`-Check auf allen drei Quellen (Order → Inquiry → Location). Ein echter `0 km`-Wert muss nun in der Order selbst gespeichert sein, um angezeigt zu werden.
+
 ## [1.11.0] — 2026-04-23
 
 ### Added
