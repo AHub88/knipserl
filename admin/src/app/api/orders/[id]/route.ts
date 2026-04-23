@@ -65,19 +65,38 @@ export async function PATCH(
     return NextResponse.json(order);
   }
 
-  // Drivers can only assign themselves
+  // Drivers: self-claim ODER internalNotes auf eigenen Aufträgen bearbeiten
   if (session.user.role === "DRIVER") {
-    if (body.driverId && body.driverId !== session.user.id) {
-      return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
-    }
-    const order = await prisma.order.update({
+    const current = await prisma.order.findUnique({
       where: { id },
-      data: {
-        driverId: session.user.id,
-        status: "ASSIGNED",
-      },
+      select: { driverId: true, secondDriverId: true },
     });
-    return NextResponse.json(order);
+    const isAssigned =
+      current != null &&
+      (current.driverId === session.user.id || current.secondDriverId === session.user.id);
+
+    // Self-claim
+    if (body.driverId !== undefined) {
+      if (body.driverId && body.driverId !== session.user.id) {
+        return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
+      }
+      const order = await prisma.order.update({
+        where: { id },
+        data: { driverId: session.user.id, status: "ASSIGNED" },
+      });
+      return NextResponse.json(order);
+    }
+
+    // Internen Kommentar auf zugewiesenem Auftrag bearbeiten
+    if (body.internalNotes !== undefined && isAssigned) {
+      const order = await prisma.order.update({
+        where: { id },
+        data: { internalNotes: body.internalNotes || null },
+      });
+      return NextResponse.json(order);
+    }
+
+    return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
   }
 
   // Admins can update everything

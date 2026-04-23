@@ -225,7 +225,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
     : 0;
   const customerTotal = customerSubtotal - discountAmount;
   const internalProfit = customerTotal - Math.abs(order.setupCost ?? 0) - Math.abs(order.materialCost ?? 0);
-  const showInternal = viewMode !== "accounting" && viewMode !== "driver";
+  const isDriverView = viewMode === "driver";
+  // Interne Box (Preiskalkulation + Interner Kommentar) sichtbar außer in der Buchhaltungs-Ansicht.
+  // Fahrer dürfen intern sehen (und den Kommentar bearbeiten).
+  const showInternal = viewMode !== "accounting";
+  const canEditInternalNotes = isAdmin || isDriverView;
 
   const statusFlags = [
     { label: "Bestätigt", icon: IconCircleCheck, done: statusState.confirmed },
@@ -329,6 +333,43 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             )}
           </div>
 
+          {/* Fahrer-Ansicht: nur Fahrer + prominente Zahlart, kein Workflow + keine Action-Rail */}
+          {isDriverView ? (
+            <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4 flex flex-col gap-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Fahrer</p>
+                <div className="flex items-center gap-2">
+                  <IconSteeringWheel
+                    className={
+                      "size-4 shrink-0 " + (driverDisplay ? "text-primary" : "text-muted-foreground")
+                    }
+                  />
+                  {driverDisplay ? (
+                    <span className="text-sm font-semibold text-foreground truncate">{driverDisplay}</span>
+                  ) : (
+                    <span className="text-sm text-muted-foreground italic">Nicht zugewiesen</span>
+                  )}
+                </div>
+              </div>
+              <div className="mt-auto">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Zahlart</p>
+                <div
+                  className={
+                    "flex items-center gap-3 rounded-xl border px-4 py-3 " +
+                    (order.paymentMethod === "CASH"
+                      ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-400"
+                      : "border-sky-500/40 bg-sky-500/15 text-sky-400")
+                  }
+                >
+                  <IconCash className="size-7 shrink-0" />
+                  <span className="text-2xl font-bold uppercase tracking-wide">
+                    {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+          <>
           {/* Middle: Workflow */}
           <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4 flex flex-col gap-2">
             {/* Header block — matches Fahrer block in rail */}
@@ -599,6 +640,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </button>
             )}
           </div>
+          </>
+          )}
         </div>
       </div>
 
@@ -1009,14 +1052,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             )}
 
             {/* Intern */}
-            {showInternal && (order.internalNotes || editingInternal || isAdmin) && (
+            {showInternal && (order.internalNotes || editingInternal || canEditInternalNotes) && (
               <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
                 <div className="flex items-center justify-between border-b border-amber-500/20 px-4 py-2.5">
                   <div className="flex items-center gap-2">
                     <IconAlertCircle className="size-4 text-amber-400" />
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
                   </div>
-                  {isAdmin && !editingInternal && (
+                  {canEditInternalNotes && !editingInternal && (
                     <button onClick={() => setEditingInternal(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
                       <IconPencil className="size-4.5" />
                     </button>
@@ -1081,16 +1124,18 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     <IconPhoto className="size-4" />
                     Vorschau
                   </button>
-                  <a
-                    href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
-                    download={`layout-${order.orderNumber}.png`}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-border bg-muted text-foreground/80 text-sm hover:bg-accent transition-colors"
-                  >
-                    <IconFileDownload className="size-4" />
-                    Herunterladen
-                  </a>
+                  {!isDriverView && (
+                    <a
+                      href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
+                      download={`layout-${order.orderNumber}.png`}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-border bg-muted text-foreground/80 text-sm hover:bg-accent transition-colors"
+                    >
+                      <IconFileDownload className="size-4" />
+                      Herunterladen
+                    </a>
+                  )}
                 </div>
-                {isAdmin && order.designToken && (
+                {isAdmin && !isDriverView && order.designToken && (
                   <a
                     href={`/design/${order.designToken}?admin=1`}
                     className="flex items-center justify-center gap-2 py-2 rounded-lg border border-primary/30 bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
@@ -1117,14 +1162,16 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       alt="Layout Vorschau"
                       className="max-w-[85vw] max-h-[80vh] rounded-xl border border-border shadow-2xl object-contain"
                     />
-                    <a
-                      href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
-                      download={`layout-${order.orderNumber}.png`}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-black font-semibold text-sm transition-colors"
-                    >
-                      <IconFileDownload className="size-4" />
-                      Layout herunterladen (ohne Platzhalter)
-                    </a>
+                    {!isDriverView && (
+                      <a
+                        href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
+                        download={`layout-${order.orderNumber}.png`}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-black font-semibold text-sm transition-colors"
+                      >
+                        <IconFileDownload className="size-4" />
+                        Layout herunterladen (ohne Platzhalter)
+                      </a>
+                    )}
                   </div>
                 </div>
               )}

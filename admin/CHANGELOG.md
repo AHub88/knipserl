@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.14.0] — 2026-04-23
+
+### Added
+- **Fahrer-optimierte Auftrag-Detailansicht**: In der Fahrer-Ansicht (viewMode `driver`) ist die Auftragsdetailseite auf das reduziert, was ein Fahrer vor Ort wirklich braucht:
+  - **Quick-Action-Spalte komplett entfernt** — kein Bestätigungslink, kein Design-Link, keine PDF-Aktion, kein „Bearbeiten"-Button.
+  - **Workflow-Progress-Spalte ersetzt** durch eine schlanke Spalte mit Fahrer-Zuweisung (read-only) und **prominenter Zahlart-Kachel**: grün für Bar, blau für Rechnung — damit der Fahrer auf den ersten Blick weiß, ob er kassieren muss.
+  - **Interner Kommentar** jetzt auch für Fahrer sichtbar und bearbeitbar (z. B. für Notizen nach dem Einsatz). Backend (`PATCH /api/orders/:id`) akzeptiert `internalNotes`-Updates von Fahrern auf den ihnen zugewiesenen Aufträgen.
+  - **Preiskalkulation intern** für Fahrer sichtbar (Aufbau-/Material-Anteile, Gewinn).
+  - **Kunden-Layout**: Fahrer können das Design nur ansehen — „Herunterladen" und „Design nachbearbeiten" sind ausgeblendet.
+
 ## [1.13.2] — 2026-04-23
 
 ### Changed
