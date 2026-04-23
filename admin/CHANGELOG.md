@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.5.3] — 2026-04-23
+
+### Changed
+- Auftrag-Detail: Firma und Name sitzen jetzt **in einer Zeile** mit Bindestrich-Trennung statt untereinander.
+- Header-Actions neu angeordnet: **1. Bestätigungslink · 2. Design-Link · 3. PDF · 4. Bearbeiten**. Action-Buttons wandern aus dem Workflow-Strip zurück in den Header.
+- Fahrer steht jetzt als eigene Pille mit Primary-Icon in der Topline statt als Dot-separierter Plain-Text — deutlich präsenter.
+- Extras-Section kompakter: Icons `size-5`, Padding `px-3 py-2`, `min-w-[72px]` statt `p-4 min-w-[90px]` — spart Vertikal-Platz.
+
 ## [1.5.2] — 2026-04-23
 
 ### Changed

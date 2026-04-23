@@ -221,38 +221,76 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
     <div className="space-y-6">
       {/* ── Hero Header (Quiet) ── */}
       <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
-        {/* Topline: back + meta dots + actions */}
-        <div className="flex items-center gap-2 mb-5 text-xs">
+        {/* Topline: back + meta dots + driver + actions */}
+        <div className="flex items-center gap-2 mb-5 text-xs flex-wrap">
           <Link
             href="/orders"
             className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <IconArrowLeft className="size-4" />
           </Link>
-          <div className="flex items-center gap-2 flex-wrap text-muted-foreground min-w-0">
+          <div className="flex items-center gap-2 text-muted-foreground min-w-0">
             <span className="font-mono">#{order.orderNumber}</span>
             <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
             <span>{companyTag}</span>
             <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
             <span>{paymentLabel}</span>
-            {driverDisplay && (
-              <>
-                <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                <span className="inline-flex items-center gap-1 truncate">
-                  <IconSteeringWheel className="size-3.5 shrink-0" />
-                  <span className="truncate">{driverDisplay}</span>
-                </span>
-              </>
-            )}
           </div>
+          {driverDisplay && (
+            <span className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-foreground/[0.06] text-foreground text-sm font-semibold">
+              <IconSteeringWheel className="size-4 text-primary" />
+              <span className="truncate max-w-[200px]">{driverDisplay}</span>
+            </span>
+          )}
           <div className="flex items-center gap-2 ml-auto shrink-0">
+            {order.confirmationToken && (
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/confirm/${order.confirmationToken}`;
+                  navigator.clipboard.writeText(url);
+                  toast.success("Bestätigungslink kopiert");
+                }}
+                className={
+                  "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                  (order.confirmedByCustomerAt
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15"
+                    : "border-border bg-muted text-foreground/80 hover:bg-accent")
+                }
+              >
+                {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
+                <span className="hidden sm:inline">Bestätigungslink</span>
+              </button>
+            )}
             {isAdmin && (
               <button
-                onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-muted text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
+                onClick={async () => {
+                  if (order.designToken) {
+                    const url = `${window.location.origin}/design/${order.designToken}`;
+                    await navigator.clipboard.writeText(url);
+                    toast.success("Design-Link kopiert");
+                  } else {
+                    try {
+                      const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
+                      if (!res.ok) throw new Error();
+                      const { token } = await res.json();
+                      const url = `${window.location.origin}/design/${token}`;
+                      await navigator.clipboard.writeText(url);
+                      toast.success("Design erstellt & Link kopiert");
+                      router.refresh();
+                    } catch {
+                      toast.error("Design konnte nicht erstellt werden");
+                    }
+                  }
+                }}
+                className={
+                  "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                  (order.designToken
+                    ? "border-border bg-muted text-foreground/80 hover:bg-accent"
+                    : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15")
+                }
               >
-                <IconEdit className="size-3.5" />
-                <span className="hidden sm:inline">Bearbeiten</span>
+                <IconPalette className="size-3.5" />
+                <span className="hidden sm:inline">{order.designToken ? "Design-Link" : "Design erstellen"}</span>
               </button>
             )}
             <a
@@ -263,6 +301,15 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               <IconFileDownload className="size-3.5" />
               <span className="hidden sm:inline">PDF</span>
             </a>
+            {isAdmin && (
+              <button
+                onClick={onEdit}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-muted text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
+              >
+                <IconEdit className="size-3.5" />
+                <span className="hidden sm:inline">Bearbeiten</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -275,15 +322,18 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           </span>
         </div>
 
-        {/* Customer Name */}
-        {firma ? (
-          <div className="mb-2">
-            <p className="text-sm sm:text-base text-muted-foreground mb-0.5">{firma}</p>
-            <h1 className="text-xl sm:text-3xl font-bold text-foreground">{kontakt}</h1>
-          </div>
-        ) : (
-          <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">{kontakt}</h1>
-        )}
+        {/* Customer Name - Firma und Name in einer Zeile */}
+        <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">
+          {firma ? (
+            <>
+              <span className="text-muted-foreground font-semibold">{firma}</span>
+              <span className="text-muted-foreground mx-2 font-normal">&ndash;</span>
+              <span>{kontakt}</span>
+            </>
+          ) : (
+            kontakt
+          )}
+        </h1>
 
         {/* Location */}
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
@@ -404,61 +454,6 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 })}
               </div>
 
-              {/* Action links */}
-              {(order.confirmationToken || isAdmin) && (
-                <div className="flex flex-wrap gap-2 pt-3 border-t border-border">
-                  {order.confirmationToken && (
-                    <button
-                      onClick={() => {
-                        const url = `${window.location.origin}/confirm/${order.confirmationToken}`;
-                        navigator.clipboard.writeText(url);
-                        toast.success("Bestätigungslink kopiert");
-                      }}
-                      className={
-                        "inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
-                        (order.confirmedByCustomerAt
-                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15"
-                          : "border-border bg-muted text-foreground/80 hover:bg-accent")
-                      }
-                    >
-                      {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
-                      {order.confirmedByCustomerAt ? "Bestätigungslink erneut kopieren" : "Bestätigungslink kopieren"}
-                    </button>
-                  )}
-                  {isAdmin && (
-                    <button
-                      onClick={async () => {
-                        if (order.designToken) {
-                          const url = `${window.location.origin}/design/${order.designToken}`;
-                          await navigator.clipboard.writeText(url);
-                          toast.success("Design-Link kopiert");
-                        } else {
-                          try {
-                            const res = await fetch(`/api/orders/${order.id}/design`, { method: "POST" });
-                            if (!res.ok) throw new Error();
-                            const { token } = await res.json();
-                            const url = `${window.location.origin}/design/${token}`;
-                            await navigator.clipboard.writeText(url);
-                            toast.success("Design erstellt & Link kopiert");
-                            router.refresh();
-                          } catch {
-                            toast.error("Design konnte nicht erstellt werden");
-                          }
-                        }
-                      }}
-                      className={
-                        "inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
-                        (order.designToken
-                          ? "border-border bg-muted text-foreground/80 hover:bg-accent"
-                          : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15")
-                      }
-                    >
-                      <IconPalette className="size-3.5" />
-                      {order.designToken ? "Design-Link kopieren" : "Design-Link erstellen"}
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </div>
 
@@ -495,8 +490,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </div>
                 )}
               </div>
-              <div className="p-5">
-              <div className="flex flex-wrap gap-3">
+              <div className="p-4">
+              <div className="flex flex-wrap gap-2">
                 {editingExtras
                   ? EXTRAS_CONFIG.map((ext) => {
                       const active = extrasState.includes(ext.key);
@@ -505,14 +500,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                           key={ext.key}
                           onClick={() => toggleExtra(ext.key)}
                           className={
-                            "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 min-w-[90px] cursor-pointer hover:opacity-80 transition-colors " +
+                            "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-2 min-w-[72px] cursor-pointer hover:opacity-80 transition-colors " +
                             (active
                               ? "border-primary/30 bg-primary/10 text-primary"
                               : "border-border bg-card text-muted-foreground")
                           }
                         >
-                          <ext.icon className="size-8" />
-                          <span className="text-[11px] font-bold uppercase tracking-wide">{ext.label}</span>
+                          <ext.icon className="size-5" />
+                          <span className="text-[10px] font-bold uppercase tracking-wide">{ext.label}</span>
                           {(EXTRAS_PRICES[ext.key] ?? 0) > 0 && (
                             <span className="text-[10px] font-mono opacity-60">{EXTRAS_PRICES[ext.key]}&euro;</span>
                           )}
@@ -522,10 +517,10 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   : activeExtras.map((ext) => (
                       <div
                         key={ext.key}
-                        className="flex flex-col items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 p-4 min-w-[90px] text-primary"
+                        className="flex flex-col items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 min-w-[72px] text-primary"
                       >
-                        <ext.icon className="size-8" />
-                        <span className="text-[11px] font-bold uppercase tracking-wide">{ext.label}</span>
+                        <ext.icon className="size-5" />
+                        <span className="text-[10px] font-bold uppercase tracking-wide">{ext.label}</span>
                         {ext.price > 0 && (
                           <span className="text-[10px] font-mono opacity-60">{ext.price}&euro;</span>
                         )}
