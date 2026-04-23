@@ -824,17 +824,6 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
           )}
 
-          {/* Startscreen-Layout (immer anzeigen) */}
-          <div className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-              <IconDeviceTv className="size-4 text-primary" />
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Startscreen-Layout</h3>
-            </div>
-            <div className="p-5">
-              <ImageGallery orderId={order.id} images={order.startscreenImages} isAdmin={isAdmin} singleColumn type="startscreen" />
-            </div>
-          </div>
-
           {/* Kunden-Layout */}
           {order.graphicUrl && (
             <>
@@ -904,6 +893,17 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               )}
             </>
           )}
+
+          {/* Startscreen-Layout (immer anzeigen) */}
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+              <IconDeviceTv className="size-4 text-primary" />
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Startscreen-Layout</h3>
+            </div>
+            <div className="p-5">
+              <ImageGallery orderId={order.id} images={order.startscreenImages} isAdmin={isAdmin} singleColumn type="startscreen" />
+            </div>
+          </div>
 
           {/* Kundenpreis */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">

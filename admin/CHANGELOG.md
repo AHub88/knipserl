@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.10.2] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Sidebar: Startscreen-Layout-Section sitzt jetzt **unterhalb** des Kunden-Layouts (vorher zwischen Drucklayouts und Kunden-Layout). Reihenfolge: Drucklayouts *oder* Kunden-Layout → Startscreen-Layout → Preiskalkulation → Intern.
+
 ## [1.10.1] — 2026-04-23
 
 ### Changed
