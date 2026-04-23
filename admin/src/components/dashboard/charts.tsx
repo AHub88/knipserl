@@ -466,12 +466,15 @@ export function YtdTrendChart({ ytdYears, ytdDateLabel }: YtdTrendChartProps) {
 
   const availableYears = ytdYears.length;
 
-  const options: { value: RangeOption; label: string }[] = [
+  const allOptions: { value: RangeOption; label: string }[] = [
     { value: 4, label: "4 Jahre" },
     { value: 6, label: "6 Jahre" },
     { value: 8, label: "8 Jahre" },
     { value: "all", label: "Alle" },
-  ].filter((o) => o.value === "all" || (o.value as number) <= availableYears);
+  ];
+  const options = allOptions.filter(
+    (o) => o.value === "all" || (o.value as number) <= availableYears
+  );
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">

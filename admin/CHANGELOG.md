@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.1] — 2026-04-23
+
+### Fixed
+- Build-Fehler behoben: Das options-Array im YtdTrendChart-Zeitraum-Filter wurde vom TS-Compiler nach `.filter()` zu `{ value: number }` verengt und kollidierte mit dem `RangeOption`-Type. Jetzt in zwei Schritten typisiert (erst Array, dann filter).
+
 ## [1.7.0] — 2026-04-23
 
 ### Changed
