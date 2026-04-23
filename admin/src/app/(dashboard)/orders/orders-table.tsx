@@ -832,28 +832,62 @@ function MonthGroup({
   const revenue = orders.reduce((s, o) => s + o.price, 0);
 
   return (
-    <div className="rounded-xl overflow-hidden border border-border bg-card">
+    <div
+      className={
+        "rounded-xl overflow-hidden border bg-card " +
+        (hasNext ? "border-primary/50" : "border-border")
+      }
+    >
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={
           "w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 transition-colors " +
           (hasNext
-            ? "bg-primary/10 hover:bg-primary/[0.14]"
+            ? "bg-primary hover:bg-primary/90"
             : "bg-muted/60 hover:bg-muted")
         }
       >
         <div className="flex items-center gap-2 md:gap-3">
           {collapsed ? (
-            <IconChevronRight className="size-4 text-muted-foreground" />
+            <IconChevronRight
+              className={
+                "size-4 " +
+                (hasNext ? "text-primary-foreground/70" : "text-muted-foreground")
+              }
+            />
           ) : (
-            <IconChevronDown className="size-4 text-muted-foreground" />
+            <IconChevronDown
+              className={
+                "size-4 " +
+                (hasNext ? "text-primary-foreground/70" : "text-muted-foreground")
+              }
+            />
           )}
-          <span className="text-sm md:text-base font-semibold text-foreground">{label}</span>
-          <span className="text-[11px] md:text-xs text-muted-foreground bg-card px-2 py-0.5 rounded-md">
+          <span
+            className={
+              "text-sm md:text-base font-semibold " +
+              (hasNext ? "text-primary-foreground" : "text-foreground")
+            }
+          >
+            {label}
+          </span>
+          <span
+            className={
+              "text-[11px] md:text-xs px-2 py-0.5 rounded-md " +
+              (hasNext
+                ? "bg-primary-foreground/15 text-primary-foreground"
+                : "bg-card text-muted-foreground")
+            }
+          >
             {orders.length}
           </span>
         </div>
-        <span className="font-mono text-xs md:text-sm font-semibold tabular-nums text-foreground/80">
+        <span
+          className={
+            "font-mono text-xs md:text-sm font-semibold tabular-nums " +
+            (hasNext ? "text-primary-foreground" : "text-foreground/80")
+          }
+        >
           {revenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })}
           &nbsp;&euro;
         </span>

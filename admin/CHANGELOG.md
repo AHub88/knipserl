@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.4] — 2026-04-23
+
+### Changed
+- Aufträge-Tabelle: Der Monats-Header des Monats mit dem nächsten Auftrag ist jetzt voll Primary-Orange statt abgedunkeltem Tint — aktive Elemente signalisieren sich eindeutiger. Kind-Elemente (Chevron, Zähler, Umsatz) kontrastangepasst.
+
 ## [1.4.3] — 2026-04-23
 
 ### Fixed
