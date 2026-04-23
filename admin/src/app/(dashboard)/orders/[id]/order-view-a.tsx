@@ -724,8 +724,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
           )}
 
-          {/* Auftraggeber + Ansprechpartner vor Ort + Location + Lieferung */}
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {/* Auftraggeber + Ansprechpartner vor Ort + Location + Lieferung (2×2 Grid) */}
+          <div className="grid gap-4 sm:grid-cols-2">
             {/* Auftraggeber */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="border-b border-border px-5 py-3 flex items-center gap-2">

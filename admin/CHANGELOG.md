@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.13.2] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Boxen (Auftraggeber / Ansprechpartner / Location / Lieferung) jetzt **2×2-Grid** auf allen Breiten ab sm statt 4 Spalten auf xl. Jede Box hat mehr Platz, Infos müssen nicht mehr wrappen (z. B. "pixner@startklar-soziale..." abgeschnitten).
+
 ## [1.13.1] — 2026-04-23
 
 ### Changed
