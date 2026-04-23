@@ -108,6 +108,17 @@ export async function PATCH(
   if (body.teardownDate !== undefined) data.teardownDate = body.teardownDate ? new Date(body.teardownDate) : null;
   if (body.teardownTime !== undefined) data.teardownTime = body.teardownTime || null;
 
+  // Ansprechpartner vor Ort
+  if (body.onSiteContactName !== undefined) data.onSiteContactName = body.onSiteContactName || null;
+  if (body.onSiteContactPhone !== undefined) data.onSiteContactPhone = body.onSiteContactPhone || null;
+  if (body.onSiteContactNotes !== undefined) data.onSiteContactNotes = body.onSiteContactNotes || null;
+
+  // Extra Papierrollen (Anzahl)
+  if (body.extraPaperRolls !== undefined) {
+    const n = Number(body.extraPaperRolls);
+    data.extraPaperRolls = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+  }
+
   // Pricing
   if (body.travelCost !== undefined) data.travelCost = body.travelCost != null ? Number(body.travelCost) : null;
   if (body.boxPrice !== undefined) data.boxPrice = body.boxPrice != null ? Number(body.boxPrice) : null;

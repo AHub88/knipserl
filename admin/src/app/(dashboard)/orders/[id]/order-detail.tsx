@@ -82,6 +82,10 @@ type Order = {
   teardownTime: string | null;
   images: string[];
   startscreenImages: string[];
+  onSiteContactName: string | null;
+  onSiteContactPhone: string | null;
+  onSiteContactNotes: string | null;
+  extraPaperRolls: number;
   graphicUrl: string | null;
   confirmationToken: string | null;
   confirmedByCustomerAt: string | null;
@@ -350,6 +354,10 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   const [setupTime, setSetupTime] = useState(order.setupTime ?? "");
   const [teardownDate, setTeardownDate] = useState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
   const [teardownTime, setTeardownTime] = useState(order.teardownTime ?? "");
+  const [onSiteContactName, setOnSiteContactName] = useState(order.onSiteContactName ?? "");
+  const [onSiteContactPhone, setOnSiteContactPhone] = useState(order.onSiteContactPhone ?? "");
+  const [onSiteContactNotes, setOnSiteContactNotes] = useState(order.onSiteContactNotes ?? "");
+  const [extraPaperRolls, setExtraPaperRolls] = useState(String(order.extraPaperRolls ?? 0));
 
   function toggleExtra(key: string) {
     setExtras((prev) => {
@@ -408,6 +416,10 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
     setSetupTime(order.setupTime ?? "");
     setTeardownDate(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
     setTeardownTime(order.teardownTime ?? "");
+    setOnSiteContactName(order.onSiteContactName ?? "");
+    setOnSiteContactPhone(order.onSiteContactPhone ?? "");
+    setOnSiteContactNotes(order.onSiteContactNotes ?? "");
+    setExtraPaperRolls(String(order.extraPaperRolls ?? 0));
     setEditing(false);
   }
 
@@ -430,6 +442,10 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           setupTime: setupTime || null,
           teardownDate: teardownDate || null,
           teardownTime: teardownTime || null,
+          onSiteContactName: onSiteContactName || null,
+          onSiteContactPhone: onSiteContactPhone || null,
+          onSiteContactNotes: onSiteContactNotes || null,
+          extraPaperRolls: extraPaperRolls !== "" ? Number(extraPaperRolls) : 0,
           price: Number(price),
           travelCost: travelCost ? Number(travelCost) : null,
           boxPrice: boxPrice ? Number(boxPrice) : null,
@@ -907,6 +923,45 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
       </div>
 
+      {/* Section 2b: Ansprechpartner vor Ort */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconUser className="size-4 text-primary" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ansprechpartner vor Ort</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelClass}>Name</label>
+              <input
+                className={inputClass}
+                value={onSiteContactName}
+                onChange={(e) => setOnSiteContactName(e.target.value)}
+                placeholder="–"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Telefon</label>
+              <input
+                className={inputClass}
+                value={onSiteContactPhone}
+                onChange={(e) => setOnSiteContactPhone(e.target.value)}
+                placeholder="–"
+              />
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Notiz</label>
+            <textarea
+              className={inputClass + " h-16 py-2 resize-none"}
+              value={onSiteContactNotes}
+              onChange={(e) => setOnSiteContactNotes(e.target.value)}
+              placeholder="Besonderheiten (Einfahrt, Etage, Schlüsselhinterlegung …)"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Section 3: Extras */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
@@ -926,6 +981,19 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               price={EXTRAS_PRICES[ext.key]}
             />
           ))}
+        </div>
+        <div className="border-t border-border pt-3">
+          <label className={labelClass}>Extra Papierrolle(n)</label>
+          <input
+            className={inputClass + " max-w-[180px]"}
+            type="number"
+            min={0}
+            step={1}
+            value={extraPaperRolls}
+            onChange={(e) => setExtraPaperRolls(e.target.value)}
+            placeholder="0"
+          />
+          <p className="text-[11px] text-muted-foreground mt-1">Anzahl zusätzlicher Papierrollen über das Standard-Paket hinaus.</p>
         </div>
         </div>
       </div>

@@ -205,6 +205,10 @@ model Order {
   images          String[]      @default([])
   startscreenImages String[]    @default([])
   distanceKm      Float?
+  onSiteContactName  String?
+  onSiteContactPhone String?
+  onSiteContactNotes String?
+  extraPaperRolls Int           @default(0)
   confirmationToken String?     @unique @default(cuid())
   confirmedByCustomerAt DateTime?
   completedAt     DateTime?

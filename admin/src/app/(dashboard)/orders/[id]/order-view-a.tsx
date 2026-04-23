@@ -41,6 +41,7 @@ import {
   IconUser,
   IconCurrencyEuro,
   IconLayout,
+  IconReceipt,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { EXTRAS_PRICES } from "@/lib/extras-pricing";
@@ -96,6 +97,10 @@ type Order = {
   teardownTime: string | null;
   images: string[];
   startscreenImages: string[];
+  onSiteContactName: string | null;
+  onSiteContactPhone: string | null;
+  onSiteContactNotes: string | null;
+  extraPaperRolls: number;
   graphicUrl?: string | null;
   confirmationToken?: string | null;
   confirmedByCustomerAt?: string | null;
@@ -582,7 +587,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Extras */}
-          {(activeExtras.length > 0 || editingExtras) && (
+          {(activeExtras.length > 0 || editingExtras || order.extraPaperRolls > 0) && (
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="flex items-center justify-between border-b border-border px-5 py-3">
                 <div className="flex items-center gap-2">
@@ -650,13 +655,23 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                         )}
                       </div>
                     ))}
+                {!editingExtras && order.extraPaperRolls > 0 && (
+                  <div
+                    className="flex flex-col items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 min-w-[72px] text-primary"
+                    title={`${order.extraPaperRolls} zusätzliche Papierrolle${order.extraPaperRolls > 1 ? "n" : ""}`}
+                  >
+                    <IconReceipt className="size-5" />
+                    <span className="text-[10px] font-bold uppercase tracking-wide">Papierrolle{order.extraPaperRolls > 1 ? "n" : ""}</span>
+                    <span className="text-[10px] font-mono opacity-60">&times;{order.extraPaperRolls}</span>
+                  </div>
+                )}
               </div>
               </div>
             </div>
           )}
 
-          {/* Auftraggeber + Location + Lieferung */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Auftraggeber + Ansprechpartner vor Ort + Location + Lieferung */}
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {/* Auftraggeber */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="border-b border-border px-5 py-3 flex items-center gap-2">
@@ -690,6 +705,38 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <span className="text-sm text-foreground/80">{order.companyName.includes("GbR") ? "GbR" : "Einzelunternehmen"}</span>
                 </div>
               </div>
+              </div>
+            </div>
+
+            {/* Ansprechpartner vor Ort */}
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+                <IconUser className="size-4 text-primary" />
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Ansprechpartner vor Ort</h3>
+              </div>
+              <div className="p-5">
+                {order.onSiteContactName || order.onSiteContactPhone || order.onSiteContactNotes ? (
+                  <>
+                    {order.onSiteContactName && (
+                      <p className="text-base font-semibold text-foreground mb-3">{order.onSiteContactName}</p>
+                    )}
+                    <div className={"space-y-2.5 " + (order.onSiteContactName ? "border-t border-border pt-3" : "")}>
+                      {order.onSiteContactPhone && (
+                        <div className="flex items-center gap-3">
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
+                          <a href={`tel:${order.onSiteContactPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-foreground/80 hover:text-primary transition-colors">
+                            {order.onSiteContactPhone}
+                          </a>
+                        </div>
+                      )}
+                      {order.onSiteContactNotes && (
+                        <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.onSiteContactNotes}</p>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">Nicht erfasst</p>
+                )}
               </div>
             </div>
 

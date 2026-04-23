@@ -4,6 +4,13 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.12.0] — 2026-04-23
+
+### Added
+- Auftrag-Detail: **Neue Card "Ansprechpartner vor Ort"** neben Auftraggeber. Felder: Name, Telefon (klickbar `tel:`), Notiz (Besonderheiten wie Einfahrt, Etage, Schlüsselhinterlegung). Editierbar über das Auftrag-bearbeiten-Formular. Leere Box zeigt "Nicht erfasst". DB-Spalten: `onSiteContactName`, `onSiteContactPhone`, `onSiteContactNotes` (alle nullable).
+- Auftrag-Detail: **Extras-Feld "Extra Papierrolle(n)"** mit Anzahl-Input im Edit-Formular. Wird bei > 0 als eigener Extras-Chip angezeigt (z. B. "Papierrollen ×3"). DB-Spalte: `extraPaperRolls Int @default(0)`.
+- Grid der Detail-Boxen (Auftraggeber / Ansprechpartner / Location / Lieferung) jetzt **4 Spalten** auf xl-Breite, 2 auf sm, 1 auf mobile.
+
 ## [1.11.2] — 2026-04-23
 
 ### Added
