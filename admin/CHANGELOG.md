@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.5] — 2026-04-23
+
+### Changed
+- Aufträge-Tabelle: Suchfeld und Action-Buttons (Nächster Auftrag / Filter / Nach Monat) jetzt in einer Zeile. Suchfeld nimmt den verfügbaren Platz, Buttons sitzen daneben. Wrappt auf schmalen Viewports automatisch.
+
 ## [1.4.4] — 2026-04-23
 
 ### Changed

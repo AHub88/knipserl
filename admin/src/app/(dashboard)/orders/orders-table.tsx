@@ -369,9 +369,9 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Search bar + actions */}
-      <div className="space-y-2">
-        <div className="relative">
+      {/* Search bar + actions — single row on desktop, wraps on narrow screens */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="relative flex-1 min-w-[240px]">
           <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <input
             type="text"
@@ -390,56 +390,54 @@ export function OrdersTable({ orders, drivers, eventTypes }: Props) {
           )}
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Next order button */}
-          {nextOrderId && (
-            <button
-              onClick={scrollToNext}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
-            >
-              <IconPlayerTrackNext className="size-3.5" />
-              <span className="hidden sm:inline">Nächster Auftrag</span>
-              <span className="sm:hidden">Nächster</span>
-            </button>
+        {/* Next order button */}
+        {nextOrderId && (
+          <button
+            onClick={scrollToNext}
+            className="flex items-center gap-1.5 h-10 px-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
+          >
+            <IconPlayerTrackNext className="size-3.5" />
+            <span className="hidden sm:inline">Nächster Auftrag</span>
+            <span className="sm:hidden">Nächster</span>
+          </button>
+        )}
+
+        {/* Filter toggle */}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={
+            "flex items-center gap-1.5 h-10 px-3 rounded-xl border text-xs font-medium transition-colors " +
+            (showFilters || activeFilterCount > 0
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:text-foreground")
+          }
+        >
+          <IconFilter className="size-3.5" />
+          Filter
+          {activeFilterCount > 0 && (
+            <span className="flex items-center justify-center size-4 rounded-full bg-primary text-[10px] font-bold text-black">
+              {activeFilterCount}
+            </span>
           )}
+        </button>
 
-          {/* Filter toggle */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={
-              "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
-              (showFilters || activeFilterCount > 0
-                ? "border-primary/40 bg-primary/10 text-primary"
-                : "border-border bg-card text-muted-foreground hover:text-foreground")
-            }
-          >
-            <IconFilter className="size-3.5" />
-            Filter
-            {activeFilterCount > 0 && (
-              <span className="flex items-center justify-center size-4 rounded-full bg-primary text-[10px] font-bold text-black">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
-
-          {/* Group by month toggle */}
-          <button
-            onClick={() => setGroupByMonth(!groupByMonth)}
-            className={
-              "flex items-center gap-1.5 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
-              (groupByMonth
-                ? "border-primary/40 bg-primary/10 text-primary"
-                : "border-border bg-card text-muted-foreground hover:text-foreground")
-            }
-          >
-            {groupByMonth ? (
-              <IconCalendarMonth className="size-3.5" />
-            ) : (
-              <IconList className="size-3.5" />
-            )}
-            <span className="hidden sm:inline">{groupByMonth ? "Nach Monat" : "Liste"}</span>
-          </button>
-        </div>
+        {/* Group by month toggle */}
+        <button
+          onClick={() => setGroupByMonth(!groupByMonth)}
+          className={
+            "flex items-center gap-1.5 h-10 px-3 rounded-xl border text-xs font-medium transition-colors " +
+            (groupByMonth
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:text-foreground")
+          }
+        >
+          {groupByMonth ? (
+            <IconCalendarMonth className="size-3.5" />
+          ) : (
+            <IconList className="size-3.5" />
+          )}
+          <span className="hidden sm:inline">{groupByMonth ? "Nach Monat" : "Liste"}</span>
+        </button>
       </div>
 
       {/* Filter dropdowns */}
