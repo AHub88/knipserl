@@ -832,12 +832,14 @@ function MonthGroup({
   const revenue = orders.reduce((s, o) => s + o.price, 0);
 
   return (
-    <div className="rounded-xl overflow-hidden">
+    <div className="rounded-xl overflow-hidden border border-border bg-card">
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={
-          "w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 rounded-t-xl transition-colors " +
-          (hasNext ? "bg-primary/10" : "bg-muted")
+          "w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 transition-colors " +
+          (hasNext
+            ? "bg-primary/10 hover:bg-primary/[0.14]"
+            : "bg-muted/60 hover:bg-muted")
         }
       >
         <div className="flex items-center gap-2 md:gap-3">
@@ -857,7 +859,7 @@ function MonthGroup({
         </span>
       </button>
       {!collapsed && (
-        <div>
+        <div className="border-t border-border">
           <OrderTable orders={orders} onRowClick={onRowClick} nextOrderId={nextOrderId} />
         </div>
       )}
@@ -1008,7 +1010,7 @@ function OrderTable({
       {/* Desktop table */}
       <Table className="hidden md:table">
       <TableHeader>
-        <TableRow className="border-b border-border hover:bg-transparent">
+        <TableRow className="border-b border-border bg-muted/40 hover:bg-muted/40">
           <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Datum
           </TableHead>
@@ -1068,11 +1070,11 @@ function OrderTable({
               data-next-order={isNext ? "true" : undefined}
               onClick={() => onRowClick(order.id)}
               className={
-                "cursor-pointer border-b transition-colors hover:bg-accent group " +
+                "cursor-pointer border-b border-border/50 transition-colors " +
                 (isNext
-                  ? "border-primary/30 bg-primary/8 border-l-2 border-l-primary"
-                  : "border-border") +
-                (isPast && !isNext ? " opacity-50" : "")
+                  ? "bg-primary/[0.08] border-l-2 border-l-primary hover:bg-primary/[0.12]"
+                  : "odd:bg-foreground/[0.02] hover:bg-foreground/[0.05]") +
+                (isPast && !isNext ? " opacity-60" : "")
               }
             >
               <TableCell className="text-muted-foreground text-sm tabular-nums">

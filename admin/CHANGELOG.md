@@ -4,6 +4,13 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.1] — 2026-04-23
+
+### Changed
+- Aufträge-Tabelle (Monatsansicht): Monatsgruppen haben jetzt einen eigenen Card-Container mit Rahmen, damit sich die Tabellenzeilen klar vom Seiten-Hintergrund absetzen.
+- Tabellen-Header mit dezentem Tint, Zebra-Striping auf den Datenzeilen und weichere Row-Divider — Zeilen lassen sich über 12 Spalten hinweg leichter lesen.
+- Hover-Zustand vom harten `accent` auf einen subtileren Tint umgestellt; vergangene Aufträge etwas weniger ausgebleicht (opacity 60 statt 50).
+
 ## [1.4.0] — 2026-04-22
 
 ### Added
