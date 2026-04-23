@@ -204,6 +204,7 @@ model Order {
   graphicUrl      String?
   images          String[]      @default([])
   startscreenImages String[]    @default([])
+  distanceKm      Float?
   confirmationToken String?     @unique @default(cuid())
   confirmedByCustomerAt DateTime?
   completedAt     DateTime?

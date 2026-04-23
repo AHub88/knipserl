@@ -4,6 +4,17 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.11.0] — 2026-04-23
+
+### Added
+- Auftrag-Detail Edit-Formular: **Neue Section "Lieferung"** mit Feldern für Aufbau-Datum/-Zeit und Abbau-Datum/-Zeit. Bisher konnten diese Felder zwar im Schema existieren, waren aber **nirgends pflegbar** — Lieferung stand immer auf "Noch nicht geplant". PATCH-Route akzeptiert jetzt `setupDate`, `setupTime`, `teardownDate`, `teardownTime`.
+
+### Fixed
+- Auftrag-Detail: **Location-Entfernung wird nun korrekt übernommen**. Ursache-Kombination:
+  - Order hatte keine eigene `distanceKm`-Spalte; das Feld zog nur aus `inquiry.distanceKm` (bei manuell erstellten Orders = 0).
+  - Das Entfernungs-Input im Edit-Formular wurde für Nicht-Privat-Locations `disabled` gesetzt und nie via PATCH mitgeschickt.
+  - Fix: neue Spalte `distanceKm Float?` auf Order (Prisma + `sync-schema.cjs`), PATCH-Handler für `distanceKm`, Input nicht mehr disabled, und `page.tsx` kaskadiert beim Laden: `order.distanceKm ?? inquiry.distanceKm ?? matchingLocation.distanceKm`.
+
 ## [1.10.3] — 2026-04-23
 
 ### Removed

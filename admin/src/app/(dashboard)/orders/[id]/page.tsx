@@ -91,7 +91,10 @@ export default async function OrderDetailPage({
     designReady: order.designReady,
     planned: order.planned,
     paid: order.paid,
-    distanceKm: order.inquiry?.distanceKm ?? null,
+    distanceKm:
+      (order as unknown as { distanceKm?: number | null }).distanceKm ??
+      order.inquiry?.distanceKm ??
+      null,
     setupDate: order.setupDate?.toISOString() ?? null,
     setupTime: order.setupTime,
     teardownDate: order.teardownDate?.toISOString() ?? null,
@@ -105,12 +108,17 @@ export default async function OrderDetailPage({
     locationId: null as string | null,
   };
 
-  // Find matching location for link
+  // Find matching location for link — and pull distanceKm as fallback if order has none
   const matchingLocation = await prisma.location.findFirst({
     where: { name: order.locationName },
-    select: { id: true },
+    select: { id: true, distanceKm: true },
   });
-  if (matchingLocation) serialized.locationId = matchingLocation.id;
+  if (matchingLocation) {
+    serialized.locationId = matchingLocation.id;
+    if (serialized.distanceKm == null && matchingLocation.distanceKm != null) {
+      serialized.distanceKm = matchingLocation.distanceKm;
+    }
+  }
 
   return (
     <OrderDetail

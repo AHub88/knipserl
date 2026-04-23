@@ -346,6 +346,10 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   const [planned, setPlanned] = useState(order.planned);
   const [paid, setPaid] = useState(order.paid);
   const [extras, setExtras] = useState<string[]>(order.extras);
+  const [setupDate, setSetupDate] = useState(order.setupDate ? order.setupDate.slice(0, 10) : "");
+  const [setupTime, setSetupTime] = useState(order.setupTime ?? "");
+  const [teardownDate, setTeardownDate] = useState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
+  const [teardownTime, setTeardownTime] = useState(order.teardownTime ?? "");
 
   function toggleExtra(key: string) {
     setExtras((prev) => {
@@ -400,6 +404,10 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
     setPlanned(order.planned);
     setPaid(order.paid);
     setExtras(order.extras);
+    setSetupDate(order.setupDate ? order.setupDate.slice(0, 10) : "");
+    setSetupTime(order.setupTime ?? "");
+    setTeardownDate(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
+    setTeardownTime(order.teardownTime ?? "");
     setEditing(false);
   }
 
@@ -417,6 +425,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
           eventDate,
           locationName,
           locationAddress,
+          distanceKm: distanceKm !== "" ? Number(distanceKm) : null,
+          setupDate: setupDate || null,
+          setupTime: setupTime || null,
+          teardownDate: teardownDate || null,
+          teardownTime: teardownTime || null,
           price: Number(price),
           travelCost: travelCost ? Number(travelCost) : null,
           boxPrice: boxPrice ? Number(boxPrice) : null,
@@ -825,11 +838,40 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
               step="0.1"
               value={distanceKm}
               onChange={(e) => setDistanceKm(e.target.value)}
-              disabled={!isPrivateLocation}
               placeholder="–"
             />
           </div>
         </div>
+        </div>
+      </div>
+
+      {/* Section 1b: Lieferung / Aufbau & Abbau */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
+          <IconTruck className="size-4 text-primary" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lieferung</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelClass}>Aufbau Datum</label>
+              <input className={inputClass} type="date" value={setupDate} onChange={(e) => setSetupDate(e.target.value)} />
+            </div>
+            <div>
+              <label className={labelClass}>Aufbau Zeit</label>
+              <input className={inputClass} type="time" value={setupTime} onChange={(e) => setSetupTime(e.target.value)} />
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelClass}>Abbau Datum</label>
+              <input className={inputClass} type="date" value={teardownDate} onChange={(e) => setTeardownDate(e.target.value)} />
+            </div>
+            <div>
+              <label className={labelClass}>Abbau Zeit</label>
+              <input className={inputClass} type="time" value={teardownTime} onChange={(e) => setTeardownTime(e.target.value)} />
+            </div>
+          </div>
         </div>
       </div>
 

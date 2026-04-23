@@ -100,6 +100,13 @@ export async function PATCH(
   if (body.eventDate !== undefined) data.eventDate = new Date(body.eventDate);
   if (body.locationName !== undefined) data.locationName = body.locationName;
   if (body.locationAddress !== undefined) data.locationAddress = body.locationAddress;
+  if (body.distanceKm !== undefined) data.distanceKm = body.distanceKm != null && body.distanceKm !== "" ? Number(body.distanceKm) : null;
+
+  // Lieferung / Aufbau & Abbau
+  if (body.setupDate !== undefined) data.setupDate = body.setupDate ? new Date(body.setupDate) : null;
+  if (body.setupTime !== undefined) data.setupTime = body.setupTime || null;
+  if (body.teardownDate !== undefined) data.teardownDate = body.teardownDate ? new Date(body.teardownDate) : null;
+  if (body.teardownTime !== undefined) data.teardownTime = body.teardownTime || null;
 
   // Pricing
   if (body.travelCost !== undefined) data.travelCost = body.travelCost != null ? Number(body.travelCost) : null;
