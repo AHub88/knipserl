@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.13.1] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Header:
+  - **Countdown entfernt** — war zu dominant.
+  - **Eventtyp-Pill** sitzt jetzt **über** dem Datum statt daneben.
+  - **Gebucht + Geändert** als zwei kleine Pillen (Label + Datum) unterhalb der Location — leiser, scanbarer.
+- Hilfsfunktion `buildCountdown` entfernt (nicht mehr benutzt).
+
 ## [1.13.0] — 2026-04-23
 
 ### Added

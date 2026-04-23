@@ -128,21 +128,6 @@ function formatDateDDMMYY(iso: string | null | undefined) {
   return new Date(iso).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-function buildCountdown(eventIso: string): { label: string; tone: "urgent" | "soon" | "future" | "today" | "past" } {
-  const event = new Date(eventIso);
-  const now = new Date();
-  const startOfEvent = new Date(event.getFullYear(), event.getMonth(), event.getDate());
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const diffDays = Math.round((startOfEvent.getTime() - startOfToday.getTime()) / 86400000);
-  if (diffDays === 0) return { label: "Heute", tone: "today" };
-  if (diffDays === 1) return { label: "Morgen", tone: "urgent" };
-  if (diffDays === -1) return { label: "Gestern", tone: "past" };
-  if (diffDays > 0) {
-    const tone: "urgent" | "soon" | "future" = diffDays <= 3 ? "urgent" : diffDays <= 14 ? "soon" : "future";
-    return { label: `In ${diffDays} Tagen`, tone };
-  }
-  return { label: `Vor ${-diffDays} Tagen`, tone: "past" };
-}
 
 export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props) {
   const router = useRouter();
@@ -282,13 +267,17 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </div>
             </div>
 
+            {/* Event type (über Datum) */}
+            <div className="mb-1.5">
+              <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                {order.eventType}
+              </span>
+            </div>
+
             {/* Date banner */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <IconCalendar className="size-5 text-primary shrink-0" />
               <span className="text-base sm:text-xl text-primary font-semibold">{formattedDate}</span>
-              <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                {order.eventType}
-              </span>
             </div>
 
             {/* Customer Name - Desktop: Firma – Name inline / Mobile: untereinander */}
@@ -321,37 +310,23 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </a>
             </div>
 
-            {/* Meta: Countdown + gebucht + letzte Änderung */}
-            {(() => {
-              const cd = buildCountdown(order.eventDate);
-              const toneClass =
-                cd.tone === "today"
-                  ? "text-primary font-bold"
-                  : cd.tone === "urgent"
-                    ? "text-primary font-semibold"
-                    : cd.tone === "soon"
-                      ? "text-foreground font-semibold"
-                      : cd.tone === "past"
-                        ? "text-muted-foreground"
-                        : "text-foreground/80";
-              return (
-                <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-                  <span className={toneClass}>{cd.label}</span>
-                  {order.createdAt && (
-                    <>
-                      <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                      <span>Gebucht {formatDateDDMMYY(order.createdAt)}</span>
-                    </>
-                  )}
-                  {order.updatedAt && order.updatedAt !== order.createdAt && (
-                    <>
-                      <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                      <span>Geändert {formatDateDDMMYY(order.updatedAt)}</span>
-                    </>
-                  )}
-                </div>
-              );
-            })()}
+            {/* Meta: Gebucht + Geändert als Pillen */}
+            {(order.createdAt || order.updatedAt) && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {order.createdAt && (
+                  <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80">Gebucht</span>
+                    <span className="text-foreground/80 tabular-nums">{formatDateDDMMYY(order.createdAt)}</span>
+                  </span>
+                )}
+                {order.updatedAt && order.updatedAt !== order.createdAt && (
+                  <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80">Geändert</span>
+                    <span className="text-foreground/80 tabular-nums">{formatDateDDMMYY(order.updatedAt)}</span>
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Middle: Workflow */}
