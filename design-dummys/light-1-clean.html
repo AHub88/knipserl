@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knipserl Admin — Clean Light</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-page: #f4f5f7;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8f9fb;
+    --bg-input: #f4f5f7;
+    --border: #e2e4e9;
+    --primary: #e8950f;
+    --primary-hover: #d4870a;
+    --text-primary: #1a1c21;
+    --text-secondary: #4b5060;
+    --text-muted: #8b90a0;
+    --destructive: #dc2626;
+    --success: #16a34a;
+    --warning: #ca8a04;
+    --sidebar-active-bg: #FFF3E0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --sidebar-w: 240px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ────────────────────────────────── */
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    font-size: 20px; font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.3px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo span { color: var(--text-muted); font-weight: 400; font-size: 13px; margin-left: 4px; }
+
+  .sidebar-nav { flex: 1; padding: 12px 10px; }
+
+  .nav-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text-muted); padding: 16px 10px 6px; margin-top: 4px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: var(--bg-page); color: var(--text-primary); }
+  .nav-item.active {
+    background: var(--sidebar-active-bg);
+    color: var(--primary); font-weight: 600;
+  }
+  .nav-item .icon { width: 20px; text-align: center; font-size: 15px; flex-shrink: 0; }
+  .nav-item .badge {
+    margin-left: auto; font-size: 11px; font-weight: 600;
+    background: var(--primary); color: #fff;
+    padding: 1px 7px; border-radius: 10px;
+  }
+
+  .nav-children { padding-left: 18px; }
+  .nav-children .nav-item { font-size: 13px; padding: 7px 12px; }
+
+  .nav-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-toggle:hover { background: var(--bg-page); color: var(--text-primary); }
+  .nav-toggle .arrow { font-size: 11px; color: var(--text-muted); transition: transform 0.2s; }
+  .nav-toggle.open .arrow { transform: rotate(90deg); }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--text-muted);
+  }
+
+  /* ── Main ────────────────────────────────────── */
+  .main { margin-left: var(--sidebar-w); padding: 32px 40px 80px; }
+
+  .variant-label {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 32px;
+  }
+
+  .page-section { margin-bottom: 64px; }
+
+  .page-section-divider {
+    border: none; border-top: 2px dashed var(--border);
+    margin: 64px 0;
+  }
+
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+  .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── Stats Row ──────────────────────────────── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .stat-card .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-card .stat-value { font-size: 28px; font-weight: 700; color: var(--text-primary); margin-top: 6px; }
+  .stat-card .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .stat-card .stat-sub .up { color: var(--success); font-weight: 600; }
+  .stat-card .stat-sub .down { color: var(--destructive); font-weight: 600; }
+
+  /* ── Card ────────────────────────────────────── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-header h2 { font-size: 16px; font-weight: 600; }
+  .card-body { padding: 24px; }
+
+  /* ── Table ───────────────────────────────────── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 12px 16px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-muted); background: var(--bg-page);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 14px 16px; font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-card-hover); }
+  td.name { font-weight: 600; color: var(--text-primary); }
+
+  /* ── Badges ──────────────────────────────────── */
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+  .badge-amber  { background: #FEF3C7; color: #92400E; }
+  .badge-blue   { background: #DBEAFE; color: #1E40AF; }
+  .badge-purple { background: #EDE9FE; color: #5B21B6; }
+  .badge-green  { background: #DCFCE7; color: #166534; }
+  .badge-red    { background: #FEE2E2; color: #991B1B; }
+
+  /* ── Buttons ─────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-secondary { background: var(--bg-page); color: var(--text-secondary); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-destructive { background: var(--destructive); color: #fff; }
+  .btn-destructive:hover { background: #b91c1c; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+  /* ── Detail Grid ─────────────────────────────── */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+  .detail-row { display: flex; flex-direction: column; gap: 3px; }
+  .detail-label { font-size: 12px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .detail-value { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+
+  /* ── Hero Card ───────────────────────────────── */
+  .hero-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .hero-card .hero-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .hero-card .hero-top h2 { font-size: 22px; font-weight: 700; }
+  .hero-card .hero-top .meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── Forms ───────────────────────────────────── */
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+  .form-input {
+    width: 100%; padding: 10px 14px;
+    background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--text-primary);
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(232,149,15,0.12); }
+  textarea.form-input { resize: vertical; min-height: 80px; }
+  select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b90a0' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── Notes ────────────────────────────────────── */
+  .note-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .note-item:last-child { border-bottom: none; }
+  .note-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .note-text { font-size: 14px; color: var(--text-secondary); }
+
+  /* ── Link Card ───────────────────────────────── */
+  .link-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: all 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  .link-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .link-card .lc-left { display: flex; align-items: center; gap: 14px; }
+  .link-card .lc-icon { font-size: 20px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-page); border-radius: 10px; }
+  .link-card .lc-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .link-card .lc-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .link-card .lc-arrow { color: var(--text-muted); font-size: 18px; }
+
+  /* ── Two-col layout ──────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .two-col-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+  /* ── Action bar ──────────────────────────────── */
+  .action-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Knipserl <span>Admin</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Hauptmenu</div>
+    <a class="nav-item" href="#">
+      <span class="icon">&#9634;</span> Ubersicht
+    </a>
+    <a class="nav-item active" href="#">
+      <span class="icon">&#9993;</span> Anfragen
+      <span class="badge">12</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">&#9823;</span> Kunden
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">&#9744;</span> Auftrage
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">&#128197;</span> Kalender
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">&#9733;</span> Google Reviews
+    </a>
+
+    <div class="nav-section-label">System</div>
+    <div class="nav-toggle open" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+      <span style="display:flex;align-items:center;gap:10px"><span class="icon">&#9881;</span> Einstellungen</span>
+      <span class="arrow">&#9654;</span>
+    </div>
+    <div class="nav-children">
+      <a class="nav-item" href="#">Allgemein</a>
+      <a class="nav-item" href="#">E-Mail-Vorlagen</a>
+      <a class="nav-item" href="#">Pakete &amp; Preise</a>
+      <a class="nav-item" href="#">Benutzer</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">Knipserl Admin &middot; v1.8.0</div>
+</aside>
+
+<!-- ═══ MAIN CONTENT ══════════════════════════════════ -->
+<div class="main">
+
+  <div class="variant-label">VARIANTE 4: CLEAN LIGHT &mdash; Helles, klares Design</div>
+
+  <!-- ═══════════════════════════════════════════════════
+       PAGE 1: ANFRAGEN-LISTE
+       ═══════════════════════════════════════════════════ -->
+  <div class="page-section">
+    <div class="page-header">
+      <h1>Anfragen</h1>
+      <p>Alle eingehenden Fotobox-Anfragen verwalten</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Gesamt</div>
+        <div class="stat-value">147</div>
+        <div class="stat-sub"><span class="up">+12%</span> vs. Vormonat</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Offen</div>
+        <div class="stat-value">12</div>
+        <div class="stat-sub">3 heute eingegangen</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">In Bearbeitung</div>
+        <div class="stat-value">8</div>
+        <div class="stat-sub">5 Angebote versendet</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Abschlussrate</div>
+        <div class="stat-value">68%</div>
+        <div class="stat-sub"><span class="up">+4%</span> vs. Vormonat</div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Aktuelle Anfragen</h2>
+        <button class="btn btn-primary btn-sm">+ Neue Anfrage</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Event</th>
+              <th>Datum</th>
+              <th>Paket</th>
+              <th>Status</th>
+              <th>Erstellt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name">Maria Huber</td>
+              <td>Hochzeit</td>
+              <td>15.06.2026</td>
+              <td>Premium</td>
+              <td><span class="badge badge-amber">Neu</span></td>
+              <td>Heute, 09:14</td>
+            </tr>
+            <tr>
+              <td class="name">Stefan Brandner</td>
+              <td>Firmenfeier</td>
+              <td>22.05.2026</td>
+              <td>Business</td>
+              <td><span class="badge badge-blue">Angebot versendet</span></td>
+              <td>12.04.2026</td>
+            </tr>
+            <tr>
+              <td class="name">Lisa Maier</td>
+              <td>Geburtstag (30.)</td>
+              <td>03.07.2026</td>
+              <td>Standard</td>
+              <td><span class="badge badge-purple">In Bearbeitung</span></td>
+              <td>10.04.2026</td>
+            </tr>
+            <tr>
+              <td class="name">Florian Eder</td>
+              <td>Hochzeit</td>
+              <td>18.09.2026</td>
+              <td>Premium</td>
+              <td><span class="badge badge-green">Bestatigt</span></td>
+              <td>05.04.2026</td>
+            </tr>
+            <tr>
+              <td class="name">Anna Kirchner</td>
+              <td>Taufe</td>
+              <td>10.05.2026</td>
+              <td>Standard</td>
+              <td><span class="badge badge-red">Storniert</span></td>
+              <td>01.04.2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr class="page-section-divider">
+
+  <!-- ═══════════════════════════════════════════════════
+       PAGE 2: ANFRAGE-DETAIL
+       ═══════════════════════════════════════════════════ -->
+  <div class="page-section">
+    <div class="page-header">
+      <h1>Anfrage-Detail</h1>
+      <p>Maria Huber &mdash; Hochzeit am 15.06.2026</p>
+    </div>
+
+    <!-- Hero Card -->
+    <div class="hero-card">
+      <div class="hero-top">
+        <div>
+          <h2>Maria Huber</h2>
+          <div class="meta">Anfrage #1042 &middot; Erstellt am 14.04.2026 um 09:14 Uhr</div>
+        </div>
+        <span class="badge badge-amber" style="font-size:13px;padding:5px 14px;">Neu</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-row">
+          <span class="detail-label">E-Mail</span>
+          <span class="detail-value">maria.huber@gmail.com</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Telefon</span>
+          <span class="detail-value">+43 660 123 4567</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Event-Typ</span>
+          <span class="detail-value">Hochzeit</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Event-Datum</span>
+          <span class="detail-value">15. Juni 2026</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Location</span>
+          <span class="detail-value">Gut Aiderbichl, Henndorf</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Gaste (ca.)</span>
+          <span class="detail-value">120 Personen</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Gewunschtes Paket</span>
+          <span class="detail-value">Premium</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Quelle</span>
+          <span class="detail-value">Google Suche</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact & Event Cards -->
+    <div class="two-col" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="card-header"><h2>Nachricht</h2></div>
+        <div class="card-body">
+          <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">
+            Hallo! Wir heiraten im Juni und wurden uns sehr uber eine Fotobox bei unserer Feier freuen.
+            Wir sind ca. 120 Gaste und die Feier findet am Gut Aiderbichl statt. Konnen Sie uns ein Angebot
+            fur das Premium-Paket schicken? Gibt es auch die Moglichkeit, ein individuelles Design fur die
+            Foto-Streifen zu bekommen? Danke!
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Notizen</h2></div>
+        <div class="card-body">
+          <div class="note-item">
+            <div class="note-meta">Andreas &middot; 14.04.2026, 10:30</div>
+            <div class="note-text">Anfrage sieht vielversprechend aus. Premium-Angebot mit individuellem Design vorbereiten.</div>
+          </div>
+          <div class="note-item">
+            <div class="note-meta">System &middot; 14.04.2026, 09:14</div>
+            <div class="note-text">Neue Anfrage uber Website-Formular eingegangen.</div>
+          </div>
+          <div style="margin-top:14px;">
+            <textarea class="form-input" placeholder="Notiz hinzufugen..." rows="2"></textarea>
+            <button class="btn btn-secondary btn-sm" style="margin-top:8px;">Notiz speichern</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-bar">
+      <button class="btn btn-primary">&#9993; Angebot senden</button>
+      <button class="btn btn-secondary">&#9998; Bearbeiten</button>
+      <button class="btn btn-secondary">&#128197; Termin eintragen</button>
+      <button class="btn btn-destructive" style="margin-left:auto;">&#10005; Stornieren</button>
+    </div>
+  </div>
+
+  <hr class="page-section-divider">
+
+  <!-- ═══════════════════════════════════════════════════
+       PAGE 3: EINSTELLUNGEN
+       ═══════════════════════════════════════════════════ -->
+  <div class="page-section">
+    <div class="page-header">
+      <h1>Einstellungen</h1>
+      <p>Allgemeine Konfiguration fur Knipserl Admin</p>
+    </div>
+
+    <!-- Settings Form -->
+    <div class="two-col" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-header"><h2>Unternehmensdaten</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Firmenname</label>
+            <input type="text" class="form-input" value="Knipserl Fotobox">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">E-Mail</label>
+              <input type="email" class="form-input" value="hallo@knipserl.at">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefon</label>
+              <input type="tel" class="form-input" value="+43 660 987 6543">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Adresse</label>
+            <input type="text" class="form-input" value="Musterstrasse 12, 5020 Salzburg">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Standardantwort (E-Mail)</label>
+            <textarea class="form-input" rows="3">Vielen Dank fur Ihre Anfrage! Wir melden uns innerhalb von 24 Stunden bei Ihnen.</textarea>
+          </div>
+          <button class="btn btn-primary">Speichern</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Benachrichtigungen</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">E-Mail bei neuer Anfrage</label>
+            <select class="form-input">
+              <option selected>Aktiviert</option>
+              <option>Deaktiviert</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-Mail bei Stornierung</label>
+            <select class="form-input">
+              <option selected>Aktiviert</option>
+              <option>Deaktiviert</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tagliche Zusammenfassung</label>
+            <select class="form-input">
+              <option>Aktiviert</option>
+              <option selected>Deaktiviert</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Erinnerung vor Event (Tage)</label>
+            <input type="number" class="form-input" value="7">
+          </div>
+          <button class="btn btn-primary">Speichern</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Link Cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div class="link-card">
+        <div class="lc-left">
+          <div class="lc-icon">&#9993;</div>
+          <div>
+            <div class="lc-title">E-Mail-Vorlagen</div>
+            <div class="lc-desc">Angebote, Bestatigungen, Erinnerungen</div>
+          </div>
+        </div>
+        <span class="lc-arrow">&#8250;</span>
+      </div>
+      <div class="link-card">
+        <div class="lc-left">
+          <div class="lc-icon">&#128230;</div>
+          <div>
+            <div class="lc-title">Pakete &amp; Preise</div>
+            <div class="lc-desc">Standard, Premium, Business</div>
+          </div>
+        </div>
+        <span class="lc-arrow">&#8250;</span>
+      </div>
+      <div class="link-card">
+        <div class="lc-left">
+          <div class="lc-icon">&#128101;</div>
+          <div>
+            <div class="lc-title">Benutzer</div>
+            <div class="lc-desc">Zugange und Rollen verwalten</div>
+          </div>
+        </div>
+        <span class="lc-arrow">&#8250;</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

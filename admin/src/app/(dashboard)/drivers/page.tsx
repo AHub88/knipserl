@@ -41,7 +41,7 @@ export default async function DriversPage() {
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="border-b">
           <CardTitle>Alle Fahrer ({drivers.length})</CardTitle>
         </CardHeader>
         <CardContent>

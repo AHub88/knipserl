@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knipserl Admin — Warm Light</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-page: #f5f2ed;
+    --bg-sidebar: #faf8f5;
+    --bg-card: #ffffff;
+    --bg-card-hover: #faf8f5;
+    --bg-input: #f5f2ed;
+    --border: #e0dbd3;
+    --primary: #d4870a;
+    --primary-hover: #c07a08;
+    --text-primary: #2c2418;
+    --text-secondary: #5c5244;
+    --text-muted: #9a9080;
+    --destructive: #dc2626;
+    --success: #16a34a;
+    --warning: #ca8a04;
+    --sidebar-active-bg: #FFF3E0;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(44,36,24,0.06), 0 1px 2px rgba(44,36,24,0.04);
+    --shadow-md: 0 4px 12px rgba(44,36,24,0.08), 0 2px 4px rgba(44,36,24,0.04);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.3px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-nav { padding: 12px 8px; flex: 1; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    user-select: none;
+  }
+  .nav-item:hover { background: var(--bg-page); color: var(--text-primary); }
+  .nav-item.active { background: var(--sidebar-active-bg); color: var(--primary); font-weight: 600; }
+
+  .nav-icon { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+
+  .nav-section-label {
+    padding: 20px 14px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+  }
+
+  .nav-children { padding-left: 18px; }
+  .nav-children .nav-item { font-size: 13px; padding: 8px 14px; }
+
+  .nav-collapse-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .nav-collapse-toggle:hover { background: var(--bg-page); color: var(--text-primary); }
+  .nav-collapse-toggle .arrow { font-size: 11px; color: var(--text-muted); transition: transform 0.2s; }
+  .nav-collapse-toggle.open .arrow { transform: rotate(90deg); }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* MAIN */
+  .main { margin-left: 240px; padding: 32px; min-height: 100vh; }
+
+  /* VARIANT LABEL */
+  .variant-label {
+    position: fixed;
+    top: 0; left: 240px; right: 0;
+    background: var(--primary);
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 0;
+    letter-spacing: 0.5px;
+    z-index: 200;
+  }
+
+  .main { padding-top: 56px; }
+
+  /* PAGE SECTIONS */
+  .page-section {
+    margin-bottom: 64px;
+    padding-bottom: 64px;
+    border-bottom: 2px dashed var(--border);
+  }
+  .page-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+  .page-section-label {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+  .page-subtitle { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+  .card-body { padding: 20px; }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+
+  /* STAT CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { padding: 20px; }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+  .stat-change { font-size: 12px; margin-top: 4px; }
+  .stat-change.up { color: var(--success); }
+  .stat-change.down { color: var(--destructive); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: middle;
+  }
+  tbody tr { transition: background 0.1s; }
+  tbody tr:hover { background: var(--bg-card-hover); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .badge-new { background: #FFF3E0; color: #d4870a; }
+  .badge-contacted { background: #E8F5E9; color: #2e7d32; }
+  .badge-booked { background: #E3F2FD; color: #1565c0; }
+  .badge-cancelled { background: #FFEBEE; color: #c62828; }
+  .badge-pending { background: #FFF8E1; color: #f57f17; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-secondary { background: var(--bg-page); color: var(--text-secondary); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); color: var(--text-primary); }
+  .btn-destructive { background: var(--destructive); color: #fff; }
+  .btn-destructive:hover { background: #b91c1c; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #15803d; }
+  .btn-ghost { background: transparent; color: var(--text-secondary); }
+  .btn-ghost:hover { background: var(--bg-page); color: var(--text-primary); }
+
+  .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .form-input,
+  .form-textarea,
+  .form-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+  }
+  .form-input:focus,
+  .form-textarea:focus,
+  .form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(212,135,10,0.12);
+  }
+  .form-textarea { min-height: 100px; resize: vertical; }
+
+  /* LAYOUT HELPERS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .flex { display: flex; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .gap-12 { gap: 12px; }
+  .gap-20 { gap: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .text-sm { font-size: 13px; }
+  .text-muted { color: var(--text-muted); }
+  .text-primary-color { color: var(--primary); }
+  .font-semibold { font-weight: 600; }
+
+  /* LINK CARD */
+  .link-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+  }
+  .link-card:hover { background: var(--bg-card-hover); }
+  .link-card-left { display: flex; align-items: center; gap: 14px; }
+  .link-card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--sidebar-active-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .link-card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .link-card-desc { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .link-card-arrow { color: var(--text-muted); font-size: 14px; }
+
+  /* HERO CARD */
+  .hero-card {
+    background: linear-gradient(135deg, var(--primary) 0%, #c07a08 100%);
+    color: #fff;
+    border: none;
+  }
+  .hero-card .hero-title { font-size: 20px; font-weight: 700; }
+  .hero-card .hero-sub { opacity: 0.85; font-size: 14px; margin-top: 4px; }
+  .hero-card .hero-badges { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .hero-badge {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+  }
+
+  /* DETAIL INFO ROWS */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--text-muted); }
+  .info-value { color: var(--text-primary); font-weight: 500; }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-label-text { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .toggle-label-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .toggle-switch {
+    width: 44px; height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-switch.on { background: var(--primary); }
+  .toggle-switch::after {
+    content: '';
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .toggle-switch.on::after { transform: translateX(20px); }
+
+  /* SEARCH */
+  .search-bar {
+    position: relative;
+    max-width: 320px;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 9px 14px 9px 38px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+  .search-bar input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(212,135,10,0.12);
+  }
+  .search-bar-icon {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- VARIANT LABEL -->
+<div class="variant-label">VARIANTE 5: WARM LIGHT &mdash; Cremewei&szlig;, sanft &amp; einladend</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Knipserl Admin</div>
+  <nav class="sidebar-nav">
+    <div class="nav-item">
+      <span class="nav-icon">&#9632;</span> &Uuml;bersicht
+    </div>
+    <div class="nav-item active">
+      <span class="nav-icon">&#9993;</span> Anfragen
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#9787;</span> Kunden
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#9998;</span> Auftr&auml;ge
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#9776;</span> Kalender
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#9733;</span> Google Reviews
+    </div>
+
+    <div style="margin-top:8px;">
+      <div class="nav-collapse-toggle open" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+        <span><span class="nav-icon">&#9881;</span> Einstellungen</span>
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="nav-children">
+        <div class="nav-item">Allgemein</div>
+        <div class="nav-item">E-Mail-Vorlagen</div>
+        <div class="nav-item">Pakete &amp; Preise</div>
+        <div class="nav-item">Verf&uuml;gbarkeit</div>
+        <div class="nav-item">Integrationen</div>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">v1.8.0</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- ==================== PAGE 1: ANFRAGEN-LISTE ==================== -->
+  <section class="page-section">
+    <div class="page-section-label">Seite 1 &mdash; Anfragen-Liste</div>
+
+    <div class="flex-between mb-24">
+      <div class="page-header">
+        <div class="page-title">Anfragen</div>
+        <div class="page-subtitle">Alle eingehenden Fotobox-Anfragen verwalten</div>
+      </div>
+      <div class="btn-group">
+        <div class="search-bar">
+          <span class="search-bar-icon">&#128269;</span>
+          <input type="text" placeholder="Suchen...">
+        </div>
+        <button class="btn btn-primary">+ Neue Anfrage</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <div class="stat-label">Neue Anfragen</div>
+        <div class="stat-value">12</div>
+        <div class="stat-change up">+3 diese Woche</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Kontaktiert</div>
+        <div class="stat-value">8</div>
+        <div class="stat-change up">+2 diese Woche</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Gebucht</div>
+        <div class="stat-value">24</div>
+        <div class="stat-change up">+5 diesen Monat</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Umsatz (Monat)</div>
+        <div class="stat-value">&euro;8.420</div>
+        <div class="stat-change up">+12% vs. Vormonat</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Event</th>
+              <th>Datum</th>
+              <th>Paket</th>
+              <th>Status</th>
+              <th>Erstellt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-semibold" style="color:var(--text-primary)">Lisa M&uuml;ller</td>
+              <td>Hochzeit</td>
+              <td>28.06.2026</td>
+              <td>Premium</td>
+              <td><span class="badge badge-new">Neu</span></td>
+              <td class="text-muted">vor 2 Std.</td>
+            </tr>
+            <tr>
+              <td class="font-semibold" style="color:var(--text-primary)">Thomas Bergmann</td>
+              <td>Firmenfeier</td>
+              <td>15.05.2026</td>
+              <td>Business</td>
+              <td><span class="badge badge-contacted">Kontaktiert</span></td>
+              <td class="text-muted">vor 1 Tag</td>
+            </tr>
+            <tr>
+              <td class="font-semibold" style="color:var(--text-primary)">Sarah Wimmer</td>
+              <td>Geburtstag</td>
+              <td>22.05.2026</td>
+              <td>Basis</td>
+              <td><span class="badge badge-booked">Gebucht</span></td>
+              <td class="text-muted">vor 3 Tagen</td>
+            </tr>
+            <tr>
+              <td class="font-semibold" style="color:var(--text-primary)">Markus Hofer</td>
+              <td>Firmenjubil&auml;um</td>
+              <td>10.07.2026</td>
+              <td>Premium</td>
+              <td><span class="badge badge-pending">Ausstehend</span></td>
+              <td class="text-muted">vor 5 Tagen</td>
+            </tr>
+            <tr>
+              <td class="font-semibold" style="color:var(--text-primary)">Julia Eder</td>
+              <td>Hochzeit</td>
+              <td>03.05.2026</td>
+              <td>Premium</td>
+              <td><span class="badge badge-cancelled">Storniert</span></td>
+              <td class="text-muted">vor 1 Woche</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PAGE 2: ANFRAGE-DETAIL ==================== -->
+  <section class="page-section">
+    <div class="page-section-label">Seite 2 &mdash; Anfrage-Detail</div>
+
+    <div class="flex-between mb-24">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="btn btn-ghost">&larr; Zur&uuml;ck</button>
+          <div class="page-title">Anfrage #247</div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Bearbeiten</button>
+        <button class="btn btn-success">&#10003; Angebot senden</button>
+        <button class="btn btn-destructive">Ablehnen</button>
+      </div>
+    </div>
+
+    <!-- Hero Card -->
+    <div class="card hero-card mb-24">
+      <div class="card-body" style="padding:24px;">
+        <div class="hero-title">Hochzeit &mdash; Lisa &amp; Florian M&uuml;ller</div>
+        <div class="hero-sub">28. Juni 2026 &bull; Gut Kaltenbrunn, Tegernsee</div>
+        <div class="hero-badges">
+          <span class="hero-badge">Premium-Paket</span>
+          <span class="hero-badge">150 G&auml;ste</span>
+          <span class="hero-badge">4 Stunden</span>
+          <span class="hero-badge">Audio-G&auml;stebuch</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-24">
+      <!-- Contact Info -->
+      <div class="card">
+        <div class="card-header">Kontaktdaten</div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Name</span>
+            <span class="info-value">Lisa M&uuml;ller</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">E-Mail</span>
+            <span class="info-value" style="color:var(--primary)">lisa.mueller@mail.de</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Telefon</span>
+            <span class="info-value">+49 170 1234567</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Quelle</span>
+            <span class="info-value">Google</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Info -->
+      <div class="card">
+        <div class="card-header">Event-Details</div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Event-Art</span>
+            <span class="info-value">Hochzeit</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Datum</span>
+            <span class="info-value">28.06.2026</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Location</span>
+            <span class="info-value">Gut Kaltenbrunn, Tegernsee</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Gesch&auml;tzter Wert</span>
+            <span class="info-value" style="font-weight:700;color:var(--primary)">&euro;1.290</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="card mb-24">
+      <div class="card-header">Interne Notizen</div>
+      <div class="card-body">
+        <textarea class="form-textarea" placeholder="Notizen zur Anfrage...">Braut hat sich telefonisch gemeldet. Sehr interessiert am Premium-Paket mit Audio-Gästebuch. Termin für Besichtigung vereinbart am 20.04.</textarea>
+        <div style="margin-top:12px; text-align:right;">
+          <button class="btn btn-primary">Notiz speichern</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PAGE 3: EINSTELLUNGEN ==================== -->
+  <section class="page-section">
+    <div class="page-section-label">Seite 3 &mdash; Einstellungen</div>
+
+    <div class="page-header mb-24">
+      <div class="page-title">Einstellungen</div>
+      <div class="page-subtitle">Allgemeine Konfiguration und Integrationen</div>
+    </div>
+
+    <div class="grid-2 mb-24">
+      <!-- General Settings -->
+      <div class="card">
+        <div class="card-header">Allgemein</div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Firmenname</label>
+            <input class="form-input" type="text" value="Knipserl Fotobox">
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-Mail-Adresse</label>
+            <input class="form-input" type="email" value="hallo@knipserl.de">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefon</label>
+            <input class="form-input" type="tel" value="+49 170 9876543">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Standort</label>
+            <select class="form-select">
+              <option>Rosenheim &amp; Umgebung</option>
+              <option>M&uuml;nchen &amp; Umgebung</option>
+              <option>Ganz Bayern</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="card">
+        <div class="card-header">Benachrichtigungen</div>
+        <div class="card-body">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">E-Mail bei neuer Anfrage</div>
+              <div class="toggle-label-desc">Sofortige Benachrichtigung per E-Mail</div>
+            </div>
+            <div class="toggle-switch on"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">Push-Benachrichtigungen</div>
+              <div class="toggle-label-desc">Browser-Benachrichtigungen aktivieren</div>
+            </div>
+            <div class="toggle-switch on"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">Wochenbericht</div>
+              <div class="toggle-label-desc">Zusammenfassung jeden Montag</div>
+            </div>
+            <div class="toggle-switch"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">SMS-Erinnerungen</div>
+              <div class="toggle-label-desc">Erinnerungen an Kunden 24h vor Event</div>
+            </div>
+            <div class="toggle-switch on"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Link Cards -->
+    <div class="card">
+      <div class="link-card" style="border-bottom:1px solid var(--border);">
+        <div class="link-card-left">
+          <div class="link-card-icon">&#9993;</div>
+          <div>
+            <div class="link-card-title">E-Mail-Vorlagen</div>
+            <div class="link-card-desc">Antwort-Templates f&uuml;r Anfragen, Best&auml;tigungen, Erinnerungen</div>
+          </div>
+        </div>
+        <span class="link-card-arrow">&#8250;</span>
+      </div>
+      <div class="link-card" style="border-bottom:1px solid var(--border);">
+        <div class="link-card-left">
+          <div class="link-card-icon">&#9733;</div>
+          <div>
+            <div class="link-card-title">Google Reviews Integration</div>
+            <div class="link-card-desc">Automatische Review-Anfragen nach Events</div>
+          </div>
+        </div>
+        <span class="link-card-arrow">&#8250;</span>
+      </div>
+      <div class="link-card" style="border-bottom:1px solid var(--border);">
+        <div class="link-card-left">
+          <div class="link-card-icon">&#128197;</div>
+          <div>
+            <div class="link-card-title">Kalender-Sync</div>
+            <div class="link-card-desc">Verbindung mit Google Calendar oder iCal</div>
+          </div>
+        </div>
+        <span class="link-card-arrow">&#8250;</span>
+      </div>
+      <div class="link-card">
+        <div class="link-card-left">
+          <div class="link-card-icon">&#128274;</div>
+          <div>
+            <div class="link-card-title">Sicherheit &amp; Zugang</div>
+            <div class="link-card-desc">Passwort, 2FA und Benutzerverwaltung</div>
+          </div>
+        </div>
+        <span class="link-card-arrow">&#8250;</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

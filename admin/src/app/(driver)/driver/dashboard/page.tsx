@@ -47,7 +47,7 @@ export default async function DriverDashboardPage() {
       </div>
 
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="border-b">
           <CardTitle className="text-base">Meine nächsten Fahrten</CardTitle>
         </CardHeader>
         <CardContent>
@@ -93,7 +93,7 @@ export default async function DriverDashboardPage() {
 
       {vacations.length > 0 && (
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="border-b">
             <CardTitle className="text-base">Mein Urlaub</CardTitle>
           </CardHeader>
           <CardContent>

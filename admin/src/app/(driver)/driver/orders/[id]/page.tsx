@@ -43,7 +43,7 @@ export default async function DriverOrderDetailPage({
       </div>
 
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="border-b">
           <CardTitle className="text-base">Event</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -76,7 +76,7 @@ export default async function DriverOrderDetailPage({
       </Card>
 
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="border-b">
           <CardTitle className="text-base">Kunde</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -103,7 +103,7 @@ export default async function DriverOrderDetailPage({
 
       {order.extras.length > 0 && (
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="border-b">
             <CardTitle className="text-base">Extras</CardTitle>
           </CardHeader>
           <CardContent>
@@ -120,7 +120,7 @@ export default async function DriverOrderDetailPage({
 
       {order.notes && (
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="border-b">
             <CardTitle className="text-base">Notizen</CardTitle>
           </CardHeader>
           <CardContent>

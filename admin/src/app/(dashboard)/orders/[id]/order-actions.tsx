@@ -60,7 +60,7 @@ export function OrderActions({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="border-b">
         <CardTitle>Auftrag bearbeiten</CardTitle>
       </CardHeader>
       <CardContent>

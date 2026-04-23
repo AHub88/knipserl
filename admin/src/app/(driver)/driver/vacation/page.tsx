@@ -18,7 +18,7 @@ export default async function DriverVacationPage() {
       <h1 className="text-xl font-bold">Urlaubsverwaltung</h1>
 
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="border-b">
           <CardTitle className="text-base">Neuen Urlaub eintragen</CardTitle>
         </CardHeader>
         <CardContent>
@@ -27,7 +27,7 @@ export default async function DriverVacationPage() {
       </Card>
 
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="border-b">
           <CardTitle className="text-base">Meine Urlaubszeiten</CardTitle>
         </CardHeader>
         <CardContent>

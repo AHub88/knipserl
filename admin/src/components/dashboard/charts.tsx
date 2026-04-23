@@ -74,12 +74,12 @@ export function MonthlyOrdersChart({
 }: MonthlyOrdersChartProps) {
   return (
     <Card className="border-border bg-card">
-      <CardHeader className="pb-2">
+      <CardHeader className="border-b">
         <CardTitle className="text-base font-semibold text-foreground">
           Auftr&auml;ge pro Monat
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent>
         <div className="h-[260px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -161,12 +161,12 @@ export function EventTypesPieChart({
 }: EventTypesPieChartProps) {
   return (
     <Card className="border-border bg-card">
-      <CardHeader className="pb-2">
+      <CardHeader className="border-b">
         <CardTitle className="text-base font-semibold text-foreground">
           Eventarten
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent>
         <div className="flex items-center gap-6">
           <div className="h-[260px] w-[260px] shrink-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -190,10 +190,10 @@ export function EventTypesPieChart({
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#18181b",
-                    border: "1px solid rgba(255,255,255,0.1)",
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
                     borderRadius: "8px",
-                    color: "#fafafa",
+                    color: "hsl(var(--foreground))",
                     fontSize: 13,
                   }}
                 />

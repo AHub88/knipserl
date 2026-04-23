@@ -339,13 +339,16 @@ export default async function DashboardPage() {
       {/* ── Standpunkt heute + KPIs side by side ── */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Standpunkt heute - takes 2 cols */}
-        <div className="lg:col-span-2 rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-            Standpunkt heute ({ytdDateLabel})
-          </h3>
-          <p className="text-xs text-muted-foreground mb-5">
-            Wie standen wir jeweils am {ytdDateLabel}?
-          </p>
+        <div className="lg:col-span-2 rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h3 className="text-sm font-semibold text-foreground">
+              Standpunkt heute ({ytdDateLabel})
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Wie standen wir jeweils am {ytdDateLabel}?
+            </p>
+          </div>
+          <div className="p-5">
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Umsatz bis {ytdDateLabel}</p>
@@ -396,6 +399,7 @@ export default async function DashboardPage() {
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         {/* KPIs - compact vertical stack in right column */}
@@ -439,14 +443,15 @@ export default async function DashboardPage() {
       {/* (old KPI grid + yearly charts replaced by above) */}
 
       {/* Monthly Comparison: This Year vs Last Year */}
-      <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Monatsvergleich Aufträge</h3>
+      <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-border px-5 py-3">
+          <h3 className="text-sm font-semibold text-foreground">Monatsvergleich Aufträge</h3>
           <div className="flex items-center gap-4 text-[10px]">
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-primary" />{now.getFullYear()}</span>
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-accent" />{now.getFullYear() - 1}</span>
           </div>
         </div>
+        <div className="p-5">
         <div className="flex items-end gap-1 sm:gap-2 h-44">
           {monthCompare.map((m, i) => {
             const maxVal = Math.max(...monthCompare.map((d) => Math.max(d.thisYear, d.lastYear)), 1);
@@ -481,6 +486,7 @@ export default async function DashboardPage() {
             );
           })}
         </div>
+        </div>
       </div>
 
       {/* Charts Row */}
@@ -495,7 +501,7 @@ export default async function DashboardPage() {
 
       {/* Upcoming Orders */}
       <Card className="border-border bg-card">
-        <CardHeader className="pb-3">
+        <CardHeader className="border-b">
           <CardTitle className="text-base font-semibold text-foreground">
             N&auml;chste Auftr&auml;ge
           </CardTitle>
