@@ -281,6 +281,89 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
           </div>
 
+          {/* Middle: Workflow */}
+          <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <IconFlag className="size-4 text-primary" />
+                <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Workflow</h3>
+                <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                  {doneSteps}/4
+                </span>
+              </div>
+              {isAdmin && !editingStatus && (
+                <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                  <IconPencil className="size-4" />
+                </button>
+              )}
+              {editingStatus && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      saveField(statusState);
+                      setEditingStatus(false);
+                    }}
+                    className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    <IconCheck className="size-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
+                      setEditingStatus(false);
+                    }}
+                    className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                  >
+                    <IconX className="size-5" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Progress bar */}
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mb-3">
+              <div
+                className="h-full bg-emerald-400 transition-all"
+                style={{ width: `${(doneSteps / 4) * 100}%` }}
+              />
+            </div>
+
+            {/* Status pills - 2×2 grid */}
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck, warnIfPast: false },
+                { key: "designReady" as const, label: "Design", icon: IconPalette, warnIfPast: false },
+                { key: "planned" as const, label: "Geplant", icon: IconTruck, warnIfPast: false },
+                { key: "paid" as const, label: "Bezahlt", icon: IconCoin, warnIfPast: true },
+              ]).map((s) => {
+                const done = statusState[s.key];
+                const warn = !done && s.warnIfPast && eventInPast;
+                const baseClass =
+                  "flex items-center justify-center gap-1.5 h-9 px-2 rounded-lg border text-xs font-medium transition-colors " +
+                  (done
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                    : warn
+                      ? "border-red-500/30 bg-red-500/10 text-red-400"
+                      : "border-border bg-card text-muted-foreground");
+                return editingStatus ? (
+                  <button
+                    key={s.label}
+                    onClick={() => setStatusState((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
+                    className={baseClass + " cursor-pointer hover:opacity-80"}
+                  >
+                    <s.icon className="size-4 shrink-0" />
+                    <span className="truncate">{s.label}</span>
+                  </button>
+                ) : (
+                  <div key={s.label} className={baseClass}>
+                    <s.icon className="size-4 shrink-0" />
+                    <span className="truncate">{s.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Right: Action Rail */}
           <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/30 p-4 flex flex-col gap-2">
             {/* Fahrer */}
@@ -386,95 +469,6 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       <div className="flex flex-col lg:flex-row gap-6">
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
-          {/* Workflow (Status + Actions) */}
-          <div className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className="flex items-center justify-between border-b border-border px-5 py-3">
-              <div className="flex items-center gap-2">
-                <IconFlag className="size-4 text-primary" />
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Workflow</h3>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-medium text-muted-foreground tabular-nums">
-                  {doneSteps}/4 erledigt
-                </span>
-                {isAdmin && !editingStatus && (
-                  <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
-                    <IconPencil className="size-4.5" />
-                  </button>
-                )}
-                {editingStatus && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => {
-                        saveField(statusState);
-                        setEditingStatus(false);
-                      }}
-                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
-                    >
-                      <IconCheck className="size-5" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setStatusState({ confirmed: order.confirmed, designReady: order.designReady, planned: order.planned, paid: order.paid });
-                        setEditingStatus(false);
-                      }}
-                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
-                    >
-                      <IconX className="size-5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="p-5 space-y-4">
-              {/* Progress bar */}
-              <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full bg-emerald-400 transition-all"
-                  style={{ width: `${(doneSteps / 4) * 100}%` }}
-                />
-              </div>
-
-              {/* Status pills */}
-              <div className="flex flex-wrap gap-2">
-                {([
-                  { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck, warnIfPast: false },
-                  { key: "designReady" as const, label: "Design", icon: IconPalette, warnIfPast: false },
-                  { key: "planned" as const, label: "Geplant", icon: IconTruck, warnIfPast: false },
-                  { key: "paid" as const, label: "Bezahlt", icon: IconCoin, warnIfPast: true },
-                ]).map((s) => {
-                  const done = statusState[s.key];
-                  const warn = !done && s.warnIfPast && eventInPast;
-                  const baseClass =
-                    "inline-flex items-center gap-2 h-9 px-3 rounded-lg border text-sm font-medium transition-colors " +
-                    (done
-                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                      : warn
-                        ? "border-red-500/30 bg-red-500/10 text-red-400"
-                        : "border-border bg-muted text-muted-foreground");
-                  return editingStatus ? (
-                    <button
-                      key={s.label}
-                      onClick={() => setStatusState((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
-                      className={baseClass + " cursor-pointer hover:opacity-80"}
-                    >
-                      <s.icon className="size-4" />
-                      <span>{s.label}</span>
-                      {done && <IconCheck className="size-3.5 opacity-70" />}
-                    </button>
-                  ) : (
-                    <div key={s.label} className={baseClass}>
-                      <s.icon className="size-4" />
-                      <span>{s.label}</span>
-                      {done && <IconCheck className="size-3.5 opacity-70" />}
-                    </div>
-                  );
-                })}
-              </div>
-
-            </div>
-          </div>
-
           {/* Extras */}
           {(activeExtras.length > 0 || editingExtras) && (
             <div className="rounded-xl border border-border bg-card overflow-hidden">

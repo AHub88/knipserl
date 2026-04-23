@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.8.0] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Header jetzt **3-Spalten-Layout**: links Info (Topline, Datum, Kunde, Location), Mitte **Workflow** (Progress-Bar + 4 Status-Pills im 2×2-Grid + Pencil-Edit), rechts Action-Rail (Fahrer + Buttons). Die separate Workflow-Card im Content-Bereich entfällt — Status und Actions sitzen jetzt kompakt im Header-Block zusammen.
+
 ## [1.7.2] — 2026-04-23
 
 ### Fixed
