@@ -143,6 +143,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [internalState, setInternalState] = useState(order.internalNotes ?? "");
   const [driverIdState, setDriverIdState] = useState(order.driverId ?? "");
   const [secondDriverIdState, setSecondDriverIdState] = useState(order.secondDriverId ?? "");
+  const [extraPaperRollsState, setExtraPaperRollsState] = useState(String(order.extraPaperRolls ?? 0));
   const [setupDateState, setSetupDateState] = useState(order.setupDate ? order.setupDate.slice(0, 10) : "");
   const [setupTimeState, setSetupTimeState] = useState(order.setupTime ?? "");
   const [teardownDateState, setTeardownDateState] = useState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
@@ -603,7 +604,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => {
-                        saveField({ extras: extrasState });
+                        const rolls = extraPaperRollsState !== "" ? Math.max(0, Math.floor(Number(extraPaperRollsState) || 0)) : 0;
+                        saveField({ extras: extrasState, extraPaperRolls: rolls });
                         setEditingExtras(false);
                       }}
                       className="text-emerald-400 hover:text-emerald-300 transition-colors"
@@ -611,7 +613,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       <IconCheck className="size-5" />
                     </button>
                     <button
-                      onClick={() => { setExtrasState(order.extras); setEditingExtras(false); }}
+                      onClick={() => {
+                        setExtrasState(order.extras);
+                        setExtraPaperRollsState(String(order.extraPaperRolls ?? 0));
+                        setEditingExtras(false);
+                      }}
                       className="text-muted-foreground hover:text-foreground/80 transition-colors"
                     >
                       <IconX className="size-5" />
@@ -619,8 +625,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </div>
                 )}
               </div>
-              <div className="p-4">
-              <div className="flex flex-wrap gap-2">
+              <div className="p-5">
+              <div className="flex flex-wrap gap-3">
                 {editingExtras
                   ? EXTRAS_CONFIG.map((ext) => {
                       const active = extrasState.includes(ext.key);
@@ -629,16 +635,16 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                           key={ext.key}
                           onClick={() => toggleExtra(ext.key)}
                           className={
-                            "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-2 min-w-[72px] cursor-pointer hover:opacity-80 transition-colors " +
+                            "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-w-[88px] cursor-pointer hover:opacity-80 transition-colors " +
                             (active
                               ? "border-primary/30 bg-primary/10 text-primary"
                               : "border-border bg-card text-muted-foreground")
                           }
                         >
-                          <ext.icon className="size-5" />
-                          <span className="text-[10px] font-bold uppercase tracking-wide">{ext.label}</span>
+                          <ext.icon className="size-7" />
+                          <span className="text-[11px] font-bold uppercase tracking-wide">{ext.label}</span>
                           {(EXTRAS_PRICES[ext.key] ?? 0) > 0 && (
-                            <span className="text-[10px] font-mono opacity-60">{EXTRAS_PRICES[ext.key]}&euro;</span>
+                            <span className="text-xs font-mono font-semibold text-foreground/80">{EXTRAS_PRICES[ext.key]}&nbsp;&euro;</span>
                           )}
                         </button>
                       );
@@ -646,24 +652,42 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   : activeExtras.map((ext) => (
                       <div
                         key={ext.key}
-                        className="flex flex-col items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 min-w-[72px] text-primary"
+                        className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 p-3 min-w-[88px] text-primary"
                       >
-                        <ext.icon className="size-5" />
-                        <span className="text-[10px] font-bold uppercase tracking-wide">{ext.label}</span>
+                        <ext.icon className="size-7" />
+                        <span className="text-[11px] font-bold uppercase tracking-wide">{ext.label}</span>
                         {ext.price > 0 && (
-                          <span className="text-[10px] font-mono opacity-60">{ext.price}&euro;</span>
+                          <span className="text-xs font-mono font-semibold text-foreground/80">{ext.price}&nbsp;&euro;</span>
                         )}
                       </div>
                     ))}
-                {!editingExtras && order.extraPaperRolls > 0 && (
-                  <div
-                    className="flex flex-col items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 min-w-[72px] text-primary"
-                    title={`${order.extraPaperRolls} zusätzliche Papierrolle${order.extraPaperRolls > 1 ? "n" : ""}`}
-                  >
-                    <IconReceipt className="size-5" />
-                    <span className="text-[10px] font-bold uppercase tracking-wide">Papierrolle{order.extraPaperRolls > 1 ? "n" : ""}</span>
-                    <span className="text-[10px] font-mono opacity-60">&times;{order.extraPaperRolls}</span>
+
+                {/* Papierrollen: inline editierbar im Edit-Mode, sonst als Chip wenn > 0 */}
+                {editingExtras ? (
+                  <div className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-card p-3 min-w-[88px] text-muted-foreground">
+                    <IconReceipt className="size-7" />
+                    <span className="text-[11px] font-bold uppercase tracking-wide">Papierrollen</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={extraPaperRollsState}
+                      onChange={(e) => setExtraPaperRollsState(e.target.value)}
+                      onClick={(e) => e.currentTarget.select()}
+                      className="h-6 w-14 rounded-md border border-border bg-muted px-1 text-xs font-mono font-semibold text-center text-foreground outline-none focus:border-primary/50"
+                    />
                   </div>
+                ) : (
+                  order.extraPaperRolls > 0 && (
+                    <div
+                      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 p-3 min-w-[88px] text-primary"
+                      title={`${order.extraPaperRolls} zusätzliche Papierrolle${order.extraPaperRolls > 1 ? "n" : ""}`}
+                    >
+                      <IconReceipt className="size-7" />
+                      <span className="text-[11px] font-bold uppercase tracking-wide">Papierrolle{order.extraPaperRolls > 1 ? "n" : ""}</span>
+                      <span className="text-xs font-mono font-semibold text-foreground/80">&times;&nbsp;{order.extraPaperRolls}</span>
+                    </div>
+                  )
                 )}
               </div>
               </div>

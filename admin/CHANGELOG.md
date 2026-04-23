@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.12.1] — 2026-04-23
+
+### Changed
+- Extras-Box: Icons wieder **größer** (`size-7` statt `size-5`), Padding zurück auf `p-3 min-w-[88px]`, Preise **kräftiger** (`text-xs font-mono font-semibold text-foreground/80` statt `text-[10px] opacity-60`) — deutlich besser lesbar.
+- Extras-Box Inline-Edit: Papierrollen-Kachel hat jetzt ein **direkt beschreibbares Zahlen-Input** (on click → markiert den Wert, Tippen überschreibt). Save schickt `extraPaperRolls` mit. Kein Umweg mehr übers große Edit-Formular.
+
 ## [1.12.0] — 2026-04-23
 
 ### Added
