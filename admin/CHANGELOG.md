@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.11.2] — 2026-04-23
+
+### Added
+- Quick-Edit-Boxen (Lieferung, Fahrer) reagieren auf Tastatur: **Enter speichert**, **Escape verwirft**. Edit-Bereiche sind jetzt `<form>`-Wrapper mit `onSubmit` → Enter in beliebigem Input triggert Save. In Notizen/Intern bleibt Enter = Zeilenumbruch (Textarea-Standardverhalten).
+
 ## [1.11.1] — 2026-04-23
 
 ### Added

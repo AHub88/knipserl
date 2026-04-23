@@ -432,10 +432,34 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   )}
                 </div>
               ) : (
-                <div className="mt-1.5 space-y-1.5">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    await saveField({
+                      driverId: driverIdState || null,
+                      secondDriverId: secondDriverIdState || null,
+                    });
+                    setEditingDriver(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      e.preventDefault();
+                      setDriverIdState(order.driverId ?? "");
+                      setSecondDriverIdState(order.secondDriverId ?? "");
+                      setEditingDriver(false);
+                    }
+                  }}
+                  className="mt-1.5 space-y-1.5"
+                >
                   <select
                     value={driverIdState}
                     onChange={(e) => setDriverIdState(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        (e.currentTarget.form as HTMLFormElement)?.requestSubmit();
+                      }
+                    }}
                     className="h-8 w-full rounded-md border border-border bg-card px-2 text-xs text-foreground outline-none focus:border-primary/50 cursor-pointer"
                   >
                     <option value="">– Kein Fahrer –</option>
@@ -449,6 +473,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <select
                     value={secondDriverIdState}
                     onChange={(e) => setSecondDriverIdState(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        (e.currentTarget.form as HTMLFormElement)?.requestSubmit();
+                      }
+                    }}
                     className="h-8 w-full rounded-md border border-border bg-card px-2 text-xs text-foreground outline-none focus:border-primary/50 cursor-pointer"
                   >
                     <option value="">– Kein 2. Fahrer –</option>
@@ -459,7 +489,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       </option>
                     ))}
                   </select>
-                </div>
+                  <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
+                </form>
               )}
             </div>
 
@@ -742,7 +773,29 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </div>
               <div className="p-5">
               {editingDelivery ? (
-                <div className="space-y-3">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    await saveField({
+                      setupDate: setupDateState || null,
+                      setupTime: setupTimeState || null,
+                      teardownDate: teardownDateState || null,
+                      teardownTime: teardownTimeState || null,
+                    });
+                    setEditingDelivery(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      e.preventDefault();
+                      setSetupDateState(order.setupDate ? order.setupDate.slice(0, 10) : "");
+                      setSetupTimeState(order.setupTime ?? "");
+                      setTeardownDateState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
+                      setTeardownTimeState(order.teardownTime ?? "");
+                      setEditingDelivery(false);
+                    }
+                  }}
+                  className="space-y-3"
+                >
                   <div>
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400 mb-1.5">Aufbau</p>
                     <div className="grid grid-cols-2 gap-2">
@@ -779,7 +832,9 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       />
                     </div>
                   </div>
-                </div>
+                  {/* Hidden submit trigger so Enter on any input submits the form */}
+                  <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
+                </form>
               ) : hasSchedule ? (
                 <div className="space-y-4">
                   {(order.setupDate || order.setupTime) && (
