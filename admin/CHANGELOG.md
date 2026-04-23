@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.0] — 2026-04-23
+
+### Changed
+- Auftrag-Detail Header: Struktur-Umbau zu **Variante C mit Action-Rail rechts**. Links Info-Block (Meta, Datum, Kunde, Location), rechts separater Rail-Bereich mit Fahrer oben und Actions vertikal gestapelt (Bestätigungslink, Design-Link, PDF, Bearbeiten). Rail nicht sticky. Auf Mobile wrappt die Rail unter den Info-Block.
+
+### Added
+- Dashboard Verlaufsgraph: **Change-Prozente** unter jedem Werte-Label (grün/rot je nach Vorzeichen). Kleinere Schrift, mit weißem Outline-Stroke damit sie über der Area-Fill lesbar bleiben.
+- Dashboard Verlaufsgraph: **Zeitraum-Filter** (4 / 6 / 8 / Alle) als Segment-Control rechts oben in der Card. Default bleibt 4 Jahre. Serverseitig werden jetzt alle Jahre mit Daten vorgehalten und im Client gefiltert.
+
 ## [1.6.0] — 2026-04-23
 
 ### Added

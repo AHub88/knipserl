@@ -228,24 +228,26 @@ export default async function DashboardPage() {
   }
   const allExtrasKeys = [...allExtrasSet].sort();
 
-  // YTD comparison: last 4 years at same date
+  // YTD comparison: all years at same date cutoff (Balken = last 4, Chart = alle verfügbar)
   const ytdDateLabel = now.toLocaleDateString("de-DE", { day: "2-digit", month: "long" });
-  const ytdYears: { year: number; revenue: number; count: number }[] = [];
-  for (let yi = 0; yi < 4; yi++) {
-    const targetYear = now.getFullYear() - yi;
-    const cutoff = new Date(targetYear, now.getMonth(), now.getDate(), 23, 59, 59);
-    let revenue = 0;
-    let count = 0;
-    for (const o of allOrders) {
-      const d = new Date(o.eventDate);
-      if (d.getFullYear() === targetYear && d <= cutoff) {
-        revenue += o.price;
-        count++;
-      }
+  const ytdByYear = new Map<number, { revenue: number; count: number }>();
+  const currentMonth = now.getMonth();
+  const currentDay = now.getDate();
+  for (const o of allOrders) {
+    const d = new Date(o.eventDate);
+    const year = d.getFullYear();
+    const cutoff = new Date(year, currentMonth, currentDay, 23, 59, 59);
+    if (d <= cutoff) {
+      const existing = ytdByYear.get(year) ?? { revenue: 0, count: 0 };
+      existing.revenue += o.price;
+      existing.count++;
+      ytdByYear.set(year, existing);
     }
-    ytdYears.push({ year: targetYear, revenue, count });
   }
-  ytdYears.reverse(); // oldest first
+  const allYtdYears = [...ytdByYear.entries()]
+    .map(([year, data]) => ({ year, ...data }))
+    .sort((a, b) => a.year - b.year);
+  const ytdYears = allYtdYears.slice(-4);
 
   // Monthly comparison: this year vs last year
   const monthCompare: { month: string; thisYear: number; lastYear: number }[] = [];
@@ -435,7 +437,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Standpunkt heute als Verlaufsgraph (testweise) ── */}
-      <YtdTrendChart ytdYears={ytdYears} ytdDateLabel={ytdDateLabel} />
+      <YtdTrendChart ytdYears={allYtdYears} ytdDateLabel={ytdDateLabel} />
 
       {/* ── Yearly Comparison (tabbed) ── */}
       {yearlyData.length > 0 && (

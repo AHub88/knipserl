@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -323,26 +324,94 @@ interface YtdYearRow {
   count: number;
 }
 
+interface YtdChartRow extends YtdYearRow {
+  revenueChange: number | null;
+  countChange: number | null;
+}
+
 interface YtdTrendChartProps {
   ytdYears: YtdYearRow[];
   ytdDateLabel: string;
 }
 
+type RangeOption = 4 | 6 | 8 | "all";
+
+// Custom 2-line label renderer: Wert + Change%
+function TwoLineLabelRenderer({
+  color,
+  valueFormatter,
+  changeKey,
+}: {
+  color: string;
+  valueFormatter: (v: number) => string;
+  changeKey: "revenueChange" | "countChange";
+}) {
+  // Returns a component compatible with recharts LabelList content prop
+  return function LabelContent(props: unknown) {
+    const p = props as {
+      x?: number;
+      y?: number;
+      value?: number | string;
+      payload?: YtdChartRow;
+      index?: number;
+    };
+    if (p.x == null || p.y == null || p.value == null) return null;
+    const change = p.payload?.[changeKey];
+    const formattedValue = valueFormatter(Number(p.value));
+    return (
+      <g>
+        <text
+          x={p.x}
+          y={p.y - 22}
+          textAnchor="middle"
+          fontSize="13"
+          fontWeight="700"
+          fill={color}
+          style={{ paintOrder: "stroke", stroke: "var(--card)", strokeWidth: 3 }}
+        >
+          {formattedValue}
+        </text>
+        {change != null && (
+          <text
+            x={p.x}
+            y={p.y - 8}
+            textAnchor="middle"
+            fontSize="11"
+            fontWeight="600"
+            fill={change >= 0 ? "#22c55e" : "#ef4444"}
+            style={{ paintOrder: "stroke", stroke: "var(--card)", strokeWidth: 3 }}
+          >
+            {change >= 0 ? "+" : ""}
+            {change}%
+          </text>
+        )}
+      </g>
+    );
+  };
+}
+
 function YtdMiniArea({
   data,
   valueKey,
+  changeKey,
   color,
   formatter,
 }: {
-  data: YtdYearRow[];
+  data: YtdChartRow[];
   valueKey: "revenue" | "count";
+  changeKey: "revenueChange" | "countChange";
   color: string;
   formatter: (v: number) => string;
 }) {
+  const LabelContent = TwoLineLabelRenderer({
+    color,
+    valueFormatter: formatter,
+    changeKey,
+  });
   return (
-    <div className="h-[200px] w-full">
+    <div className="h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 30, right: 30, bottom: 10, left: 20 }}>
+        <AreaChart data={data} margin={{ top: 40, right: 30, bottom: 10, left: 20 }}>
           <defs>
             <linearGradient id={`ytd-grad-${valueKey}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.4} />
@@ -366,13 +435,7 @@ function YtdMiniArea({
             activeDot={{ r: 6 }}
             isAnimationActive={false}
           >
-            <LabelList
-              dataKey={valueKey}
-              position="top"
-              offset={14}
-              formatter={(v: unknown) => formatter(Number(v))}
-              style={{ fontSize: 12, fontWeight: 700, fill: color }}
-            />
+            <LabelList dataKey={valueKey} content={LabelContent} />
           </Area>
         </AreaChart>
       </ResponsiveContainer>
@@ -381,14 +444,58 @@ function YtdMiniArea({
 }
 
 export function YtdTrendChart({ ytdYears, ytdDateLabel }: YtdTrendChartProps) {
+  const [range, setRange] = useState<RangeOption>(4);
+
+  const filtered = useMemo<YtdChartRow[]>(() => {
+    const slice = range === "all" ? ytdYears : ytdYears.slice(-range);
+    return slice.map((y, i) => {
+      const prev = i > 0 ? slice[i - 1] : null;
+      return {
+        ...y,
+        revenueChange:
+          prev && prev.revenue > 0
+            ? Math.round(((y.revenue - prev.revenue) / prev.revenue) * 100)
+            : null,
+        countChange:
+          prev && prev.count > 0
+            ? Math.round(((y.count - prev.count) / prev.count) * 100)
+            : null,
+      };
+    });
+  }, [ytdYears, range]);
+
+  const availableYears = ytdYears.length;
+
+  const options: { value: RangeOption; label: string }[] = [
+    { value: 4, label: "4 Jahre" },
+    { value: 6, label: "6 Jahre" },
+    { value: 8, label: "8 Jahre" },
+    { value: "all", label: "Alle" },
+  ].filter((o) => o.value === "all" || (o.value as number) <= availableYears);
+
   return (
     <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
-      <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+      <div className="border-b border-border px-5 py-3 flex items-center gap-3 flex-wrap">
         <IconTrendingUp className="size-4 text-primary" />
         <h3 className="text-sm font-semibold text-foreground">
           Verlauf Standpunkt bis {ytdDateLabel}
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5">(Test: Linienverlauf)</p>
+        <div className="ml-auto inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5">
+          {options.map((o) => (
+            <button
+              key={String(o.value)}
+              onClick={() => setRange(o.value)}
+              className={
+                "h-7 px-2.5 rounded-md text-[11px] font-semibold transition-colors " +
+                (range === o.value
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground/80")
+              }
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="p-5 grid gap-6 sm:grid-cols-2">
         <div>
@@ -396,8 +503,9 @@ export function YtdTrendChart({ ytdYears, ytdDateLabel }: YtdTrendChartProps) {
             Umsatz
           </p>
           <YtdMiniArea
-            data={ytdYears}
+            data={filtered}
             valueKey="revenue"
+            changeKey="revenueChange"
             color="#F6A11C"
             formatter={(v) => `${v.toLocaleString("de-DE", { maximumFractionDigits: 0 })} €`}
           />
@@ -407,8 +515,9 @@ export function YtdTrendChart({ ytdYears, ytdDateLabel }: YtdTrendChartProps) {
             Aufträge
           </p>
           <YtdMiniArea
-            data={ytdYears}
+            data={filtered}
             valueKey="count"
+            changeKey="countChange"
             color="#3b82f6"
             formatter={(v) => String(v)}
           />

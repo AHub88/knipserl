@@ -219,30 +219,87 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
   return (
     <div className="space-y-6">
-      {/* ── Hero Header (Quiet) ── */}
-      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
-        {/* Topline: back + meta dots + driver + actions */}
-        <div className="flex items-center gap-2 mb-5 text-xs flex-wrap">
-          <Link
-            href="/orders"
-            className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
-          >
-            <IconArrowLeft className="size-4" />
-          </Link>
-          <div className="flex items-center gap-2 text-muted-foreground min-w-0">
-            <span className="font-mono">#{order.orderNumber}</span>
-            <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-            <span>{companyTag}</span>
-            <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
-            <span>{paymentLabel}</span>
+      {/* ── Hero Header mit Action-Rail ── */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          {/* Left: Info-Block */}
+          <div className="flex-1 min-w-0 p-4 sm:p-6">
+            {/* Topline: back + meta */}
+            <div className="flex items-center gap-2 mb-5 text-xs">
+              <Link
+                href="/orders"
+                className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+              >
+                <IconArrowLeft className="size-4" />
+              </Link>
+              <div className="flex items-center gap-2 text-muted-foreground flex-wrap min-w-0">
+                <span className="font-mono">#{order.orderNumber}</span>
+                <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+                <span>{companyTag}</span>
+                <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />
+                <span>{paymentLabel}</span>
+              </div>
+            </div>
+
+            {/* Date banner */}
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <IconCalendar className="size-5 text-primary shrink-0" />
+              <span className="text-base sm:text-xl text-primary font-semibold">{formattedDate}</span>
+              <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                {order.eventType}
+              </span>
+            </div>
+
+            {/* Customer Name - Firma und Name in einer Zeile */}
+            <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">
+              {firma ? (
+                <>
+                  <span className="text-muted-foreground font-semibold">{firma}</span>
+                  <span className="text-muted-foreground mx-2 font-normal">&ndash;</span>
+                  <span>{kontakt}</span>
+                </>
+              ) : (
+                kontakt
+              )}
+            </h1>
+
+            {/* Location */}
+            <div className="flex items-center gap-2 text-muted-foreground text-sm flex-wrap">
+              <IconMapPin className="size-4 shrink-0" />
+              <span className="text-foreground/80 font-medium">{order.locationName}</span>
+              {ort && <span>&middot; {ort}</span>}
+              {order.distanceKm != null && <span>&middot; {order.distanceKm} km</span>}
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-1 text-primary hover:underline inline-flex items-center gap-0.5"
+              >
+                <IconExternalLink className="size-3" />
+                Maps
+              </a>
+            </div>
           </div>
-          {driverDisplay && (
-            <span className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-foreground/[0.06] text-foreground text-sm font-semibold">
-              <IconSteeringWheel className="size-4 text-primary" />
-              <span className="truncate max-w-[200px]">{driverDisplay}</span>
-            </span>
-          )}
-          <div className="flex items-center gap-2 ml-auto shrink-0">
+
+          {/* Right: Action Rail */}
+          <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/30 p-4 flex flex-col gap-2">
+            {/* Fahrer */}
+            <div className="pb-3 mb-1 border-b border-border">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Fahrer</p>
+              {driverDisplay ? (
+                <div className="flex items-center gap-1.5">
+                  <IconSteeringWheel className="size-4 text-primary shrink-0" />
+                  <span className="text-sm font-semibold text-foreground truncate">{driverDisplay}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <IconSteeringWheel className="size-4 text-muted-foreground shrink-0" />
+                  <span className="text-sm text-muted-foreground italic">Nicht zugewiesen</span>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
             {order.confirmationToken && (
               <button
                 onClick={() => {
@@ -251,14 +308,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   toast.success("Bestätigungslink kopiert");
                 }}
                 className={
-                  "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                  "flex items-center gap-2 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
                   (order.confirmedByCustomerAt
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15"
-                    : "border-border bg-muted text-foreground/80 hover:bg-accent")
+                    : "border-border bg-card text-foreground/80 hover:bg-accent")
                 }
               >
-                {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-3.5" /> : <IconLink className="size-3.5" />}
-                <span className="hidden sm:inline">Bestätigungslink</span>
+                {order.confirmedByCustomerAt ? <IconCircleCheckFilled className="size-4 shrink-0" /> : <IconLink className="size-4 shrink-0" />}
+                <span>Bestätigungslink</span>
               </button>
             )}
             {isAdmin && (
@@ -283,73 +340,34 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   }
                 }}
                 className={
-                  "flex items-center gap-1.5 h-8 px-3 rounded-lg border text-xs font-medium transition-colors " +
+                  "flex items-center gap-2 h-9 px-3 rounded-lg border text-xs font-medium transition-colors " +
                   (order.designToken
-                    ? "border-border bg-muted text-foreground/80 hover:bg-accent"
+                    ? "border-border bg-card text-foreground/80 hover:bg-accent"
                     : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15")
                 }
               >
-                <IconPalette className="size-3.5" />
-                <span className="hidden sm:inline">{order.designToken ? "Design-Link" : "Design erstellen"}</span>
+                <IconPalette className="size-4 shrink-0" />
+                <span>{order.designToken ? "Design-Link" : "Design erstellen"}</span>
               </button>
             )}
             <a
               href={`/api/orders/${order.id}/pdf`}
               target="_blank"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-muted text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
+              className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-card text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
             >
-              <IconFileDownload className="size-3.5" />
-              <span className="hidden sm:inline">PDF</span>
+              <IconFileDownload className="size-4 shrink-0" />
+              <span>PDF</span>
             </a>
             {isAdmin && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-muted text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
+                className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-card text-foreground/80 text-xs font-medium hover:bg-accent transition-colors"
               >
-                <IconEdit className="size-3.5" />
-                <span className="hidden sm:inline">Bearbeiten</span>
+                <IconEdit className="size-4 shrink-0" />
+                <span>Bearbeiten</span>
               </button>
             )}
           </div>
-        </div>
-
-        {/* Date banner */}
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <IconCalendar className="size-5 text-primary shrink-0" />
-          <span className="text-base sm:text-xl text-primary font-semibold">{formattedDate}</span>
-          <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            {order.eventType}
-          </span>
-        </div>
-
-        {/* Customer Name - Firma und Name in einer Zeile */}
-        <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">
-          {firma ? (
-            <>
-              <span className="text-muted-foreground font-semibold">{firma}</span>
-              <span className="text-muted-foreground mx-2 font-normal">&ndash;</span>
-              <span>{kontakt}</span>
-            </>
-          ) : (
-            kontakt
-          )}
-        </h1>
-
-        {/* Location */}
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-          <IconMapPin className="size-4 shrink-0" />
-          <span className="text-foreground/80 font-medium">{order.locationName}</span>
-          {ort && <span>&middot; {ort}</span>}
-          {order.distanceKm != null && <span>&middot; {order.distanceKm} km</span>}
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-1 text-primary hover:underline inline-flex items-center gap-0.5"
-          >
-            <IconExternalLink className="size-3" />
-            Maps
-          </a>
         </div>
       </div>
 
