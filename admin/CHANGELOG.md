@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.10.3] — 2026-04-23
+
+### Removed
+- Auftrag-Detail Edit-Modus: **Drucklayouts-Section entfernt** (letzter Block der Edit-Ansicht). Uploads/Deletes gehen über die Sidebar im View-Modus, damit war die Section im Edit-Formular redundant.
+
 ## [1.10.2] — 2026-04-23
 
 ### Changed

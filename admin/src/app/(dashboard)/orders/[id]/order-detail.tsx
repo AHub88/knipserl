@@ -1066,21 +1066,6 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         </div>
       </div>
 
-      {/* Section 7: Drucklayouts */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 sm:px-5 py-3 flex items-center gap-2">
-          <IconPrinter className="size-4 text-primary" />
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h2>
-        </div>
-        <div className="p-4 sm:p-5 space-y-3">
-        <ImageGallery
-          orderId={order.id}
-          images={order.images}
-          isAdmin={isAdmin}
-        />
-        </div>
-      </div>
-
       {/* Mobile floating save button */}
       <div className="fixed bottom-4 left-4 right-4 sm:hidden z-20">
         <button
