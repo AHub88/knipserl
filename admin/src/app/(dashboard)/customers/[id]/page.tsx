@@ -105,10 +105,13 @@ export default async function CustomerDetailPage({
 
       {/* Orders */}
       {customer.orders.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-            <IconFileText className="size-4" /> Aufträge ({customer.orders.length})
-          </h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-4 sm:px-5 py-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <IconFileText className="size-4" /> Aufträge ({customer.orders.length})
+            </h2>
+          </div>
+          <div className="p-4 sm:p-5">
           <div className="space-y-2">
             {customer.orders.map((o) => (
               <Link
@@ -147,15 +150,19 @@ export default async function CustomerDetailPage({
               </Link>
             ))}
           </div>
+          </div>
         </div>
       )}
 
       {/* Quotes */}
       {quotes.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-            <IconFileInvoice className="size-4" /> Angebote ({quotes.length})
-          </h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-4 sm:px-5 py-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <IconFileInvoice className="size-4" /> Angebote ({quotes.length})
+            </h2>
+          </div>
+          <div className="p-4 sm:p-5">
           <div className="space-y-2">
             {quotes.map((q) => (
               <Link
@@ -192,15 +199,19 @@ export default async function CustomerDetailPage({
               </Link>
             ))}
           </div>
+          </div>
         </div>
       )}
 
       {/* Invoices */}
       {invoices.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-            <IconReceipt className="size-4" /> Rechnungen ({invoices.length})
-          </h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-4 sm:px-5 py-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <IconReceipt className="size-4" /> Rechnungen ({invoices.length})
+            </h2>
+          </div>
+          <div className="p-4 sm:p-5">
           <div className="space-y-2">
             {invoices.map((inv) => (
               <Link
@@ -237,13 +248,18 @@ export default async function CustomerDetailPage({
               </Link>
             ))}
           </div>
+          </div>
         </div>
       )}
 
       {customer.notes && (
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Notizen</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-4 sm:px-5 py-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
+          </div>
+          <div className="p-4 sm:p-5">
           <p className="text-sm text-foreground/80 whitespace-pre-wrap">{customer.notes}</p>
+          </div>
         </div>
       )}
     </div>

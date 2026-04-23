@@ -59,8 +59,11 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Azure Active Directory</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Azure Active Directory</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-4">
 
         <div>
           <label className={labelClass}>Tenant ID</label>
@@ -93,10 +96,14 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
           />
           <p className="text-[10px] text-muted-foreground/70 mt-1">Wird verschlüsselt gespeichert. Leer lassen um bestehendes beizubehalten.</p>
         </div>
+        </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Absender</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Absender</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-4">
 
         <div>
           <label className={labelClass}>Absender E-Mail</label>
@@ -108,6 +115,7 @@ export function CredentialsForm({ initial }: { initial: Record<string, string> }
             placeholder="info@knipserl.de"
           />
           <p className="text-[10px] text-muted-foreground/70 mt-1">Muss als Postfach in Microsoft 365 existieren.</p>
+        </div>
         </div>
       </div>
 

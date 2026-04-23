@@ -72,8 +72,8 @@ export function LegalPagesEditor({
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Editor */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-          <div className="flex items-center justify-between">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center justify-between border-b border-border px-5 py-3">
             <div className="flex items-center gap-2">
               <IconCode className="size-4 text-primary" />
               <h2 className="text-sm font-semibold text-foreground/80">HTML-Editor</h2>
@@ -97,6 +97,7 @@ export function LegalPagesEditor({
               </button>
             </div>
           </div>
+          <div className="p-5 space-y-3">
           <p className="text-xs text-muted-foreground">
             Erlaubtes HTML: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;/&lt;li&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;
           </p>
@@ -107,20 +108,23 @@ export function LegalPagesEditor({
             className="w-full min-h-[600px] rounded-lg border border-border bg-muted p-3 text-xs font-mono text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors resize-y"
             placeholder={`<h2>&Uuml;berschrift</h2>\n<p>Text...</p>`}
           />
+          </div>
         </div>
 
         {/* Preview */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-          <div className="flex items-center gap-2">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 border-b border-border px-5 py-3">
             <IconEye className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground/80">Live-Vorschau</h2>
           </div>
+          <div className="p-5 space-y-3">
           <div className="rounded-lg border border-border bg-white p-6 min-h-[600px] overflow-auto">
             <div
               className="legal-preview text-[#666] text-[14px] leading-relaxed"
               style={{ fontFamily: "'Fira Sans', sans-serif" }}
               dangerouslySetInnerHTML={{ __html: currentValue || "<p style='color:#aaa'>(leer)</p>" }}
             />
+          </div>
           </div>
         </div>
       </div>

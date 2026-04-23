@@ -153,8 +153,11 @@ export function CustomerDetail({
 
       {/* Kundendaten */}
       {editing ? (
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4 max-w-2xl">
-          <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden max-w-2xl">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Name</label>
@@ -184,10 +187,14 @@ export function CustomerDetail({
             <label className={labelClass}>Notizen</label>
             <textarea className={inputClass + " h-20 py-2 resize-none"} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Interne Notizen..." />
           </div>
+          </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-border bg-card p-5 space-y-2">
-          <h2 className="text-sm font-semibold text-foreground/80 mb-3">Kontaktdaten</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Kontaktdaten</h2>
+          </div>
+          <div className="p-5 space-y-2">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-center gap-3">
               <IconMail className="size-4 text-muted-foreground" />
@@ -208,6 +215,7 @@ export function CustomerDetail({
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{customer.notes}</p>
             </div>
           )}
+          </div>
         </div>
       )}
 

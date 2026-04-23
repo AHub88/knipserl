@@ -53,15 +53,15 @@ export function GoogleApiForm({
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="flex items-center gap-3 mb-4">
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="flex items-center gap-3 border-b border-border px-5 py-3">
         <IconBrandGoogle className="size-5 text-[#4285F4]" />
         <h2 className="text-sm font-semibold text-foreground/80">
           Google API
         </h2>
       </div>
 
-      <div className="space-y-3">
+      <div className="p-5 space-y-3">
         <div>
           <label className="text-xs text-muted-foreground mb-1 block">
             API Key

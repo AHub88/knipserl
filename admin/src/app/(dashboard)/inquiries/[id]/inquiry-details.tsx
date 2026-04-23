@@ -353,10 +353,11 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {/* Customer Info */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-          Kundendaten
-        </h3>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-5 py-3">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundendaten</h3>
+        </div>
+        <div className="p-5">
         <div className="space-y-3">
           <EditableRow
             icon={<IconUser className="size-4" />}
@@ -405,13 +406,15 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
             </div>
           </div>
         </div>
+        </div>
       </div>
 
       {/* Event Info */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-          Event-Details
-        </h3>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-5 py-3">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Event-Details</h3>
+        </div>
+        <div className="p-5">
         <div className="space-y-3">
           <EditableRow
             icon={<IconConfetti className="size-4" />}
@@ -453,14 +456,16 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
             />
           )}
         </div>
+        </div>
       </div>
 
       {/* Angefragte Extras */}
       {inquiry.extras.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Angefragte Extras
-          </h3>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Angefragte Extras</h3>
+          </div>
+          <div className="p-5">
           <div className="flex flex-wrap gap-2">
             {inquiry.extras.map((extra) => (
               <Badge
@@ -472,14 +477,16 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
               </Badge>
             ))}
           </div>
+          </div>
         </div>
       )}
 
       {/* Comments */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-          Kommentare
-        </h3>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-5 py-3">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kommentare</h3>
+        </div>
+        <div className="p-5">
         {editingField === "comments" ? (
           <div>
             <textarea
@@ -521,6 +528,7 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
             <IconPencil className="size-3 text-muted-foreground/50 opacity-0 group-hover/edit:opacity-100 transition-opacity shrink-0 mt-0.5" />
           </div>
         )}
+        </div>
       </div>
     </div>
   );

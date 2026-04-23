@@ -259,8 +259,11 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
       </div>
 
       {/* Event & Location */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event & Location</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event & Location</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Eventart *</label>
@@ -309,11 +312,15 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             </div>
           </div>
         </div>
+        </div>
       </div>
 
       {/* Kundendaten */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kundendaten</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kundendaten</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div>
           <label className={labelClass}>Name *</label>
           <input className={inputClass} value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Vor- und Nachname" />
@@ -335,11 +342,15 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             <option value="BUSINESS" className="bg-card">Geschäftlich</option>
           </select>
         </div>
+        </div>
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => {
             const active = extras.includes(ext.key);
@@ -365,11 +376,15 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             );
           })}
         </div>
+        </div>
       </div>
 
       {/* Kalkulation */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kalkulation</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kalkulation</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-3 grid-cols-3">
           <div>
             <label className={labelClass}>Fotobox</label>
@@ -454,12 +469,17 @@ export function NewInquiryForm({ locations }: { locations: LocationOption[] }) {
             </div>
           );
         })()}
+        </div>
       </div>
 
       {/* Notizen */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kommentar</h2>
-        <textarea className={inputClass + " h-24 py-2 resize-none"} value={comments} onChange={(e) => setComments(e.target.value)} placeholder="Anmerkungen zur Anfrage..." />
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kommentar</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
+          <textarea className={inputClass + " h-24 py-2 resize-none"} value={comments} onChange={(e) => setComments(e.target.value)} placeholder="Anmerkungen zur Anfrage..." />
+        </div>
       </div>
 
       {/* Mobile floating save button */}

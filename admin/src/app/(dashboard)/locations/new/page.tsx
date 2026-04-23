@@ -169,8 +169,11 @@ export default function NewLocationPage() {
 
       <div className="grid gap-6 lg:grid-cols-2 max-w-4xl">
         {/* Location-Name */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Location</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Location</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="relative">
             <label className={labelClass}>Name *</label>
             <input
@@ -206,11 +209,15 @@ export default function NewLocationPage() {
               Google-Suche: z.B. <span className="text-foreground/80">&bdquo;Gasthaus Bartl&ldquo;</span> oder <span className="text-foreground/80">&bdquo;Mcdonalds Rosenheim&ldquo;</span> &rarr; Adresse wird automatisch bef&uuml;llt.
             </p>
           </div>
+          </div>
         </div>
 
         {/* Adresssuche */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Adresse suchen</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Adresse suchen</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="relative">
             <label className={labelClass}>Adresse eingeben</label>
             <input
@@ -242,11 +249,15 @@ export default function NewLocationPage() {
           <p className="text-xs text-muted-foreground">
             Adresse w&auml;hlen &rarr; Stra&szlig;e, PLZ, Ort und Entfernung werden automatisch ausgef&uuml;llt.
           </p>
+          </div>
         </div>
 
         {/* Adressfelder */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-foreground/80">Adressdaten</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden lg:col-span-2">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Adressdaten</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="grid gap-3 sm:grid-cols-4">
             <div className="sm:col-span-2">
               <label className={labelClass}>Straße</label>
@@ -279,6 +290,7 @@ export default function NewLocationPage() {
                 Wird automatisch als Wegstrecke berechnet
               </p>
             </div>
+          </div>
           </div>
         </div>
       </div>

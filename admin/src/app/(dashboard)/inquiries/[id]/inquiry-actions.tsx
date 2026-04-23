@@ -175,8 +175,8 @@ export function InquiryActions({
   const labelClass = "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
-    <div className="rounded-xl border border-primary/20 bg-card p-4 sm:p-5 space-y-5">
-      <div className="flex items-center justify-between">
+    <div className="rounded-xl border border-primary/20 bg-card overflow-hidden">
+      <div className="flex items-center justify-between border-b border-primary/20 px-4 sm:px-5 py-3">
         <h2 className="text-sm font-semibold text-foreground">Anfrage bearbeiten</h2>
         <span className={
           "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold border transition-colors " +
@@ -189,6 +189,7 @@ export function InquiryActions({
         </span>
       </div>
 
+      <div className="p-4 sm:p-5 space-y-5">
       {/* Extras Selection */}
       <div>
         <p className={labelClass}>Extras</p>
@@ -371,6 +372,7 @@ export function InquiryActions({
           )}
           Abgesagt
         </button>
+      </div>
       </div>
     </div>
   );

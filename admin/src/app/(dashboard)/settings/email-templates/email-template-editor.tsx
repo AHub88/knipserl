@@ -65,14 +65,18 @@ export function EmailTemplateEditor({
   return (
     <div className="space-y-6">
       {/* Variables hint */}
-      <div className="rounded-xl border border-border bg-card p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Verfügbare Platzhalter</h3>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 py-2.5">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Verfügbare Platzhalter</h3>
+        </div>
+        <div className="p-4">
         <div className="flex flex-wrap gap-1.5">
           {variables.map((v) => (
             <code key={v} className="text-xs bg-muted text-primary px-2 py-0.5 rounded font-mono">
               {`{{${v}}}`}
             </code>
           ))}
+        </div>
         </div>
       </div>
 

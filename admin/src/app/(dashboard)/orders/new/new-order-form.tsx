@@ -356,8 +356,11 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
       </div>
 
       {/* Extras */}
-      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-foreground/80">Extras</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-5 py-3">
+          <h2 className="text-sm font-semibold text-foreground/80">Extras</h2>
+        </div>
+        <div className="p-5 space-y-3">
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
             <ExtraToggle
@@ -370,12 +373,16 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
             />
           ))}
         </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Kundendaten */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Kundendaten</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Name *</label>
@@ -398,11 +405,15 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               </select>
             </div>
           </div>
+          </div>
         </div>
 
         {/* Event-Details */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Event-Details</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Event-Details</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Eventart *</label>
@@ -425,11 +436,15 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               <input className={inputClass} type="number" step="0.1" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} disabled={!!selectedLocationId && !isPrivateLocation} placeholder="–" />
             </div>
           </div>
+          </div>
         </div>
 
         {/* Preiskalkulation */}
-        <div className="rounded-xl border border-primary/20 bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Preiskalkulation</h2>
+        <div className="rounded-xl border border-primary/20 bg-card overflow-hidden">
+          <div className="border-b border-primary/20 px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Preiskalkulation</h2>
+          </div>
+          <div className="p-5 space-y-4">
 
           {/* Inputs */}
           <div className="grid gap-3 grid-cols-3">
@@ -502,11 +517,15 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               <span className="text-lg font-bold text-primary tabular-nums">{customerTotal.toFixed(2)} &euro;</span>
             </div>
           </div>
+          </div>
         </div>
 
         {/* Preiskalkulation intern */}
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-amber-400">Preiskalkulation intern</h2>
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+          <div className="border-b border-amber-500/20 px-5 py-3">
+            <h2 className="text-sm font-semibold text-amber-400">Preiskalkulation intern</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="space-y-0.5">
             <PriceRow label="Kundenpreis" value={customerTotal} />
             {setupCost && (
@@ -548,11 +567,15 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               <input className={inputClass} type="number" step="0.01" value={materialCost} onChange={(e) => setMaterialCost(e.target.value)} placeholder="–" />
             </div>
           </div>
+          </div>
         </div>
 
         {/* Zuordnung & Zahlart */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Zuordnung &amp; Zahlung</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Zuordnung &amp; Zahlung</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Fahrer</label>
@@ -580,11 +603,15 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               </select>
             </div>
           </div>
+          </div>
         </div>
 
         {/* Notizen */}
-        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground/80">Notizen</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold text-foreground/80">Notizen</h2>
+          </div>
+          <div className="p-5 space-y-4">
           <div className="space-y-3">
             <div>
               <label className={labelClass}>Kundenkommentar</label>
@@ -594,6 +621,7 @@ export function NewOrderForm({ drivers, companies, locations }: Props) {
               <label className={labelClass}>Interner Kommentar</label>
               <textarea className={inputClass + " h-20 py-2 resize-none"} value={internalNotes} onChange={(e) => setInternalNotes(e.target.value)} placeholder="Nur intern sichtbar..." />
             </div>
+          </div>
           </div>
         </div>
       </div>

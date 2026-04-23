@@ -365,8 +365,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Left: Main Content ── */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Status */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between mb-3">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border px-5 py-3">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</h3>
               {isAdmin && !editingStatus && (
                 <button onClick={() => setEditingStatus(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
@@ -396,6 +396,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 </div>
               )}
             </div>
+            <div className="p-5">
             <div className="flex flex-wrap gap-3">
               {([
                 { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck },
@@ -434,12 +435,13 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 );
               })}
             </div>
+            </div>
           </div>
 
           {/* Extras */}
           {(activeExtras.length > 0 || editingExtras) && (
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center justify-between mb-3">
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="flex items-center justify-between border-b border-border px-5 py-3">
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Extras</h3>
                 {isAdmin && !editingExtras && (
                   <button onClick={() => setEditingExtras(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
@@ -466,6 +468,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </div>
                 )}
               </div>
+              <div className="p-5">
               <div className="flex flex-wrap gap-3">
                 {editingExtras
                   ? EXTRAS_CONFIG.map((ext) => {
@@ -502,14 +505,18 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                       </div>
                     ))}
               </div>
+              </div>
             </div>
           )}
 
           {/* Auftraggeber + Location + Lieferung */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Auftraggeber */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Auftraggeber</h3>
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border px-5 py-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Auftraggeber</h3>
+              </div>
+              <div className="p-5">
               <p className="text-base font-semibold text-foreground mb-0.5">{kontakt}</p>
               {firma && (
                 <p className="text-sm text-muted-foreground mb-3">{firma}</p>
@@ -536,11 +543,15 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <span className="text-sm text-foreground/80">{order.companyName.includes("GbR") ? "GbR" : "Einzelunternehmen"}</span>
                 </div>
               </div>
+              </div>
             </div>
 
             {/* Location */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Location</h3>
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border px-5 py-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Location</h3>
+              </div>
+              <div className="p-5">
               <Link
                 href={order.locationId ? `/locations/${order.locationId}` : `/locations`}
                 className="text-base font-medium text-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
@@ -566,11 +577,15 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 <IconMapPin className="size-3" />
                 In Google Maps anzeigen
               </a>
+              </div>
             </div>
 
             {/* Lieferung */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Lieferung</h3>
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border px-5 py-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Lieferung</h3>
+              </div>
+              <div className="p-5">
               {hasSchedule ? (
                 <div className="space-y-4">
                   {(order.setupDate || order.setupTime) && (
@@ -601,6 +616,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               ) : (
                 <p className="text-sm text-muted-foreground italic">Noch nicht geplant</p>
               )}
+              </div>
             </div>
           </div>
 
@@ -608,8 +624,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="space-y-3">
             {/* Kundenkommentar */}
             {(order.notes || editingNotes || isAdmin) && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <div className="flex items-center justify-between mb-2">
+              <div className="rounded-xl border border-border bg-card overflow-hidden">
+                <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
                   <div className="flex items-center gap-2">
                     <IconMessageCircle className="size-4 text-muted-foreground" />
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenkommentar</h3>
@@ -626,6 +642,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     </div>
                   )}
                 </div>
+                <div className="p-4">
                 {editingNotes ? (
                   <textarea
                     value={notesState}
@@ -637,13 +654,14 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 ) : (
                   <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.notes || <span className="text-muted-foreground italic">Kein Kommentar</span>}</p>
                 )}
+                </div>
               </div>
             )}
 
             {/* Intern */}
             {showInternal && (order.internalNotes || editingInternal || isAdmin) && (
-              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-                <div className="flex items-center justify-between mb-2">
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+                <div className="flex items-center justify-between border-b border-amber-500/20 px-4 py-2.5">
                   <div className="flex items-center gap-2">
                     <IconAlertCircle className="size-4 text-amber-400" />
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
@@ -660,6 +678,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     </div>
                   )}
                 </div>
+                <div className="p-4">
                 {editingInternal ? (
                   <textarea
                     value={internalState}
@@ -671,6 +690,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 ) : (
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internalNotes || <span className="text-muted-foreground italic">Kein interner Kommentar</span>}</p>
                 )}
+                </div>
               </div>
             )}
           </div>
@@ -679,16 +699,23 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
         {/* ── Right: Sidebar ── */}
         <div className="w-full lg:w-80 shrink-0 space-y-4">
           {/* Drucklayouts - volle Breite */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Drucklayouts</h3>
-            <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="border-b border-border px-5 py-3">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h3>
+            </div>
+            <div className="p-5">
+              <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} singleColumn />
+            </div>
           </div>
 
           {/* Kunden-Layout */}
           {order.graphicUrl && (
             <>
-              <div className="rounded-xl border border-border bg-card p-4 space-y-3">
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
+              <div className="rounded-xl border border-border bg-card overflow-hidden">
+                <div className="border-b border-border px-4 py-2.5">
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kunden-Layout</h3>
+                </div>
+                <div className="p-4 space-y-3">
                 <button onClick={() => setLayoutModalOpen(true)} className="block w-full">
                   <img src={order.graphicUrl} alt="Layout" className="rounded-lg border border-border max-h-64 mx-auto hover:opacity-80 transition-opacity cursor-pointer" />
                 </button>
@@ -718,6 +745,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     Design nachbearbeiten
                   </a>
                 )}
+                </div>
               </div>
 
               {/* Layout Modal */}
@@ -750,8 +778,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           )}
 
           {/* Kundenpreis */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Preiskalkulation</h3>
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="border-b border-border px-5 py-3">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h3>
+            </div>
+            <div className="p-5">
             <div className="space-y-1">
               {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
               {order.travelCost != null && <PriceRow label="Fahrtkosten" value={order.travelCost} />}
@@ -775,12 +806,16 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 </span>
               </div>
             </div>
+            </div>
           </div>
 
           {/* Intern */}
           {showInternal && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-3">Intern</h3>
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+              <div className="border-b border-amber-500/20 px-5 py-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
+              </div>
+              <div className="p-5">
               <div className="space-y-1">
                 <PriceRow label="Kundenpreis" value={customerTotal} />
                 {order.setupCost != null && (
@@ -805,6 +840,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     {internalProfit.toFixed(2)}&euro;
                   </span>
                 </div>
+              </div>
               </div>
             </div>
           )}

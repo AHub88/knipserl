@@ -148,8 +148,8 @@ export function LocationDetailView({
       </div>
 
       {/* Hinweise */}
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 space-y-3">
-        <div className="flex items-center justify-between">
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-amber-500/20 px-5 py-3">
           <h2 className="text-sm font-semibold text-amber-400 flex items-center gap-2">
             <IconAlertCircle className="size-4" />
             Hinweise zur Location
@@ -163,12 +163,14 @@ export function LocationDetailView({
             {saving ? "..." : "Speichern"}
           </button>
         </div>
+        <div className="p-5 space-y-3">
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="z.B. Anfahrt über Hintereingang, Aufbau ab 14 Uhr möglich, Ansprechpartner vor Ort..."
           className="w-full h-28 rounded-lg border border-amber-500/20 bg-black/20 px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors resize-none placeholder:text-muted-foreground"
         />
+        </div>
       </div>
 
       {/* Aufträge */}

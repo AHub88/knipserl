@@ -91,8 +91,8 @@ export function StartAddressForm({
     "block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="flex items-center justify-between border-b border-border px-5 py-3">
         <div className="flex items-center gap-2">
           <IconMapPin className="size-5 text-primary" />
           <h2 className="text-sm font-semibold text-foreground/80">Startadresse</h2>
@@ -107,6 +107,7 @@ export function StartAddressForm({
         </button>
       </div>
 
+      <div className="p-5 space-y-4">
       <p className="text-xs text-muted-foreground">
         Ausgangspunkt f&uuml;r die Entfernungsberechnung zu Locations.
       </p>
@@ -151,6 +152,7 @@ export function StartAddressForm({
             <input className={inputClass + " text-muted-foreground"} value={lng} readOnly />
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

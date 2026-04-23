@@ -774,8 +774,11 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
       </div>
 
       {/* Section 1: Event & Location */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event &amp; Location</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event &amp; Location</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Eventart</label>
@@ -819,11 +822,15 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             />
           </div>
         </div>
+        </div>
       </div>
 
       {/* Section 2: Kunde */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kunde</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kunde</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Name</label>
@@ -846,11 +853,15 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             </select>
           </div>
         </div>
+        </div>
       </div>
 
       {/* Section 3: Extras */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Extras</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="flex flex-wrap gap-2">
           {EXTRAS_CONFIG.map((ext) => (
             <ExtraIcon
@@ -864,11 +875,15 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             />
           ))}
         </div>
+        </div>
       </div>
 
       {/* Section 4: Preise */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preiskalkulation</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-4">
 
         {/* Price inputs */}
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
@@ -972,11 +987,15 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             )}
           </div>
         </div>
+        </div>
       </div>
 
       {/* Section 5: Zuordnung & Zahlung */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zuordnung &amp; Zahlung</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zuordnung &amp; Zahlung</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Fahrer</label>
@@ -1004,11 +1023,15 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             <option value="INVOICE" className="bg-card">Rechnung</option>
           </select>
         </div>
+        </div>
       </div>
 
       {/* Section 6: Notizen */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notizen</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div>
           <label className={labelClass}>Kundenkommentar</label>
           <textarea
@@ -1027,16 +1050,21 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             placeholder="Nur intern sichtbar..."
           />
         </div>
+        </div>
       </div>
 
       {/* Section 7: Drucklayouts */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h2>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <ImageGallery
           orderId={order.id}
           images={order.images}
           isAdmin={isAdmin}
         />
+        </div>
       </div>
 
       {/* Mobile floating save button */}

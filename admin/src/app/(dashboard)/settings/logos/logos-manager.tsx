@@ -113,10 +113,11 @@ export function LogosManager({
       </div>
 
       {showAdd && (
-        <div className="rounded-xl border border-primary/30 bg-card p-4 sm:p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">
-            Neues Referenz-Logo hochladen
-          </h3>
+        <div className="rounded-xl border border-primary/30 bg-card overflow-hidden">
+          <div className="border-b border-primary/30 px-4 sm:px-5 py-3">
+            <h3 className="text-sm font-semibold text-foreground">Neues Referenz-Logo hochladen</h3>
+          </div>
+          <div className="p-4 sm:p-5 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-muted-foreground mb-1">
@@ -161,6 +162,7 @@ export function LogosManager({
               <IconX className="size-3.5" />
               Abbrechen
             </button>
+          </div>
           </div>
         </div>
       )}

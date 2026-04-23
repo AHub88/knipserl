@@ -250,8 +250,11 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
 
       {/* ── Preis Grid ── */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Kundenpreis</h3>
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenpreis</h3>
+          </div>
+          <div className="p-5">
           <div className="space-y-1">
             {order.boxPrice != null && <PriceRow label="Fotobox" value={order.boxPrice} />}
             {order.travelCost != null && <PriceRow label="Fahrtkosten" value={order.travelCost} />}
@@ -269,11 +272,15 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               <span className="text-xl font-bold font-mono tabular-nums text-primary">{customerTotal.toFixed(2)}&euro;</span>
             </div>
           </div>
+          </div>
         </div>
 
         {showInternal && (
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-3">Intern</h3>
+          <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+            <div className="border-b border-amber-500/20 px-5 py-3">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
+            </div>
+            <div className="p-5">
             <div className="space-y-1">
               <PriceRow label="Kundenpreis" value={customerTotal} />
               {order.setupCost != null && (
@@ -295,6 +302,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                 </span>
               </div>
             </div>
+            </div>
           </div>
         )}
       </div>
@@ -303,24 +311,36 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       {(order.notes || (order.internalNotes && showInternal)) && (
         <div className="grid gap-4 sm:grid-cols-2">
           {order.notes && (
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Kundenkommentar</h3>
-              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.notes}</p>
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border px-4 py-2.5">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kundenkommentar</h3>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.notes}</p>
+              </div>
             </div>
           )}
           {order.internalNotes && showInternal && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-2">Intern</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internalNotes}</p>
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+              <div className="border-b border-amber-500/20 px-4 py-2.5">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internalNotes}</p>
+              </div>
             </div>
           )}
         </div>
       )}
 
       {/* ── Drucklayouts ── */}
-      <div className="rounded-xl border border-border bg-card p-4">
-        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Drucklayouts</h3>
-        <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} />
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 py-2.5">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Drucklayouts</h3>
+        </div>
+        <div className="p-4">
+          <ImageGallery orderId={order.id} images={order.images} isAdmin={isAdmin} />
+        </div>
       </div>
     </div>
   );

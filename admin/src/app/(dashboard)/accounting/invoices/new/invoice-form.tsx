@@ -73,7 +73,7 @@ const selectClass =
   "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors appearance-none";
 
 const cardClass =
-  "rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3";
+  "rounded-xl border border-border bg-card overflow-hidden";
 
 const sectionTitle =
   "text-xs font-semibold uppercase tracking-wider text-muted-foreground";
@@ -345,7 +345,10 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Company & Order */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <h2 className={sectionTitle}>Firma &amp; Auftrag</h2>
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className={sectionTitle}>Firma &amp; Auftrag</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Company */}
           <div>
@@ -392,13 +395,17 @@ export function InvoiceForm({ companies, orders }: Props) {
             </select>
           </div>
         </div>
+        </div>
       </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* Customer search & Recipient */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <h2 className={sectionTitle}>Empfänger</h2>
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className={sectionTitle}>Empfänger</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
 
         {/* Customer search */}
         <div ref={customerRef} className="relative">
@@ -477,13 +484,17 @@ export function InvoiceForm({ companies, orders }: Props) {
             className={inputClass + " h-auto py-2 resize-none"}
           />
         </div>
+        </div>
       </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* Dates */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <h2 className={sectionTitle}>Datum</h2>
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className={sectionTitle}>Datum</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Fällig am *</label>
@@ -505,13 +516,14 @@ export function InvoiceForm({ companies, orders }: Props) {
             />
           </div>
         </div>
+        </div>
       </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* Line Items */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-border px-4 sm:px-5 py-3">
           <h2 className={sectionTitle}>Positionen</h2>
           <div className="flex items-center gap-2">
             {/* Standard item button */}
@@ -565,6 +577,7 @@ export function InvoiceForm({ companies, orders }: Props) {
           </div>
         </div>
 
+        <div className="p-4 sm:p-5 space-y-3">
         {/* Item list */}
         <div className="space-y-3">
           {items.map((item, index) => (
@@ -643,18 +656,23 @@ export function InvoiceForm({ companies, orders }: Props) {
             </div>
           ))}
         </div>
+        </div>
       </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* Totals */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <h2 className={sectionTitle}>Zusammenfassung</h2>
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className={sectionTitle}>Zusammenfassung</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <div className="flex items-center justify-between border-t border-border pt-3">
           <span className="text-sm font-semibold text-foreground/80">Gesamtbetrag</span>
           <span className="text-xl font-bold tabular-nums text-foreground">
             {formatEUR(total)}
           </span>
+        </div>
         </div>
       </div>
 
@@ -662,7 +680,10 @@ export function InvoiceForm({ companies, orders }: Props) {
       {/* Notes */}
       {/* ------------------------------------------------------------------ */}
       <div className={cardClass}>
-        <h2 className={sectionTitle}>Anmerkungen</h2>
+        <div className="border-b border-border px-4 sm:px-5 py-3">
+          <h2 className={sectionTitle}>Anmerkungen</h2>
+        </div>
+        <div className="p-4 sm:p-5 space-y-3">
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -670,6 +691,7 @@ export function InvoiceForm({ companies, orders }: Props) {
           placeholder="Interne oder externe Anmerkungen zur Rechnung..."
           className={inputClass + " h-auto py-2 resize-none"}
         />
+        </div>
       </div>
 
       {/* ------------------------------------------------------------------ */}
