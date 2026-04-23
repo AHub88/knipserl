@@ -98,6 +98,21 @@ function companyTag(name: string) {
   );
 }
 
+/** Find index of first past order that comes after at least one upcoming order in the list.
+ *  Returns -1 if no divider should be drawn (group all past or all future). */
+function findFirstPastAfterFuture(orders: OrderRow[], nowTs: number): number {
+  let hasSeenFuture = false;
+  for (let i = 0; i < orders.length; i++) {
+    const isPast = new Date(orders[i].eventDate).getTime() < nowTs;
+    if (!isPast) {
+      hasSeenFuture = true;
+    } else if (hasSeenFuture) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 /** Extract "Ort" from address like "Straße 1, 83024 Rosenheim" */
 function extractOrt(address: string): string {
   const match = address.match(/\d{5}\s+(.+)$/);
@@ -818,7 +833,10 @@ function MonthGroup({
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
 }) {
-  const hasNext = nextOrderId ? orders.some((o) => o.id === nextOrderId) : false;
+  const hasUpcoming = (() => {
+    const nowTs = Date.now();
+    return orders.some((o) => new Date(o.eventDate).getTime() >= nowTs);
+  })();
   const isPastMonth = (() => {
     if (orders.length === 0) return false;
     const d = new Date(orders[0].eventDate);
@@ -826,66 +844,27 @@ function MonthGroup({
     return d.getFullYear() < now.getFullYear() ||
       (d.getFullYear() === now.getFullYear() && d.getMonth() < now.getMonth());
   })();
-  const [collapsed, setCollapsed] = useState(isPastMonth && !hasNext);
+  const [collapsed, setCollapsed] = useState(isPastMonth && !hasUpcoming);
   const revenue = orders.reduce((s, o) => s + o.price, 0);
 
   return (
-    <div
-      className={
-        "rounded-xl overflow-hidden border bg-card " +
-        (hasNext ? "border-primary/50" : "border-border")
-      }
-    >
+    <div className="rounded-xl overflow-hidden border border-border bg-card">
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className={
-          "w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 transition-colors " +
-          (hasNext
-            ? "bg-primary hover:bg-primary/90"
-            : "bg-muted/60 hover:bg-muted")
-        }
+        className="w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 transition-colors bg-muted/60 hover:bg-muted"
       >
         <div className="flex items-center gap-2 md:gap-3">
           {collapsed ? (
-            <IconChevronRight
-              className={
-                "size-4 " +
-                (hasNext ? "text-primary-foreground/70" : "text-muted-foreground")
-              }
-            />
+            <IconChevronRight className="size-4 text-muted-foreground" />
           ) : (
-            <IconChevronDown
-              className={
-                "size-4 " +
-                (hasNext ? "text-primary-foreground/70" : "text-muted-foreground")
-              }
-            />
+            <IconChevronDown className="size-4 text-muted-foreground" />
           )}
-          <span
-            className={
-              "text-sm md:text-base font-semibold " +
-              (hasNext ? "text-primary-foreground" : "text-foreground")
-            }
-          >
-            {label}
-          </span>
-          <span
-            className={
-              "text-[11px] md:text-xs px-2 py-0.5 rounded-md " +
-              (hasNext
-                ? "bg-primary-foreground/15 text-primary-foreground"
-                : "bg-card text-muted-foreground")
-            }
-          >
+          <span className="text-sm md:text-base font-semibold text-foreground">{label}</span>
+          <span className="text-[11px] md:text-xs px-2 py-0.5 rounded-md bg-card text-muted-foreground">
             {orders.length}
           </span>
         </div>
-        <span
-          className={
-            "font-mono text-xs md:text-sm font-semibold tabular-nums " +
-            (hasNext ? "text-primary-foreground" : "text-foreground/80")
-          }
-        >
+        <span className="font-mono text-xs md:text-sm font-semibold tabular-nums text-foreground/80">
           {revenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })}
           &nbsp;&euro;
         </span>
@@ -909,13 +888,16 @@ function MobileOrderList({
   onRowClick: (id: string) => void;
   nextOrderId?: string | null;
 }) {
+  const nowTs = Date.now();
+  const firstPastIdx = findFirstPastAfterFuture(orders, nowTs);
   return (
     <div className="divide-y divide-border">
-      {orders.map((order) => {
+      {orders.map((order, idx) => {
         const { firma, kontakt } = splitCustomerName(order.customerName);
         const displayName = firma || kontakt;
         const isNext = nextOrderId === order.id;
-        const isPast = new Date(order.eventDate) < new Date();
+        const isPast = new Date(order.eventDate).getTime() < nowTs;
+        const isDivider = idx === firstPastIdx;
         const d = new Date(order.eventDate);
         const payment = paymentConfig[order.paymentMethod] ?? paymentConfig.CASH;
 
@@ -926,10 +908,8 @@ function MobileOrderList({
             onClick={() => onRowClick(order.id)}
             className={
               "cursor-pointer px-3 py-2.5 transition-colors active:bg-accent " +
-              (isNext
-                ? "border-l-2 border-l-primary bg-primary/8"
-                : "") +
-              (isPast && !isNext ? " opacity-50" : "")
+              (isDivider ? "border-t-[3px] border-t-primary/60 " : "") +
+              (isPast ? "opacity-60" : "")
             }
           >
             <div className="flex gap-2.5 min-w-0">
@@ -1087,14 +1067,18 @@ function OrderTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {orders.map((order) => {
+        {(() => {
+          const nowTs = Date.now();
+          const firstPastIdx = findFirstPastAfterFuture(orders, nowTs);
+          return orders.map((order, idx) => {
           const payment =
             paymentConfig[order.paymentMethod] ?? paymentConfig.CASH;
           const { firma, kontakt } = splitCustomerName(order.customerName);
           const ort = extractOrt(order.locationAddress);
 
           const isNext = nextOrderId === order.id;
-          const isPast = new Date(order.eventDate) < new Date();
+          const isPast = new Date(order.eventDate).getTime() < nowTs;
+          const isDivider = idx === firstPastIdx;
 
           return (
             <TableRow
@@ -1102,11 +1086,9 @@ function OrderTable({
               data-next-order={isNext ? "true" : undefined}
               onClick={() => onRowClick(order.id)}
               className={
-                "cursor-pointer border-b border-border/50 transition-colors " +
-                (isNext
-                  ? "bg-primary/[0.08] border-l-2 border-l-primary hover:bg-primary/[0.12]"
-                  : "odd:bg-foreground/[0.02] hover:bg-foreground/[0.05]") +
-                (isPast && !isNext ? " opacity-60" : "")
+                "cursor-pointer border-b border-border/50 transition-colors odd:bg-foreground/[0.02] hover:bg-foreground/[0.05] " +
+                (isDivider ? "border-t-[3px] border-t-primary/60 " : "") +
+                (isPast ? "opacity-60" : "")
               }
             >
               <TableCell className="text-muted-foreground text-sm tabular-nums">
@@ -1209,7 +1191,8 @@ function OrderTable({
               </TableCell>
             </TableRow>
           );
-        })}
+        });
+        })()}
       </TableBody>
     </Table>
     </>

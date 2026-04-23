@@ -4,6 +4,13 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.5.2] — 2026-04-23
+
+### Changed
+- Aufträge-Tabelle: Der Monats-Header mit dem nächsten Auftrag ist nicht mehr voll-orange; die Zeile mit dem nächsten Auftrag bekommt keinen Primary-Rahmen mehr.
+- Stattdessen: **Dicker Trennstrich** (3px Primary/60) zwischen der letzten zukünftigen und der ersten vergangenen Zeile innerhalb eines Monats — macht „ab hier ist Vergangenheit" eindeutig sichtbar.
+- Button „Nächster Auftrag" scrollt weiterhin zur ersten zukünftigen Zeile, visuell ist sie aber nicht mehr extra markiert.
+
 ## [1.5.1] — 2026-04-23
 
 ### Changed
