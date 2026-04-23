@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.4.3] — 2026-04-23
+
+### Fixed
+- Dashboard-Chart "Aufträge pro Monat" wieder in Orange — die CSS-Variablen sind im Theme als Hex-Werte definiert, wurden im Chart aber als `hsl(var(--primary))` referenziert und fielen dadurch auf Grau zurück.
+
 ## [1.4.2] — 2026-04-23
 
 ### Changed
