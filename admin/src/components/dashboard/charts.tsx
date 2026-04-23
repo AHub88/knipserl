@@ -336,28 +336,28 @@ interface YtdTrendChartProps {
 
 type RangeOption = 4 | 6 | 8 | "all";
 
-// Custom 2-line label renderer: Wert + Change%
-function TwoLineLabelRenderer({
-  color,
-  valueFormatter,
+function YtdMiniArea({
+  data,
+  valueKey,
   changeKey,
+  color,
+  formatter,
 }: {
-  color: string;
-  valueFormatter: (v: number) => string;
+  data: YtdChartRow[];
+  valueKey: "revenue" | "count";
   changeKey: "revenueChange" | "countChange";
+  color: string;
+  formatter: (v: number) => string;
 }) {
-  // Returns a component compatible with recharts LabelList content prop
-  return function LabelContent(props: unknown) {
-    const p = props as {
-      x?: number;
-      y?: number;
-      value?: number | string;
-      payload?: YtdChartRow;
-      index?: number;
-    };
-    if (p.x == null || p.y == null || p.value == null) return null;
-    const change = p.payload?.[changeKey];
-    const formattedValue = valueFormatter(Number(p.value));
+  // Custom label renderer with closure access to `data`. Looks up the row
+  // by index so we can render BOTH the value and the change% label together.
+  const renderLabel = (labelProps: unknown) => {
+    const p = labelProps as { x?: number; y?: number; index?: number };
+    if (p.x == null || p.y == null || p.index == null) return null;
+    const row = data[p.index];
+    if (!row) return null;
+    const value = row[valueKey];
+    const change = row[changeKey];
     return (
       <g>
         <text
@@ -369,7 +369,7 @@ function TwoLineLabelRenderer({
           fill={color}
           style={{ paintOrder: "stroke", stroke: "var(--card)", strokeWidth: 3 }}
         >
-          {formattedValue}
+          {formatter(value)}
         </text>
         {change != null && (
           <text
@@ -388,26 +388,7 @@ function TwoLineLabelRenderer({
       </g>
     );
   };
-}
 
-function YtdMiniArea({
-  data,
-  valueKey,
-  changeKey,
-  color,
-  formatter,
-}: {
-  data: YtdChartRow[];
-  valueKey: "revenue" | "count";
-  changeKey: "revenueChange" | "countChange";
-  color: string;
-  formatter: (v: number) => string;
-}) {
-  const LabelContent = TwoLineLabelRenderer({
-    color,
-    valueFormatter: formatter,
-    changeKey,
-  });
   return (
     <div className="h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -435,7 +416,7 @@ function YtdMiniArea({
             activeDot={{ r: 6 }}
             isAnimationActive={false}
           >
-            <LabelList dataKey={valueKey} content={LabelContent} />
+            <LabelList dataKey={valueKey} content={renderLabel} />
           </Area>
         </AreaChart>
       </ResponsiveContainer>

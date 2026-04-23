@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.7.2] — 2026-04-23
+
+### Fixed
+- YtdTrendChart: Change-Prozent-Labels werden jetzt tatsächlich angezeigt. Zuvor hatte ich `p.payload` im LabelList-content-Callback abgefragt — das Feld liefert Recharts dort aber nicht. Fix: Row-Lookup per `index` auf dem Daten-Array via Closure.
+
 ## [1.7.1] — 2026-04-23
 
 ### Fixed
