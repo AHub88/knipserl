@@ -44,6 +44,8 @@ async function syncSchema() {
     ["users", "maxDistanceKm", "INTEGER", true, null],
     ["users", "initials", "TEXT", true, null],
     ["users", "active", "BOOLEAN", false, "true"],
+    ["users", "reminderEmailEnabled", "BOOLEAN", false, "true"],
+    ["users", "reminderLeadDays", "INTEGER", false, "2"],
     ["users", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["users", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
 
@@ -150,6 +152,8 @@ async function syncSchema() {
     ["orders", "confirmationToken", "TEXT", true, null],
     ["orders", "confirmedByCustomerAt", "TIMESTAMPTZ", true, null],
     ["orders", "completedAt", "TIMESTAMPTZ", true, null],
+    ["orders", "driverReminderSentAt", "TIMESTAMPTZ", true, null],
+    ["orders", "secondDriverReminderSentAt", "TIMESTAMPTZ", true, null],
     ["orders", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["orders", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
 

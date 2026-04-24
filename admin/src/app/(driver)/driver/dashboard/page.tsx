@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { IconMapPin, IconCalendar, IconClock, IconRoute, IconBeach } from "@tabler/icons-react";
-import { PushToggle } from "@/components/push/push-toggle";
+import { ReminderSettings } from "@/components/driver/reminder-settings";
 
 export default async function DriverDashboardPage() {
   const session = await auth();
   const driverId = session!.user.id;
 
-  const [myOrders, openOrders, vacations] = await Promise.all([
+  const [myOrders, openOrders, vacations, driver] = await Promise.all([
     prisma.order.findMany({
       where: { driverId, status: "ASSIGNED" },
       orderBy: { eventDate: "asc" },
@@ -23,6 +23,10 @@ export default async function DriverDashboardPage() {
       },
       orderBy: { startDate: "asc" },
       take: 3,
+    }),
+    prisma.user.findUnique({
+      where: { id: driverId },
+      select: { email: true, reminderEmailEnabled: true, reminderLeadDays: true },
     }),
   ]);
 
@@ -93,7 +97,13 @@ export default async function DriverDashboardPage() {
         </CardContent>
       </Card>
 
-      <PushToggle />
+      {driver && (
+        <ReminderSettings
+          initialEnabled={driver.reminderEmailEnabled}
+          initialLeadDays={driver.reminderLeadDays}
+          driverEmail={driver.email}
+        />
+      )}
 
       {vacations.length > 0 && (
         <Card>
