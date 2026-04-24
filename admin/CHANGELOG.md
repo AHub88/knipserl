@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.17.3] — 2026-04-24
+
+### Changed
+- **Dashboard — „Monatsvergleich Aufträge" direkt unter „Verlauf Standpunkt"** positioniert. Vorher saß der Monatsvergleich unterhalb der Jahresvergleichs-Tabs, jetzt ist er die erste Detail-Ansicht direkt nach dem YTD-Trend — der Gedankensprung „Gesamt-Verlauf → Monats-Aufschlüsselung" ist so enger. Neue Reihenfolge: KPIs → Verlauf Standpunkt → Monatsvergleich → Jahresvergleich-Tabs → Charts-Row → Nächste Aufträge.
+
 ## [1.17.2] — 2026-04-24
 
 ### Changed

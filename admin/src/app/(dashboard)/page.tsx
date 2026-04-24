@@ -305,17 +305,6 @@ export default async function DashboardPage() {
       {/* Verlauf Standpunkt */}
       <YtdTrendChart ytdYears={allYtdYears} ytdDateLabel={ytdDateLabel} />
 
-      {/* ── Yearly Comparison (tabbed) ── */}
-      {yearlyData.length > 0 && (
-        <YearlyComparisonTabs
-          yearlyData={yearlyData}
-          allExtrasKeys={allExtrasKeys}
-          currentYear={now.getFullYear()}
-        />
-      )}
-
-      {/* (old KPI grid + yearly charts replaced by above) */}
-
       {/* Monthly Comparison: This Year vs Last Year */}
       <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
@@ -371,6 +360,15 @@ export default async function DashboardPage() {
         </div>
         </div>
       </div>
+
+      {/* ── Yearly Comparison (tabbed) ── */}
+      {yearlyData.length > 0 && (
+        <YearlyComparisonTabs
+          yearlyData={yearlyData}
+          allExtrasKeys={allExtrasKeys}
+          currentYear={now.getFullYear()}
+        />
+      )}
 
       {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-5">
