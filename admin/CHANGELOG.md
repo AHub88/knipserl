@@ -4,6 +4,19 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.17.0] — 2026-04-24
+
+### Added
+- **Dashboard: 4 flache KPI-Boxen ganz oben** — „Offene Anfragen" (Status `NEW` + `CONTACTED` + `WAITING`), „Offene Aufträge", „Offener Umsatz" (Summe der `price`-Werte aller Aufträge mit Status `OPEN`/`ASSIGNED`) und **„Offener Umsatz bar"** (dito, aber nur `paymentMethod = CASH`). Die „bar"-Kachel macht erstmals auf einen Blick sichtbar, wie viel Cash noch hereinkommen muss.
+
+### Changed
+- **Dashboard-Reihenfolge umgestellt**: flache KPIs → „Verlauf Standpunkt bis \<Datum\>"-Chart → Jahresvergleichs-Tabs → Monatsvergleich → Charts-Row → Nächste Aufträge. Die alte breite „Standpunkt heute"-Box (Jahresbalken direkt oben) ist raus, weil der Verlaufsgraph dieselbe Info als klar lesbare Kurve zeigt.
+- **Monatsvergleich Aufträge (Chart)**: Farbkonsistent auf exakt **zwei** Farben reduziert — Vorjahr in neutralem Grau (`bg-muted-foreground/40`), dieses Jahr durchgehend in primär-Orange. Der aktuelle Monat wird nicht mehr durch eine dritte Farbe hervorgehoben, sondern durch einen dezenten `ring-1 ring-primary/30` um die Balkengruppe. Unter jedem Balken steht jetzt zusätzlich eine Jahres-Kurzform („'25" / „'26") — damit ist ohne Blick zur Legende klar, welcher Balken welches Jahr ist. Die alte dreistufige Opazitäts-Logik (past/current/future) ist komplett entfernt, weil sie fälschlich nach drei Datenreihen aussah.
+
+### Removed
+- Die bisherigen Dashboard-KPIs „Neue Anfragen / Offene Aufträge / Abgeschlossen (Monat) / Aktive Fahrer" samt Mock-Sparklines. Ersetzt durch die vier neuen „offen"-Metriken.
+- Tote Umsatz-Vorab-Berechnungen (`revenueThisMonth`, `revenueLastMonth`, `revenueYTD`, `revenueLastYear`, `revenueChartData`), die seit dem Wechsel auf Jahres-Tabs + Trend-Chart nirgends mehr gerendert wurden. Spart pro Dashboard-Aufruf **5 zusätzliche DB-Queries**.
+
 ## [1.16.1] — 2026-04-24
 
 ### Changed

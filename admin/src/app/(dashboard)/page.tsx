@@ -6,14 +6,10 @@ import {
   IconInbox,
   IconFileText,
   IconCalendarEvent,
-  IconUsers,
   IconCurrencyEuro,
-  IconTrendingUp,
-  IconTrendingDown,
   IconChartBar,
 } from "@tabler/icons-react";
 import {
-  Sparkline,
   MonthlyOrdersChart,
   EventTypesPieChart,
   UpcomingOrdersList,
@@ -26,21 +22,22 @@ export default async function DashboardPage() {
   const paymentFilter = await getPaymentFilter(session?.user?.role ?? "");
 
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   const [
-    newInquiries,
+    openInquiries,
     openOrders,
-    completedThisMonth,
-    activeDrivers,
+    openRevenueAgg,
+    openRevenueCashAgg,
     recentOrders,
     monthlyOrderCounts,
     eventTypeCounts,
   ] = await Promise.all([
-    // KPI 1: new inquiries
-    prisma.inquiry.count({ where: { status: "NEW" } }),
+    // KPI 1: offene Anfragen (noch keine finale Entscheidung)
+    prisma.inquiry.count({
+      where: { status: { in: ["NEW", "CONTACTED", "WAITING"] } },
+    }),
 
-    // KPI 2: open orders
+    // KPI 2: offene Aufträge
     prisma.order.count({
       where: {
         status: { in: ["OPEN", "ASSIGNED"] },
@@ -48,18 +45,23 @@ export default async function DashboardPage() {
       },
     }),
 
-    // KPI 3: completed this month
-    prisma.order.count({
+    // KPI 3: offener Umsatz (Summe aller offenen Aufträge)
+    prisma.order.aggregate({
+      _sum: { price: true },
       where: {
-        status: "COMPLETED",
-        completedAt: { gte: startOfMonth },
+        status: { in: ["OPEN", "ASSIGNED"] },
         ...paymentFilter,
       },
     }),
 
-    // KPI 4: active drivers
-    prisma.user.count({
-      where: { role: "DRIVER", active: true },
+    // KPI 4: offener Umsatz bar
+    prisma.order.aggregate({
+      _sum: { price: true },
+      where: {
+        status: { in: ["OPEN", "ASSIGNED"] },
+        paymentMethod: "CASH",
+        ...paymentFilter,
+      },
     }),
 
     // Upcoming orders list
@@ -120,68 +122,6 @@ export default async function DashboardPage() {
       take: 5,
     }),
   ]);
-
-  // Revenue calculations
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
-  const startOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
-  const endOfLastYear = new Date(now.getFullYear() - 1, 11, 31, 23, 59, 59);
-
-  const [revenueThisMonth, revenueLastMonth, revenueYTD, revenueLastYear, monthlyRevenue] = await Promise.all([
-    // This month
-    prisma.order.aggregate({
-      _sum: { price: true },
-      where: { eventDate: { gte: startOfMonth }, ...paymentFilter },
-    }),
-    // Last month
-    prisma.order.aggregate({
-      _sum: { price: true },
-      where: { eventDate: { gte: startOfLastMonth, lte: endOfLastMonth }, ...paymentFilter },
-    }),
-    // Year to date
-    prisma.order.aggregate({
-      _sum: { price: true },
-      where: { eventDate: { gte: startOfYear }, ...paymentFilter },
-    }),
-    // Last year total
-    prisma.order.aggregate({
-      _sum: { price: true },
-      where: { eventDate: { gte: startOfLastYear, lte: endOfLastYear }, ...paymentFilter },
-    }),
-    // Monthly revenue for chart (last 12 months)
-    prisma.order.findMany({
-      where: {
-        eventDate: { gte: new Date(now.getFullYear(), now.getMonth() - 11, 1) },
-        ...paymentFilter,
-      },
-      select: { eventDate: true, price: true },
-    }),
-  ]);
-
-  const revThisMonth = revenueThisMonth._sum.price ?? 0;
-  const revLastMonth = revenueLastMonth._sum.price ?? 0;
-  const revYTD = revenueYTD._sum.price ?? 0;
-  const revLastYear = revenueLastYear._sum.price ?? 0;
-  const monthChangePercent = revLastMonth > 0 ? Math.round(((revThisMonth - revLastMonth) / revLastMonth) * 100) : 0;
-
-  // Build monthly revenue chart data
-  const monthNames12 = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-  const revenueBuckets = new Map<string, number>();
-  for (const o of monthlyRevenue) {
-    const d = new Date(o.eventDate);
-    const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, "0")}`;
-    revenueBuckets.set(key, (revenueBuckets.get(key) ?? 0) + o.price);
-  }
-  const revenueChartData: { month: string; revenue: number }[] = [];
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, "0")}`;
-    revenueChartData.push({
-      month: monthNames12[d.getMonth()],
-      revenue: Math.round(revenueBuckets.get(key) ?? 0),
-    });
-  }
 
   // Yearly comparison - all years (unfiltered for BAR stats)
   const allOrders = await prisma.order.findMany({
@@ -288,43 +228,40 @@ export default async function DashboardPage() {
     driverName: order.driver?.name ?? null,
   }));
 
-  // KPI card definitions
+  const openRevenue = openRevenueAgg._sum.price ?? 0;
+  const openRevenueCash = openRevenueCashAgg._sum.price ?? 0;
+  const fmtEuro = (v: number) =>
+    `${v.toLocaleString("de-DE", { maximumFractionDigits: 0 })} €`;
+
+  // KPI card definitions (flach, oben auf Dashboard)
   const kpiCards = [
     {
-      label: "Neue Anfragen",
-      value: newInquiries,
+      label: "Offene Anfragen",
+      value: String(openInquiries),
       icon: IconInbox,
-      sparkline: [3, 5, 2, 8, 6, newInquiries],
-      color: "#F6A11C",
-      bgClass: "bg-primary/10",
       iconClass: "text-primary",
+      bgClass: "bg-primary/10",
     },
     {
       label: "Offene Auftr\u00e4ge",
-      value: openOrders,
+      value: String(openOrders),
       icon: IconFileText,
-      sparkline: [10, 8, 14, 11, 9, openOrders],
-      color: "#3b82f6",
-      bgClass: "bg-blue-500/10",
       iconClass: "text-blue-400",
+      bgClass: "bg-blue-500/10",
     },
     {
-      label: "Abgeschlossen (Monat)",
-      value: completedThisMonth,
-      icon: IconCalendarEvent,
-      sparkline: [4, 7, 5, 9, 12, completedThisMonth],
-      color: "#22c55e",
-      bgClass: "bg-emerald-500/10",
+      label: "Offener Umsatz",
+      value: fmtEuro(openRevenue),
+      icon: IconCurrencyEuro,
       iconClass: "text-emerald-400",
+      bgClass: "bg-emerald-500/10",
     },
     {
-      label: "Aktive Fahrer",
-      value: activeDrivers,
-      icon: IconUsers,
-      sparkline: [2, 3, 3, 4, 4, activeDrivers],
-      color: "#a855f7",
-      bgClass: "bg-purple-500/10",
-      iconClass: "text-purple-400",
+      label: "Offener Umsatz bar",
+      value: fmtEuro(openRevenueCash),
+      icon: IconCurrencyEuro,
+      iconClass: "text-amber-400",
+      bgClass: "bg-amber-500/10",
     },
   ];
 
@@ -340,103 +277,32 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* ── Standpunkt heute + KPIs side by side ── */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        {/* Standpunkt heute - takes 2 cols */}
-        <div className="lg:col-span-2 rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
-          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-            <IconTrendingUp className="size-4 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">
-              Standpunkt heute ({ytdDateLabel})
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Wie standen wir jeweils am {ytdDateLabel}?
-            </p>
-          </div>
-          <div className="p-5">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Umsatz bis {ytdDateLabel}</p>
-              <div className="space-y-2">
-                {(() => {
-                  const maxRev = Math.max(...ytdYears.map((y) => y.revenue), 1);
-                  return ytdYears.map((y, i) => {
-                    const isCurrentYear = y.year === now.getFullYear();
-                    const prev = i > 0 ? ytdYears[i - 1] : null;
-                    const change = prev && prev.revenue > 0 ? Math.round(((y.revenue - prev.revenue) / prev.revenue) * 100) : null;
-                    return (
-                      <div key={y.year} className="flex items-center gap-3">
-                        <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-primary" : "text-muted-foreground")}>{y.year}</span>
-                        <div className="flex-1 h-8 bg-muted rounded-md overflow-hidden">
-                          <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-primary/30" : "bg-accent")} style={{ width: `${Math.max((y.revenue / maxRev) * 100, 5)}%` }}>
-                            <span className={"text-[11px] font-mono font-bold tabular-nums whitespace-nowrap " + (isCurrentYear ? "text-primary" : "text-foreground/80")}>{y.revenue.toLocaleString("de-DE", { minimumFractionDigits: 0 })}&nbsp;&euro;</span>
-                          </div>
-                        </div>
-                        <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-muted-foreground" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "\u2013" : `${change >= 0 ? "+" : ""}${change}%`}</span>
-                      </div>
-                    );
-                  });
-                })()}
+      {/* Flache KPI-Boxen ganz oben */}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+        {kpiCards.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={kpi.label}
+              className="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3"
+            >
+              <div className={`flex items-center justify-center rounded-md p-2 ${kpi.bgClass}`}>
+                <Icon className={`h-4 w-4 ${kpi.iconClass}`} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {kpi.label}
+                </p>
+                <p className="text-lg font-bold tracking-tight text-foreground tabular-nums leading-tight">
+                  {kpi.value}
+                </p>
               </div>
             </div>
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Aufträge bis {ytdDateLabel}</p>
-              <div className="space-y-2">
-                {(() => {
-                  const maxCount = Math.max(...ytdYears.map((y) => y.count), 1);
-                  return ytdYears.map((y, i) => {
-                    const isCurrentYear = y.year === now.getFullYear();
-                    const prev = i > 0 ? ytdYears[i - 1] : null;
-                    const change = prev && prev.count > 0 ? Math.round(((y.count - prev.count) / prev.count) * 100) : null;
-                    return (
-                      <div key={y.year} className="flex items-center gap-3">
-                        <span className={"text-sm font-semibold w-10 tabular-nums " + (isCurrentYear ? "text-primary" : "text-muted-foreground")}>{y.year}</span>
-                        <div className="flex-1 h-8 bg-muted rounded-md overflow-hidden">
-                          <div className={"h-full rounded-md flex items-center px-2.5 " + (isCurrentYear ? "bg-blue-500/30" : "bg-accent")} style={{ width: `${Math.max((y.count / maxCount) * 100, 5)}%` }}>
-                            <span className={"text-[11px] font-mono font-bold tabular-nums " + (isCurrentYear ? "text-blue-400" : "text-foreground/80")}>{y.count}</span>
-                          </div>
-                        </div>
-                        <span className={"text-[11px] font-semibold w-12 text-right " + (change === null ? "text-muted-foreground" : change >= 0 ? "text-emerald-400" : "text-red-400")}>{change === null ? "\u2013" : `${change >= 0 ? "+" : ""}${change}%`}</span>
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
-
-        {/* KPIs - compact vertical stack in right column */}
-        <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
-          {kpiCards.map((kpi) => {
-            const Icon = kpi.icon;
-            return (
-              <div
-                key={kpi.label}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5"
-              >
-                <div className={`flex items-center justify-center rounded-lg p-2 ${kpi.bgClass}`}>
-                  <Icon className={`h-4 w-4 ${kpi.iconClass}`} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xl font-bold tracking-tight text-foreground tabular-nums leading-tight">
-                    {kpi.value}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground truncate">
-                    {kpi.label}
-                  </p>
-                </div>
-                <div className="ml-auto">
-                  <Sparkline data={kpi.sparkline} color={kpi.color} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+          );
+        })}
       </div>
 
-      {/* ── Standpunkt heute als Verlaufsgraph (testweise) ── */}
+      {/* Verlauf Standpunkt */}
       <YtdTrendChart ytdYears={allYtdYears} ytdDateLabel={ytdDateLabel} />
 
       {/* ── Yearly Comparison (tabbed) ── */}
@@ -457,19 +323,20 @@ export default async function DashboardPage() {
             <IconChartBar className="size-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Monatsvergleich Aufträge</h3>
           </div>
-          <div className="flex items-center gap-4 text-[10px]">
-            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-primary" />{now.getFullYear()}</span>
-            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-accent" />{now.getFullYear() - 1}</span>
+          <div className="flex items-center gap-3 text-[11px]">
+            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-muted-foreground/40" /><span className="text-muted-foreground">{now.getFullYear() - 1}</span></span>
+            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-primary" /><span className="font-semibold text-foreground">{now.getFullYear()}</span></span>
           </div>
         </div>
         <div className="p-5">
-        <div className="flex items-end gap-1 sm:gap-2 h-44">
+        <div className="flex items-end gap-1 sm:gap-2 h-48">
           {monthCompare.map((m, i) => {
             const maxVal = Math.max(...monthCompare.map((d) => Math.max(d.thisYear, d.lastYear)), 1);
             const isCurrentMonth = i === now.getMonth();
-            const isFuture = i > now.getMonth();
+            const lastYearShort = `'${String((now.getFullYear() - 1) % 100).padStart(2, "0")}`;
+            const thisYearShort = `'${String(now.getFullYear() % 100).padStart(2, "0")}`;
             return (
-              <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
+              <div key={m.month} className={"flex-1 flex flex-col items-center gap-1 rounded-md px-0.5 py-1 " + (isCurrentMonth ? "bg-primary/5 ring-1 ring-primary/30" : "")}>
                 <div className="flex items-end gap-0.5 w-full h-32">
                   {/* Last year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
@@ -477,20 +344,25 @@ export default async function DashboardPage() {
                       <span className="text-[9px] font-mono text-muted-foreground mb-0.5 hidden sm:block">{m.lastYear}</span>
                     )}
                     <div
-                      className="w-full bg-accent rounded-t-sm"
+                      className="w-full bg-muted-foreground/40 rounded-t-sm"
                       style={{ height: `${(m.lastYear / maxVal) * 100}%`, minHeight: m.lastYear > 0 ? "4px" : "0" }}
                     />
                   </div>
                   {/* This year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
                     {m.thisYear > 0 && (
-                      <span className={"text-[9px] font-mono mb-0.5 hidden sm:block " + (isCurrentMonth ? "text-primary" : "text-muted-foreground")}>{m.thisYear}</span>
+                      <span className={"text-[9px] font-mono mb-0.5 hidden sm:block " + (isCurrentMonth ? "text-primary font-semibold" : "text-muted-foreground")}>{m.thisYear}</span>
                     )}
                     <div
-                      className={"w-full rounded-t-sm " + (isFuture ? "bg-primary/15" : isCurrentMonth ? "bg-primary" : "bg-primary/50")}
+                      className="w-full bg-primary rounded-t-sm"
                       style={{ height: `${(m.thisYear / maxVal) * 100}%`, minHeight: m.thisYear > 0 ? "4px" : "0" }}
                     />
                   </div>
+                </div>
+                {/* Jahres-Kurzform unter den Balken */}
+                <div className="hidden sm:flex gap-0.5 w-full">
+                  <span className="flex-1 text-center text-[9px] font-mono text-muted-foreground/70">{lastYearShort}</span>
+                  <span className="flex-1 text-center text-[9px] font-mono text-primary/90">{thisYearShort}</span>
                 </div>
                 <span className={"text-[10px] " + (isCurrentMonth ? "text-primary font-semibold" : "text-muted-foreground")}>{m.month}</span>
               </div>
