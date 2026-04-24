@@ -4,6 +4,23 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.20.2] — 2026-04-24
+
+### Fixed
+- **Admin-Download: 5×15-Streifen hatte falsche Zielauflösung**. Das vom Kunden hochgeladene `layout-final.png` wird je nach Browser-DPR unterschiedlich groß exportiert (Fabric's Retina-Workaround halbiert bei `dpr=2`) — beim einfachen Verdoppeln übernahm der Endpoint also eine eventuell zu kleine Streifengröße. Download-Route normalisiert den Streifen jetzt zuerst auf exakt **600×1800 px** (5×15 cm @ 300 dpi) und komponiert dann zwei davon nebeneinander → verlässlich **1200×1800 px** Zieldatei. Für 10×15 quer wird analog auf **1800×1200 px** normalisiert, damit Admins auch bei DPR-Ausreißern immer ein 300-dpi-korrektes File bekommen.
+
+
+
+### Fixed
+- **Design-Vorlagen Übersicht (Admin) zeigte nur eine Kategorie pro Vorlage** — das Template-Card-Markup rendert jetzt `template.categories[]` als Chip-Reihe (mit Legacy-Fallback auf `template.category`, falls noch keine Multi-Kategorien migriert sind). Ohne diesen Fix wirkte es so, als würde der Multi-Select nichts speichern, obwohl die API das Array korrekt durchschrieb. (Voraussetzung für tatsächliches Persistieren mehrerer Einträge: das Spalten-Upgrade aus 1.19.0 muss in der Ziel-DB durchgelaufen sein — wird beim Container-Start über `sync-schema.cjs` automatisch erledigt.)
+
+### Changed
+- **Kunden-Vorlagen-Modal deutlich größer + Vorschaubilder größer**: Modal belegt jetzt bis zu 95 vw / 95 vh (vorher fixe 600 px × 70 vh). Raster ist responsive: 2 Spalten auf Mobile, 3 auf `sm`, 4 auf `lg`, 5 auf `xl`. Thumbnails haben feste `aspect-[4/3]`-Kacheln (statt starrer `h-28`), der Name steht in normaler Größe (`text-sm`) unter dem Bild statt winzig.
+- **Dashboard Mobile-Optimierung**:
+  - KPI-Boxen: kleineres Padding/Gap auf Mobile (`gap-2 px-3 py-2.5`), Value-Größe `text-base` statt `text-lg`, Label `text-[10px]` statt `text-[11px]` — damit lange Euro-Beträge wie „9.404 €" in der schmalen Zwei-Spalten-Ansicht nicht umbrechen. Value bekommt `truncate` als Notlösung.
+  - Monatsvergleich: `p-3 sm:p-5`, Chart-Höhe `h-40 sm:h-48`, Balken-Gap `gap-0.5`, Spalten-Innenpadding auf Mobile = 0, Header-Legende `flex-wrap`.
+  - „Nächste Aufträge"-Card-Header: Beschreibungstext („Die nächsten anstehenden Events — klicken zum Öffnen") auf Mobile ausgeblendet — der Titel erklärt sich selbst, der Text hat nur die Kopfzeile in den Wrap gedrückt.
+
 ## [1.20.1] — 2026-04-24
 
 ### Fixed

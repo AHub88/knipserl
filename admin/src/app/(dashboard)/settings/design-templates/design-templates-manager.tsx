@@ -22,6 +22,7 @@ type Template = {
   format: string;
   thumbnail: string | null;
   category: string | null;
+  categories?: string[];
   active: boolean;
   sortOrder: number;
 };
@@ -324,11 +325,27 @@ export function DesignTemplatesManager({
                     {template.format === "4x6" ? "10×15 cm" : "5×15 cm"}
                   </span>
                 </div>
-                {template.category && (
-                  <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground/[0.06] text-muted-foreground">
-                    {template.category}
-                  </span>
-                )}
+                {(() => {
+                  const cats =
+                    template.categories && template.categories.length > 0
+                      ? template.categories
+                      : template.category
+                      ? [template.category]
+                      : [];
+                  if (cats.length === 0) return null;
+                  return (
+                    <div className="flex flex-wrap gap-1">
+                      {cats.map((cat) => (
+                        <span
+                          key={cat}
+                          className="inline-block text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground/[0.06] text-muted-foreground"
+                        >
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           ))}

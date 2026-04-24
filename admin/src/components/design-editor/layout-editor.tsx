@@ -1059,8 +1059,8 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
         {/* Modals for Elements + Templates */}
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setOpenModal(null)}>
-            <div className="bg-accent border border-border rounded-xl shadow-2xl w-[600px] max-h-[70vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 sm:p-6" onClick={() => setOpenModal(null)}>
+            <div className="bg-accent border border-border rounded-xl shadow-2xl w-full h-full max-w-[95vw] max-h-[95vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between px-5 py-3 border-b border-border">
                 <h2 className="text-sm font-semibold text-foreground">{openModal === "elements" ? "Elemente" : "Vorlagen"}</h2>
                 <button onClick={() => setOpenModal(null)} className="text-foreground/40 hover:text-foreground"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -1198,26 +1198,26 @@ function TemplatesPanel({
       {filtered.length === 0 ? (
         <p className="text-foreground/40 text-sm">Keine Vorlagen in dieser Kategorie.</p>
       ) : (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {filtered.map((t) => (
             <button
               key={t.id}
               onClick={() => onSelect(t)}
-              className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left"
+              className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left group"
             >
               {t.thumbnail ? (
                 <img
                   src={t.thumbnail}
                   alt={t.name}
-                  className="w-full h-28 object-contain bg-foreground/5"
+                  className="w-full aspect-[4/3] object-contain bg-foreground/5 group-hover:bg-foreground/10 transition-colors"
                 />
               ) : (
-                <div className="w-full h-28 bg-foreground/5 flex items-center justify-center">
-                  <span className="text-xs text-foreground/30">Vorschau</span>
+                <div className="w-full aspect-[4/3] bg-foreground/5 flex items-center justify-center">
+                  <span className="text-sm text-foreground/30">Vorschau</span>
                 </div>
               )}
-              <div className="p-1.5">
-                <span className="text-xs text-foreground/60 truncate block">{t.name}</span>
+              <div className="px-3 py-2">
+                <span className="text-sm text-foreground/80 truncate block">{t.name}</span>
               </div>
             </button>
           ))}

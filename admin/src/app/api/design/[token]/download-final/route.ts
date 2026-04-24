@@ -42,31 +42,42 @@ export async function GET(
   let output: Buffer;
   const filename = `layout-${order.orderNumber}.png`;
 
+  // Zielauflösung bei 300 dpi:
+  //   5×15 cm Streifen = 600×1800 px (ein Streifen)
+  //   10×15 cm Quer    = 1800×1200 px
+  //   10×15 cm Hoch (verdoppelter Streifen) = 1200×1800 px (zwei Streifen à 600 px)
+  // Das Quell-PNG kann je nach Browser-DPR kleiner exportiert worden sein
+  // (Fabric's toDataURL-Retina-Workaround halbiert bei dpr=2). Daher immer
+  // auf die Soll-Größe hochskalieren, bevor wir zusammenbauen.
   if (ld.format === "2x6") {
-    // Streifen-Auflösung: aus dem Quell-PNG ermitteln (robust gegen Skalierungen).
-    const meta = await sharp(input).metadata();
-    const stripW = meta.width ?? 600;
-    const stripH = meta.height ?? 1800;
+    const STRIP_W = 600;
+    const STRIP_H = 1800;
 
-    // Ziel: zwei Streifen nebeneinander, vollflächig auf 10×15 cm Hochformat.
-    // Canvas-Breite = 2 × Streifen-Breite, Höhe = Streifen-Höhe.
+    const resizedStrip = await sharp(input)
+      .resize(STRIP_W, STRIP_H, { fit: "fill" })
+      .png()
+      .toBuffer();
+
     output = await sharp({
       create: {
-        width: stripW * 2,
-        height: stripH,
+        width: STRIP_W * 2,
+        height: STRIP_H,
         channels: 4,
         background: { r: 255, g: 255, b: 255, alpha: 1 },
       },
     })
       .composite([
-        { input, left: 0, top: 0 },
-        { input, left: stripW, top: 0 },
+        { input: resizedStrip, left: 0, top: 0 },
+        { input: resizedStrip, left: STRIP_W, top: 0 },
       ])
       .png()
       .toBuffer();
   } else {
-    // 4x6 (10×15 quer): unverändert ausliefern.
-    output = input;
+    // 4x6 (10×15 quer): auf exakt 1800×1200 px normalisieren.
+    output = await sharp(input)
+      .resize(1800, 1200, { fit: "fill" })
+      .png()
+      .toBuffer();
   }
 
   return new NextResponse(new Uint8Array(output), {

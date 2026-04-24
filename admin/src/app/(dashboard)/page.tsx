@@ -237,22 +237,22 @@ export default async function DashboardPage() {
       </div>
 
       {/* Flache KPI-Boxen ganz oben */}
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 sm:gap-3 grid-cols-2 lg:grid-cols-4">
         {kpiCards.map((kpi) => {
           const Icon = kpi.icon;
           return (
             <div
               key={kpi.label}
-              className="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3"
+              className="flex items-center gap-2 sm:gap-3 rounded-lg border border-border bg-card px-3 py-2.5 sm:px-4 sm:py-3"
             >
-              <div className={`flex items-center justify-center rounded-md p-2 ${kpi.bgClass}`}>
+              <div className={`flex items-center justify-center rounded-md p-1.5 sm:p-2 shrink-0 ${kpi.bgClass}`}>
                 <Icon className={`h-4 w-4 ${kpi.iconClass}`} />
               </div>
-              <div className="min-w-0">
-                <p className="text-[11px] text-muted-foreground truncate">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate">
                   {kpi.label}
                 </p>
-                <p className="text-lg font-bold tracking-tight text-foreground tabular-nums leading-tight">
+                <p className="text-base sm:text-lg font-bold tracking-tight text-foreground tabular-nums leading-tight truncate">
                   {kpi.value}
                 </p>
               </div>
@@ -266,7 +266,7 @@ export default async function DashboardPage() {
 
       {/* Monthly Comparison: This Year vs Last Year */}
       <div className="rounded-xl border border-border bg-card shadow-lg shadow-black/5 dark:shadow-black/25 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-border px-5 py-3">
+        <div className="flex items-center justify-between border-b border-border px-4 sm:px-5 py-3 gap-3 flex-wrap">
           <div className="flex items-center gap-2">
             <IconChartBar className="size-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Monatsvergleich Aufträge</h3>
@@ -276,16 +276,16 @@ export default async function DashboardPage() {
             <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-primary" /><span className="font-semibold text-foreground">{now.getFullYear()}</span></span>
           </div>
         </div>
-        <div className="p-5">
-        <div className="flex items-end gap-1 sm:gap-2 h-48">
+        <div className="p-3 sm:p-5">
+        <div className="flex items-end gap-0.5 sm:gap-2 h-40 sm:h-48">
           {monthCompare.map((m, i) => {
             const maxVal = Math.max(...monthCompare.map((d) => Math.max(d.thisYear, d.lastYear)), 1);
             const isCurrentMonth = i === now.getMonth();
             const lastYearShort = `'${String((now.getFullYear() - 1) % 100).padStart(2, "0")}`;
             const thisYearShort = `'${String(now.getFullYear() % 100).padStart(2, "0")}`;
             return (
-              <div key={m.month} className={"flex-1 flex flex-col items-center gap-1 rounded-md px-0.5 py-1 " + (isCurrentMonth ? "bg-primary/5 ring-1 ring-primary/30" : "")}>
-                <div className="flex items-end gap-0.5 w-full h-32">
+              <div key={m.month} className={"flex-1 flex flex-col items-center gap-1 rounded-md px-0 sm:px-0.5 py-1 min-w-0 " + (isCurrentMonth ? "bg-primary/5 ring-1 ring-primary/30" : "")}>
+                <div className="flex items-end gap-px sm:gap-0.5 w-full h-24 sm:h-32">
                   {/* Last year bar */}
                   <div className="flex-1 flex flex-col items-center justify-end h-full">
                     {m.lastYear > 0 && (
@@ -332,12 +332,12 @@ export default async function DashboardPage() {
       {/* Nächste Aufträge + Eventarten nebeneinander */}
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="border-border bg-card lg:col-span-2">
-          <CardHeader className="border-b flex-row items-center gap-2">
+          <CardHeader className="border-b flex-row items-center gap-2 flex-wrap">
             <IconCalendarEvent className="size-4 text-primary" />
             <CardTitle className="text-base font-semibold text-foreground">
               N&auml;chste Auftr&auml;ge
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground hidden sm:block">
               Die n&auml;chsten anstehenden Events &mdash; klicken zum
               &Ouml;ffnen
             </p>
