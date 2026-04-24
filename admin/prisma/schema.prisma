@@ -434,7 +434,8 @@ model LayoutTemplate {
   format     String   @default("2x6")
   thumbnail  String?
   canvasJson Json
-  category   String?
+  category   String?  // deprecated — legacy single category, Lese-Fallback
+  categories String[] @default([]) // neue Multi-Kategorie-Tags
   active     Boolean  @default(true)
   sortOrder  Int      @default(0)
   createdAt  DateTime @default(now())

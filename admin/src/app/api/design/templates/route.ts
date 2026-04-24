@@ -16,10 +16,23 @@ export async function GET() {
       thumbnail: true,
       canvasJson: true,
       category: true,
+      categories: true,
     },
   });
 
-  return NextResponse.json({ templates });
+  // Legacy-Fallback: wenn `categories` leer, aber `category` gesetzt,
+  // mappe single-category in das neue Array damit Filter ohne Migration greift.
+  const normalized = templates.map((t) => ({
+    ...t,
+    categories:
+      t.categories && t.categories.length > 0
+        ? t.categories
+        : t.category
+        ? [t.category]
+        : [],
+  }));
+
+  return NextResponse.json({ templates: normalized });
 }
 
 // POST /api/design/templates — create template (admin only)
@@ -35,17 +48,22 @@ export async function POST(request: NextRequest) {
   // JSON body path (admin editor sends canvasJson directly)
   if (contentType.includes("application/json")) {
     const body = await request.json();
-    const { name, format, category, canvasJson, thumbnail } = body;
+    const { name, format, category, categories, canvasJson, thumbnail } = body;
 
     if (!name) {
       return NextResponse.json({ error: "Name ist Pflichtfeld" }, { status: 400 });
     }
 
+    const cats: string[] = Array.isArray(categories)
+      ? categories.filter((c): c is string => typeof c === "string" && c.length > 0)
+      : [];
+
     const template = await prisma.layoutTemplate.create({
       data: {
         name,
         format: format || "2x6",
-        category: category || null,
+        category: category || (cats[0] ?? null), // legacy-Feld gefüllt mit erster Kategorie
+        categories: cats,
         thumbnail: thumbnail || null,
         canvasJson: canvasJson ?? { version: "6.6.1", objects: [] },
       },

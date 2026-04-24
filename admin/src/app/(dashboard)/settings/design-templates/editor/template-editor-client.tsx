@@ -7,12 +7,14 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { LayoutEditorLoader } from "@/components/design-editor/layout-editor-loader";
 import { useSidebar } from "@/components/ui/sidebar";
+import { DESIGN_TEMPLATE_CATEGORIES } from "@/lib/design-template-categories";
 
 type ExistingTemplate = {
   id: string;
   name: string;
   format: string;
   category: string | null;
+  categories?: string[];
   canvasJson: unknown;
 } | null;
 
@@ -25,8 +27,21 @@ export function TemplateEditorClient({
   const { setOpen } = useSidebar();
   const [name, setName] = useState(existingTemplate?.name ?? "");
   const [format, setFormat] = useState(existingTemplate?.format ?? "2x6");
-  const [category, setCategory] = useState(existingTemplate?.category ?? "");
+  const [categories, setCategories] = useState<string[]>(() => {
+    // Bevorzugt das neue `categories`-Array; fallback auf legacy-`category`.
+    if (existingTemplate?.categories && existingTemplate.categories.length > 0) {
+      return existingTemplate.categories;
+    }
+    if (existingTemplate?.category) return [existingTemplate.category];
+    return [];
+  });
   const [saving, setSaving] = useState(false);
+
+  function toggleCategory(cat: string) {
+    setCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  }
 
   // Sidebar beim Laden des Editors einklappen
   useEffect(() => {
@@ -58,11 +73,12 @@ export function TemplateEditorClient({
 
     setSaving(true);
     try {
+      const payload = { name, format, categories, canvasJson, thumbnail };
       if (existingTemplate) {
         const res = await fetch(`/api/design/templates/${existingTemplate.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, format, category: category || null, canvasJson, thumbnail }),
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error();
         toast.success("Vorlage aktualisiert");
@@ -70,7 +86,7 @@ export function TemplateEditorClient({
         const res = await fetch("/api/design/templates", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, format, category: category || null, canvasJson, thumbnail }),
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error();
         toast.success("Vorlage erstellt");
@@ -137,13 +153,29 @@ export function TemplateEditorClient({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] text-muted-foreground/70 mb-1 leading-none">Kategorie</label>
-                  <input
-                    className={fieldClass + " w-40"}
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    placeholder="z.B. Hochzeit"
-                  />
+                  <label className="block text-[11px] text-muted-foreground/70 mb-1 leading-none">
+                    Kategorien {categories.length > 0 && <span className="text-foreground/40">({categories.length})</span>}
+                  </label>
+                  <div className="flex items-center gap-1.5 h-12 flex-wrap">
+                    {DESIGN_TEMPLATE_CATEGORIES.map((cat) => {
+                      const active = categories.includes(cat);
+                      return (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => toggleCategory(cat)}
+                          className={
+                            "h-8 px-3 rounded-lg text-xs font-medium transition-colors border " +
+                            (active
+                              ? "bg-primary text-black border-primary"
+                              : "bg-muted text-muted-foreground border-border hover:text-foreground hover:border-foreground/30")
+                          }
+                        >
+                          {cat}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
               {saving && <span className="text-sm text-foreground/40">Speichert...</span>}

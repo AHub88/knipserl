@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.19.0] — 2026-04-24
+
+### Added
+- **Layout-Vorlagen: mehrere Kategorien pro Vorlage + Filter für Kunden.**
+  - Schema: neues Feld `LayoutTemplate.categories String[]` (Prisma), Migration via `sync-schema.cjs` (`TEXT[] DEFAULT ARRAY[]::TEXT[]`). Das alte Einzel-Feld `category` bleibt vorerst als Legacy-Fallback (wird beim Lesen in `categories` gespiegelt, falls `categories` leer ist), damit bestehende Templates nicht leer wirken.
+  - Feste Kategorien-Liste (`admin/src/lib/design-template-categories.ts`): **Geburtstag, Hochzeit, Weihnachtsfeier, Sommerfest, Firmenevent**. Wird vom Admin-Editor und vom Kunden-Vorlagenpanel gemeinsam genutzt.
+  - **Admin-Template-Editor** (`settings/design-templates/editor`): Eingabefeld „Kategorie" durch fünf Chip-Buttons ersetzt (Toggle-Auswahl, Primary-Fill = aktiv). Zeigt im Label die Anzahl ausgewählter Kategorien an.
+  - **Kunden-Vorlagenpanel** im Layoutdesigner: über dem Vorlagen-Grid liegt jetzt eine Filterleiste mit „Alle" + allen tatsächlich benutzten Kategorien. Klick auf einen Chip filtert die angezeigten Vorlagen. Zeigt nur Kategorien, die mind. eine Vorlage haben — leere Chips sind ausgeblendet.
+  - **API**: `GET /api/design/templates` liefert jetzt `categories`, `POST`+`PUT` akzeptieren `categories: string[]`. Das legacy-`category`-Feld wird beim Schreiben automatisch mit dem ersten Eintrag aus `categories` synchron gehalten, solange keine Migration passiert ist.
+
 ## [1.18.0] — 2026-04-24
 
 ### Added

@@ -303,6 +303,7 @@ async function syncSchema() {
     ["layout_templates", "thumbnail", "TEXT", true, null],
     ["layout_templates", "canvasJson", "JSONB", false, "'{}'"],
     ["layout_templates", "category", "TEXT", true, null],
+    ["layout_templates", "categories", "TEXT[]", false, "ARRAY[]::TEXT[]"],
     ["layout_templates", "active", "BOOLEAN", false, "true"],
     ["layout_templates", "sortOrder", "INTEGER", false, "0"],
     ["layout_templates", "createdAt", "TIMESTAMPTZ", false, "NOW()"],

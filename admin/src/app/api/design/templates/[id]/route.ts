@@ -62,6 +62,7 @@ export async function POST(
       name: `${original.name} (Kopie)`,
       format: original.format,
       category: original.category,
+      categories: original.categories ?? [],
       thumbnail: original.thumbnail,
       canvasJson: original.canvasJson ?? { version: "6.6.1", objects: [] },
       active: false,
@@ -88,6 +89,14 @@ export async function PUT(
   if (body.name !== undefined) data.name = body.name;
   if (body.format !== undefined) data.format = body.format;
   if (body.category !== undefined) data.category = body.category || null;
+  if (body.categories !== undefined) {
+    const cats: string[] = Array.isArray(body.categories)
+      ? body.categories.filter((c: unknown): c is string => typeof c === "string" && c.length > 0)
+      : [];
+    data.categories = cats;
+    // legacy-Feld synchron halten für alte Konsumenten
+    if (body.category === undefined) data.category = cats[0] ?? null;
+  }
   if (body.canvasJson !== undefined) data.canvasJson = body.canvasJson;
   if (body.thumbnail !== undefined) data.thumbnail = body.thumbnail || null;
 

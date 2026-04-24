@@ -36,6 +36,7 @@ type Template = {
   thumbnail: string | null;
   canvasJson: any;
   category: string | null;
+  categories?: string[];
 };
 
 type FontDef = {
@@ -1155,37 +1156,73 @@ function TemplatesPanel({
   templates: Template[];
   onSelect: (t: Template) => void;
 }) {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
   if (templates.length === 0) {
     return <p className="text-foreground/40 text-sm">Keine Vorlagen verfügbar.</p>;
   }
 
+  // Nur Kategorien anzeigen, die mindestens eine Vorlage haben.
+  const usedCategories = new Set<string>();
+  for (const t of templates) {
+    const cats = t.categories && t.categories.length > 0 ? t.categories : t.category ? [t.category] : [];
+    cats.forEach((c) => usedCategories.add(c));
+  }
+
+  const filtered = activeCategory
+    ? templates.filter((t) => {
+        const cats = t.categories && t.categories.length > 0 ? t.categories : t.category ? [t.category] : [];
+        return cats.includes(activeCategory);
+      })
+    : templates;
+
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold text-foreground/80">Vorlagen</h3>
-      <div className="grid grid-cols-2 gap-2">
-        {templates.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => onSelect(t)}
-            className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left"
-          >
-            {t.thumbnail ? (
-              <img
-                src={t.thumbnail}
-                alt={t.name}
-                className="w-full h-28 object-contain bg-foreground/5"
-              />
-            ) : (
-              <div className="w-full h-28 bg-foreground/5 flex items-center justify-center">
-                <span className="text-xs text-foreground/30">Vorschau</span>
+      {usedCategories.size > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          <FilterChip active={activeCategory === null} onClick={() => setActiveCategory(null)}>
+            Alle
+          </FilterChip>
+          {[...usedCategories].sort().map((cat) => (
+            <FilterChip
+              key={cat}
+              active={activeCategory === cat}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </FilterChip>
+          ))}
+        </div>
+      )}
+      {filtered.length === 0 ? (
+        <p className="text-foreground/40 text-sm">Keine Vorlagen in dieser Kategorie.</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          {filtered.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => onSelect(t)}
+              className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left"
+            >
+              {t.thumbnail ? (
+                <img
+                  src={t.thumbnail}
+                  alt={t.name}
+                  className="w-full h-28 object-contain bg-foreground/5"
+                />
+              ) : (
+                <div className="w-full h-28 bg-foreground/5 flex items-center justify-center">
+                  <span className="text-xs text-foreground/30">Vorschau</span>
+                </div>
+              )}
+              <div className="p-1.5">
+                <span className="text-xs text-foreground/60 truncate block">{t.name}</span>
               </div>
-            )}
-            <div className="p-1.5">
-              <span className="text-xs text-foreground/60 truncate block">{t.name}</span>
-            </div>
-          </button>
-        ))}
-      </div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
