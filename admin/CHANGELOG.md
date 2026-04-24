@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.17.2] — 2026-04-24
+
+### Changed
+- **Layoutdesigner — Schriftart-Dropdown deutlich größer und mit Live-Vorschau in der Box**: Das geschlossene Select zeigt den Namen der aktiven Schrift jetzt in genau dieser Schrift an (`fontFamily` inline auf dem `<select>`), Schriftgröße von 11 px auf 15 px erhöht, Padding verdoppelt (`py-2`). Die Dropdown-Optionen nutzen 16 px statt der Browser-Default-~11 px, damit Schwung- und Handschrift-Fonts wie „Lobster", „Pacifico" oder „Showclick" in der Auswahl gut lesbar sind. Gilt für Einzelauswahl und Bulk-Text-Auswahl.
+- **Layoutdesigner — linke Sidebar wieder mit Labels** (zurück auf 220 px). Die Icon-only-Variante aus 1.17.1 hat die Einträge zu anonym wirken lassen, besonders „Foto-Platzhalter" und „Elemente" waren auf den Icons allein nicht eindeutig. Accordion-Eigenschaften rechts (Position/Größe/Transformation collapsed) bleiben wie in 1.17.1.
+
 ## [1.17.1] — 2026-04-24
 
 ### Changed
