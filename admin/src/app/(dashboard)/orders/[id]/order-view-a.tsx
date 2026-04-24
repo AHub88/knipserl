@@ -830,10 +830,6 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                     </a>
                   </div>
                 )}
-                <div className="flex items-center gap-3">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Firma</span>
-                  <span className="text-sm text-foreground/80">{order.companyName.includes("GbR") ? "GbR" : "Einzelunternehmen"}</span>
-                </div>
               </div>
               </div>
             </div>

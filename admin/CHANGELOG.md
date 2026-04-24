@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.14.2] — 2026-04-24
+
+### Changed
+- Auftrag-Detail, Box „Auftraggeber": Die Zeile **Firma: Einzelunternehmen / GbR** entfernt. War redundant mit der Firmen-Info in der Topline („EU" / „GbR"-Chip neben Auftragsnummer) und hat die Kontakt-Box unnötig aufgebläht.
+
 ## [1.14.1] — 2026-04-24
 
 ### Changed
