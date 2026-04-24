@@ -42,26 +42,30 @@ export async function GET(
   let output: Buffer;
   const filename = `layout-${order.orderNumber}.png`;
 
-  // Zielauflösung bei 300 dpi:
-  //   5×15 cm Streifen = 600×1800 px (ein Streifen)
-  //   10×15 cm Quer    = 1800×1200 px
-  //   10×15 cm Hoch (verdoppelter Streifen) = 1200×1800 px (zwei Streifen à 600 px)
-  // Das Quell-PNG kann je nach Browser-DPR kleiner exportiert worden sein
-  // (Fabric's toDataURL-Retina-Workaround halbiert bei dpr=2). Daher immer
-  // auf die Soll-Größe hochskalieren, bevor wir zusammenbauen.
+  // Zielauflösung für den Fotoprint-Drucker: 3600×2400 px (Querformat),
+  // DPI-Metadatum 72. Egal ob der Kunde einen 10×15-Quer oder einen
+  // 5×15-Streifen gestaltet hat — der Drucker bekommt immer dasselbe
+  // Querformat-Input-Format.
+  const TARGET_W = 3600;
+  const TARGET_H = 2400;
+  const TARGET_DPI = 72;
+
   if (ld.format === "2x6") {
-    const STRIP_W = 600;
-    const STRIP_H = 1800;
+    // 5×15 cm Streifen → auf Soll-Streifengröße normalisieren, dann zwei
+    // nebeneinander zu Hochformat (2400×3600), am Ende um 90° rotieren
+    // → 3600×2400 Querformat für den Drucker.
+    const STRIP_W = TARGET_H / 2;  // 1200 px
+    const STRIP_H = TARGET_W;      // 3600 px
 
     const resizedStrip = await sharp(input)
       .resize(STRIP_W, STRIP_H, { fit: "fill" })
       .png()
       .toBuffer();
 
-    output = await sharp({
+    const doubled = await sharp({
       create: {
-        width: STRIP_W * 2,
-        height: STRIP_H,
+        width: STRIP_W * 2, // 2400 px
+        height: STRIP_H,    // 3600 px
         channels: 4,
         background: { r: 255, g: 255, b: 255, alpha: 1 },
       },
@@ -72,10 +76,17 @@ export async function GET(
       ])
       .png()
       .toBuffer();
+
+    output = await sharp(doubled)
+      .rotate(90)
+      .withMetadata({ density: TARGET_DPI })
+      .png()
+      .toBuffer();
   } else {
-    // 4x6 (10×15 quer): auf exakt 1800×1200 px normalisieren.
+    // 4x6 (10×15 quer): direkt auf Zielauflösung strecken.
     output = await sharp(input)
-      .resize(1800, 1200, { fit: "fill" })
+      .resize(TARGET_W, TARGET_H, { fit: "fill" })
+      .withMetadata({ density: TARGET_DPI })
       .png()
       .toBuffer();
   }

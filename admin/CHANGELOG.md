@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.20.4] — 2026-04-24
+
+### Changed
+- **Admin-Download: Zielformat auf 3600×2400 px bei 72 dpi (Querformat) umgestellt**. Für **beide** Layout-Formate:
+  - `4x6` (10×15 quer): direkt auf 3600×2400 px normalisiert.
+  - `2x6` (5×15 Streifen): Streifen wird auf 1200×3600 px hochskaliert, zweimal nebeneinander komponiert (2400×3600 Hochformat), anschließend **um 90° rotiert** → 3600×2400 Querformat. Das ist nötig, weil die Doppel-Streifen-Kombination physikalisch ein Hochformat ergibt, der Fotoprint-Drucker-Workflow aber Querformat-Input erwartet.
+  - PNG-Metadata `density: 72` ausgeschrieben (`sharp.withMetadata`), damit Software, die die pHYs-Chunks liest, konsistent 72 dpi meldet.
+
 ## [1.20.3] — 2026-04-24
 
 ### Fixed
