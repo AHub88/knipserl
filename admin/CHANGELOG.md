@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.22.0] — 2026-04-24
+
+### Added
+- **Design-Elemente nachträglich bearbeitbar**: In `/settings/design-elements` gibt es pro Karte jetzt einen Stift-Button neben Aktiv-Toggle und Löschen. Klick öffnet ein Modal mit Vorschaubild + Name + Kategorie-Feld (inkl. Autocomplete aus den bekannten Kategorien). Bild selbst bleibt unveränderlich — Hinweis im Modal: bei Bedarf löschen und neu anlegen (ist sauberer, weil sonst Datei-Management, Thumb-Caching und verknüpfte Designs mitgeändert werden müssten).
+- API: `PATCH /api/design/elements/[id]` akzeptiert jetzt zusätzlich `name` (nicht leer) und `category` (leerer String → null). Das bestehende `active`-Verhalten bleibt unverändert. Wenn kein gültiges Feld mitkommt, antwortet der Endpoint mit 400.
+
 ## [1.21.1] — 2026-04-24
 
 ### Fixed

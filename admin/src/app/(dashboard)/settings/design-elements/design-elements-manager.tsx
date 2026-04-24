@@ -11,6 +11,7 @@ import {
   IconTrash,
   IconToggleLeft,
   IconToggleRight,
+  IconPencil,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 
@@ -40,6 +41,8 @@ export function DesignElementsManager({
   const [saving, setSaving] = useState(false);
   const [showInactive, setShowInactive] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", category: "" });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeItems = elements.filter((e) => e.active);
@@ -102,6 +105,42 @@ export function DesignElementsManager({
       router.refresh();
     } catch {
       toast.error("Fehler beim Löschen");
+    }
+  }
+
+  function openEdit(element: DesignElement) {
+    setEditingId(element.id);
+    setEditForm({ name: element.name, category: element.category ?? "" });
+  }
+
+  async function handleSaveEdit() {
+    if (!editingId) return;
+    if (!editForm.name.trim()) {
+      toast.error("Name darf nicht leer sein");
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/design/elements/${editingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editForm.name.trim(),
+          category: editForm.category.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error();
+      const updated = await res.json();
+      setElements((prev) =>
+        prev.map((e) => (e.id === editingId ? { ...e, ...updated } : e))
+      );
+      setEditingId(null);
+      toast.success("Element aktualisiert");
+      router.refresh();
+    } catch {
+      toast.error("Fehler beim Speichern");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -251,6 +290,81 @@ export function DesignElementsManager({
         </div>
       )}
 
+      {editingId && (() => {
+        const el = elements.find((e) => e.id === editingId);
+        if (!el) return null;
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+            onClick={() => setEditingId(null)}
+          >
+            <div
+              className="w-full max-w-md rounded-xl bg-card border border-border shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-border px-5 py-3">
+                <h3 className="text-sm font-semibold text-foreground">Element bearbeiten</h3>
+                <button
+                  onClick={() => setEditingId(null)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <IconX className="size-4" />
+                </button>
+              </div>
+              <div className="p-5 space-y-4">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-foreground/[0.03] border border-border">
+                  <div className="size-14 shrink-0 rounded-lg bg-foreground/[0.05] flex items-center justify-center p-1.5">
+                    <img src={el.imageUrl} alt={el.name} className="max-w-full max-h-full object-contain" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Bild kann nicht verändert werden — bei Bedarf Element löschen und neu anlegen.</span>
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Name *</label>
+                  <input
+                    className={inputClass}
+                    value={editForm.name}
+                    onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                    placeholder="z.B. Goldener Rahmen"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Kategorie</label>
+                  <input
+                    className={inputClass}
+                    value={editForm.category}
+                    onChange={(e) => setEditForm((f) => ({ ...f, category: e.target.value }))}
+                    placeholder="z.B. Rahmen, Deko, Logos"
+                    list="edit-category-suggestions"
+                  />
+                  <datalist id="edit-category-suggestions">
+                    {CATEGORY_SUGGESTIONS.map((s) => (
+                      <option key={s} value={s} />
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+                <button
+                  onClick={() => setEditingId(null)}
+                  className="h-9 px-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={saving}
+                  className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
+                >
+                  <IconCheck className="size-3.5" />
+                  Speichern
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {displayItems.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
@@ -299,6 +413,13 @@ export function DesignElementsManager({
                     ) : (
                       <IconToggleLeft className="size-3.5" />
                     )}
+                  </button>
+                  <button
+                    onClick={() => openEdit(element)}
+                    className="p-1 rounded-lg text-muted-foreground/70 hover:text-foreground hover:bg-foreground/[0.06] transition-colors"
+                    title="Bearbeiten"
+                  >
+                    <IconPencil className="size-3" />
                   </button>
                   <button
                     onClick={() => handleDelete(element.id)}
