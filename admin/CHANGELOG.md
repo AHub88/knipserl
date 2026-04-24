@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.15.0] — 2026-04-24
+
+### Added
+- **Auftraggeber-Box inline editierbar**: Pencil-Icon rechts öffnet ein Edit-Formular mit Name / E-Mail / Telefon. Check/X zum Speichern bzw. Abbrechen (Escape = Abbrechen).
+- **Ansprechpartner vor Ort inline editierbar**: Name / Telefon / Notiz direkt in der Box editierbar. Zusätzlich **Checkbox „= Auftraggeber"**: Einmal anklicken übernimmt automatisch Name (Kontakt-Teil, ohne Firma-Prefix) + Telefon vom Auftraggeber. Erneutes Abwählen leert die Felder.
+
+### Changed
+- Intern-Preisbox unter „Gewinn": neue Zeile **Zahlweise** (grüne Pille „Bar" bzw. blaue Pille „Rechnung"), damit Kassier- vs. Rechnungs-Info auch im internen Block auf einen Blick sichtbar ist.
+
 ## [1.14.2] — 2026-04-24
 
 ### Changed

@@ -139,6 +139,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [editingInternal, setEditingInternal] = useState(false);
   const [editingDriver, setEditingDriver] = useState(false);
   const [editingDelivery, setEditingDelivery] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(false);
+  const [editingOnSite, setEditingOnSite] = useState(false);
 
   const [statusState, setStatusState] = useState({
     confirmed: order.confirmed,
@@ -156,6 +158,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   const [setupTimeState, setSetupTimeState] = useState(order.setupTime ?? "");
   const [teardownDateState, setTeardownDateState] = useState(order.teardownDate ? order.teardownDate.slice(0, 10) : "");
   const [teardownTimeState, setTeardownTimeState] = useState(order.teardownTime ?? "");
+  const [customerNameState, setCustomerNameState] = useState(order.customerName);
+  const [customerEmailState, setCustomerEmailState] = useState(order.customerEmail);
+  const [customerPhoneState, setCustomerPhoneState] = useState(order.customerPhone ?? "");
+  const [onSiteNameState, setOnSiteNameState] = useState(order.onSiteContactName ?? "");
+  const [onSitePhoneState, setOnSitePhoneState] = useState(order.onSiteContactPhone ?? "");
+  const [onSiteNotesState, setOnSiteNotesState] = useState(order.onSiteContactNotes ?? "");
   const [layoutModalOpen, setLayoutModalOpen] = useState(false);
 
   async function saveField(data: Record<string, unknown>) {
@@ -804,65 +812,271 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Auftraggeber */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-                <IconUser className="size-4 text-primary" />
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Auftraggeber</h3>
+              <div className="flex items-center justify-between border-b border-border px-5 py-3">
+                <div className="flex items-center gap-2">
+                  <IconUser className="size-4 text-primary" />
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Auftraggeber</h3>
+                </div>
+                {isAdmin && !editingCustomer && (
+                  <button onClick={() => setEditingCustomer(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                    <IconPencil className="size-4.5" />
+                  </button>
+                )}
+                {editingCustomer && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={async () => {
+                        await saveField({
+                          customerName: customerNameState,
+                          customerEmail: customerEmailState,
+                          customerPhone: customerPhoneState || null,
+                        });
+                        setEditingCustomer(false);
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <IconCheck className="size-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCustomerNameState(order.customerName);
+                        setCustomerEmailState(order.customerEmail);
+                        setCustomerPhoneState(order.customerPhone ?? "");
+                        setEditingCustomer(false);
+                      }}
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <IconX className="size-5" />
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="p-5">
-              <p className="text-base font-semibold text-foreground mb-0.5">{kontakt}</p>
-              {firma && (
-                <p className="text-sm text-muted-foreground mb-3">{firma}</p>
+              {editingCustomer ? (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    await saveField({
+                      customerName: customerNameState,
+                      customerEmail: customerEmailState,
+                      customerPhone: customerPhoneState || null,
+                    });
+                    setEditingCustomer(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      e.preventDefault();
+                      setCustomerNameState(order.customerName);
+                      setCustomerEmailState(order.customerEmail);
+                      setCustomerPhoneState(order.customerPhone ?? "");
+                      setEditingCustomer(false);
+                    }
+                  }}
+                  className="space-y-3"
+                >
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Name</p>
+                    <input
+                      type="text"
+                      value={customerNameState}
+                      onChange={(e) => setCustomerNameState(e.target.value)}
+                      placeholder="Firma - Kontakt"
+                      className="h-9 w-full rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">E-Mail</p>
+                    <input
+                      type="email"
+                      value={customerEmailState}
+                      onChange={(e) => setCustomerEmailState(e.target.value)}
+                      className="h-9 w-full rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Telefon</p>
+                    <input
+                      type="tel"
+                      value={customerPhoneState}
+                      onChange={(e) => setCustomerPhoneState(e.target.value)}
+                      className="h-9 w-full rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                    />
+                  </div>
+                  <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
+                </form>
+              ) : (
+                <>
+                  <p className="text-base font-semibold text-foreground mb-0.5">{kontakt}</p>
+                  {firma && (
+                    <p className="text-sm text-muted-foreground mb-3">{firma}</p>
+                  )}
+                  <div className="space-y-2.5 border-t border-border pt-3">
+                    {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">E-Mail</span>
+                        <a href={`mailto:${order.customerEmail}`} className="text-sm text-foreground/80 hover:text-primary transition-colors truncate">
+                          {order.customerEmail}
+                        </a>
+                      </div>
+                    )}
+                    {order.customerPhone && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
+                        <a href={`tel:${order.customerPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-foreground/80 hover:text-primary transition-colors">
+                          {order.customerPhone}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
-              <div className="space-y-2.5 border-t border-border pt-3">
-                {order.customerEmail && order.customerEmail !== "unbekannt@import.local" && (
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">E-Mail</span>
-                    <a href={`mailto:${order.customerEmail}`} className="text-sm text-foreground/80 hover:text-primary transition-colors truncate">
-                      {order.customerEmail}
-                    </a>
-                  </div>
-                )}
-                {order.customerPhone && (
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
-                    <a href={`tel:${order.customerPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-foreground/80 hover:text-primary transition-colors">
-                      {order.customerPhone}
-                    </a>
-                  </div>
-                )}
-              </div>
               </div>
             </div>
 
             {/* Ansprechpartner vor Ort */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-                <IconUser className="size-4 text-primary" />
-                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Ansprechpartner vor Ort</h3>
+              <div className="flex items-center justify-between border-b border-border px-5 py-3">
+                <div className="flex items-center gap-2">
+                  <IconUser className="size-4 text-primary" />
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Ansprechpartner vor Ort</h3>
+                </div>
+                {isAdmin && !editingOnSite && (
+                  <button onClick={() => setEditingOnSite(true)} className="text-muted-foreground hover:text-foreground/80 transition-colors">
+                    <IconPencil className="size-4.5" />
+                  </button>
+                )}
+                {editingOnSite && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={async () => {
+                        await saveField({
+                          onSiteContactName: onSiteNameState || null,
+                          onSiteContactPhone: onSitePhoneState || null,
+                          onSiteContactNotes: onSiteNotesState || null,
+                        });
+                        setEditingOnSite(false);
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <IconCheck className="size-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setOnSiteNameState(order.onSiteContactName ?? "");
+                        setOnSitePhoneState(order.onSiteContactPhone ?? "");
+                        setOnSiteNotesState(order.onSiteContactNotes ?? "");
+                        setEditingOnSite(false);
+                      }}
+                      className="text-muted-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <IconX className="size-5" />
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="p-5">
-                {order.onSiteContactName || order.onSiteContactPhone || order.onSiteContactNotes ? (
-                  <>
-                    {order.onSiteContactName && (
-                      <p className="text-base font-semibold text-foreground mb-3">{order.onSiteContactName}</p>
+              {editingOnSite ? (
+                (() => {
+                  // Auftraggeber-Kontakt (nur Personenname, ohne "Firma - ") für die "= Auftraggeber"-Checkbox
+                  const customerContactName = (() => {
+                    const sep = order.customerName.indexOf(" - ");
+                    return sep >= 0 ? order.customerName.slice(sep + 3) : order.customerName;
+                  })();
+                  const sameAsCustomer =
+                    onSiteNameState === customerContactName &&
+                    onSitePhoneState === (order.customerPhone ?? "");
+                  return (
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        await saveField({
+                          onSiteContactName: onSiteNameState || null,
+                          onSiteContactPhone: onSitePhoneState || null,
+                          onSiteContactNotes: onSiteNotesState || null,
+                        });
+                        setEditingOnSite(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          setOnSiteNameState(order.onSiteContactName ?? "");
+                          setOnSitePhoneState(order.onSiteContactPhone ?? "");
+                          setOnSiteNotesState(order.onSiteContactNotes ?? "");
+                          setEditingOnSite(false);
+                        }
+                      }}
+                      className="space-y-3"
+                    >
+                      <label className="flex items-center gap-2 cursor-pointer select-none text-sm">
+                        <input
+                          type="checkbox"
+                          checked={sameAsCustomer}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setOnSiteNameState(customerContactName);
+                              setOnSitePhoneState(order.customerPhone ?? "");
+                            } else {
+                              setOnSiteNameState("");
+                              setOnSitePhoneState("");
+                            }
+                          }}
+                          className="size-4 rounded border-border bg-muted accent-primary cursor-pointer"
+                        />
+                        <span className="text-foreground/80">= Auftraggeber</span>
+                      </label>
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Name</p>
+                        <input
+                          type="text"
+                          value={onSiteNameState}
+                          onChange={(e) => setOnSiteNameState(e.target.value)}
+                          className="h-9 w-full rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Telefon</p>
+                        <input
+                          type="tel"
+                          value={onSitePhoneState}
+                          onChange={(e) => setOnSitePhoneState(e.target.value)}
+                          className="h-9 w-full rounded-md border border-border bg-muted px-2 text-sm text-foreground outline-none focus:border-primary/50"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Notiz</p>
+                        <textarea
+                          value={onSiteNotesState}
+                          onChange={(e) => setOnSiteNotesState(e.target.value)}
+                          placeholder="Besonderheiten (Einfahrt, Etage, Schlüsselhinterlegung …)"
+                          className="w-full h-20 rounded-md border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary/50 resize-none"
+                        />
+                      </div>
+                      <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
+                    </form>
+                  );
+                })()
+              ) : order.onSiteContactName || order.onSiteContactPhone || order.onSiteContactNotes ? (
+                <>
+                  {order.onSiteContactName && (
+                    <p className="text-base font-semibold text-foreground mb-3">{order.onSiteContactName}</p>
+                  )}
+                  <div className={"space-y-2.5 " + (order.onSiteContactName ? "border-t border-border pt-3" : "")}>
+                    {order.onSiteContactPhone && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
+                        <a href={`tel:${order.onSiteContactPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-foreground/80 hover:text-primary transition-colors">
+                          {order.onSiteContactPhone}
+                        </a>
+                      </div>
                     )}
-                    <div className={"space-y-2.5 " + (order.onSiteContactName ? "border-t border-border pt-3" : "")}>
-                      {order.onSiteContactPhone && (
-                        <div className="flex items-center gap-3">
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-14 shrink-0">Telefon</span>
-                          <a href={`tel:${order.onSiteContactPhone.replace(/[\s\/]/g, "")}`} className="text-sm text-foreground/80 hover:text-primary transition-colors">
-                            {order.onSiteContactPhone}
-                          </a>
-                        </div>
-                      )}
-                      {order.onSiteContactNotes && (
-                        <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.onSiteContactNotes}</p>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">Nicht erfasst</p>
-                )}
+                    {order.onSiteContactNotes && (
+                      <p className="text-sm text-foreground/80 whitespace-pre-wrap">{order.onSiteContactNotes}</p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Nicht erfasst</p>
+              )}
               </div>
             </div>
 
@@ -1280,6 +1494,20 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   <span className="text-sm font-semibold text-foreground">Gewinn</span>
                   <span className={"text-lg font-bold font-mono tabular-nums " + (internalProfit >= 0 ? "text-emerald-400" : "text-red-400")}>
                     {internalProfit.toFixed(2)}&euro;
+                  </span>
+                </div>
+                <div className="border-t border-amber-500/20 mt-2 pt-2 flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Zahlweise</span>
+                  <span
+                    className={
+                      "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold uppercase tracking-wide " +
+                      (order.paymentMethod === "CASH"
+                        ? "bg-emerald-500/15 text-emerald-400"
+                        : "bg-sky-500/15 text-sky-400")
+                    }
+                  >
+                    <IconCash className="size-3.5" />
+                    {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
                   </span>
                 </div>
               </div>
