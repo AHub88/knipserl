@@ -25,7 +25,7 @@ type Props = {
   mode?: "customer" | "admin";
   isAdminEdit?: boolean;
   onSaveTemplate?: (canvasJson: any, thumbnailDataUrl: string | null) => void;
-  onFormatChange?: (newFormat: string) => void;
+  onFormatChange?: (newFormat: string, templateCanvasJson?: any) => void;
   templateMeta?: React.ReactNode;
 };
 
@@ -405,6 +405,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     if (!canvas) return;
     const fabric = fabricModRef.current;
     if (!fabric) return;
+
+    // Template-Format weicht ab → Parent lädt Template nach Format-Wechsel neu
+    if (template.format && template.format !== format && onFormatChange) {
+      onFormatChange(template.format, template.canvasJson);
+      return;
+    }
 
     const json = template.canvasJson as Record<string, any>;
 

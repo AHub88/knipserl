@@ -27,6 +27,7 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
   );
   const [saving, setSaving] = useState(false);
   const [formatChanged, setFormatChanged] = useState(false);
+  const [pendingTemplateJson, setPendingTemplateJson] = useState<any>(null);
 
   async function selectFormat(fmt: string) {
     setSaving(true);
@@ -112,20 +113,25 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
           : "",
         locationName: order.locationName,
       }}
-      existingDesign={formatChanged ? null : {
-        canvasJson: layoutDesign.canvasJson,
-        submitted: layoutDesign.submitted,
-      }}
-      onFormatChange={async (newFmt) => {
+      existingDesign={
+        pendingTemplateJson
+          ? { canvasJson: pendingTemplateJson, submitted: false }
+          : formatChanged
+          ? null
+          : { canvasJson: layoutDesign.canvasJson, submitted: layoutDesign.submitted }
+      }
+      onFormatChange={async (newFmt, templateCanvasJson) => {
         setSaving(true);
         try {
+          const nextJson = templateCanvasJson ?? {};
           const res = await fetch(`/api/design/${token}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ format: newFmt, canvasJson: {} }),
+            body: JSON.stringify({ format: newFmt, canvasJson: nextJson }),
           });
           if (!res.ok) throw new Error();
           setFormatChanged(true);
+          setPendingTemplateJson(templateCanvasJson ?? null);
           setFormat(newFmt);
         } catch {
           alert("Fehler beim Ändern des Formats.");

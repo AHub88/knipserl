@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.18.0] — 2026-04-24
+
+### Added
+- **Layoutdesigner (Kunde) — Vorlage schaltet Format automatisch um**: Wählt der Kunde eine Vorlage, deren `format` vom aktuell gewählten Format abweicht (z.B. 5×15 Hochformat-Streifen bei geöffnetem 10×15 Querformat), wird das Format nun automatisch auf das der Vorlage gewechselt und der Vorlagen-Inhalt direkt geladen. Vorher wurden Hochformat-Vorlagen im Querformat-Canvas verzerrt/abgeschnitten dargestellt, bis der Kunde zusätzlich manuell auf den Format-Button oben klickte.
+- Implementierungsweg: `onFormatChange` nimmt jetzt optional `templateCanvasJson` als zweiten Parameter. Der Customer-Client (`design-page-client.tsx`) speichert das JSON nach erfolgreichem PATCH in `pendingTemplateJson` und reicht es beim Remount als `existingDesign` durch — so lädt der neu gemountete `LayoutEditor` die Vorlage sofort, statt ein leeres Canvas zu zeigen.
+
 ## [1.17.5] — 2026-04-24
 
 ### Removed
