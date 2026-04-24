@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.17.1] — 2026-04-24
+
+### Changed
+- **Layoutdesigner — linke Sidebar auf Icon-Leiste reduziert** (220 px → 56 px). „Hinzufügen" / „Bibliothek" hatten jeweils nur 2–3 Einträge, die Section-Titel + vollflächige Labels verbrauchten deshalb unnötig viel Breite. Labels jetzt als Tooltip (`title`-Attribut). Der Foto-Platzhalter-Zähler (`2/3` etc.) erscheint als kleines Primary-Badge oben rechts am Icon, damit die Info nicht verloren geht. Canvas gewinnt dadurch ~160 px Breite.
+- **Eigenschaften-Panel rechts — Position / Größe / Transformation standardmäßig eingeklappt**. Die drei Sektionen stehen unten in der Property-Liste, werden aber im Alltag selten angefasst — bisher mussten sie jedes Mal vorbei-gescrollt werden, bevor man an Farbe / Abstände kam. Klick auf den Titel klappt auf. „Text", „Rahmen" und „Schatten" verhalten sich wie vorher.
+
 ## [1.17.0] — 2026-04-24
 
 ### Added

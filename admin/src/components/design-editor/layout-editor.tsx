@@ -978,36 +978,31 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
         {/* Main area: Left sidebar + Canvas + Right sidebar */}
         <div className="flex flex-1 min-h-0">
 
-          {/* LEFT SIDEBAR: Add elements */}
-          <div className="w-[220px] shrink-0 border-r border-border bg-accent flex flex-col overflow-y-auto">
-            <div className="px-3 py-2 border-b border-border">
-              <h3 className="text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">Hinzufügen</h3>
-            </div>
-
+          {/* LEFT SIDEBAR: Add elements (icon-only, 56px) */}
+          <div className="w-14 shrink-0 border-r border-border bg-accent flex flex-col overflow-y-auto py-1">
             <SidebarButton
               icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 4-6 5 7"/></svg>}
-              label="Bild"
+              label="Bild hinzufügen"
               onClick={() => document.getElementById("img-upload-hidden")?.click()}
             />
             <SidebarButton
               icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M17 8h.01"/></svg>}
               label={`Foto-Platzhalter (${placeholderCount}/3)`}
+              badge={`${placeholderCount}/3`}
               onClick={addPhotoPlaceholder}
               disabled={placeholderCount >= 3}
             />
             <SidebarButton
               icon={<span className="w-5 h-5 flex items-center justify-center text-lg font-bold">T</span>}
-              label="Text"
+              label="Text hinzufügen"
               onClick={addText}
             />
 
-            <div className="px-3 py-2 border-t border-b border-border mt-1">
-              <h3 className="text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">Bibliothek</h3>
-            </div>
+            <div className="mx-3 my-1.5 border-t border-border" />
 
             <SidebarButton
               icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>}
-              label="Elemente"
+              label="Element-Bibliothek"
               onClick={() => setOpenModal("elements")}
             />
             <SidebarButton
@@ -1120,15 +1115,21 @@ function PropSection({ title, children, action, collapsible, defaultOpen }: { ti
   );
 }
 
-function SidebarButton({ icon, label, onClick, disabled }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean }) {
+function SidebarButton({ icon, label, onClick, disabled, badge }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean; badge?: string }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-foreground/70 hover:bg-accent hover:text-foreground transition-colors ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
+      title={label}
+      aria-label={label}
+      className={`w-full flex items-center justify-center h-12 text-foreground/70 hover:bg-muted hover:text-foreground transition-colors relative ${disabled ? "opacity-30 cursor-not-allowed" : ""}`}
     >
-      <span className="text-foreground/50 shrink-0">{icon}</span>
-      <span className="truncate">{label}</span>
+      <span className="text-foreground/60">{icon}</span>
+      {badge !== undefined && (
+        <span className="absolute top-1 right-1 text-[8px] font-mono font-semibold bg-primary/90 text-primary-foreground rounded px-1 leading-tight tabular-nums">
+          {badge}
+        </span>
+      )}
     </button>
   );
 }
@@ -2175,7 +2176,7 @@ function RightPanel({
             )}
 
             {/* ── POSITION ── */}
-            <PropSection title="Position">
+            <PropSection title="Position" collapsible>
               <div className="grid grid-cols-2 gap-1.5">
                 <div>
                   <label className={lbl}>X</label>
@@ -2191,7 +2192,7 @@ function RightPanel({
             </PropSection>
 
             {/* ── GRÖSSE ── */}
-            <PropSection title="Größe">
+            <PropSection title="Größe" collapsible>
               <div className="grid grid-cols-2 gap-1.5">
                 <div>
                   <label className={lbl}>Breite</label>
@@ -2212,7 +2213,7 @@ function RightPanel({
             </PropSection>
 
             {/* ── TRANSFORMATION ── */}
-            <PropSection title="Transformation">
+            <PropSection title="Transformation" collapsible>
               <label className={lbl}>Drehung</label>
               <div className="flex items-center gap-1.5">
                 <input type="range" min={0} max={360} value={getObjProp("angle")}
