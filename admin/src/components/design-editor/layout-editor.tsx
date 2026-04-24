@@ -97,6 +97,12 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
 
   const [placeholderCount, setPlaceholderCount] = useState(0);
   const [hasSelection, setHasSelection] = useState(false);
+  // Startscreen: nur für Kunden, und nur wenn das Canvas noch nichts enthält.
+  const [showStartScreen, setShowStartScreen] = useState(() => {
+    if (mode !== "customer" || isAdminEdit) return false;
+    const objs = (existingDesign?.canvasJson as { objects?: unknown[] } | null | undefined)?.objects;
+    return !Array.isArray(objs) || objs.length === 0;
+  });
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -1032,11 +1038,50 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
           {/* CANVAS AREA */}
           <div
             ref={wrapperRef}
-            className="flex-1 flex items-start justify-center overflow-auto bg-muted p-4"
+            className="flex-1 flex items-start justify-center overflow-auto bg-muted p-4 relative"
           >
             <div ref={canvasWrapRef} className="shadow-2xl shadow-black/5 dark:shadow-black/25 border border-border" style={{ transformOrigin: "top center", backgroundImage: "repeating-conic-gradient(#808080 0% 25%, #fff 0% 50%)", backgroundSize: "16px 16px" }}>
               <canvas ref={canvasRef} />
             </div>
+
+            {showStartScreen && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/90 backdrop-blur-sm z-20 p-4">
+                <div className="w-full max-w-2xl rounded-2xl bg-card border border-border shadow-2xl p-6 sm:p-8 text-center space-y-5">
+                  <div className="space-y-1.5">
+                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">Wie möchtest du starten?</h2>
+                    <p className="text-sm text-foreground/60">Wähle eine fertige Vorlage oder lege direkt selbst los.</p>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => { setOpenModal("templates"); setShowStartScreen(false); }}
+                      className="group flex flex-col items-center gap-2 rounded-xl border-2 border-primary/40 bg-primary/10 hover:bg-primary/20 hover:border-primary transition-colors p-6 text-foreground"
+                    >
+                      <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                      </svg>
+                      <span className="text-sm font-semibold">Vorlage auswählen</span>
+                      <span className="text-xs text-foreground/50">Aus fertigen Designs wählen</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowStartScreen(false)}
+                      className="group flex flex-col items-center gap-2 rounded-xl border-2 border-border hover:border-foreground/30 hover:bg-foreground/5 transition-colors p-6 text-foreground"
+                    >
+                      <svg className="w-8 h-8 text-foreground/60 group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      </svg>
+                      <span className="text-sm font-semibold">Design manuell erstellen</span>
+                      <span className="text-xs text-foreground/50">Leer starten und selbst gestalten</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* RIGHT SIDEBAR: Layers + Object Properties */}

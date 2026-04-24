@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.21.0] — 2026-04-24
+
+### Added
+- **Layoutdesigner — Startscreen für den Kunden bei leerem Canvas**. Wenn der Kunde den Designer öffnet und noch keine Objekte auf dem Canvas sind, legt sich ein zentriertes Overlay („Wie möchtest du starten?") über die Zeichenfläche mit zwei großen Call-to-Actions:
+  - **Vorlage auswählen** — öffnet direkt das Vorlagen-Modal (gleiche Aktion wie der Sidebar-Eintrag), Primary-Akzent.
+  - **Design manuell erstellen** — schließt das Overlay und gibt das leere Canvas frei.
+  - Overlay erscheint nur im `customer`-Mode (nicht im Admin-Editor bzw. Admin-Edit-Mode) und nur, wenn `existingDesign.canvasJson.objects` leer oder nicht vorhanden ist. Sobald der Kunde eine Entscheidung trifft, bleibt es weg — auch wenn die Vorlage später wieder gewechselt wird.
+  - Soll verhindern, dass Kunden das leere Canvas sehen und nicht wissen, wo sie anfangen sollen — viele wollten zuerst eine Vorlage, hatten aber keinen offensichtlichen Einstieg dafür.
+
 ## [1.20.4] — 2026-04-24
 
 ### Changed
