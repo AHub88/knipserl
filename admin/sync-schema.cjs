@@ -96,6 +96,7 @@ async function syncSchema() {
     ["inquiries", "locationLng", "DOUBLE PRECISION", true, null],
     ["inquiries", "distanceKm", "DOUBLE PRECISION", true, null],
     ["inquiries", "extras", "TEXT[]", false, "'{}'"],
+    ["inquiries", "extraPaperRolls", "INTEGER", false, "0"],
     ["inquiries", "comments", "TEXT", true, null],
     ["inquiries", "status", '"InquiryStatus"', false, "'NEW'"],
     ["inquiries", "createdAt", "TIMESTAMPTZ", false, "NOW()"],

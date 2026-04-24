@@ -153,6 +153,7 @@ model Inquiry {
   locationLng     Float?
   distanceKm      Float?
   extras          String[]      @default([])
+  extraPaperRolls Int           @default(0)
   comments        String?
   status          InquiryStatus @default(NEW)
   createdAt       DateTime      @default(now())

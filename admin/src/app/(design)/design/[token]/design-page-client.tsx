@@ -73,17 +73,17 @@ export function DesignPageClient({ token, order, layoutDesign, isAdminEdit = fal
               </div>
             </button>
 
-            {/* 4x6 - Fotoprint */}
+            {/* 4x6 - Fotoprint (Querformat) */}
             <button
               onClick={() => selectFormat("4x6")}
               disabled={saving}
               className="group relative rounded-xl border-2 border-border hover:border-primary transition-all p-6 text-left disabled:opacity-50"
             >
               <div className="flex flex-col items-center gap-4">
-                <div className="w-32 h-48 bg-foreground/10 rounded-lg border border-border group-hover:border-primary transition-colors" />
+                <div className="w-48 h-32 bg-foreground/10 rounded-lg border border-border group-hover:border-primary transition-colors" />
                 <div className="text-center">
                   <div className="text-lg font-semibold text-foreground">10 x 15 cm</div>
-                  <div className="text-sm text-foreground/50">Fotoprint</div>
+                  <div className="text-sm text-foreground/50">Fotoprint (Querformat)</div>
                 </div>
               </div>
             </button>

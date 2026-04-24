@@ -1,5 +1,8 @@
 export const BOX_PRICE = 379;
 
+/** Aufpreis pro zusätzlicher Papierrolle (über Standard-Paket hinaus). */
+export const PAPER_ROLL_PRICE = 99;
+
 export const EXTRAS_PRICES: Record<string, number> = {
   Props: 45,
   Telefon: 100,

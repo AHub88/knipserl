@@ -85,7 +85,7 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const { action, price, paymentMethod, boxPrice, travelCost, extrasCost, extras, discount, discountType } = body;
+  const { action, price, paymentMethod, boxPrice, travelCost, extrasCost, extras, discount, discountType, extraPaperRolls } = body;
 
   const inquiry = await prisma.inquiry.findUnique({ where: { id } });
   if (!inquiry) {
@@ -162,6 +162,10 @@ export async function PATCH(
           customerEmail: inquiry.customerEmail,
           customerPhone: inquiry.customerPhone,
           extras: extras ?? inquiry.extras,
+          extraPaperRolls:
+            extraPaperRolls !== undefined
+              ? Math.max(0, Math.floor(Number(extraPaperRolls) || 0))
+              : inquiry.extraPaperRolls,
         },
       });
 
@@ -205,12 +209,20 @@ export async function PATCH(
       "customerName", "customerEmail", "customerPhone", "customerType",
       "eventType", "eventDate", "locationName", "locationAddress",
       "locationLat", "locationLng", "distanceKm", "extras", "comments",
+      "extraPaperRolls",
     ] as const;
 
     const updateData: Record<string, unknown> = {};
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
-        updateData[field] = field === "eventDate" ? new Date(body[field]) : body[field];
+        if (field === "eventDate") {
+          updateData[field] = new Date(body[field]);
+        } else if (field === "extraPaperRolls") {
+          const n = Number(body[field]);
+          updateData[field] = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+        } else {
+          updateData[field] = body[field];
+        }
       }
     }
 

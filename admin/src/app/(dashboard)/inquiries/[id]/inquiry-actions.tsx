@@ -22,7 +22,7 @@ import {
   IconPhone,
   IconCopy,
 } from "@tabler/icons-react";
-import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
+import { BOX_PRICE, EXTRAS_PRICES, PAPER_ROLL_PRICE, calculateExtrasTotal } from "@/lib/extras-pricing";
 
 const EXTRAS_CONFIG = [
   { key: "Drucker", label: "Drucker", icon: IconPrinter },
@@ -40,6 +40,7 @@ interface InquiryActionsProps {
   inquiryId: string;
   customerType: string;
   inquiryExtras: string[];
+  inquiryExtraPaperRolls: number;
   distanceKm: number | null;
 }
 
@@ -47,6 +48,7 @@ export function InquiryActions({
   inquiryId,
   customerType,
   inquiryExtras,
+  inquiryExtraPaperRolls,
   distanceKm,
 }: InquiryActionsProps) {
   const router = useRouter();
@@ -54,6 +56,7 @@ export function InquiryActions({
 
   // Pricing state
   const [extras, setExtras] = useState<string[]>(inquiryExtras);
+  const [extraPaperRolls, setExtraPaperRolls] = useState(String(inquiryExtraPaperRolls ?? 0));
   const [boxPrice, setBoxPrice] = useState(String(BOX_PRICE));
   const [travelCost, setTravelCost] = useState("");
   const [discount, setDiscount] = useState("");
@@ -92,7 +95,9 @@ export function InquiryActions({
   const calcBox = Number(boxPrice) || 0;
   const calcTravel = Number(travelCost) || 0;
   const calcExtras = calculateExtrasTotal(extras);
-  const calcSubtotal = calcBox + calcTravel + calcExtras;
+  const calcPaperRolls = Math.max(0, Math.floor(Number(extraPaperRolls) || 0));
+  const calcPaperRollsCost = calcPaperRolls * PAPER_ROLL_PRICE;
+  const calcSubtotal = calcBox + calcTravel + calcExtras + calcPaperRollsCost;
   const calcDiscount = Number(discount) || 0;
   const calcDiscountAmount = discountType === "PERCENT"
     ? (calcSubtotal * calcDiscount) / 100
@@ -115,6 +120,9 @@ export function InquiryActions({
     }
     for (const ext of activeExtrasWithPrices) {
       if (ext.price > 0) lines.push(`${ext.label}: ${ext.price.toFixed(2)} €`);
+    }
+    if (calcPaperRolls > 0) {
+      lines.push(`Papierrolle${calcPaperRolls > 1 ? "n" : ""} (× ${calcPaperRolls}): ${calcPaperRollsCost.toFixed(2)} €`);
     }
     if (calcDiscountAmount > 0) {
       lines.push(`Rabatt${discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}: -${calcDiscountAmount.toFixed(2)} €`);
@@ -149,6 +157,7 @@ export function InquiryActions({
           discount: action === "accept" && calcDiscount > 0 ? calcDiscount : undefined,
           discountType: action === "accept" && calcDiscount > 0 ? discountType : undefined,
           extras: action === "accept" ? extras : undefined,
+          extraPaperRolls: action === "accept" ? calcPaperRolls : undefined,
           paymentMethod: action === "accept" ? paymentMethod : undefined,
         }),
       });
@@ -220,6 +229,20 @@ export function InquiryActions({
         </div>
       </div>
 
+      {/* Extra Papierrolle(n) */}
+      <div>
+        <label className={labelClass}>Extra Papierrolle(n) &middot; {PAPER_ROLL_PRICE} &euro; pro Stück</label>
+        <input
+          className={inputClass + " max-w-[160px]"}
+          type="number"
+          min={0}
+          step={1}
+          value={extraPaperRolls}
+          onChange={(e) => setExtraPaperRolls(e.target.value)}
+          placeholder="0"
+        />
+      </div>
+
       {/* Price inputs */}
       <div className="grid gap-3 grid-cols-3">
         <div>
@@ -285,6 +308,12 @@ export function InquiryActions({
             </div>
           )
         ))}
+        {calcPaperRolls > 0 && (
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>Papierrolle{calcPaperRolls > 1 ? "n" : ""} (&times; {calcPaperRolls})</span>
+            <span className="tabular-nums">{calcPaperRollsCost.toFixed(2)} &euro;</span>
+          </div>
+        )}
         {calcDiscountAmount > 0 && (
           <div className="flex justify-between text-xs text-red-400">
             <span>Rabatt{discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}</span>

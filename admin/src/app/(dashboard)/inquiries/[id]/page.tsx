@@ -199,6 +199,7 @@ export default async function InquiryDetailPage({
           locationLng: inquiry.locationLng,
           distanceKm: inquiry.distanceKm,
           extras: normalizedExtras,
+          extraPaperRolls: inquiry.extraPaperRolls,
           comments: inquiry.comments,
         }}
       />
@@ -209,6 +210,7 @@ export default async function InquiryDetailPage({
           inquiryId={inquiry.id}
           customerType={inquiry.customerType}
           inquiryExtras={normalizedExtras}
+          inquiryExtraPaperRolls={inquiry.extraPaperRolls}
           distanceKm={inquiry.distanceKm}
         />
       )}

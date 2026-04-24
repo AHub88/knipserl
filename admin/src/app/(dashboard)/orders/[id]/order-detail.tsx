@@ -37,7 +37,7 @@ import {
   IconNotes,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
-import { BOX_PRICE, EXTRAS_PRICES, calculateExtrasTotal } from "@/lib/extras-pricing";
+import { BOX_PRICE, EXTRAS_PRICES, PAPER_ROLL_PRICE, calculateExtrasTotal } from "@/lib/extras-pricing";
 import { ImageGallery } from "./image-gallery";
 import { OrderViewA } from "./order-view-a";
 import { useViewMode } from "@/lib/view-mode-context";
@@ -372,7 +372,9 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   const calcBoxPrice = Number(boxPrice) || 0;
   const calcTravelCost = Number(travelCost) || 0;
   const calcExtrasCost = Number(extrasCost) || 0;
-  const calcSubtotal = calcBoxPrice + calcTravelCost + calcExtrasCost;
+  const calcPaperRolls = Math.max(0, Math.floor(Number(extraPaperRolls) || 0));
+  const calcPaperRollsCost = calcPaperRolls * PAPER_ROLL_PRICE;
+  const calcSubtotal = calcBoxPrice + calcTravelCost + calcExtrasCost + calcPaperRollsCost;
   const calcDiscount = Number(discount) || 0;
   const calcDiscountAmount = discountType === "PERCENT"
     ? (calcSubtotal * calcDiscount) / 100
@@ -515,8 +517,9 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
   })();
 
   // Price calculations
+  const paperRollsCost = (order.extraPaperRolls ?? 0) * PAPER_ROLL_PRICE;
   const customerSubtotal =
-    (order.boxPrice ?? 0) + (order.travelCost ?? 0) + (order.extrasCost ?? 0);
+    (order.boxPrice ?? 0) + (order.travelCost ?? 0) + (order.extrasCost ?? 0) + paperRollsCost;
   const discountAmount =
     order.discount != null
       ? order.discountType === "PERCENT"
@@ -1051,6 +1054,12 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
             <span>Extras</span>
             <span className="tabular-nums">{calcExtrasCost.toFixed(2)} &euro;</span>
           </div>
+          {calcPaperRolls > 0 && (
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Papierrolle{calcPaperRolls > 1 ? "n" : ""} (&times; {calcPaperRolls})</span>
+              <span className="tabular-nums">{calcPaperRollsCost.toFixed(2)} &euro;</span>
+            </div>
+          )}
           {calcDiscount > 0 && (
             <div className="flex justify-between text-xs text-red-400">
               <span>Rabatt{discountType === "PERCENT" ? ` (${calcDiscount}%)` : ""}</span>

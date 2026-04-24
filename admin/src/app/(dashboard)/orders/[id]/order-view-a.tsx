@@ -44,7 +44,7 @@ import {
   IconReceipt,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
-import { EXTRAS_PRICES } from "@/lib/extras-pricing";
+import { EXTRAS_PRICES, PAPER_ROLL_PRICE } from "@/lib/extras-pricing";
 import { ImageGallery } from "./image-gallery";
 
 const EXTRAS_CONFIG = [
@@ -227,7 +227,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
     })
     .filter(Boolean) as { key: string; label: string; icon: typeof IconPrinter; price: number }[];
 
-  const customerSubtotal = (order.boxPrice ?? 0) + (order.travelCost ?? 0) + (order.extrasCost ?? 0);
+  const paperRollsCost = (order.extraPaperRolls ?? 0) * PAPER_ROLL_PRICE;
+  const customerSubtotal = (order.boxPrice ?? 0) + (order.travelCost ?? 0) + (order.extrasCost ?? 0) + paperRollsCost;
   const discountAmount = order.discount
     ? order.discountType === "PERCENT" ? (customerSubtotal * order.discount) / 100 : order.discount
     : 0;
@@ -1445,6 +1446,12 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               {activeExtras.filter(e => e.price > 0).map((e) => (
                 <PriceRow key={e.key} label={e.label} value={e.price} />
               ))}
+              {order.extraPaperRolls > 0 && (
+                <PriceRow
+                  label={`Papierrolle${order.extraPaperRolls > 1 ? "n" : ""} (× ${order.extraPaperRolls})`}
+                  value={paperRollsCost}
+                />
+              )}
               {discountAmount > 0 && (
                 <div className="flex items-center justify-between py-0.5">
                   <span className="text-sm text-red-400">

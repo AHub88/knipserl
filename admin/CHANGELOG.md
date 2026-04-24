@@ -4,6 +4,19 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.16.0] — 2026-04-24
+
+### Added
+- **Extra Papierrolle(n) bei Anfragen**: Neues Feld `extraPaperRolls` auf Anfragen, genauso wie bisher bei Aufträgen. Inline editierbar in der Anfrage-Detailansicht (Stückzahl-Input unter „Angefragte Extras"). Wird bei Annahme der Anfrage automatisch in den neuen Auftrag übernommen.
+- **Aufpreis 99 € pro Papierrolle** in allen Kundenpreis-Kalkulationen: neue Konstante `PAPER_ROLL_PRICE = 99` in `extras-pricing.ts`. Die Zeile „Papierrolle(n) × *n*" erscheint jetzt sowohl in der Live-Berechnung der Anfrage-Annahme als auch in der Preiskalkulation-Box der Auftragsdetails.
+
+### Changed
+- **Design-Editor Format-Picker**: Die Vorschau-Kachel für das „10 × 15 cm Fotoprint"-Format wird jetzt **im Querformat** angezeigt (passt zum tatsächlich landscape-orientierten Canvas 1800 × 1200 px). Bezeichnung ergänzt um „(Querformat)".
+- Schema: `Inquiry` bekommt Spalte `extraPaperRolls INTEGER DEFAULT 0` (auch in `sync-schema.cjs` gepflegt).
+
+### Heads-up / Migration
+- Bestehende Aufträge mit `extraPaperRolls > 0` zeigen im Kundenpreis-Block jetzt **99 € × Anzahl** zusätzlich an. Der gespeicherte `price` wird dabei **nicht** automatisch angepasst — er bleibt der tatsächlich in Rechnung gestellte Betrag. Wer will, öffnet den Auftrag im „Bearbeiten"-Modus und klickt „Berechnen", um den Preis zu aktualisieren.
+
 ## [1.15.0] — 2026-04-24
 
 ### Added
