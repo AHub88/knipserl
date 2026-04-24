@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.20.0] — 2026-04-24
+
+### Added
+- **Admin-Download für 5×15-Streifen liefert automatisch verdoppeltes 10×15-PNG.** Gibt der Kunde einen Fotostreifen (Format `2x6`) ab, bekommt der Fotoprint-Drucker standardmäßig ein 10×15-cm-Papier — darauf müssen zwei identische Streifen nebeneinander sitzen, sonst gibt es pro Druck nur einen halb-bedruckten Bogen. Das erledigt ab sofort der Download selbst.
+  - Neuer Endpoint: `GET /api/design/[token]/download-final` (Admin-only, Driver gesperrt). Liest `layout-final.png` aus dem Order-Upload-Verzeichnis. Bei Format `2x6` baut **sharp** ein neues Canvas mit doppelter Breite (2 × `stripW` × `stripH`) und komponiert das Streifen-PNG zweimal nebeneinander — links bei `x=0`, rechts bei `x=stripW`. Das Ergebnis ist ein 1200×1800-Hochformat-PNG (entspricht exakt einem 10×15 cm Standard-Fotoprint, hochkant); nach dem Druck wird mittig geschnitten → zwei identische Streifen.
+  - Bei Format `4x6` (10×15 quer) wird das Original 1:1 ausgeliefert — kein Overhead.
+  - Download-Buttons in der Auftragsansicht (`order-view-a.tsx`, Kunden-Layout-Box + Modal) verlinken jetzt auf den neuen Endpoint statt direkt auf die statische `layout-final.png`. Fallback auf die alte URL bleibt erhalten, falls für einen Altbestands-Auftrag kein `designToken` gesetzt ist.
+
 ## [1.19.0] — 2026-04-24
 
 ### Added

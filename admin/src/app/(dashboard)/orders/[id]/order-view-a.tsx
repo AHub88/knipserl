@@ -1370,7 +1370,7 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   </button>
                   {!isDriverView && (
                     <a
-                      href={order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
+                      href={order.designToken ? `/api/design/${order.designToken}/download-final` : order.graphicUrl.replace("layout-preview.png", "layout-final.png")}
                       download={`layout-${order.orderNumber}.png`}
                       className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-border bg-muted text-foreground/80 text-sm hover:bg-accent transition-colors"
                     >
