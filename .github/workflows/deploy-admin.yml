@@ -61,8 +61,11 @@ jobs:
           context: ./admin
           push: true
           tags: ${{ env.IMAGE }}:${{ steps.env.outputs.tag }}
+          # cache-from liest noch bestehende GHA-Cache-Layer (solange vorhanden).
+          # cache-to schreibt NUR inline ins Image-Manifest — kein separater GHA-Cache-Export,
+          # daher kein 502/504-Risiko mehr am GHA-Cache-Endpoint (seit 2026-04-23 chronisch flaky).
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=inline
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1

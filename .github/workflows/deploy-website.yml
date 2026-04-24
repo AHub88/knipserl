@@ -51,7 +51,7 @@ jobs:
           push: true
           tags: ${{ env.IMAGE }}:${{ steps.env.outputs.tag }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=inline
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
