@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.14.1] — 2026-04-24
+
+### Changed
+- **Fahrer-Ansicht — Seitenspalte**: Statt „Fahrer + Zahlart-Kachel" sitzen in der rechten Spalte jetzt **Fahrer-Name oben + die vier Workflow-Status-Pills** (Bestätigt / Design / Geplant / Bezahlt) als read-only. Layout matcht das gewünschte Design (Fahrer-Header, Trennlinie, Pills darunter).
+- **Zahlart prominent** ist aus der Fahrer-Spalte rausgeflogen und sitzt jetzt als **breiter farbiger Banner direkt unter dem Auftrag-Header**: grün „Bar kassieren" bzw. blau „Rechnung — nicht kassieren". Damit steht die zahlungsrelevante Info ganz oben und ist auf einen Blick klar.
+
 ## [1.14.0] — 2026-04-23
 
 ### Added

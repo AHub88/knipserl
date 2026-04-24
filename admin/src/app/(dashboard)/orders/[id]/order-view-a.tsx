@@ -333,12 +333,13 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             )}
           </div>
 
-          {/* Fahrer-Ansicht: nur Fahrer + prominente Zahlart, kein Workflow + keine Action-Rail */}
+          {/* Fahrer-Ansicht: Fahrer-Name + Workflow-Status (read-only), keine Action-Rail */}
           {isDriverView ? (
-            <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4 flex flex-col gap-4">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Fahrer</p>
-                <div className="flex items-center gap-2">
+            <div className="w-full lg:w-64 lg:border-l border-t lg:border-t-0 border-border bg-muted/20 p-4 flex flex-col gap-2">
+              {/* Fahrer-Header */}
+              <div className="pb-3 mb-1 border-b border-border">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Fahrer</p>
+                <div className="flex items-center gap-2 h-5">
                   <IconSteeringWheel
                     className={
                       "size-4 shrink-0 " + (driverDisplay ? "text-primary" : "text-muted-foreground")
@@ -351,22 +352,34 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
                   )}
                 </div>
               </div>
-              <div className="mt-auto">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Zahlart</p>
-                <div
-                  className={
-                    "flex items-center gap-3 rounded-xl border px-4 py-3 " +
-                    (order.paymentMethod === "CASH"
-                      ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-400"
-                      : "border-sky-500/40 bg-sky-500/15 text-sky-400")
-                  }
-                >
-                  <IconCash className="size-7 shrink-0" />
-                  <span className="text-2xl font-bold uppercase tracking-wide">
-                    {order.paymentMethod === "CASH" ? "Bar" : "Rechnung"}
-                  </span>
-                </div>
-              </div>
+
+              {/* Status-Pills (read-only für Fahrer) */}
+              {([
+                { key: "confirmed" as const, label: "Bestätigt", icon: IconCircleCheck, warnIfPast: false },
+                { key: "designReady" as const, label: "Design", icon: IconPalette, warnIfPast: false },
+                { key: "planned" as const, label: "Geplant", icon: IconTruck, warnIfPast: false },
+                { key: "paid" as const, label: "Bezahlt", icon: IconCoin, warnIfPast: true },
+              ]).map((s) => {
+                const done = statusState[s.key];
+                const warn = !done && s.warnIfPast && eventInPast;
+                return (
+                  <div
+                    key={s.label}
+                    className={
+                      "flex items-center gap-2 h-9 px-3 rounded-lg border text-xs font-medium " +
+                      (done
+                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                        : warn
+                          ? "border-red-500/30 bg-red-500/10 text-red-400"
+                          : "border-border bg-card text-muted-foreground")
+                    }
+                  >
+                    <s.icon className="size-4 shrink-0" />
+                    <span>{s.label}</span>
+                    {done && <IconCheck className="size-3.5 opacity-70 ml-auto" />}
+                  </div>
+                );
+              })}
             </div>
           ) : (
           <>
@@ -644,6 +657,26 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           )}
         </div>
       </div>
+
+      {/* Zahlart-Banner (Fahrer-Ansicht): Bar oder Rechnung prominent */}
+      {isDriverView && (
+        <div
+          className={
+            "flex items-center gap-3 rounded-xl border px-5 py-3 " +
+            (order.paymentMethod === "CASH"
+              ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-400"
+              : "border-sky-500/40 bg-sky-500/15 text-sky-400")
+          }
+        >
+          <IconCash className="size-7 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-wider opacity-70">Zahlart</p>
+            <p className="text-xl font-bold uppercase tracking-wide">
+              {order.paymentMethod === "CASH" ? "Bar kassieren" : "Rechnung — nicht kassieren"}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Customer confirmation timestamp */}
       {order.confirmedByCustomerAt && (
