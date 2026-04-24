@@ -466,13 +466,13 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
       </div>
 
       {/* Angefragte Extras */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-5 py-3 flex items-center gap-2">
-          <IconStar className="size-4 text-primary" />
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Angefragte Extras</h3>
-        </div>
-        <div className="p-5 space-y-4">
-          {inquiry.extras.length > 0 ? (
+      {inquiry.extras.length > 0 && (
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2">
+            <IconStar className="size-4 text-primary" />
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Angefragte Extras</h3>
+          </div>
+          <div className="p-5">
             <div className="flex flex-wrap gap-2">
               {inquiry.extras.map((extra) => (
                 <Badge
@@ -484,70 +484,9 @@ export function InquiryDetails({ inquiry }: { inquiry: InquiryData }) {
                 </Badge>
               ))}
             </div>
-          ) : (
-            <p className="text-sm text-muted-foreground italic">Keine Extras angefragt</p>
-          )}
-
-          {/* Extra Papierrolle(n) — inline editierbar */}
-          <div className="border-t border-border pt-4">
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-32 shrink-0">
-                Extra Papierrolle(n)
-              </span>
-              {editingField === "extraPaperRolls" ? (
-                <div className="flex items-center gap-1.5 flex-1">
-                  <input
-                    ref={inputRef as React.RefObject<HTMLInputElement>}
-                    type="number"
-                    min={0}
-                    step={1}
-                    className={inputClass + " max-w-[120px]"}
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") cancelEdit();
-                      if (e.key === "Enter") {
-                        const n = Math.max(0, Math.floor(Number(editValue) || 0));
-                        saveField({ extraPaperRolls: n });
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const n = Math.max(0, Math.floor(Number(editValue) || 0));
-                      saveField({ extraPaperRolls: n });
-                    }}
-                    disabled={saving}
-                    className="flex items-center gap-1 rounded-md bg-emerald-600/20 text-emerald-400 px-2 py-0.5 text-xs hover:bg-emerald-600/30 transition-colors"
-                  >
-                    {saving ? <IconLoader2 className="size-3 animate-spin" /> : <IconCheck className="size-3" />}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={cancelEdit}
-                    className="flex items-center gap-1 rounded-md bg-zinc-700/30 text-muted-foreground px-2 py-0.5 text-xs hover:bg-zinc-700/50 transition-colors"
-                  >
-                    <IconX className="size-3" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => startEdit("extraPaperRolls", String(inquiry.extraPaperRolls ?? 0))}
-                  className="flex items-center gap-2 text-sm text-foreground/80 hover:text-primary transition-colors"
-                >
-                  <span className="font-mono tabular-nums">{inquiry.extraPaperRolls ?? 0}</span>
-                  {inquiry.extraPaperRolls > 0 && (
-                    <span className="text-muted-foreground">× 99 € = <span className="font-mono tabular-nums text-foreground/80">{(inquiry.extraPaperRolls * 99).toFixed(2)} €</span></span>
-                  )}
-                  <IconPencil className="size-3 text-muted-foreground/60" />
-                </button>
-              )}
-            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Comments */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">

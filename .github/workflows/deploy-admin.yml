@@ -5,6 +5,8 @@ on:
     branches: [main, dev]
     paths:
       - 'admin/**'
+      - 'webseite/CHANGELOG.md'
+      - 'webseite/package.json'
       - 'deploy/docker-compose.prod.yml'
 
 env:
@@ -33,6 +35,15 @@ jobs:
             echo "tag=dev" >> $GITHUB_OUTPUT
             echo "env=staging" >> $GITHUB_OUTPUT
           fi
+
+      - name: Mirror Webseite-Metadaten in den Admin-Build-Kontext
+        # Die Changelog-Seite im Admin liest auch das Webseiten-Changelog.
+        # Da der Docker-Build-Kontext nur ./admin ist, spiegeln wir CHANGELOG.md
+        # und package.json der Webseite in admin/.webseite/ rein.
+        run: |
+          mkdir -p admin/.webseite
+          cp webseite/CHANGELOG.md admin/.webseite/CHANGELOG.md
+          cp webseite/package.json admin/.webseite/package.json
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

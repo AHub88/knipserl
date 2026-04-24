@@ -4,6 +4,19 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.16.1] — 2026-04-24
+
+### Changed
+- **Anfrage-Detail, Box „Angefragte Extras"**: Die separat eingefügte „Extra Papierrolle(n)"-Zeile ist wieder raus. Stattdessen sitzt im „Anfrage bearbeiten"-Panel direkt neben den anderen Extras-Kacheln eine **eigene Papierrollen-Kachel mit `IconReceipt`** + Stückzahl-Input + Preis-Hinweis (99 €). Kachel färbt sich primär ein, sobald Stückzahl > 0 — gleiche Optik wie bei Aufträgen.
+- Die Stückzahl wird beim Verlassen des Inputs (`onBlur`) sofort auf der Anfrage persistiert, damit sie bei Navigation nicht verloren geht.
+
+### Fixed
+- **Changelog-Seite — Webseiten-Changelog wurde in Produktion nicht gefunden**: Der Docker-Build-Kontext ist `./admin`, also war `../webseite/CHANGELOG.md` zur Laufzeit nicht erreichbar — deshalb stand dort dauerhaft „Webseiten-Changelog nicht gefunden.".
+  - CI-Workflow spiegelt jetzt `webseite/CHANGELOG.md` + `webseite/package.json` vor dem Docker-Build nach `admin/.webseite/` (neuer Step in `.github/workflows/deploy-admin.yml`).
+  - Dockerfile kopiert `.webseite/` in den Runner.
+  - `changelog/page.tsx` liest beide Pfade der Reihe nach (`../webseite/...` zuerst für lokale Dev-Workflows, `.webseite/...` als Fallback im Container).
+  - Änderungen an `webseite/CHANGELOG.md` oder `webseite/package.json` triggern jetzt ebenfalls ein Admin-Deployment (sonst käme die neue Version im Admin nie an).
+
 ## [1.16.0] — 2026-04-24
 
 ### Added

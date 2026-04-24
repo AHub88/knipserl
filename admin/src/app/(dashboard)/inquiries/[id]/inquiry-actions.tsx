@@ -21,6 +21,7 @@ import {
   IconDeviceTv,
   IconPhone,
   IconCopy,
+  IconReceipt,
 } from "@tabler/icons-react";
 import { BOX_PRICE, EXTRAS_PRICES, PAPER_ROLL_PRICE, calculateExtrasTotal } from "@/lib/extras-pricing";
 
@@ -226,21 +227,38 @@ export function InquiryActions({
               </button>
             );
           })}
-        </div>
-      </div>
 
-      {/* Extra Papierrolle(n) */}
-      <div>
-        <label className={labelClass}>Extra Papierrolle(n) &middot; {PAPER_ROLL_PRICE} &euro; pro Stück</label>
-        <input
-          className={inputClass + " max-w-[160px]"}
-          type="number"
-          min={0}
-          step={1}
-          value={extraPaperRolls}
-          onChange={(e) => setExtraPaperRolls(e.target.value)}
-          placeholder="0"
-        />
+          {/* Extra Papierrolle(n) — Kachel mit Icon + Stückzahl-Input */}
+          <div
+            className={
+              "flex flex-col items-center justify-center gap-1 rounded-lg border px-3 py-3 min-w-[90px] text-xs font-medium transition-colors " +
+              (calcPaperRolls > 0
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-muted text-muted-foreground/70")
+            }
+          >
+            <IconReceipt className="size-5" />
+            <span>Papierrollen</span>
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={extraPaperRolls}
+              onChange={(e) => setExtraPaperRolls(e.target.value)}
+              onClick={(e) => e.currentTarget.select()}
+              onBlur={(e) => {
+                const n = Math.max(0, Math.floor(Number(e.target.value) || 0));
+                fetch(`/api/inquiries/${inquiryId}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ action: "updateFields", extraPaperRolls: n }),
+                }).catch(() => { /* wird beim Accept erneut geschrieben */ });
+              }}
+              className="h-6 w-14 rounded-md border border-border bg-muted px-1 text-xs font-mono font-semibold text-center text-foreground outline-none focus:border-primary/50"
+            />
+            <span className="text-[10px] opacity-60 tabular-nums">{PAPER_ROLL_PRICE}&thinsp;&euro;</span>
+          </div>
+        </div>
       </div>
 
       {/* Price inputs */}

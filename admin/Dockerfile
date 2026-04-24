@@ -50,6 +50,10 @@ COPY --from=pg-deps /app/node_modules/ ./node_modules/
 COPY entrypoint.sh ./entrypoint.sh
 COPY sync-schema.cjs ./sync-schema.cjs
 
+# Webseiten-Metadaten für die kombinierte Changelog-Seite
+# (wird vom CI-Workflow befüllt, lokal leer wenn nicht gespiegelt)
+COPY --from=builder /app/.webseite ./.webseite
+
 RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads
 
 USER nextjs

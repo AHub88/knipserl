@@ -54,3 +54,7 @@ Thumbs.db
 
 # prisma generated
 **/src/generated/
+
+# Webseiten-Metadaten-Spiegel für den Admin-Docker-Build (wird vom CI erstellt)
+admin/.webseite/*
+!admin/.webseite/.gitkeep

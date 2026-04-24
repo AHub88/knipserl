@@ -2,24 +2,30 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { IconHistory } from "@tabler/icons-react";
 
-async function readChangelog(relativePath: string): Promise<string | null> {
-  try {
-    const filePath = path.resolve(process.cwd(), relativePath);
-    return await readFile(filePath, "utf8");
-  } catch {
-    return null;
+async function readChangelog(relativePaths: string[]): Promise<string | null> {
+  for (const rel of relativePaths) {
+    try {
+      const filePath = path.resolve(process.cwd(), rel);
+      return await readFile(filePath, "utf8");
+    } catch {
+      // weiter zum nächsten Fallback
+    }
   }
+  return null;
 }
 
-async function readVersion(relativePkgPath: string): Promise<string | null> {
-  try {
-    const filePath = path.resolve(process.cwd(), relativePkgPath);
-    const raw = await readFile(filePath, "utf8");
-    const pkg = JSON.parse(raw) as { version?: string };
-    return pkg.version ?? null;
-  } catch {
-    return null;
+async function readVersion(relativePkgPaths: string[]): Promise<string | null> {
+  for (const rel of relativePkgPaths) {
+    try {
+      const filePath = path.resolve(process.cwd(), rel);
+      const raw = await readFile(filePath, "utf8");
+      const pkg = JSON.parse(raw) as { version?: string };
+      if (pkg.version) return pkg.version;
+    } catch {
+      // weiter zum nächsten Fallback
+    }
   }
+  return null;
 }
 
 type Block =
@@ -140,10 +146,13 @@ function ChangelogBody({ source, source404 }: { source: string | null; source404
 
 export default async function ChangelogPage() {
   const [adminMd, webseiteMd, adminVersion, webseiteVersion] = await Promise.all([
-    readChangelog("CHANGELOG.md"),
-    readChangelog("../webseite/CHANGELOG.md"),
-    readVersion("package.json"),
-    readVersion("../webseite/package.json"),
+    // Admin-CHANGELOG liegt im Root des Admin-Workspaces (lokal + Docker).
+    readChangelog(["CHANGELOG.md"]),
+    // Webseite-CHANGELOG: lokal über `../webseite/CHANGELOG.md`,
+    // im Docker-Image via CI nach `.webseite/CHANGELOG.md` gespiegelt.
+    readChangelog(["../webseite/CHANGELOG.md", ".webseite/CHANGELOG.md"]),
+    readVersion(["package.json"]),
+    readVersion(["../webseite/package.json", ".webseite/package.json"]),
   ]);
 
   return (
