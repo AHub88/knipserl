@@ -4,7 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
-## [1.22.0] — 2026-04-24
+## [1.22.1] — 2026-04-24
+
+### Fixed
+- **Dashboard: Eventarten-Pie sprengte auf Mobile die Breite**. Pie hatte `w-[260px] shrink-0` neben der Legende in einem `flex items-center` — zusammen ergab das ~410 px Content in einem 375-px-Viewport und schob die Card über den Rand. Fix:
+  - Auf Mobile stapelt das Layout vertikal (`flex-col sm:flex-row`), Pie zentriert und voll-breit (`w-full`), Radius kompakter (`innerRadius={50}`, `outerRadius={85}`, Höhe 200 px).
+  - Ab `sm` wieder Pie links / Legende rechts mit schmaleren 220×220 px.
+  - Legende: Items bekommen `min-w-0 truncate` auf dem Text, Zahl rechts `shrink-0` — so kann die Card jetzt tatsächlich schrumpfen.
+  - Card bekommt zur Sicherheit `overflow-hidden`.
+
+
 
 ### Added
 - **Design-Elemente nachträglich bearbeitbar**: In `/settings/design-elements` gibt es pro Karte jetzt einen Stift-Button neben Aktiv-Toggle und Löschen. Klick öffnet ein Modal mit Vorschaubild + Name + Kategorie-Feld (inkl. Autocomplete aus den bekannten Kategorien). Bild selbst bleibt unveränderlich — Hinweis im Modal: bei Bedarf löschen und neu anlegen (ist sauberer, weil sonst Datei-Management, Thumb-Caching und verknüpfte Designs mitgeändert werden müssten).

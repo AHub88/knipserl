@@ -164,7 +164,7 @@ export function EventTypesPieChart({
   data = defaultEventData,
 }: EventTypesPieChartProps) {
   return (
-    <Card className="border-border bg-card">
+    <Card className="border-border bg-card overflow-hidden">
       <CardHeader className="border-b flex-row items-center gap-2">
         <IconChartPie className="size-4 text-primary" />
         <CardTitle className="text-base font-semibold text-foreground">
@@ -172,16 +172,16 @@ export function EventTypesPieChart({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-6">
-          <div className="h-[260px] w-[260px] shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 min-w-0">
+          <div className="h-[200px] w-full sm:h-[220px] sm:w-[220px] sm:shrink-0 mx-auto">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
+                  innerRadius={50}
+                  outerRadius={85}
                   paddingAngle={3}
                   dataKey="value"
                   strokeWidth={0}
@@ -205,17 +205,17 @@ export function EventTypesPieChart({
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5 min-w-0 flex-1">
             {data.map((entry, idx) => (
-              <div key={entry.name} className="flex items-center gap-2 text-sm">
+              <div key={entry.name} className="flex items-center gap-2 text-sm min-w-0">
                 <span
                   className="h-3 w-3 rounded-sm shrink-0"
                   style={{
                     backgroundColor: PIE_COLORS[idx % PIE_COLORS.length],
                   }}
                 />
-                <span className="text-muted-foreground">{entry.name}</span>
-                <span className="ml-auto font-medium text-foreground tabular-nums">
+                <span className="text-muted-foreground truncate">{entry.name}</span>
+                <span className="ml-auto font-medium text-foreground tabular-nums shrink-0">
                   {entry.value}
                 </span>
               </div>
