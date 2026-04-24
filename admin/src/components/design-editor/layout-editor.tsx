@@ -1552,22 +1552,22 @@ function ElementsPanel({
           ))}
         </div>
       )}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-3">
         {filtered.map((el) => (
           <button
             key={el.id}
             onClick={() => onSelect(el)}
-            className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left"
+            className="rounded-lg border border-border hover:border-primary transition-colors overflow-hidden text-left group"
           >
-            <div className="aspect-square bg-foreground/5 flex items-center justify-center p-2">
+            <div className="aspect-square bg-foreground/5 flex items-center justify-center p-2 group-hover:bg-foreground/10 transition-colors">
               <img
                 src={el.imageUrl}
                 alt={el.name}
                 className="max-w-full max-h-full object-contain"
               />
             </div>
-            <div className="p-1.5">
-              <span className="text-xs text-foreground/60 truncate block">{el.name}</span>
+            <div className="px-2 py-1.5">
+              <span className="text-[11px] text-foreground/70 truncate block">{el.name}</span>
             </div>
           </button>
         ))}

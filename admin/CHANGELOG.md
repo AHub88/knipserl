@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.21.1] — 2026-04-24
+
+### Fixed
+- **Elemente-Modal: Items viel zu groß**. Das Raster war noch auf dem alten 600-px-Modal-Layout mit `grid-cols-2` stehengeblieben — im neuen 95 vw großen Modal wurde jedes Element dadurch über einen halben Bildschirm breit. Raster jetzt responsive: `3 / 4 / 5 / 6 / 8` Spalten (Mobile → XL), Gap `2 → 3` auf `sm+`, Name in `text-[11px]` statt `text-xs`. Thumbnails bekommen beim Hover einen subtilen Hintergrund-Shift, damit Klickziel klarer wird.
+
 ## [1.21.0] — 2026-04-24
 
 ### Added
