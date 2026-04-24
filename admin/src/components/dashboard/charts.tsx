@@ -280,13 +280,13 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
           <div
             key={order.id}
             onClick={() => router.push(`/orders/${order.id}`)}
-            className="group flex cursor-pointer items-center justify-between rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/20 hover:bg-primary/[0.04]"
+            className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 cursor-pointer rounded-lg border border-border bg-card p-3 sm:p-4 transition-all hover:border-primary/20 hover:bg-primary/[0.04]"
           >
             <div className="min-w-0 flex-1 space-y-1">
-              <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+              <p className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
                 {order.customerName}
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground truncate">
                 {order.locationName} &middot; {order.eventType} &middot;{" "}
                 {new Date(order.eventDate).toLocaleDateString("de-DE", {
                   day: "2-digit",
@@ -295,13 +295,13 @@ export function UpcomingOrdersList({ orders }: UpcomingOrdersListProps) {
                 })}
               </p>
             </div>
-            <div className="flex items-center gap-3 pl-4">
+            <div className="flex items-center gap-2 sm:gap-3 sm:pl-4 shrink-0">
               {order.driverName ? (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs sm:text-sm text-muted-foreground truncate max-w-[140px]">
                   {order.driverName}
                 </span>
               ) : (
-                <span className="text-sm text-muted-foreground italic">
+                <span className="text-xs sm:text-sm text-muted-foreground italic">
                   Kein Fahrer
                 </span>
               )}

@@ -4,7 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
-## [1.20.2] — 2026-04-24
+## [1.20.3] — 2026-04-24
+
+### Fixed
+- **Dashboard „Nächste Aufträge" erzwang horizontalen Scrollbalken auf Mobile**: Zeile war starr als einreihiges Flex mit „Name + Event-Zeile" links und „Fahrer + Status-Badge" rechts ausgelegt. Eine typische Event-Zeile wie „Holzkirchener Straße · Geburtstag · 24.04.2026" war ohne `truncate` und pushte zusammen mit der nicht-schrumpfenden rechten Box den Container über 375 px Viewport-Breite hinaus → horizontales Scrollen auf der ganzen Seite. Fix:
+  - Kartenzeile stapelt auf `< sm` vertikal (`flex-col sm:flex-row`), auf `sm+` bleibt das gewohnte Nebeneinander.
+  - Beide Textzeilen links bekommen `truncate`, damit zu lange Event-Infos nicht mehr horizontal überlaufen.
+  - Rechte Box bekommt `shrink-0`, der Fahrername bekommt `max-w-[140px] truncate`, Badges und Texte nutzen auf Mobile `text-xs` (vorher `text-sm`).
+  - Padding auf Mobile `p-3` statt `p-4`, damit die schon breite Card nicht unnötig weiter rauspolstert.
+
+
 
 ### Fixed
 - **Admin-Download: 5×15-Streifen hatte falsche Zielauflösung**. Das vom Kunden hochgeladene `layout-final.png` wird je nach Browser-DPR unterschiedlich groß exportiert (Fabric's Retina-Workaround halbiert bei `dpr=2`) — beim einfachen Verdoppeln übernahm der Endpoint also eine eventuell zu kleine Streifengröße. Download-Route normalisiert den Streifen jetzt zuerst auf exakt **600×1800 px** (5×15 cm @ 300 dpi) und komponiert dann zwei davon nebeneinander → verlässlich **1200×1800 px** Zieldatei. Für 10×15 quer wird analog auf **1800×1200 px** normalisiert, damit Admins auch bei DPR-Ausreißern immer ein 300-dpi-korrektes File bekommen.
