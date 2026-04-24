@@ -10,7 +10,6 @@ import {
   IconChartBar,
 } from "@tabler/icons-react";
 import {
-  MonthlyOrdersChart,
   EventTypesPieChart,
   UpcomingOrdersList,
   YtdTrendChart,
@@ -29,7 +28,6 @@ export default async function DashboardPage() {
     openRevenueAgg,
     openRevenueCashAgg,
     recentOrders,
-    monthlyOrderCounts,
     eventTypeCounts,
   ] = await Promise.all([
     // KPI 1: offene Anfragen (noch keine finale Entscheidung)
@@ -74,44 +72,6 @@ export default async function DashboardPage() {
       take: 6,
       include: { driver: true },
     }),
-
-    // Monthly orders for area chart (last 6 months)
-    prisma.order
-      .groupBy({
-        by: ["eventDate"],
-        _count: { _all: true },
-        where: {
-          eventDate: {
-            gte: new Date(now.getFullYear(), now.getMonth() - 5, 1),
-          },
-          ...paymentFilter,
-        },
-      })
-      .then((rows) => {
-        // Bucket by month
-        const buckets = new Map<string, number>();
-        for (const row of rows) {
-          const d = new Date(row.eventDate);
-          const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, "0")}`;
-          buckets.set(key, (buckets.get(key) ?? 0) + row._count._all);
-        }
-        // Build sorted array for last 6 months
-        const monthNames = [
-          "Jan", "Feb", "Mär", "Apr", "Mai", "Jun",
-          "Jul", "Aug", "Sep", "Okt", "Nov", "Dez",
-        ];
-        const result: { month: string; orders: number }[] = [];
-        for (let i = 5; i >= 0; i--) {
-          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-          const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, "0")}`;
-          result.push({
-            month: monthNames[d.getMonth()],
-            orders: buckets.get(key) ?? 0,
-          });
-        }
-        return result;
-      })
-      .catch(() => [] as { month: string; orders: number }[]),
 
     // Event type distribution
     prisma.order.groupBy({
@@ -206,9 +166,6 @@ export default async function DashboardPage() {
   }
 
   // Transform data for charts
-  const monthlyChartData =
-    monthlyOrderCounts.length > 0 ? monthlyOrderCounts : undefined;
-
   const eventTypeData =
     eventTypeCounts.length > 0
       ? eventTypeCounts.map((row) => ({
@@ -370,32 +327,27 @@ export default async function DashboardPage() {
         />
       )}
 
-      {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <MonthlyOrdersChart data={monthlyChartData} />
-        </div>
-        <div className="lg:col-span-2">
+      {/* Nächste Aufträge + Eventarten nebeneinander */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="border-border bg-card lg:col-span-2">
+          <CardHeader className="border-b flex-row items-center gap-2">
+            <IconCalendarEvent className="size-4 text-primary" />
+            <CardTitle className="text-base font-semibold text-foreground">
+              N&auml;chste Auftr&auml;ge
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Die n&auml;chsten anstehenden Events &mdash; klicken zum
+              &Ouml;ffnen
+            </p>
+          </CardHeader>
+          <CardContent>
+            <UpcomingOrdersList orders={upcomingOrders} />
+          </CardContent>
+        </Card>
+        <div className="lg:col-span-1">
           <EventTypesPieChart data={eventTypeData} />
         </div>
       </div>
-
-      {/* Upcoming Orders */}
-      <Card className="border-border bg-card">
-        <CardHeader className="border-b flex-row items-center gap-2">
-          <IconCalendarEvent className="size-4 text-primary" />
-          <CardTitle className="text-base font-semibold text-foreground">
-            N&auml;chste Auftr&auml;ge
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Die n&auml;chsten anstehenden Events &mdash; klicken zum
-            &Ouml;ffnen
-          </p>
-        </CardHeader>
-        <CardContent>
-          <UpcomingOrdersList orders={upcomingOrders} />
-        </CardContent>
-      </Card>
     </div>
   );
 }

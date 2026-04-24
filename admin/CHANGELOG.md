@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.17.5] — 2026-04-24
+
+### Removed
+- **Dashboard — „Aufträge pro Monat" (Area-Chart über 6 Monate) raus.** Info war redundant zum neuen Monatsvergleich-Chart direkt darüber, der dieselbe Achse zeigt (aber mit Jahresvergleich). Spart eine weitere DB-Query (`prisma.order.groupBy` über 6 Monate).
+
+### Changed
+- **Dashboard — „Nächste Aufträge" und „Eventarten" in einer Zeile**: 3-Spalten-Grid (`lg:grid-cols-3`), Liste belegt 2 Spalten, Pie-Chart 1 Spalte. Auf Mobile untereinander wie bisher.
+
 ## [1.17.4] — 2026-04-24
 
 ### Changed
