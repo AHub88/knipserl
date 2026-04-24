@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.17.4] — 2026-04-24
+
+### Changed
+- **Layoutdesigner — Header-Buttons „Duplizieren" / „Löschen" umbenannt und abhängig vom Selektionsstatus**: Die generischen Labels haben Nutzer glauben lassen, sie würden das gesamte Design kopieren bzw. löschen — tatsächlich beziehen sie sich nur auf das aktuell ausgewählte Element. Neue Labels: **„Element kopieren"** und **„Element löschen"**. Zusätzlich sind beide Buttons jetzt inaktiv (40 % Deckkraft, `cursor-not-allowed`), solange kein Element ausgewählt ist — damit ist auf einen Blick erkennbar, dass sie kontextabhängig sind. Tooltip erklärt ebenfalls den Zustand („Kein Element ausgewählt" / „Ausgewähltes Element löschen (Entf)").
+
 ## [1.17.3] — 2026-04-24
 
 ### Changed

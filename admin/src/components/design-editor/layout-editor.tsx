@@ -95,6 +95,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
   const [textColor, setTextColor] = useState("#000000");
 
   const [placeholderCount, setPlaceholderCount] = useState(0);
+  const [hasSelection, setHasSelection] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -254,9 +255,10 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
       const onResize = () => fitCanvas(canvas, 1);
       window.addEventListener("resize", onResize);
 
-      // Track selection for text editing
+      // Track selection for text editing + enable/disable header actions
       canvas.on("selection:created", handleSelection);
       canvas.on("selection:updated", handleSelection);
+      canvas.on("selection:cleared", () => setHasSelection(false));
     })();
 
     return () => {
@@ -342,6 +344,7 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
     const canvas = fabricRef.current;
     if (!canvas) return;
     const active = canvas.getActiveObject();
+    setHasSelection(!!active);
     if (active && active.type === "textbox") {
       const tb = active as Textbox;
       setSelectedFont(tb.fontFamily ?? "Montserrat");
@@ -889,15 +892,17 @@ export function LayoutEditor({ orderId, token, format, orderInfo, existingDesign
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H11a5 5 0 0 0 0 10h4"/><path d="M21 10l-4-4M21 10l-4 4"/></svg>
                 <span className="text-[10px] leading-none whitespace-nowrap">Wiederherstellen</span>
               </button>
-              <button onClick={duplicateSelected} title="Duplizieren (Strg+D)"
-                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-foreground hover:bg-accent hover:border-border transition-colors">
+              <button onClick={duplicateSelected} disabled={!hasSelection}
+                title={hasSelection ? "Ausgewähltes Element duplizieren (Strg+D)" : "Kein Element ausgewählt"}
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[6rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-foreground hover:bg-accent hover:border-border transition-colors disabled:opacity-40 disabled:hover:text-foreground/60 disabled:hover:bg-foreground/[0.03] disabled:hover:border-border disabled:cursor-not-allowed">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <span className="text-[10px] leading-none whitespace-nowrap">Duplizieren</span>
+                <span className="text-[10px] leading-none whitespace-nowrap">Element kopieren</span>
               </button>
-              <button onClick={deleteSelected} title="Ausgewähltes Element löschen"
-                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[5rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors">
+              <button onClick={deleteSelected} disabled={!hasSelection}
+                title={hasSelection ? "Ausgewähltes Element löschen (Entf)" : "Kein Element ausgewählt"}
+                className="flex flex-col items-center justify-center gap-1 h-14 min-w-[6rem] px-3 rounded-xl border border-border bg-foreground/[0.03] text-foreground/60 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors disabled:opacity-40 disabled:hover:text-foreground/60 disabled:hover:bg-foreground/[0.03] disabled:hover:border-border disabled:cursor-not-allowed">
                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span className="text-[10px] leading-none whitespace-nowrap">Löschen</span>
+                <span className="text-[10px] leading-none whitespace-nowrap">Element löschen</span>
               </button>
             </div>
 
