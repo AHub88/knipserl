@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.20.1] — 2026-04-24
+
+### Fixed
+- **Dashboard „Nächste Aufträge" zeigte alte, nie abgeschlossene Aufträge mit**: Die Liste filterte nur auf Status `OPEN`/`ASSIGNED`, nicht aber aufs Event-Datum — dadurch tauchten Altleichen wie „Pointtec Messe München · 24.02.2023" oder „Dominik Babel · 08.02.2025" in der „nächste"-Liste auf, obwohl das Event längst vergangen war (jemand hatte den Status nicht auf `COMPLETED`/`CANCELLED` gesetzt). Jetzt wird zusätzlich auf `eventDate >= startOfToday` gefiltert — nur Aufträge, deren Event heute oder später stattfindet, erscheinen.
+
 ## [1.20.0] — 2026-04-24
 
 ### Added

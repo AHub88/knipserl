@@ -21,6 +21,7 @@ export default async function DashboardPage() {
   const paymentFilter = await getPaymentFilter(session?.user?.role ?? "");
 
   const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const [
     openInquiries,
@@ -62,10 +63,11 @@ export default async function DashboardPage() {
       },
     }),
 
-    // Upcoming orders list
+    // Upcoming orders list — nur zukünftige (ab heute) offene Aufträge
     prisma.order.findMany({
       where: {
         status: { in: ["OPEN", "ASSIGNED"] },
+        eventDate: { gte: startOfToday },
         ...paymentFilter,
       },
       orderBy: { eventDate: "asc" },
