@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { IconMapPin, IconCalendar, IconClock, IconRoute, IconBeach } from "@tabler/icons-react";
+import { PushToggle } from "@/components/push/push-toggle";
 
 export default async function DriverDashboardPage() {
   const session = await auth();
@@ -91,6 +92,8 @@ export default async function DriverDashboardPage() {
           )}
         </CardContent>
       </Card>
+
+      <PushToggle />
 
       {vacations.length > 0 && (
         <Card>

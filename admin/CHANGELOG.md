@@ -4,6 +4,20 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.23.0] — 2026-04-24
+
+### Added
+- **PWA + Web-Push-Infrastruktur für die Admin-Konsole**. Vorbereitung für Fahrer-Erinnerungen vor Aufträgen — in diesem Release zunächst Opt-in und Testversand, der eigentliche Reminder-Scheduler folgt als separater Schritt.
+  - Minimaler Service Worker unter `/sw.js` (nur Push + Notification-Click, kein Offline-Caching — bewusst schlicht, damit nichts unbemerkt gecacht wird).
+  - SW-Registrierung global im Root-Layout via Client-Komponente `ServiceWorkerRegister`.
+  - `Cache-Control: no-store` für `/sw.js` in `next.config.ts`, sonst bleiben Clients auf alten SW-Versionen hängen.
+  - Neue Prisma-Tabelle `PushSubscription` (User kann mehrere Geräte abonnieren, `endpoint` ist unique, `onDelete: Cascade` vom User). `sync-schema.cjs` entsprechend mitgepflegt inkl. Unique- und Lookup-Index.
+  - Neue Server-Lib `src/lib/push.ts` (`sendPushToUser`) mit automatischer Bereinigung toter Subscriptions bei `404`/`410`.
+  - API-Routes unter `/api/push/`: `vapid-key` (GET), `subscribe` (POST, Upsert), `unsubscribe` (POST), `test` (POST, sendet Test an eingeloggten User).
+  - Opt-in-UI `PushToggle` im Fahrer-Dashboard: deckt die vier Zustände sauber ab — Permission offen, aktiv, blockiert, und iOS-Browser-ohne-PWA (dann Hinweis „Zum Homescreen hinzufügen", weil Safari Push nur in der installierten PWA kennt).
+  - Abhängigkeiten: `web-push` + `@types/web-push`.
+  - Setup einmalig: `node scripts/generate-vapid.cjs` ausführen und `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` in die `.env` des Admin-Containers eintragen. Ohne Keys liefern die Push-Endpoints `503`.
+
 ## [1.22.1] — 2026-04-24
 
 ### Fixed

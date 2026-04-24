@@ -419,6 +419,16 @@ async function syncSchema() {
     ["page_impression_photos", "mediaAssetId", "TEXT", false, "''"],
     ["page_impression_photos", "sortOrder", "INTEGER", false, "0"],
     ["page_impression_photos", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // push_subscriptions — Web-Push-Abos pro Nutzer/Gerät
+    ["push_subscriptions", "id", "TEXT", false, null],
+    ["push_subscriptions", "userId", "TEXT", false, "''"],
+    ["push_subscriptions", "endpoint", "TEXT", false, "''"],
+    ["push_subscriptions", "p256dh", "TEXT", false, "''"],
+    ["push_subscriptions", "auth", "TEXT", false, "''"],
+    ["push_subscriptions", "userAgent", "TEXT", true, null],
+    ["push_subscriptions", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+    ["push_subscriptions", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table
@@ -454,6 +464,10 @@ async function syncSchema() {
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "pages_slug_key" ON "pages" ("slug")`);
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "page_image_slots_pageId_slotKey_key" ON "page_image_slots" ("pageId", "slotKey")`);
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "page_impression_photos_pageId_mediaAssetId_key" ON "page_impression_photos" ("pageId", "mediaAssetId")`);
+
+  // Unique index + lookup-index für Web-Push-Abos
+  await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "push_subscriptions_endpoint_key" ON "push_subscriptions" ("endpoint")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "push_subscriptions_userId_idx" ON "push_subscriptions" ("userId")`);
 
   // ── Data migration: impression_photos → media_assets (idempotent, one-shot) ──
   // Kopiert alle Records aus impression_photos nach media_assets, falls media_assets leer ist

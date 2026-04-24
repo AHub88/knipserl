@@ -3,6 +3,7 @@ import { Inter, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import { ServiceWorkerRegister } from "@/components/push/service-worker-register";
 import "./globals.css";
 
 const inter = Inter({
@@ -51,6 +52,7 @@ export default function RootLayout({
           <SessionProvider>
             {children}
             <Toaster />
+            <ServiceWorkerRegister />
           </SessionProvider>
         </ThemeProvider>
       </body>
