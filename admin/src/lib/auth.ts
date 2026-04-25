@@ -32,6 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const isPublic = pathname.startsWith("/confirm") || pathname.startsWith("/api/confirm")
         || pathname.startsWith("/design") || pathname.startsWith("/api/design")
         || pathname.startsWith("/api/google-oauth")
+        || pathname.startsWith("/api/cron/")
         || pathname === "/api/google-reviews"
         || pathname === "/api/busy-dates";
 

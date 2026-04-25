@@ -4,6 +4,48 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.24.0] — 2026-04-24
+
+### Added
+- **Auftrags-Erinnerungen für Fahrer per E-Mail**, über die bestehende Microsoft-Graph-Route.
+  - Pro Fahrer konfigurierbar im Dashboard: Opt-in + Vorlauf (1 Tag / 2 Tage / 3 Tage / 1 Woche). Default: aktiv, 2 Tage Vorlauf.
+  - Neue User-Spalten `reminderEmailEnabled`, `reminderLeadDays` (mitgepflegt in `sync-schema.cjs`).
+  - Neue Order-Spalten `driverReminderSentAt`, `secondDriverReminderSentAt` — separat pro Fahrer, damit Primary und Secondary unabhängig voneinander ihren Reminder bekommen. Idempotenz: einmal gesendet, kein zweiter Versand.
+  - E-Mail-Template `driverReminderEmail` (`src/lib/email-templates.ts`) — zeigt Kunde, Event-Art, Datum, Aufbau-/Abbauzeit, Ort, Ansprechpartner vor Ort, Notiz und einen Button zurück zum Auftrag im Fahrer-Dashboard.
+  - Core-Logik in `src/lib/driver-reminders.ts` (`runDriverReminders`) — testbar, idempotent, läuft auch mehrfach pro Tag sauber.
+  - APIs:
+    - `GET/PATCH /api/driver/reminder-settings` — Fahrer lädt/speichert sein Opt-in und Vorlauf.
+    - `POST /api/cron/driver-reminders` — Cron-Trigger mit Bearer-Secret (`CRON_SECRET`).
+  - `/api/cron/*` als Public-Route in der Auth-Middleware markiert (keine NextAuth-Session nötig, stattdessen Secret-Auth).
+  - UI-Komponente `ReminderSettings` ersetzt den bisherigen Push-Toggle im Fahrer-Dashboard. Die PWA/Push-Infrastruktur aus 1.23.0 bleibt im Code vorhanden, wird aber aktuell nicht mehr sichtbar angezeigt — kann später für Live-Benachrichtigungen (z.B. neue Zuweisung) reaktiviert werden.
+
+### Setup (einmalig durch Betreiber)
+- `CRON_SECRET` in die `.env` des Admin-Containers eintragen (zufälligen String setzen).
+- Cron auf dem Host einrichten, z.B. täglich 8:00:
+  ```
+  0 8 * * *  curl -s -X POST -H "Authorization: Bearer $CRON_SECRET" https://DEINE-ADMIN-URL/api/cron/driver-reminders
+  ```
+- `NEXT_PUBLIC_APP_URL` sollte gesetzt sein, sonst fehlt in der Reminder-Mail der Auftrags-Deeplink.
+
+### Behavior-Notizen
+- **Keine erneute Zustellung bei Datumsänderung**: Wird ein Event-Datum nach dem Versand verschoben, bekommt der Fahrer keinen neuen Reminder. Bewusst einfach gehalten — für Umplanungen gibt es andere Kanäle.
+- Der Scheduler zieht Aufträge bis 14 Tage in die Zukunft, d.h. alles über einem Vorlauf von 14 Tagen wird beim nächsten Run erwischt.
+- Fehler (z.B. Graph-API-Ausfall) blockieren nicht die anderen Mails — jede Sendung ist individuell, Fehler werden geloggt und kommen im Response-JSON zurück.
+
+## [1.23.0] — 2026-04-24
+
+### Added
+- **PWA + Web-Push-Infrastruktur für die Admin-Konsole**. Vorbereitung für Fahrer-Erinnerungen vor Aufträgen — in diesem Release zunächst Opt-in und Testversand, der eigentliche Reminder-Scheduler folgt als separater Schritt.
+  - Minimaler Service Worker unter `/sw.js` (nur Push + Notification-Click, kein Offline-Caching — bewusst schlicht, damit nichts unbemerkt gecacht wird).
+  - SW-Registrierung global im Root-Layout via Client-Komponente `ServiceWorkerRegister`.
+  - `Cache-Control: no-store` für `/sw.js` in `next.config.ts`, sonst bleiben Clients auf alten SW-Versionen hängen.
+  - Neue Prisma-Tabelle `PushSubscription` (User kann mehrere Geräte abonnieren, `endpoint` ist unique, `onDelete: Cascade` vom User). `sync-schema.cjs` entsprechend mitgepflegt inkl. Unique- und Lookup-Index.
+  - Neue Server-Lib `src/lib/push.ts` (`sendPushToUser`) mit automatischer Bereinigung toter Subscriptions bei `404`/`410`.
+  - API-Routes unter `/api/push/`: `vapid-key` (GET), `subscribe` (POST, Upsert), `unsubscribe` (POST), `test` (POST, sendet Test an eingeloggten User).
+  - Opt-in-UI `PushToggle` im Fahrer-Dashboard: deckt die vier Zustände sauber ab — Permission offen, aktiv, blockiert, und iOS-Browser-ohne-PWA (dann Hinweis „Zum Homescreen hinzufügen", weil Safari Push nur in der installierten PWA kennt).
+  - Abhängigkeiten: `web-push` + `@types/web-push`.
+  - Setup einmalig: `node scripts/generate-vapid.cjs` ausführen und `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` in die `.env` des Admin-Containers eintragen. Ohne Keys liefern die Push-Endpoints `503`.
+
 ## [1.22.1] — 2026-04-24
 
 ### Fixed
