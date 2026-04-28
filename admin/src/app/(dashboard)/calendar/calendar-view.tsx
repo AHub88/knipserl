@@ -82,6 +82,7 @@ function getDriverInitials(driver: { name: string; initials?: string } | null) {
 }
 
 const WEEKDAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+const WEEKDAYS_SHORT = ["M", "D", "M", "D", "F", "S", "S"];
 const MONTH_NAMES = [
   "Januar", "Februar", "März", "April", "Mai", "Juni",
   "Juli", "August", "September", "Oktober", "November", "Dezember",
@@ -238,172 +239,207 @@ export function CalendarView() {
     return days;
   }
 
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   return (
-    <div className="space-y-4">
-      {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prevMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <IconChevronLeft className="size-4" />
-          </button>
-          <button
-            onClick={nextMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <IconChevronRight className="size-4" />
-          </button>
-          <h2 className="text-lg font-semibold text-foreground ml-2">
-            {MONTH_NAMES[month - 1]} {year}
+    <div className="space-y-3">
+      {/* ── Compact Navigation Bar ── */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        {/* Top row: Month navigation + view toggle */}
+        <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4">
+          {/* Nav arrows */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={prevMonth}
+              className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              <IconChevronLeft className="size-4" />
+            </button>
+            <button
+              onClick={nextMonth}
+              className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              <IconChevronRight className="size-4" />
+            </button>
+          </div>
+
+          {/* Month + Year */}
+          <h2 className="text-base sm:text-lg font-semibold text-foreground whitespace-nowrap">
+            <span className="sm:hidden">{MONTH_NAMES[month - 1].slice(0, 3)}</span>
+            <span className="hidden sm:inline">{MONTH_NAMES[month - 1]}</span>
+            {" "}{year}
           </h2>
+
           {!isCurrentMonth && (
             <button
               onClick={goToday}
-              className="ml-2 text-xs text-primary hover:underline"
+              className="text-[11px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-md hover:bg-primary/15 transition-colors"
             >
               Heute
             </button>
           )}
-        </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-0.5">
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Filter toggle (mobile + desktop) */}
           <button
-            onClick={() => setView("month")}
+            onClick={() => setFiltersOpen(!filtersOpen)}
             className={
-              "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
-              (view === "month"
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground hover:text-foreground/80")
+              "flex items-center gap-1.5 h-8 px-2.5 rounded-lg border text-xs font-medium transition-colors " +
+              (filtersOpen || hiddenCount > 0
+                ? "border-primary/30 bg-primary/10 text-primary"
+                : "border-border bg-muted text-muted-foreground hover:text-foreground")
             }
           >
-            <IconCalendarMonth className="size-3.5" />
-            Monat
+            <IconTruck className="size-3.5" />
+            <span className="hidden sm:inline">Fahrer</span>
+            {hiddenCount > 0 && (
+              <span className="size-4 flex items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+                {hiddenCount}
+              </span>
+            )}
           </button>
-          <button
-            onClick={() => setView("list")}
-            className={
-              "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
-              (view === "list"
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground hover:text-foreground/80")
-            }
-          >
-            <IconList className="size-3.5" />
-            Liste
-          </button>
-        </div>
-      </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-        <div className="flex items-center gap-1.5">
-          <div className="size-2 rounded-full bg-amber-400" /> Offen
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="size-2 rounded-full bg-blue-400" /> Zugewiesen
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="size-2 rounded-full bg-emerald-400" /> Abgeschlossen
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="size-2.5 w-4 rounded bg-orange-500/20 border border-orange-500/30" /> Abwesend
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="size-2.5 w-4 rounded bg-yellow-500/20 border border-yellow-500/30" /> Bedingt
-        </div>
-      </div>
-
-      {/* Driver color legend / toggles (Outlook-style) */}
-      {(driversInMonth.length > 0 || hasOrdersWithoutDriver) && (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs">
-          <span className="text-muted-foreground mr-1">Fahrer:</span>
-          {driversInMonth.map((d) => {
-            const dc = getDriverColor(d.id);
-            const initials = getDriverInitials(d) ?? "";
-            const isHidden = hiddenDriverIds.has(d.id);
-            return (
-              <button
-                key={d.id}
-                type="button"
-                onClick={() => toggleDriverVisibility(d.id)}
-                aria-pressed={!isHidden}
-                title={isHidden ? `${d.name} einblenden` : `${d.name} ausblenden`}
-                className={
-                  "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 transition-opacity hover:opacity-100 " +
-                  (isHidden ? "opacity-40" : "")
-                }
-                style={{
-                  backgroundColor: dc.bg,
-                  border: `1px solid ${dc.border}`,
-                  color: dc.text,
-                }}
-              >
-                {isHidden ? (
-                  <IconEyeOff className="size-3 shrink-0" />
-                ) : (
-                  <span className="font-bold">{initials}</span>
-                )}
-                <span
-                  className={
-                    "text-foreground/80 " + (isHidden ? "line-through" : "")
-                  }
-                >
-                  {d.name}
-                </span>
-              </button>
-            );
-          })}
-          {hasOrdersWithoutDriver && (() => {
-            const isHidden = hiddenDriverIds.has(NO_DRIVER_KEY);
-            return (
-              <button
-                type="button"
-                onClick={() => toggleDriverVisibility(NO_DRIVER_KEY)}
-                aria-pressed={!isHidden}
-                title={isHidden ? "Aufträge ohne Fahrer einblenden" : "Aufträge ohne Fahrer ausblenden"}
-                className={
-                  "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-100 " +
-                  (isHidden ? "opacity-40" : "")
-                }
-              >
-                {isHidden ? (
-                  <IconEyeOff className="size-3 shrink-0" />
-                ) : (
-                  <IconEye className="size-3 shrink-0" />
-                )}
-                <span
-                  className={isHidden ? "line-through" : ""}
-                >
-                  Kein Fahrer
-                </span>
-              </button>
-            );
-          })()}
-          {hiddenCount > 0 && (
+          {/* View toggle */}
+          <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted p-0.5">
             <button
-              type="button"
-              onClick={() => setHiddenDriverIds(new Set())}
-              className="ml-1 text-primary hover:underline"
+              onClick={() => setView("month")}
+              className={
+                "flex items-center gap-1 h-7 px-2 sm:px-3 rounded-md text-xs font-medium transition-colors " +
+                (view === "month"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground")
+              }
             >
-              Alle einblenden ({hiddenCount})
+              <IconCalendarMonth className="size-3.5" />
+              <span className="hidden sm:inline">Monat</span>
             </button>
-          )}
+            <button
+              onClick={() => setView("list")}
+              className={
+                "flex items-center gap-1 h-7 px-2 sm:px-3 rounded-md text-xs font-medium transition-colors " +
+                (view === "list"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground")
+              }
+            >
+              <IconList className="size-3.5" />
+              <span className="hidden sm:inline">Liste</span>
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Status legend — compact inline row */}
+        <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-1.5 border-t border-border bg-muted/50 overflow-x-auto">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
+            <div className="size-2 rounded-full bg-amber-400" /> Offen
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
+            <div className="size-2 rounded-full bg-blue-400" /> Zugewiesen
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
+            <div className="size-2 rounded-full bg-emerald-400" /> Abgeschlossen
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
+            <div className="size-2.5 w-3.5 rounded-sm bg-orange-500/20 border border-orange-500/30" /> Abwesend
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
+            <div className="size-2.5 w-3.5 rounded-sm bg-yellow-500/20 border border-yellow-500/30" /> Bedingt
+          </div>
+        </div>
+
+        {/* Driver filter panel — collapsible */}
+        {filtersOpen && (driversInMonth.length > 0 || hasOrdersWithoutDriver) && (
+          <div className="border-t border-border px-3 sm:px-4 py-2.5 bg-card">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {driversInMonth.map((d) => {
+                const dc = getDriverColor(d.id);
+                const initials = getDriverInitials(d) ?? "";
+                const isHidden = hiddenDriverIds.has(d.id);
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => toggleDriverVisibility(d.id)}
+                    aria-pressed={!isHidden}
+                    title={isHidden ? `${d.name} einblenden` : `${d.name} ausblenden`}
+                    className={
+                      "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition-opacity hover:opacity-100 " +
+                      (isHidden ? "opacity-35" : "")
+                    }
+                    style={{
+                      backgroundColor: dc.bg,
+                      border: `1px solid ${dc.border}`,
+                      color: dc.text,
+                    }}
+                  >
+                    {isHidden ? (
+                      <IconEyeOff className="size-3 shrink-0" />
+                    ) : (
+                      <span className="font-bold">{initials}</span>
+                    )}
+                    <span
+                      className={
+                        "text-foreground/80 " + (isHidden ? "line-through" : "")
+                      }
+                    >
+                      <span className="sm:hidden">{d.name.split(" ")[0]}</span>
+                      <span className="hidden sm:inline">{d.name}</span>
+                    </span>
+                  </button>
+                );
+              })}
+              {hasOrdersWithoutDriver && (() => {
+                const isHidden = hiddenDriverIds.has(NO_DRIVER_KEY);
+                return (
+                  <button
+                    type="button"
+                    onClick={() => toggleDriverVisibility(NO_DRIVER_KEY)}
+                    aria-pressed={!isHidden}
+                    title={isHidden ? "Aufträge ohne Fahrer einblenden" : "Aufträge ohne Fahrer ausblenden"}
+                    className={
+                      "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-100 " +
+                      (isHidden ? "opacity-35" : "")
+                    }
+                  >
+                    {isHidden ? (
+                      <IconEyeOff className="size-3 shrink-0" />
+                    ) : (
+                      <IconEye className="size-3 shrink-0" />
+                    )}
+                    <span className={isHidden ? "line-through" : ""}>
+                      Kein Fahrer
+                    </span>
+                  </button>
+                );
+              })()}
+              {hiddenCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setHiddenDriverIds(new Set())}
+                  className="text-[11px] font-medium text-primary hover:underline ml-1"
+                >
+                  Alle zeigen
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Month View */}
       {view === "month" && (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           {/* Weekday headers */}
           <div className="grid grid-cols-7 border-b border-border">
-            {WEEKDAYS.map((d) => (
+            {WEEKDAYS.map((d, i) => (
               <div
                 key={d}
-                className="px-2 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+                className="px-1 sm:px-2 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
               >
-                {d}
+                <span className="sm:hidden">{WEEKDAYS_SHORT[i]}</span>
+                <span className="hidden sm:inline">{d}</span>
               </div>
             ))}
           </div>
@@ -413,7 +449,7 @@ export function CalendarView() {
             {Array.from({ length: offset }).map((_, i) => (
               <div
                 key={`e-${i}`}
-                className="min-h-[100px] border-b border-r border-border bg-muted"
+                className="min-h-[72px] sm:min-h-[100px] border-b border-r border-border bg-muted"
               />
             ))}
             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
@@ -428,7 +464,7 @@ export function CalendarView() {
                 <div
                   key={day}
                   className={
-                    "min-h-[100px] border-b border-r border-border p-1.5 transition-colors " +
+                    "min-h-[72px] sm:min-h-[100px] border-b border-r border-border p-1 sm:p-1.5 transition-colors " +
                     (isWeekend ? "bg-muted " : "") +
                     (isToday ? "bg-primary/5 " : "")
                   }
