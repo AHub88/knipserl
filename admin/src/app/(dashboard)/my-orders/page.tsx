@@ -15,7 +15,7 @@ export default async function MyOrdersPage() {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
-  const [upcomingOrders, pastOrders, openOrders] = await Promise.all([
+  const [upcomingOrders, pastOrders] = await Promise.all([
     prisma.order.findMany({
       where: { driverId, status: { not: "CANCELLED" }, eventDate: { gte: now } },
       orderBy: { eventDate: "asc" },
@@ -24,10 +24,6 @@ export default async function MyOrdersPage() {
       where: { driverId, eventDate: { lt: now } },
       orderBy: { eventDate: "desc" },
       take: 15,
-    }),
-    prisma.order.findMany({
-      where: { status: "OPEN", driverId: null },
-      orderBy: { eventDate: "asc" },
     }),
   ]);
 
@@ -61,7 +57,6 @@ export default async function MyOrdersPage() {
       <MyOrdersTabs
         assignedOrders={serialize(upcomingOrders)}
         pastOrders={serialize(pastOrders)}
-        openOrders={serialize(openOrders)}
         nowIso={now.toISOString()}
       />
     </div>

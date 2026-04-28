@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { IconClipboardCheck } from "@tabler/icons-react";
-import { OrdersTable } from "../orders/orders-table";
+import { FreeOrdersList } from "./free-orders-list";
 
 // Freie Aufträge: status = OPEN UND noch kein Fahrer (weder Primary noch Secondary).
 // Sichtbar für Fahrer im Driver-Modus + Admins.
@@ -21,9 +21,6 @@ export default async function FreeOrdersPage() {
     },
     orderBy: { eventDate: "asc" },
     include: {
-      driver: { select: { name: true, initials: true } },
-      secondDriver: { select: { name: true, initials: true } },
-      company: { select: { name: true } },
       inquiry: { select: { distanceKm: true } },
     },
   });
@@ -34,25 +31,10 @@ export default async function FreeOrdersPage() {
     customerName: order.customerName,
     eventType: order.eventType,
     eventDate: order.eventDate.toISOString(),
-    driverName: null,
-    driverInitials: null,
-    secondDriverName: null,
-    secondDriverInitials: null,
-    price: order.price,
-    paymentMethod: order.paymentMethod,
-    companyName: order.company.name,
     locationName: order.locationName,
     locationAddress: order.locationAddress,
     distanceKm: order.inquiry?.distanceKm ?? null,
-    confirmed: order.confirmed,
-    designReady: order.designReady,
-    planned: order.planned,
-    paid: order.paid,
   }));
-
-  const eventTypes = [
-    ...new Set(orders.map((o) => o.eventType).filter(Boolean)),
-  ].sort();
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -81,11 +63,7 @@ export default async function FreeOrdersPage() {
           </p>
         </div>
       ) : (
-        <OrdersTable
-          orders={serialized}
-          drivers={[]}
-          eventTypes={eventTypes}
-        />
+        <FreeOrdersList orders={serialized} />
       )}
     </div>
   );

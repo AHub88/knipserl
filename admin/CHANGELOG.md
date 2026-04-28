@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.29.0] — 2026-04-28
+
+### Added
+- **Übernehmen-Button auf der Seite „Freie Aufträge"** (`/free-orders`). Jeder freie Auftrag wird als Karte mit Datum, „in X Tagen"-Badge, Eventtyp, Location und Distanz angezeigt; ein grüner „Übernehmen"-Button greift den Auftrag direkt für den eingeloggten Fahrer (oder den impersonierten Fahrer im Admin-Modus) und setzt `status: ASSIGNED`. Der Button nutzt den bestehenden `PATCH /api/orders/[id]` mit `driverId: "self"` — der Endpoint hat die Self-Claim-Logik schon länger.
+
+### Changed
+- **„Meine Aufträge" aufgeräumt — der „Offen"-Tab ist weg.** Vorher zeigten sowohl `/my-orders` (Tab „Offen") als auch `/free-orders` dieselbe Liste freier Aufträge. Jetzt gehört Übernehmen-Workflow eindeutig zu „Freie Aufträge", `/my-orders` zeigt nur noch die zwei sinnvollen Tabs **„Anstehend"** und **„Erledigt"** (vorher „Zugewiesen" und „Erledigt", umbenannt für Klarheit).
+
 ## [1.28.0] — 2026-04-28
 
 ### Added
