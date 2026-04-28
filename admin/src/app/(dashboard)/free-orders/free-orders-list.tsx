@@ -118,13 +118,16 @@ export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
               {/* Content */}
               <div className="flex-1 min-w-0 p-3 sm:p-4 flex flex-col gap-2">
                 <Link href={`/orders/${o.id}`} className="group flex flex-col gap-2">
-                  {/* Row 1: Location + countdown */}
+                  {/* Row 1: Location (two lines) + countdown */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2 min-w-0">
                       <IconMapPin className="size-4 text-emerald-500 shrink-0 mt-0.5" />
-                      <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug group-hover:text-emerald-500 transition-colors line-clamp-2">
-                        {locationLabel}
-                      </p>
+                      <div className="min-w-0">
+                        <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug truncate group-hover:text-emerald-500 transition-colors">
+                          {o.locationName || city || o.locationAddress}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">{o.locationAddress}</p>
+                      </div>
                     </div>
                     <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/12 text-emerald-500 px-1.5 py-1 shrink-0 leading-none whitespace-nowrap">
                       {daysUntil(o.eventDate)}

@@ -164,20 +164,22 @@ function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
 
         {/* Content */}
         <div className="flex-1 min-w-0 p-3 sm:p-4 flex flex-col gap-2.5">
-          {/* Row 1: Location (primary) + countdown badge */}
+          {/* Row 1: Location name + city (two lines) + countdown */}
           <div>
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-start gap-2 min-w-0">
                 <IconMapPin className="size-4 text-primary shrink-0 mt-0.5" />
-                <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug line-clamp-2">{locationLabel}</p>
+                <div className="min-w-0">
+                  <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug truncate">
+                    {order.locationName || city || order.locationAddress}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{order.locationAddress}</p>
+                </div>
               </div>
               <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-primary/12 text-primary px-1.5 py-1 shrink-0 leading-none whitespace-nowrap">
                 {daysUntil(order.eventDate, now)}
               </span>
             </div>
-            {order.locationAddress && order.locationName && (
-              <p className="text-[11px] text-muted-foreground mt-0.5 ml-6 truncate">{order.locationAddress}</p>
-            )}
           </div>
 
           {/* Row 2: Customer · Event type · Compensation */}
@@ -193,7 +195,7 @@ function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
           {order.extras.length > 0 && (
             <div className="flex flex-wrap gap-1.5 ml-6">
               {order.extras.map((e) => (
-                <span key={e} className="px-2 py-0.5 rounded-md border border-border bg-muted/50 text-[11px] font-medium text-muted-foreground">{e}</span>
+                <span key={e} className="px-2 py-0.5 rounded-md border border-primary/20 bg-primary/8 text-[11px] font-semibold text-primary">{e}</span>
               ))}
             </div>
           )}
