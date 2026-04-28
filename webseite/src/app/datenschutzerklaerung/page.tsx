@@ -82,8 +82,67 @@ function FallbackContent() {
 
       <h2>5. Analyse-Tools und Werbung</h2>
       <p>
-        Diese Website verwendet keine Analyse-Tools oder Tracking-Dienste von Drittanbietern.
-        Wir verwenden ausschließlich DSGVO-konforme Dienste.
+        Diese Website verwendet keine Analyse-Tools oder Tracking-Dienste von Drittanbietern
+        (kein Google Analytics, kein Facebook-Pixel, kein Matomo, kein TikTok Pixel etc.).
+        Sie nutzt eine eigene, cookielose Reichweitenmessung, die im folgenden Abschnitt
+        beschrieben wird.
+      </p>
+
+      <h3>5.1 Eigene cookielose Reichweitenmessung</h3>
+      <p>
+        Zur statistischen Auswertung der Webseiten-Nutzung (z. B. wie viele Personen
+        welche Seiten aufrufen) betreiben wir eine selbst gehostete, cookielose
+        Reichweitenmessung. Es werden weder Cookies gesetzt noch sonstige Informationen
+        in Ihrem Endgerät gespeichert oder ausgelesen (kein <em>localStorage</em>, kein
+        <em> sessionStorage</em>).
+      </p>
+      <p>
+        <strong>Welche Daten werden verarbeitet?</strong>
+        <br />
+        Bei jedem Seitenaufruf werten wir aus: aufgerufene URL, vorhergehende URL
+        (Referrer, falls übermittelt), Datum/Uhrzeit, ungefähre Geräteklasse
+        (Desktop/Mobil/Tablet), Browser- und Betriebssystem-Familie aus dem User-Agent,
+        Bildschirmauflösung, Browser-Sprache, ggf. UTM-Kampagnen-Parameter aus der URL,
+        Verweildauer auf der Seite und maximal erreichte Scroll-Tiefe. Außerdem
+        verarbeiten wir kurzzeitig Ihre IP-Adresse zusammen mit dem User-Agent, um
+        daraus einen pseudonymen Identifier zu erzeugen.
+      </p>
+      <p>
+        <strong>Wie wird Ihre Identität geschützt?</strong>
+        <br />
+        IP-Adresse und User-Agent werden nicht in unserer Datenbank gespeichert.
+        Stattdessen erzeugen wir aus IP-Adresse, User-Agent und einem täglich
+        rotierenden Zufallswert (sog. Salt) einen Hash-Wert. Nur dieser Hash wird
+        gespeichert. Da der Salt jeden Tag neu generiert und der vorherige Salt
+        verworfen wird, lässt sich aus dem gespeicherten Hash nach 24 Stunden
+        keine Verbindung mehr zu einer bestimmten IP-Adresse oder Person herstellen.
+        Eine Wiedererkennung über mehrere Tage hinweg ist technisch ausgeschlossen.
+      </p>
+      <p>
+        <strong>Speicherdauer:</strong> Reichweiten-Datensätze werden automatisch
+        nach 365 Tagen gelöscht. Tagesbezogene Salt-Werte werden nach spätestens 7
+        Tagen gelöscht.
+      </p>
+      <p>
+        <strong>Empfänger:</strong> Die Daten werden ausschließlich auf unseren
+        eigenen Servern in Deutschland (Hetzner) verarbeitet. Es findet keine
+        Übermittlung an Drittanbieter und keine Übermittlung in Drittländer statt.
+      </p>
+      <p>
+        <strong>Rechtsgrundlage:</strong> Da keine Informationen in Ihrem Endgerät
+        gespeichert oder ausgelesen werden (keine Cookies, kein Browserspeicher),
+        ist eine Einwilligung nach § 25 Abs. 1 TDDDG (vormals TTDSG) nicht erforderlich.
+        Die Verarbeitung der pseudonymisierten Daten erfolgt auf Grundlage unseres
+        berechtigten Interesses gemäß Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes
+        Interesse besteht darin, die Reichweite, Funktion und Optimierung unseres
+        Webauftritts statistisch auswerten zu können, ohne dabei Profile von
+        einzelnen Besucherinnen und Besuchern anzulegen.
+      </p>
+      <p>
+        <strong>Widerspruch:</strong> Sie können der Reichweitenmessung jederzeit
+        widersprechen, indem Sie in Ihrem Browser die Funktion <em>Do Not Track</em>{" "}
+        oder <em>Global Privacy Control</em> aktivieren. Beide Signale werden
+        respektiert; in diesem Fall wird kein Datensatz erfasst.
       </p>
 
       <h2>6. Distanzberechnung</h2>

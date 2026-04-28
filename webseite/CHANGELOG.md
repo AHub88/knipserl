@@ -4,6 +4,29 @@ Alle nennenswerten Änderungen an der öffentlichen Webseite (www.knipserl.de).
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.9.0] — 2026-04-28
+
+### Added
+- **Eigene cookielose Reichweitenmessung** — Ersatz für externe Analytics-Tools, ohne Consent-Banner.
+  - Client-Tracker (`src/components/analytics/Tracker.tsx`) im Root-Layout, registriert eine globale `window.knipTrack(type, meta)`-Funktion und sendet bei jedem Pfadwechsel ein Pageview-Beacon. Beim Verlassen wird per `sendBeacon` die Verweildauer + maximale Scroll-Tiefe nachgereicht.
+  - **Browser-Signale `Do Not Track` und `Global Privacy Control` werden respektiert** — ist eines aktiv, wird kein einziges Beacon gesendet.
+  - **Keinerlei Browser-Storage** verwendet (keine Cookies, kein `localStorage`, kein `sessionStorage`) → keine Einwilligungspflicht nach §&nbsp;25 TDDDG.
+  - Pageview-IDs leben nur in einer JS-Closure und sind beim Tab-Schließen weg.
+- **Server-Proxy** unter `/api/track/*` — empfängt Browser-Beacons, hasht IP+User-Agent mit dem täglich rotierten Salt zu pseudonymem `visitorId` + `sessionId` und leitet an den Admin-Ingest weiter. **Die rohe IP-Adresse verlässt den Webseite-Prozess nie und wird nirgends gespeichert.**
+  - `POST /api/track/pageview` (Create), `POST /api/track/pageview/close` (Beacon-PATCH-Brücke), `POST /api/track/event`.
+  - Tägliches Salt wird vom Admin geholt und 60s in-process gecached.
+- **Funnel-Events in den beiden zentralen Formularen**:
+  - `InquiryForm` (Anfrage / Termin reservieren): feuert `anfrage_started` beim ersten Feld-/Datum-/Eventtyp-Touch und `anfrage_submitted` bei erfolgreicher Übermittlung (mit Preset + EventType + Produkt als Meta).
+  - `ContactForm` (Kontaktseite): feuert `kontakt_started` beim ersten Feld-Touch (Honeypot ausgenommen) und `kontakt_submitted` bei Erfolg (mit `hasFirma`-Flag).
+
+### Changed
+- **Datenschutzerklärung um Abschnitt 5.1 „Eigene cookielose Reichweitenmessung" erweitert** (Fallback-Inhalt in `webseite/src/app/datenschutzerklaerung/page.tsx` und Default-HTML in der Admin-Konsole). Beschreibt verarbeitete Datenpunkte, Pseudonymisierung über tägliches Salt-Rotationsverfahren, Speicherdauer (Daten 365 Tage, Salt 7 Tage), Empfänger (nur eigener Hetzner-Server, kein Drittanbieter), Rechtsgrundlage (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO ohne Einwilligungspflicht nach §&nbsp;25 Abs.&nbsp;1 TDDDG) und Widerspruchsmöglichkeit über DNT/GPC.
+
+### Setup (einmalig durch Betreiber)
+- `TRACK_SHARED_SECRET` in der Webseite-Container-`.env` eintragen — denselben Wert wie im Admin-Container.
+- `ADMIN_API_URL` (oder Host-Mapping) sicherstellen, sonst skippen die Track-Endpunkte mit `skipped: "no_admin_base"`.
+- Auf `localhost` ist der Tracker bewusst deaktiviert (kein Datenbank-Spam beim lokalen Entwickeln).
+
 ## [1.8.1] — 2026-04-22
 
 ### Removed

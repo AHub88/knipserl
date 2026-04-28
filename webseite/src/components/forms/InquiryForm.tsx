@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useGooglePlacesAutocomplete } from "@/lib/use-google-places";
 import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
+import { trackEvent } from "@/lib/track-client";
 import MiniCalendar from "./MiniCalendar";
 
 interface InquiryFormProps {
@@ -31,6 +32,7 @@ const inputClass = "w-full px-4 py-3 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px
 export default function InquiryForm({ preset = "fotobox", compact = false }: InquiryFormProps) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const startedTrackedRef = useRef(false);
   const [formData, setFormData] = useState({
     art: preset === "gaestetelefon" ? "Gästetelefon" : "Knipserl mit Drucker",
     datum: "",
@@ -65,6 +67,10 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    if (!startedTrackedRef.current) {
+      startedTrackedRef.current = true;
+      trackEvent("anfrage_started", { preset });
+    }
     setFormData((prev) => {
       // Manuelles Editieren des Location-Felds → gespeicherte Places-Metadaten invalidieren
       if (name === "location") {
@@ -82,6 +88,10 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
   };
 
   const toggleEventType = (type: string) => {
+    if (!startedTrackedRef.current) {
+      startedTrackedRef.current = true;
+      trackEvent("anfrage_started", { preset });
+    }
     setFormData((prev) => ({
       ...prev,
       eventType: prev.eventType === type ? "" : type,
@@ -104,6 +114,11 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
       });
 
       if (!res.ok) throw new Error("Fehler beim Senden");
+      trackEvent("anfrage_submitted", {
+        preset,
+        eventType: formData.eventType || null,
+        product: formData.art,
+      });
       saveInquirySummary({
         eventDate: formData.datum,
         eventType: formData.eventType,
@@ -121,7 +136,13 @@ export default function InquiryForm({ preset = "fotobox", compact = false }: Inq
         {/* Left: Calendar */}
         <MiniCalendar
           selected={formData.datum}
-          onSelect={(date) => setFormData((prev) => ({ ...prev, datum: date }))}
+          onSelect={(date) => {
+            if (!startedTrackedRef.current) {
+              startedTrackedRef.current = true;
+              trackEvent("anfrage_started", { preset });
+            }
+            setFormData((prev) => ({ ...prev, datum: date }));
+          }}
         />
 
         {/* Right: Form fields */}

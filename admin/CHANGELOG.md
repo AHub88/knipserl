@@ -4,6 +4,39 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.25.0] — 2026-04-28
+
+### Added
+- **Eigene Webanalyse-Konsole unter `/statistics`** — Ersatz für Google Analytics, vollständig DSGVO-konform und cookielos.
+  - Vier Tabs: **Seitenaufrufe** (KPIs heute/7T/30T, Unique Besucher, Ø Verweildauer, Ø Scroll-Tiefe, Bounce-Rate, Bot-Aufrufe, Verlaufschart, Top-Domains-Donut, Top-Seiten- und Top-Referrer-Tabellen), **Besucher** (Geräte-Pie, Browser- und OS-Bars, Sprachen, Bildschirmauflösungen, UTM-Quellen + UTM-Kampagnen-Tabellen), **Ereignisse** (KPIs für heute/Bereich/Anfragen/Kontakte, Tages-Bar-Chart, Aufschlüsselung nach Typ, Liste der letzten 40 Ereignisse), **Anfrage-Funnel** (3-Stufen-Funnel für Anfrage und Kontakt mit Conversion-Raten je Schritt und Gesamt).
+  - Domain-Filter (Pillen) + Zeitraum-Wahl (7/30/90 Tage). Filter-Werte werden in der URL gespiegelt, damit ein Refresh den Zustand erhält.
+  - Sichtbar nur für Rolle `ADMIN` — andere Rollen werden auf `/` umgeleitet.
+- **Tracking-Ingest-API** (Webseite-Proxy → Admin):
+  - `GET  /api/track/salt` — liefert das täglich rotierte Salt für IP+UA-Hashing, geschützt durch Shared-Secret-Header `X-Track-Secret`. Wird vom Webseite-Server 60s in-process gecached.
+  - `POST /api/track/ingest/pageview` — speichert eine Pageview, gibt die ID zurück.
+  - `PATCH /api/track/ingest/pageview` — reicht `durationMs` + `scrollPct` nach (per Beacon vom Tracker beim Verlassen).
+  - `POST /api/track/ingest/event` — speichert ein Custom-Event (`anfrage_started`, `anfrage_submitted`, `kontakt_started`, `kontakt_submitted`, …).
+- **Server-Side User-Agent-Parser + Bot-Filter** in `src/lib/analytics.ts` — fängt die offensichtlichsten Crawler ab (Googlebot, Bingbot, Headless-Chrome, Lighthouse, PageSpeed, Social-Bots etc.).
+- **Datenschutzerklärung-Default-HTML** (`settings/legal-pages/default-content.ts`) um den Abschnitt „5.1 Eigene cookielose Reichweitenmessung" erweitert. Die im DB gespeicherte Live-Version ist editierbar — Inhalt bei Bedarf in der Admin-Konsole aktualisieren.
+
+### Database
+- Drei neue Tabellen, mitgepflegt in `sync-schema.cjs`:
+  - `analytics_pageviews` — Pageview-Zeilen mit pseudonymem `visitorId` + `sessionId`, Domain, Pfad, Referrer, UA-Felder (Device/Browser/OS), Sprache, Bildschirmgröße, UTM-Felder, `isBot`, `durationMs`, `scrollPct`.
+  - `analytics_events` — Funnel- und Custom-Events.
+  - `analytics_daily_salts` — täglich rotierter Zufallswert (32-Byte-Hex), aus dem zusammen mit IP+UA der pseudonyme Identifier gebildet wird. Salt wird nach spätestens 7 Tagen gelöscht.
+- Auto-Cleanup beim Container-Start: Pageviews + Events älter als 365 Tage werden gelöscht (Datenminimierung). Salt-Records älter als 7 Tage werden gelöscht.
+
+### DSGVO/Security
+- **Plausible-Modell:** keine Cookies, kein `localStorage`, kein `sessionStorage`, keine Drittanbieter. Identifier ist `sha256(daily_salt + ip + ua)` — Re-Identifikation ist nach 24h technisch ausgeschlossen.
+- IP-Adresse wird ausschließlich kurz im Speicher des Webseite-Prozesses verwendet (für das Hashing) und niemals gespeichert oder an den Admin-Container übermittelt.
+- Browser-Signale `Do Not Track` und `Global Privacy Control` werden respektiert — bei aktivem Signal wird gar nichts erfasst.
+- Shared-Secret zwischen Webseite-Proxy und Admin-Ingest (`TRACK_SHARED_SECRET`-ENV) — verhindert Direktaufrufe der Ingest-Endpunkte aus dem Internet.
+
+### Setup (einmalig durch Betreiber)
+- `TRACK_SHARED_SECRET` in beide `.env`-Dateien (Webseite + Admin) eintragen, z.&nbsp;B. `openssl rand -hex 32`. Beide Container müssen denselben Wert haben.
+- `ADMIN_API_URL` muss in der Webseite-Container-`.env` auf den intern erreichbaren Admin-Endpunkt zeigen (Default-Mapping über Host-Header existiert bereits für `dev-admin.knipserl.de` und `admin.knipserl.de`).
+- Live-Datenschutzerklärung über Admin-Konsole (`/settings/legal-pages` → Datenschutzerklärung) um den neuen Abschnitt 5.1 ergänzen — der neue Text liegt unter `default-content.ts` zum Übernehmen bereit.
+
 ## [1.24.0] — 2026-04-24
 
 ### Added

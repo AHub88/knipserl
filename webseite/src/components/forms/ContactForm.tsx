@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { saveInquirySummary } from "@/app/anfrage-erhalten/InquirySummary";
+import { trackEvent } from "@/lib/track-client";
 
 const inputBase =
   "w-full h-[52px] px-4 bg-[rgba(0,0,0,0.07)] border-0 rounded-[5px] text-[#1a171b] text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-[#F3A300] focus:outline-none font-[family-name:var(--font-fira-sans)]";
@@ -14,6 +15,7 @@ export default function ContactForm() {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const startedTrackedRef = useRef(false);
   const [form, setForm] = useState({
     firma: "",
     vorname: "",
@@ -28,6 +30,10 @@ export default function ContactForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    if (!startedTrackedRef.current && name !== "website") {
+      startedTrackedRef.current = true;
+      trackEvent("kontakt_started");
+    }
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -61,6 +67,7 @@ export default function ContactForm() {
       });
 
       if (!res.ok) throw new Error("Fehler beim Senden");
+      trackEvent("kontakt_submitted", { hasFirma: Boolean(form.firma) });
       // Kontaktformular hat keine Event-Details — Summary bleibt leer,
       // dadurch zeigt die Dankesseite nur den Danke-Text ohne "Deine Anfrage"-Box
       saveInquirySummary({});

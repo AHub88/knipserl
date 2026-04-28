@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Fira_Sans, Fira_Sans_Extra_Condensed } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import Tracker from "@/components/analytics/Tracker";
 import { generateLocalBusinessSchema, generateServiceSchema } from "@/lib/seo";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
@@ -93,6 +95,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        <Suspense fallback={null}>
+          <Tracker />
+        </Suspense>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

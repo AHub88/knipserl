@@ -433,6 +433,46 @@ async function syncSchema() {
     ["push_subscriptions", "userAgent", "TEXT", true, null],
     ["push_subscriptions", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
     ["push_subscriptions", "updatedAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // analytics_pageviews — eigene Webanalyse, cookieless
+    ["analytics_pageviews", "id", "TEXT", false, null],
+    ["analytics_pageviews", "visitorId", "TEXT", false, "''"],
+    ["analytics_pageviews", "sessionId", "TEXT", false, "''"],
+    ["analytics_pageviews", "domain", "TEXT", false, "''"],
+    ["analytics_pageviews", "path", "TEXT", false, "''"],
+    ["analytics_pageviews", "referrer", "TEXT", true, null],
+    ["analytics_pageviews", "referrerHost", "TEXT", true, null],
+    ["analytics_pageviews", "userAgent", "TEXT", true, null],
+    ["analytics_pageviews", "device", "TEXT", true, null],
+    ["analytics_pageviews", "browser", "TEXT", true, null],
+    ["analytics_pageviews", "os", "TEXT", true, null],
+    ["analytics_pageviews", "language", "TEXT", true, null],
+    ["analytics_pageviews", "screenWidth", "INTEGER", true, null],
+    ["analytics_pageviews", "screenHeight", "INTEGER", true, null],
+    ["analytics_pageviews", "utmSource", "TEXT", true, null],
+    ["analytics_pageviews", "utmMedium", "TEXT", true, null],
+    ["analytics_pageviews", "utmCampaign", "TEXT", true, null],
+    ["analytics_pageviews", "utmTerm", "TEXT", true, null],
+    ["analytics_pageviews", "utmContent", "TEXT", true, null],
+    ["analytics_pageviews", "isBot", "BOOLEAN", false, "false"],
+    ["analytics_pageviews", "durationMs", "INTEGER", true, null],
+    ["analytics_pageviews", "scrollPct", "INTEGER", true, null],
+    ["analytics_pageviews", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // analytics_events — Funnel- und Custom-Events
+    ["analytics_events", "id", "TEXT", false, null],
+    ["analytics_events", "visitorId", "TEXT", false, "''"],
+    ["analytics_events", "sessionId", "TEXT", false, "''"],
+    ["analytics_events", "type", "TEXT", false, "''"],
+    ["analytics_events", "domain", "TEXT", true, null],
+    ["analytics_events", "path", "TEXT", true, null],
+    ["analytics_events", "meta", "JSONB", true, null],
+    ["analytics_events", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
+
+    // analytics_daily_salts — täglich rotiertes Salt zum Hashen von IP+UA
+    ["analytics_daily_salts", "date", "TEXT", false, null],
+    ["analytics_daily_salts", "salt", "TEXT", false, "''"],
+    ["analytics_daily_salts", "createdAt", "TIMESTAMPTZ", false, "NOW()"],
   ];
 
   // Group by table
@@ -472,6 +512,21 @@ async function syncSchema() {
   // Unique index + lookup-index für Web-Push-Abos
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "push_subscriptions_endpoint_key" ON "push_subscriptions" ("endpoint")`);
   await q(c, `CREATE INDEX IF NOT EXISTS "push_subscriptions_userId_idx" ON "push_subscriptions" ("userId")`);
+
+  // Analytics-Indizes — Aggregationsperformance
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_createdAt_idx" ON "analytics_pageviews" ("createdAt")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_path_idx" ON "analytics_pageviews" ("path")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_visitorId_idx" ON "analytics_pageviews" ("visitorId")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_sessionId_idx" ON "analytics_pageviews" ("sessionId")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_domain_idx" ON "analytics_pageviews" ("domain")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_events_createdAt_idx" ON "analytics_events" ("createdAt")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_events_type_idx" ON "analytics_events" ("type")`);
+  await q(c, `CREATE INDEX IF NOT EXISTS "analytics_events_sessionId_idx" ON "analytics_events" ("sessionId")`);
+
+  // Auto-cleanup: Pageviews + Events älter als 365 Tage löschen (DSGVO Datenminimierung)
+  await q(c, `DELETE FROM "analytics_pageviews" WHERE "createdAt" < NOW() - INTERVAL '365 days'`);
+  await q(c, `DELETE FROM "analytics_events" WHERE "createdAt" < NOW() - INTERVAL '365 days'`);
+  await q(c, `DELETE FROM "analytics_daily_salts" WHERE "createdAt" < NOW() - INTERVAL '7 days'`);
 
   // ── Data migration: impression_photos → media_assets (idempotent, one-shot) ──
   // Kopiert alle Records aus impression_photos nach media_assets, falls media_assets leer ist

@@ -597,3 +597,64 @@ model GoogleReview {
 
   @@map("google_reviews")
 }
+
+// ─── Eigene Webanalyse (cookieless, DSGVO-konform) ──────────────────────────
+// IP wird nie gespeichert. visitorId/sessionId sind Hashes aus täglich rotiertem
+// Salt + IP + UA — nach 24h nicht mehr re-identifizierbar (Plausible-Modell).
+
+model AnalyticsPageview {
+  id            String   @id @default(cuid())
+  visitorId    String
+  sessionId    String
+  domain       String
+  path         String
+  referrer     String?
+  referrerHost String?
+  userAgent    String?
+  device       String?
+  browser      String?
+  os           String?
+  language     String?
+  screenWidth  Int?
+  screenHeight Int?
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmTerm      String?
+  utmContent   String?
+  isBot        Boolean  @default(false)
+  durationMs   Int?
+  scrollPct    Int?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+  @@index([visitorId])
+  @@index([sessionId])
+  @@index([domain])
+  @@map("analytics_pageviews")
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  visitorId String
+  sessionId String
+  type      String
+  domain    String?
+  path      String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+  @@index([sessionId])
+  @@map("analytics_events")
+}
+
+model AnalyticsDailySalt {
+  date      String   @id   // YYYY-MM-DD (UTC)
+  salt      String
+  createdAt DateTime @default(now())
+
+  @@map("analytics_daily_salts")
+}
