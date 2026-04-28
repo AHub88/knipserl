@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.31.0] — 2026-04-28
+
+### Added
+- **Fahrer im Kalender ein- und ausblenden (Outlook-Stil).** Die Fahrer-Pillen in der Legende über dem Kalender sind jetzt klickbare Toggles — ein Klick blendet alle Aufträge und Urlaubsbalken dieses Fahrers aus, ein zweiter Klick wieder ein. Versteckte Fahrer werden ausgegraut und durchgestrichen dargestellt, das Initialen-Badge wird durch ein „Auge-zu"-Symbol ersetzt. Wirkt auf Monats- und Listenansicht. Bei Aufträgen ohne Fahrer erscheint zusätzlich eine graue „Kein Fahrer"-Pille, die separat ausgeblendet werden kann. Sind Fahrer ausgeblendet, zeigt rechts neben den Pillen ein „Alle einblenden (n)"-Link in Primärfarbe, mit dem alles in einem Klick zurückgesetzt wird. Die Auswahl wird in `localStorage` (`calendar-hidden-drivers`) gespeichert und bleibt damit über Page-Reloads, Monatswechsel und Browser-Sessions erhalten. Nebenbei mitgenommen: Fahrer, die im aktuellen Monat zwar Urlaub haben aber keinen Auftrag, tauchen jetzt ebenfalls in der Legende auf — vorher fehlten sie und ihr Urlaubsbalken hatte keinen erklärenden Pin.
+
 ## [1.30.2] — 2026-04-28
 
 ### Fixed

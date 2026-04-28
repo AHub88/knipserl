@@ -12,6 +12,8 @@ import {
   IconPalette,
   IconTruck,
   IconCoin,
+  IconEye,
+  IconEyeOff,
 } from "@tabler/icons-react";
 
 interface Order {
@@ -87,11 +89,46 @@ const MONTH_NAMES = [
 
 type ViewMode = "month" | "list";
 
+const HIDDEN_DRIVERS_STORAGE_KEY = "calendar-hidden-drivers";
+const NO_DRIVER_KEY = "__none__";
+
 export function CalendarView() {
   const router = useRouter();
   const [date, setDate] = useState(() => new Date());
   const [data, setData] = useState<CalendarData | null>(null);
   const [view, setView] = useState<ViewMode>("month");
+  const [hiddenDriverIds, setHiddenDriverIds] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      const raw = window.localStorage.getItem(HIDDEN_DRIVERS_STORAGE_KEY);
+      if (!raw) return new Set();
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? new Set(parsed.filter((x): x is string => typeof x === "string")) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(
+        HIDDEN_DRIVERS_STORAGE_KEY,
+        JSON.stringify([...hiddenDriverIds]),
+      );
+    } catch {
+      // localStorage may be unavailable (private mode, quota); ignore
+    }
+  }, [hiddenDriverIds]);
+
+  function toggleDriverVisibility(id: string) {
+    setHiddenDriverIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
@@ -126,15 +163,21 @@ export function CalendarView() {
 
   function getOrdersForDay(day: number): Order[] {
     if (!data) return [];
-    return data.orders.filter((o) => new Date(o.eventDate).getDate() === day);
+    return data.orders.filter((o) => {
+      if (new Date(o.eventDate).getDate() !== day) return false;
+      const driverKey = o.driver?.id ?? NO_DRIVER_KEY;
+      return !hiddenDriverIds.has(driverKey);
+    });
   }
 
-  // Sort vacations once, consistently by startDate then id
+  // Sort vacations once, consistently by startDate then id; hidden drivers are filtered out
   const sortedVacations = data
-    ? [...data.vacations].sort((a, b) => {
-        const diff = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
-        return diff !== 0 ? diff : a.id.localeCompare(b.id);
-      })
+    ? [...data.vacations]
+        .filter((v) => !hiddenDriverIds.has(v.driver.id))
+        .sort((a, b) => {
+          const diff = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+          return diff !== 0 ? diff : a.id.localeCompare(b.id);
+        })
     : [];
 
   function getVacationsForDay(day: number): Vacation[] {
@@ -150,19 +193,35 @@ export function CalendarView() {
     });
   }
 
-  // Unique drivers present in the current month's orders (for colour legend)
+  // Unique drivers present in the current month's orders or vacations (for colour legend / toggles)
   const driversInMonth = data
-    ? Array.from(
-        new Map(
-          data.orders
-            .filter((o) => o.driver)
-            .map((o) => [
-              o.driver!.id,
-              { id: o.driver!.id, name: o.driver!.name, initials: o.driver!.initials },
-            ])
-        ).values()
-      ).sort((a, b) => a.name.localeCompare(b.name, "de"))
+    ? (() => {
+        const map = new Map<string, { id: string; name: string; initials?: string }>();
+        for (const o of data.orders) {
+          if (o.driver) {
+            map.set(o.driver.id, {
+              id: o.driver.id,
+              name: o.driver.name,
+              initials: o.driver.initials,
+            });
+          }
+        }
+        for (const v of data.vacations) {
+          if (!map.has(v.driver.id)) {
+            map.set(v.driver.id, { id: v.driver.id, name: v.driver.name });
+          }
+        }
+        return Array.from(map.values()).sort((a, b) =>
+          a.name.localeCompare(b.name, "de"),
+        );
+      })()
     : [];
+
+  const hasOrdersWithoutDriver = data?.orders.some((o) => !o.driver) ?? false;
+  const hiddenCount = [
+    ...driversInMonth.map((d) => d.id),
+    ...(hasOrdersWithoutDriver ? [NO_DRIVER_KEY] : []),
+  ].filter((id) => hiddenDriverIds.has(id)).length;
 
   // Group orders by day for list view
   function getOrdersByDay(): { day: number; weekday: string; orders: Order[]; vacations: Vacation[] }[] {
@@ -256,28 +315,81 @@ export function CalendarView() {
         </div>
       </div>
 
-      {/* Driver color legend */}
-      {driversInMonth.length > 0 && (
+      {/* Driver color legend / toggles (Outlook-style) */}
+      {(driversInMonth.length > 0 || hasOrdersWithoutDriver) && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs">
           <span className="text-muted-foreground mr-1">Fahrer:</span>
           {driversInMonth.map((d) => {
             const dc = getDriverColor(d.id);
             const initials = getDriverInitials(d) ?? "";
+            const isHidden = hiddenDriverIds.has(d.id);
             return (
-              <span
+              <button
                 key={d.id}
-                className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5"
+                type="button"
+                onClick={() => toggleDriverVisibility(d.id)}
+                aria-pressed={!isHidden}
+                title={isHidden ? `${d.name} einblenden` : `${d.name} ausblenden`}
+                className={
+                  "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 transition-opacity hover:opacity-100 " +
+                  (isHidden ? "opacity-40" : "")
+                }
                 style={{
                   backgroundColor: dc.bg,
                   border: `1px solid ${dc.border}`,
                   color: dc.text,
                 }}
               >
-                <span className="font-bold">{initials}</span>
-                <span className="text-foreground/80">{d.name}</span>
-              </span>
+                {isHidden ? (
+                  <IconEyeOff className="size-3 shrink-0" />
+                ) : (
+                  <span className="font-bold">{initials}</span>
+                )}
+                <span
+                  className={
+                    "text-foreground/80 " + (isHidden ? "line-through" : "")
+                  }
+                >
+                  {d.name}
+                </span>
+              </button>
             );
           })}
+          {hasOrdersWithoutDriver && (() => {
+            const isHidden = hiddenDriverIds.has(NO_DRIVER_KEY);
+            return (
+              <button
+                type="button"
+                onClick={() => toggleDriverVisibility(NO_DRIVER_KEY)}
+                aria-pressed={!isHidden}
+                title={isHidden ? "Aufträge ohne Fahrer einblenden" : "Aufträge ohne Fahrer ausblenden"}
+                className={
+                  "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-100 " +
+                  (isHidden ? "opacity-40" : "")
+                }
+              >
+                {isHidden ? (
+                  <IconEyeOff className="size-3 shrink-0" />
+                ) : (
+                  <IconEye className="size-3 shrink-0" />
+                )}
+                <span
+                  className={isHidden ? "line-through" : ""}
+                >
+                  Kein Fahrer
+                </span>
+              </button>
+            );
+          })()}
+          {hiddenCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setHiddenDriverIds(new Set())}
+              className="ml-1 text-primary hover:underline"
+            >
+              Alle einblenden ({hiddenCount})
+            </button>
+          )}
         </div>
       )}
 
