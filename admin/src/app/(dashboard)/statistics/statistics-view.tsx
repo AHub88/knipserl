@@ -846,7 +846,7 @@ function FunnelView({
   steps,
 }: {
   title: string;
-  steps: { icon: React.ComponentType<{ className?: string }>; label: string; sublabel: string; value: number; color: string }[];
+  steps: { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; label: string; sublabel: string; value: number; color: string }[];
 }) {
   const max = Math.max(...steps.map((s) => s.value), 1);
   const totalConversion = steps[0].value > 0 ? (steps[steps.length - 1].value / steps[0].value) * 100 : 0;
