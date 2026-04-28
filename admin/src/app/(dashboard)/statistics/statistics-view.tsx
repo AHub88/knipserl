@@ -305,8 +305,8 @@ function PageviewsTab({ data, byDay }: { data: AnalyticsBundle; byDay: { day: st
                       borderRadius: 8,
                       fontSize: 12,
                     }}
-                    formatter={(v: number) => [v, "Aufrufe"]}
-                    labelFormatter={(l: string) => formatPathDate(l)}
+                    formatter={(v) => [String(v), "Aufrufe"]}
+                    labelFormatter={(l) => formatPathDate(String(l))}
                   />
                   <Area type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2.2} fill="url(#pvgrad)" isAnimationActive={false} />
                 </AreaChart>
@@ -595,7 +595,7 @@ function DeviceDonut({ rows }: { rows: { name: string; count: number }[] }) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(v: number, n: string) => [v, n]}
+              formatter={(v, n) => [String(v), String(n)]}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -683,8 +683,8 @@ function EventsTab({ data, byDay }: { data: AnalyticsBundle; byDay: { day: strin
                       fontSize: 12,
                     }}
                     cursor={{ fill: "var(--muted)" }}
-                    labelFormatter={(l: string) => formatPathDate(l)}
-                    formatter={(v: number) => [v, "Ereignisse"]}
+                    labelFormatter={(l) => formatPathDate(String(l))}
+                    formatter={(v) => [String(v), "Ereignisse"]}
                   />
                   <Bar dataKey="count" fill="#3b82f6" radius={[3, 3, 0, 0]} />
                 </BarChart>
