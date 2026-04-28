@@ -157,13 +157,42 @@ export function StatisticsView({
             setQuery({ tab: next });
           }}
         >
-          {/* Tab-Leiste: horizontaler Scroll ohne sichtbaren Scrollbar */}
-          <div
-            className="-mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <TabsList className="h-auto inline-flex w-max">
-              <TabsTrigger value="live" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
+          {/* Mobile: Tab- und Range-Auswahl als kompakte Selects */}
+          <div className="flex items-center gap-2 sm:hidden">
+            <select
+              value={tab}
+              onChange={(e) => {
+                const v = e.target.value as TabKey;
+                setTab(v);
+                setQuery({ tab: v });
+              }}
+              className="flex-1 h-9 rounded-lg border border-border bg-card px-3 pr-8 text-sm font-semibold text-foreground outline-none cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+            >
+              <option value="live">
+                {live.activeCount > 0 ? `● Live · ${live.activeCount} aktiv` : "● Live"}
+              </option>
+              <option value="pageviews">Aufrufe · {data.total30d.toLocaleString("de-DE")}</option>
+              <option value="visitors">Besucher</option>
+              <option value="events">
+                Ereignisse{data.eventsRange > 0 ? ` · ${data.eventsRange.toLocaleString("de-DE")}` : ""}
+              </option>
+              <option value="funnel">Anfrage-Funnel</option>
+            </select>
+            <select
+              value={data.range}
+              onChange={(e) => setQuery({ range: Number(e.target.value) })}
+              className="h-9 rounded-lg border border-border bg-card px-3 pr-8 text-sm font-semibold text-foreground outline-none cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+            >
+              <option value="7">7 Tage</option>
+              <option value="30">30 Tage</option>
+              <option value="90">90 Tage</option>
+            </select>
+          </div>
+
+          {/* Desktop: vollständige Tab-Reihe */}
+          <div className="hidden sm:block">
+            <TabsList className="h-auto flex-wrap">
+              <TabsTrigger value="live" className="px-2.5 py-1.5 whitespace-nowrap">
                 <span className="relative flex items-center gap-1.5">
                   {live.activeCount > 0 ? (
                     <span className="relative flex size-2">
@@ -176,38 +205,37 @@ export function StatisticsView({
                   <span>Live</span>
                 </span>
                 {live.activeCount > 0 && (
-                  <span className="ml-1 inline-flex items-center justify-center rounded-md px-1 text-[10px] font-semibold tabular-nums bg-emerald-500/10 text-emerald-500">
+                  <span className="ml-1.5 inline-flex items-center justify-center rounded-md px-1.5 text-[11px] font-semibold tabular-nums bg-emerald-500/10 text-emerald-500">
                     {live.activeCount}
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="pageviews" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
-                <span className="hidden sm:inline">Seitenaufrufe</span>
-                <span className="sm:hidden">Aufrufe</span>
-                <span className="ml-1 inline-flex items-center justify-center rounded-md bg-primary/10 px-1 text-[10px] font-semibold text-primary tabular-nums">
+              <TabsTrigger value="pageviews" className="px-2.5 py-1.5 whitespace-nowrap">
+                Seitenaufrufe
+                <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-primary/10 px-1.5 text-[11px] font-semibold text-primary tabular-nums">
                   {data.total30d.toLocaleString("de-DE")}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="visitors" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="visitors" className="px-2.5 py-1.5 whitespace-nowrap">
                 Besucher
               </TabsTrigger>
-              <TabsTrigger value="events" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="events" className="px-2.5 py-1.5 whitespace-nowrap">
                 Ereignisse
                 {data.eventsRange > 0 && (
-                  <span className="ml-1 inline-flex items-center justify-center rounded-md bg-blue-500/10 px-1 text-[10px] font-semibold text-blue-500 tabular-nums">
+                  <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-blue-500/10 px-1.5 text-[11px] font-semibold text-blue-500 tabular-nums">
                     {data.eventsRange.toLocaleString("de-DE")}
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="funnel" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
-                <span className="hidden sm:inline">Anfrage-Funnel</span>
-                <span className="sm:hidden">Funnel</span>
+              <TabsTrigger value="funnel" className="px-2.5 py-1.5 whitespace-nowrap">
+                Anfrage-Funnel
               </TabsTrigger>
             </TabsList>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            {/* Range picker — immer sichtbar */}
+          {/* Desktop: Range-Picker + optional Domain-Filter (auf Mobile sind beide
+              im oberen Select-Block bereits abgedeckt) */}
+          <div className="mt-3 hidden sm:flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5">
               {[7, 30, 90].map((r) => (
                 <button
@@ -225,7 +253,6 @@ export function StatisticsView({
               ))}
             </div>
 
-            {/* Domain filter — nur sichtbar wenn mehr als eine Domain getrackt wurde */}
             {data.domains.length > 1 && (
               <select
                 value={data.domain ?? ""}
