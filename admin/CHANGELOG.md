@@ -4,6 +4,18 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.30.0] — 2026-04-28
+
+### Added
+- **Fahrer-Bonus pro Extra** — die Vergütung eines Fahrers ist jetzt nicht mehr nur die Aufbau-Pauschale (`setupCost`), sondern zusätzlich ein konfigurierbarer Bonus je gebuchtem Extra. Default-Sätze: Gästetelefon 10 €, Hintergrundsystem 20 €, TV 30 €, LOVE Buchstaben 30 €. In den Einstellungen unter `/settings/extras-pricing` editierbar — neue zweite Spalte „Vergütung Fahrer".
+- **Vergütungs-Box auf der Auftragsdetail-Seite.** Fahrer sehen statt der „Intern"-Box jetzt eine eigene grüne Box „Deine Vergütung" mit Aufschlüsselung: Aufbau-Pauschale + ein Eintrag pro Bonus-Extra + Summe. Admins behalten die „Intern"-Box (Kundenpreis/Gewinn/Zahlweise) und sehen die Vergütungs-Box zusätzlich.
+- **Zweitfahrer-Aufteilung 50/50.** Aufträge mit `secondDriverId` zeigen unter der Vergütung einen Hinweis-Block „50/50-Aufteilung mit [Name]" und teilen die Vergütung zwischen beiden Fahrern. Der Buchhaltungs-Report (`/accounting/driver-report`) erfasst jetzt beide Fahrer und summiert pro Fahrer den Anteil; Einsätze mit Aufteilung sind mit „50/50"-Badge markiert.
+
+### Changed
+- **Bonus wird pro Auftrag eingefroren.** Beim Anlegen eines Auftrags und beim Ändern der Extras wird ein Snapshot der aktuell konfigurierten Boni in der neuen Spalte `Order.driverBonus` (JSONB) gespeichert. Spätere Änderungen an den Bonus-Sätzen wirken nicht rückwirkend auf bereits existierende Aufträge — was dem Fahrer für seinen Auftrag versprochen wurde, bleibt stehen.
+- **Alt-Aufträge ohne Snapshot** zeigen einen Live-Fallback aus den aktuellen Settings an; markiert mit einem kleinen „Live"-Badge in der Vergütungs-Box, damit klar ist, dass der Wert sich noch ändern kann. Wird beim noch ausstehenden Initial-Re-Import sauber nachgezogen.
+- **Driver-Report**: Spalte „Fahrten" → „Einsätze" (zwei Fahrer auf einem Auftrag = zwei Einsätze). Vergütung pro Eintrag = Aufbau-Pauschale + Bonus, ggf. halbiert.
+
 ## [1.29.2] — 2026-04-28
 
 ### Fixed

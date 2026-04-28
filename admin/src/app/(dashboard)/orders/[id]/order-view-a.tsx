@@ -44,7 +44,8 @@ import {
   IconReceipt,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
-import { EXTRAS_PRICES, PAPER_ROLL_PRICE } from "@/lib/extras-pricing";
+import { EXTRAS_PRICES, EXTRAS_LABELS, PAPER_ROLL_PRICE } from "@/lib/extras-pricing";
+import { getDriverCompensation } from "@/lib/driver-compensation";
 import { ImageGallery } from "./image-gallery";
 
 const EXTRAS_CONFIG = [
@@ -108,6 +109,7 @@ type Order = {
   confirmedByCustomerAt?: string | null;
   designToken?: string | null;
   locationId?: string | null;
+  driverBonus?: unknown;
 };
 
 type Props = {
@@ -115,6 +117,7 @@ type Props = {
   drivers: { id: string; name: string; initials: string | null }[];
   isAdmin: boolean;
   viewMode?: string;
+  driverBonusPrices?: Record<string, number>;
   onEdit: () => void;
 };
 
@@ -129,7 +132,7 @@ function formatDateDDMMYY(iso: string | null | undefined) {
 }
 
 
-export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props) {
+export function OrderViewA({ order, drivers, isAdmin, viewMode, driverBonusPrices, onEdit }: Props) {
   const router = useRouter();
 
   // Inline edit states
@@ -239,6 +242,17 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
   // Fahrer dürfen intern sehen (und den Kommentar bearbeiten).
   const showInternal = viewMode !== "accounting";
   const canEditInternalNotes = isAdmin || isDriverView;
+
+  // Fahrer-Vergütung: eingefrorener Snapshot in order.driverBonus,
+  // Fallback auf aktuelle Settings (driverBonusPrices) für Alt-Aufträge ohne Snapshot.
+  const compensation = getDriverCompensation({
+    setupCost: order.setupCost,
+    extras: extrasState,
+    driverBonus: order.driverBonus,
+    hasSecondDriver: !!order.secondDriverId,
+    livePrices: driverBonusPrices,
+  });
+  const compensationSecondName = order.secondDriverName;
 
   const statusFlags = [
     { label: "Bestätigt", icon: IconCircleCheck, done: statusState.confirmed },
@@ -1484,8 +1498,8 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
             </div>
           </div>
 
-          {/* Intern */}
-          {showInternal && (
+          {/* Intern (Admin/Buchhaltung) — Driver sieht stattdessen unten die Vergütungsbox */}
+          {showInternal && !isDriverView && (
             <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
               <div className="border-b border-amber-500/20 px-5 py-3">
                 <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Intern</h3>
@@ -1533,6 +1547,15 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
               </div>
             </div>
           )}
+
+          {/* Fahrer-Vergütung — sichtbar für Driver-View und Admin (außer Buchhaltung) */}
+          {showInternal && (
+            <CompensationBox
+              compensation={compensation}
+              secondDriverName={compensationSecondName}
+              isDriverView={isDriverView}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -1544,6 +1567,96 @@ function PriceRow({ label, value }: { label: string; value: number }) {
     <div className="flex items-center justify-between py-0.5">
       <span className="text-sm text-muted-foreground">{label}</span>
       <span className="text-sm font-mono tabular-nums text-foreground/80">{value.toFixed(2)}&euro;</span>
+    </div>
+  );
+}
+
+function CompensationBox({
+  compensation,
+  secondDriverName,
+  isDriverView,
+}: {
+  compensation: ReturnType<typeof getDriverCompensation>;
+  secondDriverName: string | null;
+  isDriverView: boolean;
+}) {
+  const { base, breakdown, bonusTotal, total, hasSecondDriver, perDriver, isFrozen } = compensation;
+  const breakdownEntries = Object.entries(breakdown).filter(([, v]) => v > 0);
+  const heading = isDriverView ? "Deine Vergütung" : "Fahrer-Vergütung";
+
+  return (
+    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 overflow-hidden">
+      <div className="border-b border-emerald-500/20 px-5 py-3 flex items-center justify-between gap-2">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+          {heading}
+        </h3>
+        {!isFrozen && (
+          <span
+            className="text-[9px] font-semibold uppercase tracking-wider rounded bg-amber-500/15 text-amber-400 px-1.5 py-0.5"
+            title="Vor dem Snapshot-Feature angelegt — Werte stammen aus aktuellen Settings"
+          >
+            Live
+          </span>
+        )}
+      </div>
+      <div className="p-5">
+        <div className="space-y-1">
+          {base > 0 && (
+            <div className="flex items-center justify-between py-0.5">
+              <span className="text-sm text-muted-foreground">Aufbau-Pauschale</span>
+              <span className="text-sm font-mono tabular-nums text-foreground/80">
+                {base.toFixed(2)}&euro;
+              </span>
+            </div>
+          )}
+          {breakdownEntries.length > 0 && (
+            <>
+              {breakdownEntries.map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between py-0.5">
+                  <span className="text-sm text-muted-foreground">
+                    Bonus · {EXTRAS_LABELS[key] ?? key}
+                  </span>
+                  <span className="text-sm font-mono tabular-nums text-emerald-400">
+                    +{Number(value).toFixed(2)}&euro;
+                  </span>
+                </div>
+              ))}
+              <div className="flex items-center justify-between py-0.5 border-t border-emerald-500/20 mt-1 pt-1">
+                <span className="text-xs text-muted-foreground/80">Bonus-Summe</span>
+                <span className="text-xs font-mono tabular-nums text-emerald-400/80">
+                  +{bonusTotal.toFixed(2)}&euro;
+                </span>
+              </div>
+            </>
+          )}
+
+          <div className="border-t border-emerald-500/20 mt-2 pt-2 flex items-center justify-between">
+            <span className="text-sm font-semibold text-foreground">
+              {hasSecondDriver ? "Gesamt-Vergütung" : "Vergütung"}
+            </span>
+            <span className="text-lg font-bold font-mono tabular-nums text-emerald-400">
+              {total.toFixed(2)}&euro;
+            </span>
+          </div>
+
+          {hasSecondDriver && (
+            <div className="mt-2 rounded-lg border border-emerald-500/15 bg-emerald-500/5 p-3 space-y-1">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400/80">
+                50/50-Aufteilung
+                {secondDriverName ? ` · mit ${secondDriverName}` : ""}
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-foreground/80">
+                  {isDriverView ? "Dein Anteil" : "Pro Fahrer"}
+                </span>
+                <span className="text-base font-bold font-mono tabular-nums text-emerald-400">
+                  {perDriver.toFixed(2)}&euro;
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

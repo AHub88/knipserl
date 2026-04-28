@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { shouldHideCashOrders } from "@/lib/view-mode";
+import {
+  loadDriverBonusPrices,
+  computeDriverBonusBreakdown,
+} from "@/lib/driver-compensation";
 
 export async function GET(
   _request: NextRequest,
@@ -147,8 +151,12 @@ export async function PATCH(
   if (body.discount !== undefined) data.discount = body.discount != null ? Number(body.discount) : null;
   if (body.discountType !== undefined) data.discountType = body.discountType || "AMOUNT";
 
-  // Extras
-  if (body.extras !== undefined) data.extras = body.extras;
+  // Extras (bei Änderung: Bonus-Snapshot neu einfrieren)
+  if (body.extras !== undefined) {
+    data.extras = body.extras;
+    const bonusPrices = await loadDriverBonusPrices();
+    data.driverBonus = computeDriverBonusBreakdown(body.extras ?? [], bonusPrices);
+  }
 
   // Status flags
   if (body.confirmed !== undefined) data.confirmed = body.confirmed;

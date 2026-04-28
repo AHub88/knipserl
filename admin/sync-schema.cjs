@@ -123,6 +123,7 @@ async function syncSchema() {
     ["orders", "discount", "DOUBLE PRECISION", true, null],
     ["orders", "discountType", "TEXT", true, "'AMOUNT'"],
     ["orders", "profit", "DOUBLE PRECISION", true, null],
+    ["orders", "driverBonus", "JSONB", true, null],
     ["orders", "extras", "TEXT[]", false, "'{}'"],
     ["orders", "notes", "TEXT", true, null],
     ["orders", "internalNotes", "TEXT", true, null],

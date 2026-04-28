@@ -203,6 +203,7 @@ model Order {
   discount        Float?
   discountType    String?       @default("AMOUNT")
   profit          Float?
+  driverBonus     Json?
   extras          String[]      @default([])
   notes           String?
   internalNotes   String?

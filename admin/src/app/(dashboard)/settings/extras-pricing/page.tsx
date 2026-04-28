@@ -1,16 +1,30 @@
 import { prisma } from "@/lib/db";
 import { IconSettings } from "@tabler/icons-react";
 import { ExtrasPricingEditor } from "./extras-pricing-editor";
-import { BOX_PRICE, EXTRAS_PRICES } from "@/lib/extras-pricing";
+import {
+  BOX_PRICE,
+  EXTRAS_PRICES,
+  DRIVER_BONUS_DEFAULTS,
+} from "@/lib/extras-pricing";
 
 export default async function ExtrasPricingPage() {
   // Load saved prices from DB, fallback to defaults
   const settings = await prisma.appSetting.findMany({
-    where: { key: { startsWith: "price_" } },
+    where: {
+      OR: [
+        { key: { startsWith: "price_" } },
+        { key: { startsWith: "driver_bonus_" } },
+      ],
+    },
   });
   const savedPrices: Record<string, number> = {};
+  const savedBonus: Record<string, number> = {};
   for (const s of settings) {
-    savedPrices[s.key.replace("price_", "")] = Number(s.value);
+    if (s.key.startsWith("price_")) {
+      savedPrices[s.key.replace("price_", "")] = Number(s.value);
+    } else if (s.key.startsWith("driver_bonus_")) {
+      savedBonus[s.key.replace("driver_bonus_", "")] = Number(s.value);
+    }
   }
 
   const boxSetting = await prisma.appSetting.findUnique({ where: { key: "price_box" } });
@@ -20,6 +34,7 @@ export default async function ExtrasPricingPage() {
   const extras = Object.entries(EXTRAS_PRICES).map(([key, defaultPrice]) => ({
     key,
     price: savedPrices[key] ?? defaultPrice,
+    driverBonus: savedBonus[key] ?? DRIVER_BONUS_DEFAULTS[key] ?? 0,
   }));
 
   return (
@@ -33,7 +48,8 @@ export default async function ExtrasPricingPage() {
             Extras &amp; Preise
           </h1>
           <p className="text-sm text-muted-foreground">
-            Preise f&uuml;r Fotobox und Extras verwalten
+            Preise f&uuml;r Fotobox und Extras verwalten — inkl. Vergütung pro Extra
+            für Fahrer
           </p>
         </div>
       </div>

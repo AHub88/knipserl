@@ -14,6 +14,22 @@ export const EXTRAS_PRICES: Record<string, number> = {
   LOVE: 150,
 };
 
+/**
+ * Standard-Vergütungs-Boni pro Extra für Fahrer (in €).
+ * Wird bei Auftrags-Anlage als Snapshot in Order.driverBonus eingefroren.
+ * In den Settings (`/settings/extras-pricing`) editierbar als `driver_bonus_<KEY>`.
+ */
+export const DRIVER_BONUS_DEFAULTS: Record<string, number> = {
+  Props: 0,
+  Telefon: 10,
+  TV: 30,
+  Stick: 0,
+  HG: 20,
+  Social: 0,
+  Book: 0,
+  LOVE: 30,
+};
+
 export const EXTRAS_LABELS: Record<string, string> = {
   Drucker: "Drucker",
   Props: "Requisiten",

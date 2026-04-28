@@ -17,22 +17,30 @@ const EXTRAS_LABELS: Record<string, string> = {
   LOVE: "LOVE Buchstaben",
 };
 
+type Extra = { key: string; price: number; driverBonus: number };
+
 export function ExtrasPricingEditor({
   boxPrice: initialBox,
   extras: initialExtras,
 }: {
   boxPrice: number;
-  extras: { key: string; price: number }[];
+  extras: Extra[];
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [boxPrice, setBoxPrice] = useState(String(initialBox));
   const [prices, setPrices] = useState<Record<string, string>>(
-    Object.fromEntries(initialExtras.map((e) => [e.key, String(e.price)]))
+    Object.fromEntries(initialExtras.map((e) => [e.key, String(e.price)])),
+  );
+  const [bonuses, setBonuses] = useState<Record<string, string>>(
+    Object.fromEntries(initialExtras.map((e) => [e.key, String(e.driverBonus)])),
   );
 
   function updatePrice(key: string, value: string) {
     setPrices((prev) => ({ ...prev, [key]: value }));
+  }
+  function updateBonus(key: string, value: string) {
+    setBonuses((prev) => ({ ...prev, [key]: value }));
   }
 
   async function handleSave() {
@@ -43,6 +51,9 @@ export function ExtrasPricingEditor({
       };
       for (const [key, val] of Object.entries(prices)) {
         body[`price_${key}`] = val;
+      }
+      for (const [key, val] of Object.entries(bonuses)) {
+        body[`driver_bonus_${key}`] = val;
       }
 
       const res = await fetch("/api/settings", {
@@ -64,7 +75,7 @@ export function ExtrasPricingEditor({
     "h-9 w-full rounded-lg border border-border bg-muted px-3 text-sm text-foreground text-right font-mono tabular-nums outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-colors";
 
   return (
-    <div className="space-y-4 max-w-lg">
+    <div className="space-y-4 max-w-2xl">
       <div className="flex items-center justify-between">
         <Link
           href="/settings"
@@ -84,10 +95,23 @@ export function ExtrasPricingEditor({
       </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
+        {/* Spalten-Header */}
+        <div className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-2.5 border-b border-border bg-muted/40">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Extra
+          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-32 text-right">
+            Kundenpreis
+          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-32 text-right">
+            Vergütung Fahrer
+          </span>
+        </div>
+
         {/* Fotobox */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+        <div className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-3 border-b border-border">
           <span className="text-sm font-semibold text-primary">Fotobox (Grundpreis)</span>
-          <div className="flex items-center gap-1 w-28">
+          <div className="flex items-center gap-1 w-32">
             <input
               className={inputClass}
               type="number"
@@ -97,18 +121,19 @@ export function ExtrasPricingEditor({
             />
             <span className="text-xs text-muted-foreground">&euro;</span>
           </div>
+          <div className="w-32 text-right text-xs text-muted-foreground/60">—</div>
         </div>
 
         {/* Extras */}
         {initialExtras.map((e) => (
           <div
             key={e.key}
-            className="flex items-center justify-between px-5 py-3 border-b border-border last:border-0"
+            className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-3 border-b border-border last:border-0"
           >
             <span className="text-sm text-foreground/80">
               {EXTRAS_LABELS[e.key] ?? e.key}
             </span>
-            <div className="flex items-center gap-1 w-28">
+            <div className="flex items-center gap-1 w-32">
               <input
                 className={inputClass}
                 type="number"
@@ -118,13 +143,27 @@ export function ExtrasPricingEditor({
               />
               <span className="text-xs text-muted-foreground">&euro;</span>
             </div>
+            <div className="flex items-center gap-1 w-32">
+              <input
+                className={inputClass}
+                type="number"
+                step="1"
+                value={bonuses[e.key] ?? "0"}
+                onChange={(ev) => updateBonus(e.key, ev.target.value)}
+              />
+              <span className="text-xs text-muted-foreground">&euro;</span>
+            </div>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Drucker ist im Grundpreis enthalten und hat keinen eigenen Aufpreis.
-      </p>
+      <div className="space-y-1 text-xs text-muted-foreground">
+        <p>Drucker ist im Grundpreis enthalten und hat keinen eigenen Aufpreis.</p>
+        <p>
+          <span className="text-foreground/80">Vergütung Fahrer:</span> wird pro Auftrag bei
+          Anlage eingefroren. Spätere Änderungen wirken nur auf neue Aufträge.
+        </p>
+      </div>
     </div>
   );
 }

@@ -8,8 +8,10 @@ import {
   IconChevronRight,
   IconCopy,
   IconExternalLink,
+  IconUsers,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
+import { getDriverCompensation } from "@/lib/driver-compensation";
 
 type Driver = { id: string; name: string; initials: string | null };
 type Order = {
@@ -21,9 +23,29 @@ type Order = {
   price: number;
   setupCost: number;
   locationName: string;
+  extras: string[];
+  driverBonus: unknown;
+  driverId: string | null;
+  driverName: string | null;
+  driverInitials: string | null;
+  secondDriverId: string | null;
+  secondDriverName: string | null;
+  secondDriverInitials: string | null;
+};
+
+type Entry = {
+  order: Order;
   driverId: string;
   driverName: string;
-  driverInitials: string;
+  driverInitials: string | null;
+  /** Anteil dieses Fahrers an der Gesamt-Vergütung (perDriver) */
+  share: number;
+  /** Vergütung des Auftrags insgesamt (base + bonus) */
+  total: number;
+  /** True wenn 50/50 mit anderem Fahrer geteilt */
+  shared: boolean;
+  /** Name des Mit-Fahrers (für Anzeige bei shared=true) */
+  partnerName: string | null;
 };
 
 const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
@@ -31,9 +53,11 @@ const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "A
 export function DriverReportView({
   drivers,
   orders,
+  driverBonusPrices,
 }: {
   drivers: Driver[];
   orders: Order[];
+  driverBonusPrices: Record<string, number>;
 }) {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
@@ -50,34 +74,73 @@ export function DriverReportView({
     else setMonth(month + 1);
   }
 
-  // Filter orders by month, year, payment method, and driver
-  const filtered = useMemo(() => {
-    return orders.filter((o) => {
+  // Erzeuge pro Order einen Eintrag pro beteiligtem Fahrer (50/50 bei Zweitfahrer).
+  // Filter danach: Monat, Zahlart, Fahrer.
+  const entries = useMemo<Entry[]>(() => {
+    const out: Entry[] = [];
+    for (const o of orders) {
       const d = new Date(o.eventDate);
-      if (d.getFullYear() !== year || d.getMonth() !== month) return false;
-      if (paymentFilter !== "all" && o.paymentMethod !== paymentFilter) return false;
-      if (selectedDriverId !== "all" && o.driverId !== selectedDriverId) return false;
-      return true;
-    });
-  }, [orders, year, month, paymentFilter, selectedDriverId]);
+      if (d.getFullYear() !== year || d.getMonth() !== month) continue;
+      if (paymentFilter !== "all" && o.paymentMethod !== paymentFilter) continue;
+
+      const comp = getDriverCompensation({
+        setupCost: o.setupCost,
+        extras: o.extras,
+        driverBonus: o.driverBonus,
+        hasSecondDriver: !!o.secondDriverId,
+        livePrices: driverBonusPrices,
+      });
+
+      const shared = !!(o.driverId && o.secondDriverId);
+
+      if (o.driverId) {
+        out.push({
+          order: o,
+          driverId: o.driverId,
+          driverName: o.driverName ?? "—",
+          driverInitials: o.driverInitials,
+          share: comp.perDriver,
+          total: comp.total,
+          shared,
+          partnerName: shared ? o.secondDriverName : null,
+        });
+      }
+      if (o.secondDriverId) {
+        out.push({
+          order: o,
+          driverId: o.secondDriverId,
+          driverName: o.secondDriverName ?? "—",
+          driverInitials: o.secondDriverInitials,
+          share: comp.perDriver,
+          total: comp.total,
+          shared,
+          partnerName: shared ? o.driverName : null,
+        });
+      }
+    }
+    if (selectedDriverId !== "all") {
+      return out.filter((e) => e.driverId === selectedDriverId);
+    }
+    return out;
+  }, [orders, year, month, paymentFilter, selectedDriverId, driverBonusPrices]);
 
   // Group by driver
   const driverGroups = useMemo(() => {
-    const groups: Record<string, { driver: Driver; orders: Order[]; total: number }> = {};
-    for (const o of filtered) {
-      if (!groups[o.driverId]) {
-        const driver = drivers.find((d) => d.id === o.driverId);
-        groups[o.driverId] = {
-          driver: driver ?? { id: o.driverId, name: o.driverName, initials: o.driverInitials },
-          orders: [],
+    const groups: Record<string, { driver: Driver; entries: Entry[]; total: number }> = {};
+    for (const e of entries) {
+      if (!groups[e.driverId]) {
+        const driver = drivers.find((d) => d.id === e.driverId);
+        groups[e.driverId] = {
+          driver: driver ?? { id: e.driverId, name: e.driverName, initials: e.driverInitials },
+          entries: [],
           total: 0,
         };
       }
-      groups[o.driverId].orders.push(o);
-      groups[o.driverId].total += Math.abs(o.setupCost);
+      groups[e.driverId].entries.push(e);
+      groups[e.driverId].total += e.share;
     }
     return Object.values(groups).sort((a, b) => a.driver.name.localeCompare(b.driver.name));
-  }, [filtered, drivers]);
+  }, [entries, drivers]);
 
   const grandTotal = driverGroups.reduce((s, g) => s + g.total, 0);
 
@@ -88,9 +151,10 @@ export function DriverReportView({
     lines.push("");
     for (const g of driverGroups) {
       lines.push(`${g.driver.name} (${g.driver.initials ?? ""}):`);
-      for (const o of g.orders) {
-        const d = new Date(o.eventDate);
-        lines.push(`  #${o.orderNumber} ${d.toLocaleDateString("de-DE")} ${o.customerName} – ${o.locationName} → ${Math.abs(o.setupCost).toFixed(2)} €`);
+      for (const e of g.entries) {
+        const d = new Date(e.order.eventDate);
+        const sharedNote = e.shared ? ` (50/50${e.partnerName ? ` mit ${e.partnerName}` : ""})` : "";
+        lines.push(`  #${e.order.orderNumber} ${d.toLocaleDateString("de-DE")} ${e.order.customerName} – ${e.order.locationName} → ${e.share.toFixed(2)} €${sharedNote}`);
       }
       lines.push(`  Gesamt: ${g.total.toFixed(2)} €`);
       lines.push("");
@@ -114,7 +178,7 @@ export function DriverReportView({
             Fahrer-Vergütungen
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Monatliche Übersicht der Fahrer-Vergütungen
+            Aufbau-Pauschale + Bonus pro Extra · 50/50 bei Zweitfahrer
           </p>
         </div>
       </div>
@@ -181,8 +245,8 @@ export function DriverReportView({
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div className="rounded-xl border border-border bg-card px-4 py-3">
-          <p className="text-2xl font-bold text-foreground tabular-nums">{filtered.length}</p>
-          <p className="text-[11px] text-muted-foreground/70">Fahrten</p>
+          <p className="text-2xl font-bold text-foreground tabular-nums">{entries.length}</p>
+          <p className="text-[11px] text-muted-foreground/70">Einsätze</p>
         </div>
         <div className="rounded-xl border border-border bg-card px-4 py-3">
           <p className="text-2xl font-bold text-foreground tabular-nums">{driverGroups.length}</p>
@@ -212,7 +276,7 @@ export function DriverReportView({
                   </span>
                   <div>
                     <span className="text-sm font-semibold text-foreground">{group.driver.name}</span>
-                    <span className="text-xs text-muted-foreground/70 ml-2">{group.orders.length} Fahrten</span>
+                    <span className="text-xs text-muted-foreground/70 ml-2">{group.entries.length} Einsätze</span>
                   </div>
                 </div>
                 <span className="text-base font-bold text-emerald-400 tabular-nums">
@@ -220,25 +284,34 @@ export function DriverReportView({
                 </span>
               </div>
 
-              {/* Orders */}
+              {/* Entries */}
               <div className="divide-y divide-border">
-                {group.orders.map((order) => (
+                {group.entries.map((e) => (
                   <Link
-                    key={order.id}
-                    href={`/orders/${order.id}`}
+                    key={`${e.order.id}-${e.driverId}`}
+                    href={`/orders/${e.order.id}`}
                     className="flex items-center justify-between px-4 py-2.5 hover:bg-muted transition-colors group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-xs font-mono text-muted-foreground/70 shrink-0">#{order.orderNumber}</span>
-                      <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">{fmtDate(order.eventDate)}</span>
-                      <span className="text-sm text-foreground/80 truncate">{order.customerName}</span>
-                      <span className="text-xs text-muted-foreground/70 truncate hidden sm:inline">{order.locationName}</span>
+                      <span className="text-xs font-mono text-muted-foreground/70 shrink-0">#{e.order.orderNumber}</span>
+                      <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">{fmtDate(e.order.eventDate)}</span>
+                      <span className="text-sm text-foreground/80 truncate">{e.order.customerName}</span>
+                      <span className="text-xs text-muted-foreground/70 truncate hidden sm:inline">{e.order.locationName}</span>
+                      {e.shared && (
+                        <span
+                          className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold rounded px-1.5 py-0.5 bg-amber-500/10 text-amber-400 shrink-0"
+                          title={`50/50 mit ${e.partnerName ?? "Mit-Fahrer"}`}
+                        >
+                          <IconUsers className="size-3" />
+                          50/50
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className={"text-[10px] rounded px-1.5 py-0.5 font-semibold " + (order.paymentMethod === "INVOICE" ? "bg-purple-500/15 text-purple-400" : "bg-emerald-500/15 text-emerald-400")}>
-                        {order.paymentMethod === "INVOICE" ? "RE" : "BAR"}
+                      <span className={"text-[10px] rounded px-1.5 py-0.5 font-semibold " + (e.order.paymentMethod === "INVOICE" ? "bg-purple-500/15 text-purple-400" : "bg-emerald-500/15 text-emerald-400")}>
+                        {e.order.paymentMethod === "INVOICE" ? "RE" : "BAR"}
                       </span>
-                      <span className="text-sm font-mono text-foreground/80 tabular-nums">{Math.abs(order.setupCost).toFixed(2)} €</span>
+                      <span className="text-sm font-mono text-foreground/80 tabular-nums">{e.share.toFixed(2)} €</span>
                       <IconExternalLink className="size-3 text-muted-foreground/50 group-hover:text-muted-foreground" />
                     </div>
                   </Link>

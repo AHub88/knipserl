@@ -90,6 +90,7 @@ type Order = {
   confirmationToken: string | null;
   confirmedByCustomerAt: string | null;
   locationId: string | null;
+  driverBonus: unknown;
 };
 
 type LocationOption = {
@@ -107,6 +108,7 @@ type Props = {
   companies: { id: string; name: string }[];
   locations: LocationOption[];
   isAdmin: boolean;
+  driverBonusPrices: Record<string, number>;
 };
 
 const EXTRAS_CONFIG = [
@@ -291,7 +293,7 @@ function LocationAutocomplete({
   );
 }
 
-export function OrderDetail({ order, drivers, companies, locations, isAdmin }: Props) {
+export function OrderDetail({ order, drivers, companies, locations, isAdmin, driverBonusPrices }: Props) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -554,6 +556,7 @@ export function OrderDetail({ order, drivers, companies, locations, isAdmin }: P
         drivers={drivers}
         isAdmin={isAdmin}
         viewMode={viewMode}
+        driverBonusPrices={driverBonusPrices}
         onEdit={() => setEditing(true)}
       />
     );

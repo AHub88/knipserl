@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { getPaymentFilter } from "@/lib/view-mode";
+import {
+  loadDriverBonusPrices,
+  computeDriverBonusBreakdown,
+} from "@/lib/driver-compensation";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -92,6 +96,10 @@ export async function POST(request: NextRequest) {
     customerId = newCustomer.id;
   }
 
+  // Bonus-Snapshot aus aktuellen Settings einfrieren
+  const bonusPrices = await loadDriverBonusPrices();
+  const driverBonus = computeDriverBonusBreakdown(extras || [], bonusPrices);
+
   // Create inquiry + order in a transaction
   const result = await prisma.$transaction(async (tx) => {
     const inquiry = await tx.inquiry.create({
@@ -128,6 +136,7 @@ export async function POST(request: NextRequest) {
         materialCost: materialCost != null ? Number(materialCost) : null,
         discount: discount != null ? Number(discount) : null,
         discountType: discountType || "AMOUNT",
+        driverBonus,
         extras: extras || [],
         notes: notes || null,
         internalNotes: internalNotes || null,

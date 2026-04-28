@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { OrderDetail } from "./order-detail";
 import { shouldHideCashOrders } from "@/lib/view-mode";
+import { loadDriverBonusPrices } from "@/lib/driver-compensation";
 
 export default async function OrderDetailPage({
   params,
@@ -102,6 +103,7 @@ export default async function OrderDetailPage({
     setupTime: order.setupTime,
     teardownDate: order.teardownDate?.toISOString() ?? null,
     teardownTime: order.teardownTime,
+    driverBonus: (order as { driverBonus?: unknown }).driverBonus ?? null,
     images: order.images,
     startscreenImages: (order as { startscreenImages?: string[] }).startscreenImages ?? [],
     onSiteContactName: (order as { onSiteContactName?: string | null }).onSiteContactName ?? null,
@@ -133,6 +135,9 @@ export default async function OrderDetailPage({
     }
   }
 
+  // Live-Bonus-Tabelle als Fallback für Alt-Aufträge ohne Snapshot
+  const driverBonusPrices = await loadDriverBonusPrices();
+
   return (
     <OrderDetail
       order={serialized}
@@ -147,6 +152,7 @@ export default async function OrderDetailPage({
         distanceKm: l.distanceKm,
       }))}
       isAdmin={isAdmin}
+      driverBonusPrices={driverBonusPrices}
     />
   );
 }
