@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { isPasswordStrongEnough } from "@/lib/passwords";
+import bcrypt from "bcryptjs";
 
 export async function GET(
   _request: NextRequest,
@@ -15,7 +17,10 @@ export async function GET(
   if (!user) {
     return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
   }
-  return NextResponse.json(user);
+  // passwordHash darf nie an den Client geliefert werden
+  const { passwordHash: _ignored, ...safe } = user;
+  void _ignored;
+  return NextResponse.json(safe);
 }
 
 export async function PATCH(
@@ -38,6 +43,19 @@ export async function PATCH(
   if (body.role !== undefined) data.role = body.role;
   if (body.active !== undefined) data.active = body.active;
 
+  // Passwort-Reset: optional, nur wenn übergeben + Mindestlänge
+  if (body.password !== undefined) {
+    if (!isPasswordStrongEnough(body.password)) {
+      return NextResponse.json(
+        { error: "Passwort muss mindestens 8 Zeichen haben" },
+        { status: 400 }
+      );
+    }
+    data.passwordHash = await bcrypt.hash(body.password, 12);
+  }
+
   const user = await prisma.user.update({ where: { id }, data });
-  return NextResponse.json(user);
+  const { passwordHash: _ignored, ...safe } = user;
+  void _ignored;
+  return NextResponse.json(safe);
 }

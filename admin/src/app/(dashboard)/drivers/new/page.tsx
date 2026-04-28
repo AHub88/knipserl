@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { IconArrowLeft, IconDeviceFloppy } from "@tabler/icons-react";
+import { IconArrowLeft, IconDeviceFloppy, IconCopy, IconEye, IconEyeOff, IconRefresh } from "@tabler/icons-react";
 import { toast } from "sonner";
+import { generatePassword } from "@/lib/passwords";
 
 export default function NewDriverPage() {
   const router = useRouter();
@@ -14,11 +15,16 @@ export default function NewDriverPage() {
   const [phone, setPhone] = useState("");
   const [initials, setInitials] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
   const [role, setRole] = useState("DRIVER");
 
   async function handleSave() {
     if (!name || !email) {
       toast.error("Name und E-Mail sind Pflichtfelder");
+      return;
+    }
+    if (password.length < 8) {
+      toast.error("Passwort muss mindestens 8 Zeichen haben");
       return;
     }
     setSaving(true);
@@ -31,7 +37,7 @@ export default function NewDriverPage() {
           email,
           phone: phone || null,
           initials: initials || null,
-          password: password || undefined,
+          password,
           role,
         }),
       });
@@ -39,12 +45,28 @@ export default function NewDriverPage() {
         const data = await res.json();
         throw new Error(data.error || "Fehler beim Erstellen");
       }
-      toast.success("Fahrer erstellt");
+      toast.success("Fahrer erstellt — bitte Passwort weitergeben");
       router.push("/drivers");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Fehler");
     } finally {
       setSaving(false);
+    }
+  }
+
+  function handleGenerate() {
+    const pw = generatePassword(12);
+    setPassword(pw);
+    setShowPassword(true);
+  }
+
+  async function handleCopy() {
+    if (!password) return;
+    try {
+      await navigator.clipboard.writeText(password);
+      toast.success("Passwort in Zwischenablage kopiert");
+    } catch {
+      toast.error("Kopieren fehlgeschlagen");
     }
   }
 
@@ -97,8 +119,46 @@ export default function NewDriverPage() {
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className={labelClass}>Passwort</label>
-            <input className={inputClass} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Standard: knipserl123" />
+            <label className={labelClass}>Passwort *</label>
+            <div className="flex items-stretch gap-2">
+              <input
+                className={inputClass + " font-mono"}
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="mindestens 8 Zeichen"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                title={showPassword ? "Verbergen" : "Anzeigen"}
+                className="flex items-center justify-center size-9 shrink-0 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? <IconEyeOff className="size-4" /> : <IconEye className="size-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={handleCopy}
+                disabled={!password}
+                title="Kopieren"
+                className="flex items-center justify-center size-9 shrink-0 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <IconCopy className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerate}
+                title="Sicheres Passwort generieren"
+                className="flex items-center gap-1.5 h-9 px-3 shrink-0 rounded-lg border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-semibold"
+              >
+                <IconRefresh className="size-4" />
+                Generieren
+              </button>
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Notiere oder kopiere das Passwort jetzt — nach dem Speichern ist es nur noch als Hash in der DB.
+            </p>
           </div>
         </div>
       </div>

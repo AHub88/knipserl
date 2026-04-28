@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { isPasswordStrongEnough } from "@/lib/passwords";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
@@ -19,6 +20,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (!isPasswordStrongEnough(password)) {
+    return NextResponse.json(
+      { error: "Passwort ist erforderlich (mindestens 8 Zeichen)" },
+      { status: 400 }
+    );
+  }
+
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return NextResponse.json(
@@ -27,7 +35,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const passwordHash = await bcrypt.hash(password || "knipserl123", 12);
+  const passwordHash = await bcrypt.hash(password, 12);
 
   const user = await prisma.user.create({
     data: {

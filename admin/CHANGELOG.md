@@ -4,6 +4,21 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.27.0] — 2026-04-28
+
+### Added
+- **Passwort-Reset für Fahrer-Accounts direkt im UI.** Auf der Detail-Seite eines Fahrers (`/drivers/[id]`) gibt es eine eigene Karte „Passwort zurücksetzen": Klick auf „Neues Passwort generieren" erzeugt sofort ein 12-Zeichen-Passwort (Web Crypto API, verwechslungsarmes Charset ohne 0/O/1/I/l), zeigt es in einem Eingabefeld mit Sichtbar-Toggle, Kopier-Button und Re-Generate-Button. Erst der „Passwort speichern"-Button persistiert den neuen bcrypt-Hash. Der Admin sieht das Klartext-Passwort genau einmal — danach nur noch der Hash in der DB.
+- **Sicheres Passwort beim Anlegen eines Fahrers.** Auf `/drivers/new` ist das Passwort-Feld jetzt Pflichtfeld (mind. 8 Zeichen). Daneben ein „Generieren"-Button (gleicher Generator wie beim Reset) plus Sichtbar- und Kopier-Buttons.
+
+### Changed
+- **`POST /api/drivers` verlangt jetzt `password` im Request-Body.** Vorher fiel die Route bei fehlendem Passwort silently auf den globalen Default `knipserl123` zurück — eine echte Sicherheitslücke, weil jeder Fahrer ohne explizit gesetztes Passwort identisch einlogbar war. Bei fehlendem oder zu kurzem Passwort kommt jetzt 400.
+- **`PATCH /api/drivers/[id]` akzeptiert optional `password`** und schreibt einen frischen bcrypt-Hash. Min. 8 Zeichen, sonst 400.
+- **GET/PATCH `/api/drivers/[id]` strippen den `passwordHash` aus dem Response.** Damit das UI keinen Hash unbeabsichtigt zu Gesicht bekommt, auch wenn niemand danach fragt.
+
+### Security
+- Default-Passwort `knipserl123` aus dem POST-Endpoint entfernt — siehe oben.
+- Hash-Strippung im GET/PATCH-Response — defense in depth.
+
 ## [1.26.1] — 2026-04-28
 
 ### Changed
