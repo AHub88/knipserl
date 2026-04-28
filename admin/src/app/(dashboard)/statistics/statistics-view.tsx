@@ -157,70 +157,77 @@ export function StatisticsView({
             setQuery({ tab: next });
           }}
         >
-          <TabsList className="h-auto flex-wrap">
-            <TabsTrigger value="live" className="px-3 py-1.5">
-              <span className="relative flex items-center gap-2">
-                {live.activeCount > 0 ? (
-                  <span className="relative flex size-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full size-2 bg-emerald-500" />
-                  </span>
-                ) : (
-                  <span className="size-2 rounded-full bg-muted-foreground/40" />
-                )}
-                <span>Live</span>
-              </span>
-              <span
-                className={
-                  "ml-1.5 inline-flex items-center justify-center rounded-md px-1.5 text-[11px] font-semibold tabular-nums " +
-                  (live.activeCount > 0
-                    ? "bg-emerald-500/10 text-emerald-500"
-                    : "bg-muted text-muted-foreground")
-                }
-              >
-                {live.activeCount}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="pageviews" className="px-3 py-1.5">
-              Seitenaufrufe
-              <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-primary/10 px-1.5 text-[11px] font-semibold text-primary tabular-nums">
-                {data.total30d.toLocaleString("de-DE")}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="visitors" className="px-3 py-1.5">
-              Besucher
-            </TabsTrigger>
-            <TabsTrigger value="events" className="px-3 py-1.5">
-              Ereignisse
-              <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-blue-500/10 px-1.5 text-[11px] font-semibold text-blue-500 tabular-nums">
-                {data.eventsRange.toLocaleString("de-DE")}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="funnel" className="px-3 py-1.5">
-              Anfrage-Funnel
-            </TabsTrigger>
-          </TabsList>
+          {/* Tab-Leiste: horizontaler Scroll auf Mobile, damit Tabs nicht umbrechen */}
+          <div className="-mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto scrollbar-thin">
+            <TabsList className="h-auto inline-flex w-max">
+              <TabsTrigger value="live" className="px-2.5 py-1.5 whitespace-nowrap">
+                <span className="relative flex items-center gap-1.5">
+                  {live.activeCount > 0 ? (
+                    <span className="relative flex size-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full size-2 bg-emerald-500" />
+                    </span>
+                  ) : (
+                    <span className="size-2 rounded-full bg-muted-foreground/40" />
+                  )}
+                  <span>Live</span>
+                </span>
+                <span
+                  className={
+                    "ml-1.5 inline-flex items-center justify-center rounded-md px-1.5 text-[11px] font-semibold tabular-nums " +
+                    (live.activeCount > 0
+                      ? "bg-emerald-500/10 text-emerald-500"
+                      : "bg-muted text-muted-foreground")
+                  }
+                >
+                  {live.activeCount}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="pageviews" className="px-2.5 py-1.5 whitespace-nowrap">
+                <span className="hidden sm:inline">Seitenaufrufe</span>
+                <span className="sm:hidden">Aufrufe</span>
+                <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-primary/10 px-1.5 text-[11px] font-semibold text-primary tabular-nums">
+                  {data.total30d.toLocaleString("de-DE")}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="visitors" className="px-2.5 py-1.5 whitespace-nowrap">
+                Besucher
+              </TabsTrigger>
+              <TabsTrigger value="events" className="px-2.5 py-1.5 whitespace-nowrap">
+                Ereignisse
+                <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-blue-500/10 px-1.5 text-[11px] font-semibold text-blue-500 tabular-nums">
+                  {data.eventsRange.toLocaleString("de-DE")}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="funnel" className="px-2.5 py-1.5 whitespace-nowrap">
+                <span className="hidden sm:inline">Anfrage-Funnel</span>
+                <span className="sm:hidden">Funnel</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {/* Domain filter */}
-            <div className="flex flex-wrap items-center gap-1">
-              <FilterPill
-                active={!data.domain}
-                label="Alle Domains"
-                onClick={() => setQuery({ domain: null })}
-              />
-              {data.domains.slice(0, 6).map((d) => (
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2">
+            {/* Domain filter — horizontaler Scroll auf Mobile */}
+            <div className="-mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto">
+              <div className="flex items-center gap-1 w-max sm:w-auto sm:flex-wrap">
                 <FilterPill
-                  key={d}
-                  active={data.domain === d}
-                  label={d}
-                  onClick={() => setQuery({ domain: d })}
+                  active={!data.domain}
+                  label="Alle Domains"
+                  onClick={() => setQuery({ domain: null })}
                 />
-              ))}
+                {data.domains.slice(0, 6).map((d) => (
+                  <FilterPill
+                    key={d}
+                    active={data.domain === d}
+                    label={d}
+                    onClick={() => setQuery({ domain: d })}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="flex-1" />
+            <div className="hidden sm:block flex-1" />
             {/* Range picker */}
-            <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5">
+            <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5 self-start sm:self-auto">
               {[7, 30, 90].map((r) => (
                 <button
                   key={r}
@@ -283,11 +290,11 @@ function FilterPill({ active, label, onClick }: { active: boolean; label: string
 
 function Kpi({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
+      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground leading-tight">
         {label}
       </p>
-      <p className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-foreground tabular-nums">
+      <p className="mt-1 text-xl sm:text-3xl font-bold tracking-tight text-foreground tabular-nums">
         {value}
       </p>
       {hint && <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p>}
@@ -423,30 +430,49 @@ function PageviewsTab({ data, byDay }: { data: AnalyticsBundle; byDay: { day: st
           {data.topPages.length === 0 ? (
             <Empty />
           ) : (
-            <div className="overflow-x-auto -mx-4">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-4 pb-2 text-left font-semibold">Domain</th>
-                    <th className="px-4 pb-2 text-left font-semibold">Seite</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Ø Zeit</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Ø Scroll</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.topPages.map((p) => (
-                    <tr key={`${p.domain}|${p.path}`} className="border-t border-border/60">
-                      <td className="px-4 py-2 text-muted-foreground truncate max-w-[140px]">{p.domain}</td>
-                      <td className="px-4 py-2 font-mono text-xs text-foreground truncate max-w-[260px]">{p.path}</td>
-                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{p.avgDurationMs ? formatDuration(p.avgDurationMs) : "—"}</td>
-                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{p.avgScrollPct != null ? `${p.avgScrollPct}%` : "—"}</td>
-                      <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">{p.count.toLocaleString("de-DE")}</td>
+            <>
+              {/* Mobile: Card-Liste */}
+              <div className="space-y-2 sm:hidden">
+                {data.topPages.map((p) => (
+                  <div key={`${p.domain}|${p.path}`} className="rounded-lg border border-border/60 bg-muted/30 p-2.5">
+                    <div className="flex items-baseline justify-between gap-2 mb-1">
+                      <span className="font-mono text-xs text-foreground truncate flex-1">{p.path}</span>
+                      <span className="tabular-nums font-bold text-foreground shrink-0">{p.count.toLocaleString("de-DE")}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                      <span className="truncate">{p.domain}</span>
+                      <span className="ml-auto shrink-0 tabular-nums">{p.avgDurationMs ? formatDuration(p.avgDurationMs) : "—"}</span>
+                      <span className="shrink-0 tabular-nums">{p.avgScrollPct != null ? `${p.avgScrollPct}%` : "—"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Desktop: Tabelle */}
+              <div className="overflow-x-auto -mx-4 hidden sm:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <th className="px-4 pb-2 text-left font-semibold">Domain</th>
+                      <th className="px-4 pb-2 text-left font-semibold">Seite</th>
+                      <th className="px-4 pb-2 text-right font-semibold">Ø Zeit</th>
+                      <th className="px-4 pb-2 text-right font-semibold">Ø Scroll</th>
+                      <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {data.topPages.map((p) => (
+                      <tr key={`${p.domain}|${p.path}`} className="border-t border-border/60">
+                        <td className="px-4 py-2 text-muted-foreground truncate max-w-[140px]">{p.domain}</td>
+                        <td className="px-4 py-2 font-mono text-xs text-foreground truncate max-w-[260px]">{p.path}</td>
+                        <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{p.avgDurationMs ? formatDuration(p.avgDurationMs) : "—"}</td>
+                        <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{p.avgScrollPct != null ? `${p.avgScrollPct}%` : "—"}</td>
+                        <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">{p.count.toLocaleString("de-DE")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </Panel>
 
@@ -454,23 +480,13 @@ function PageviewsTab({ data, byDay }: { data: AnalyticsBundle; byDay: { day: st
           {data.topReferrers.length === 0 ? (
             <Empty hint="Noch keine externen Verweise im Zeitraum." />
           ) : (
-            <div className="overflow-x-auto -mx-4">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-4 pb-2 text-left font-semibold">Referrer</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.topReferrers.map((r) => (
-                    <tr key={r.referrer} className="border-t border-border/60">
-                      <td className="px-4 py-2 text-foreground truncate max-w-[300px]">{r.referrer}</td>
-                      <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">{r.count.toLocaleString("de-DE")}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-1.5 text-sm">
+              {data.topReferrers.map((r) => (
+                <div key={r.referrer} className="flex items-center justify-between gap-3 py-1 border-b border-border/40 last:border-0">
+                  <span className="text-foreground truncate text-xs sm:text-sm">{r.referrer}</span>
+                  <span className="tabular-nums font-semibold text-foreground shrink-0">{r.count.toLocaleString("de-DE")}</span>
+                </div>
+              ))}
             </div>
           )}
         </Panel>
@@ -569,7 +585,7 @@ function VisitorsTab({ data }: { data: AnalyticsBundle }) {
                 <thead>
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 pb-2 text-left font-semibold">Quelle</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Besucher</th>
+                    <th className="px-4 pb-2 text-right font-semibold hidden sm:table-cell">Besucher</th>
                     <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
                   </tr>
                 </thead>
@@ -577,7 +593,7 @@ function VisitorsTab({ data }: { data: AnalyticsBundle }) {
                   {data.utmSources.map((r) => (
                     <tr key={r.source} className="border-t border-border/60">
                       <td className="px-4 py-2 text-foreground">{r.source}</td>
-                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{r.visitors.toLocaleString("de-DE")}</td>
+                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground hidden sm:table-cell">{r.visitors.toLocaleString("de-DE")}</td>
                       <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">{r.pageviews.toLocaleString("de-DE")}</td>
                     </tr>
                   ))}
@@ -591,30 +607,49 @@ function VisitorsTab({ data }: { data: AnalyticsBundle }) {
           {data.utmCampaigns.length === 0 ? (
             <Empty hint="Keine UTM-Kampagnen im Zeitraum." />
           ) : (
-            <div className="overflow-x-auto -mx-4">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-4 pb-2 text-left font-semibold">Kampagne</th>
-                    <th className="px-4 pb-2 text-left font-semibold">Quelle</th>
-                    <th className="px-4 pb-2 text-left font-semibold">Medium</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Besucher</th>
-                    <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.utmCampaigns.map((r) => (
-                    <tr key={`${r.campaign}|${r.source}|${r.medium}`} className="border-t border-border/60">
-                      <td className="px-4 py-2 text-foreground">{r.campaign}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{r.source || "—"}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{r.medium || "—"}</td>
-                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{r.visitors.toLocaleString("de-DE")}</td>
-                      <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">{r.pageviews.toLocaleString("de-DE")}</td>
+            <>
+              {/* Mobile: Card */}
+              <div className="space-y-2 sm:hidden">
+                {data.utmCampaigns.map((r) => (
+                  <div key={`${r.campaign}|${r.source}|${r.medium}`} className="rounded-lg border border-border/60 bg-muted/30 p-2.5">
+                    <div className="flex items-baseline justify-between gap-2 mb-1">
+                      <span className="font-semibold text-foreground truncate flex-1">{r.campaign}</span>
+                      <span className="tabular-nums font-bold text-foreground shrink-0">{r.pageviews.toLocaleString("de-DE")}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                      {r.source && <span className="truncate">via {r.source}</span>}
+                      {r.medium && <span className="truncate">· {r.medium}</span>}
+                      <span className="ml-auto shrink-0 tabular-nums">{r.visitors.toLocaleString("de-DE")} Besucher</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Desktop: Tabelle */}
+              <div className="overflow-x-auto -mx-4 hidden sm:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <th className="px-4 pb-2 text-left font-semibold">Kampagne</th>
+                      <th className="px-4 pb-2 text-left font-semibold">Quelle</th>
+                      <th className="px-4 pb-2 text-left font-semibold">Medium</th>
+                      <th className="px-4 pb-2 text-right font-semibold">Besucher</th>
+                      <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {data.utmCampaigns.map((r) => (
+                      <tr key={`${r.campaign}|${r.source}|${r.medium}`} className="border-t border-border/60">
+                        <td className="px-4 py-2 text-foreground">{r.campaign}</td>
+                        <td className="px-4 py-2 text-muted-foreground">{r.source || "—"}</td>
+                        <td className="px-4 py-2 text-muted-foreground">{r.medium || "—"}</td>
+                        <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">{r.visitors.toLocaleString("de-DE")}</td>
+                        <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">{r.pageviews.toLocaleString("de-DE")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </Panel>
       </div>
@@ -675,27 +710,50 @@ function DeviceDonut({ rows }: { rows: { name: string; count: number }[] }) {
 
 function HBar({ rows, color }: { rows: { name: string; count: number }[]; color: string }) {
   const data = rows.map((r) => ({ name: r.name || "Unbekannt", value: r.count }));
+  // Wir bauen das auf Mobile als simple Balken-Liste, weil recharts mit YAxis-Width
+  // sonst die Browser-Namen abschneidet und das auf Schmalformat schlecht aussieht.
+  const max = Math.max(...data.map((d) => d.value), 1);
   return (
-    <div className="h-[230px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-          <XAxis type="number" tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-          <YAxis dataKey="name" type="category" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} axisLine={false} tickLine={false} width={80} />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            cursor={{ fill: "var(--muted)" }}
-          />
-          <Bar dataKey="value" fill={color} radius={[0, 4, 4, 0]}>
-            <LabelList dataKey="value" position="right" fill="var(--foreground)" fontSize={11} fontWeight={600} />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <>
+      {/* Mobile */}
+      <div className="space-y-2 sm:hidden">
+        {data.map((d) => {
+          const pct = (d.value / max) * 100;
+          return (
+            <div key={d.name}>
+              <div className="flex items-baseline justify-between text-xs mb-1">
+                <span className="text-foreground truncate">{d.name}</span>
+                <span className="tabular-nums font-semibold text-foreground shrink-0">{d.value.toLocaleString("de-DE")}</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Desktop */}
+      <div className="h-[230px] w-full hidden sm:block">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+            <XAxis type="number" tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+            <YAxis dataKey="name" type="category" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} axisLine={false} tickLine={false} width={80} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                fontSize: 12,
+              }}
+              cursor={{ fill: "var(--muted)" }}
+            />
+            <Bar dataKey="value" fill={color} radius={[0, 4, 4, 0]}>
+              <LabelList dataKey="value" position="right" fill="var(--foreground)" fontSize={11} fontWeight={600} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 }
 
@@ -770,36 +828,62 @@ function EventsTab({ data, byDay }: { data: AnalyticsBundle; byDay: { day: strin
         {data.recentEvents.length === 0 ? (
           <Empty />
         ) : (
-          <div className="overflow-x-auto -mx-4">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  <th className="px-4 pb-2 text-left font-semibold">Zeitpunkt</th>
-                  <th className="px-4 pb-2 text-left font-semibold">Ereignis</th>
-                  <th className="px-4 pb-2 text-left font-semibold">Details</th>
-                  <th className="px-4 pb-2 text-left font-semibold">Pfad</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.recentEvents.map((e) => (
-                  <tr key={e.id} className="border-t border-border/60">
-                    <td className="px-4 py-2 text-muted-foreground tabular-nums whitespace-nowrap">
-                      {new Date(e.createdAt).toLocaleString("de-DE", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </td>
-                    <td className="px-4 py-2"><EventTypeBadge type={e.type} /></td>
-                    <td className="px-4 py-2 text-foreground text-xs max-w-[280px] truncate">{summarizeMeta(e.meta)}</td>
-                    <td className="px-4 py-2 font-mono text-xs text-muted-foreground truncate max-w-[200px]">{e.path ?? "—"}</td>
+          <>
+            {/* Mobile: Card-Liste */}
+            <div className="space-y-2 sm:hidden">
+              {data.recentEvents.map((e) => {
+                const meta = summarizeMeta(e.meta);
+                return (
+                  <div key={e.id} className="rounded-lg border border-border/60 bg-muted/30 p-2.5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <EventTypeBadge type={e.type} />
+                      <span className="ml-auto text-[10px] text-muted-foreground tabular-nums whitespace-nowrap">
+                        {new Date(e.createdAt).toLocaleString("de-DE", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    {meta && <p className="text-xs text-foreground mb-0.5 truncate">{meta}</p>}
+                    {e.path && <p className="font-mono text-[11px] text-muted-foreground truncate">{e.path}</p>}
+                  </div>
+                );
+              })}
+            </div>
+            {/* Desktop: Tabelle */}
+            <div className="overflow-x-auto -mx-4 hidden sm:block">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <th className="px-4 pb-2 text-left font-semibold">Zeitpunkt</th>
+                    <th className="px-4 pb-2 text-left font-semibold">Ereignis</th>
+                    <th className="px-4 pb-2 text-left font-semibold">Details</th>
+                    <th className="px-4 pb-2 text-left font-semibold">Pfad</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {data.recentEvents.map((e) => (
+                    <tr key={e.id} className="border-t border-border/60">
+                      <td className="px-4 py-2 text-muted-foreground tabular-nums whitespace-nowrap">
+                        {new Date(e.createdAt).toLocaleString("de-DE", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                      <td className="px-4 py-2"><EventTypeBadge type={e.type} /></td>
+                      <td className="px-4 py-2 text-foreground text-xs max-w-[280px] truncate">{summarizeMeta(e.meta)}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-muted-foreground truncate max-w-[200px]">{e.path ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </Panel>
     </div>
@@ -923,17 +1007,17 @@ function FunnelView({
                 <div className="flex items-center gap-2 min-w-0">
                   <Icon className="size-4 shrink-0" style={{ color: s.color }} />
                   <div className="min-w-0">
-                    <p className="font-semibold text-foreground truncate">{s.label}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">{s.sublabel}</p>
+                    <p className="font-semibold text-foreground text-xs sm:text-sm truncate">{s.label}</p>
+                    <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{s.sublabel}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0 text-right">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0 text-right">
                   {conv != null && (
-                    <span className="text-xs tabular-nums" style={{ color: conv >= 50 ? "#22c55e" : conv >= 20 ? "#f59e0b" : "#ef4444" }}>
-                      {conv.toFixed(1)}% Conversion
+                    <span className="text-[10px] sm:text-xs tabular-nums" style={{ color: conv >= 50 ? "#22c55e" : conv >= 20 ? "#f59e0b" : "#ef4444" }}>
+                      {conv.toFixed(1)}%<span className="hidden sm:inline"> Conversion</span>
                     </span>
                   )}
-                  <span className="font-bold text-2xl tabular-nums text-foreground">{s.value.toLocaleString("de-DE")}</span>
+                  <span className="font-bold text-lg sm:text-2xl tabular-nums text-foreground">{s.value.toLocaleString("de-DE")}</span>
                 </div>
               </div>
               <div className="h-3 rounded-md bg-muted overflow-hidden">
@@ -1052,7 +1136,7 @@ function LiveTab({ live }: { live: LiveData }) {
   return (
     <div className="space-y-5">
       {/* Big "X live" headline */}
-      <div className="rounded-xl border border-border bg-card p-5 flex flex-wrap items-center gap-4">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5 flex flex-wrap items-center gap-3 sm:gap-4">
         <div className="flex items-center gap-3">
           {live.activeCount > 0 ? (
             <span className="relative flex size-3.5">
@@ -1066,13 +1150,13 @@ function LiveTab({ live }: { live: LiveData }) {
             <p className="text-3xl font-bold tabular-nums text-foreground leading-none">
               {live.activeCount}
             </p>
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-1">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground mt-1">
               {live.activeCount === 1 ? "aktiver Besucher" : "aktive Besucher"} · letzte {Math.round(live.windowSeconds / 60)} Min
             </p>
           </div>
         </div>
-        <div className="flex-1" />
-        <p className="text-[11px] text-muted-foreground">
+        <div className="hidden sm:block flex-1" />
+        <p className="text-[10px] sm:text-[11px] text-muted-foreground w-full sm:w-auto sm:text-right">
           {generated > 0 ? (
             <>
               Aktualisiert {timeAgo(now - generated)}
@@ -1160,7 +1244,35 @@ function LiveTab({ live }: { live: LiveData }) {
           </div>
 
           <Panel title={`Wer ist gerade da (${live.visitors.length})`}>
-            <div className="overflow-x-auto -mx-4">
+            {/* Mobile: kompaktes Card-Layout */}
+            <div className="space-y-2 sm:hidden">
+              {live.visitors.map((v) => (
+                <div key={v.sessionShort} className="rounded-lg border border-border/60 bg-muted/30 p-2.5 space-y-1.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <DeviceIcon device={v.device} className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="text-xs text-foreground truncate flex-1">
+                      {v.browser ?? "—"} <span className="text-muted-foreground">· {v.os ?? ""}</span>
+                    </span>
+                    <span className="ml-auto shrink-0 inline-flex items-center gap-1 text-[10px] text-emerald-500 tabular-nums">
+                      <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      {timeAgo(now - new Date(v.lastSeenAt).getTime())}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-mono text-xs text-foreground truncate">{v.currentPath}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{v.currentDomain}</p>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                    <span className="truncate">{v.referrerHost ?? "(direkt)"}</span>
+                    <span className="ml-auto tabular-nums shrink-0">
+                      {v.pageviewCount}× · {formatSessionDuration(v.inSessionSeconds)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: Tabelle */}
+            <div className="overflow-x-auto -mx-4 hidden sm:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">

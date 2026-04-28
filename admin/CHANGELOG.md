@@ -4,6 +4,20 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.26.1] — 2026-04-28
+
+### Changed
+- **Mobile-Optimierung der Besucherstatistik** (`/statistics`):
+  - Tab-Leiste scrollt horizontal statt zu umbrechen, lange Labels werden auf Mobile gekürzt („Seitenaufrufe" → „Aufrufe", „Anfrage-Funnel" → „Funnel").
+  - Filter-Bereich stackt sauber: Domain-Pillen oben (eigener horizontaler Scroll), Range-Picker (7/30/90 T.) darunter — kein verschobener Spacer mehr.
+  - KPI-Boxen kompakter: `p-3` statt `p-4` und Werte `text-xl` statt `text-3xl` auf Mobile.
+  - Tabellen mit vielen Spalten (Top Seiten, UTM-Kampagnen, Letzte Ereignisse, Live-Visitors) zeigen auf Mobile ein kompaktes Card-Layout statt sich horizontal zu quetschen — auf ≥ sm bleibt die klassische Tabelle.
+  - Top-Referrer wird zur einfachen Liste (Referrer + Aufrufe), die Tabelle war auf Mobile nur Overhead.
+  - Browser- und OS-Bars: auf Mobile als horizontale Tailwind-Bars mit Label statt recharts (das schnitt Browser-Namen wegen fixer YAxis-Breite ab).
+  - Funnel-Schritte: Conversion-Label auf Mobile gekürzt („50.0%" statt „50.0% Conversion"), Wert-Schrift auf Mobile `text-lg` statt `text-2xl`.
+  - Live-Headline: auf Mobile bricht die „Aktualisiert vor … Sek."-Zeile in eine eigene Zeile um, statt sich neben den großen Zähler zu zwängen.
+- **Mobile-Header**: Klick aufs Knipserl-Logo führt jetzt zum Dashboard (`/`). Vorher war es ein nicht klickbares `<img>`.
+
 ## [1.26.0] — 2026-04-28
 
 ### Added

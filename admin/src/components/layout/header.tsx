@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -73,9 +74,11 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
         className="h-5 bg-border hidden sm:block"
       />
 
-      {/* Mobile: centered logo */}
+      {/* Mobile: centered logo, klickt zum Dashboard */}
       <div className="flex-1 flex justify-center sm:hidden">
-        <img src="/logo.png" alt="Knipserl" className="h-7 w-auto" />
+        <Link href="/" aria-label="Zum Dashboard" className="flex items-center">
+          <img src="/logo.png" alt="Knipserl" className="h-7 w-auto" />
+        </Link>
       </div>
 
       {/* Desktop: spacer */}
