@@ -513,6 +513,13 @@ async function syncSchema() {
   await q(c, `CREATE UNIQUE INDEX IF NOT EXISTS "push_subscriptions_endpoint_key" ON "push_subscriptions" ("endpoint")`);
   await q(c, `CREATE INDEX IF NOT EXISTS "push_subscriptions_userId_idx" ON "push_subscriptions" ("userId")`);
 
+  // analytics_daily_salts hat als Primary Key die Spalte "date" (nicht "id" oder "key").
+  // Der generische Tabellenanlage-Loop oben erkennt nur id/key als PK und überspringt
+  // diese Tabelle daher → manuell anlegen, sonst crasht jeder Salt-Aufruf mit P2021.
+  await q(c, `CREATE TABLE IF NOT EXISTS "analytics_daily_salts" ("date" TEXT PRIMARY KEY, "salt" TEXT NOT NULL DEFAULT '', "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  await q(c, `ALTER TABLE "analytics_daily_salts" ADD COLUMN IF NOT EXISTS "salt" TEXT NOT NULL DEFAULT ''`);
+  await q(c, `ALTER TABLE "analytics_daily_salts" ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()`);
+
   // Analytics-Indizes — Aggregationsperformance
   await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_createdAt_idx" ON "analytics_pageviews" ("createdAt")`);
   await q(c, `CREATE INDEX IF NOT EXISTS "analytics_pageviews_path_idx" ON "analytics_pageviews" ("path")`);
