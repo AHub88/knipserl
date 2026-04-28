@@ -166,7 +166,7 @@ export function StatisticsView({
                 setTab(v);
                 setQuery({ tab: v });
               }}
-              className="flex-1 h-9 rounded-lg border border-border bg-card px-3 pr-8 text-sm font-semibold text-foreground outline-none cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+              className="flex-1 h-10 rounded-lg border-2 border-input bg-muted/60 dark:bg-input/40 px-3.5 pr-9 text-sm font-semibold text-foreground shadow-sm outline-none cursor-pointer appearance-none hover:border-border focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30 transition-colors bg-[length:14px] bg-[right_10px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222.5%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
             >
               <option value="live">
                 {live.activeCount > 0 ? `● Live · ${live.activeCount} aktiv` : "● Live"}
@@ -181,7 +181,7 @@ export function StatisticsView({
             <select
               value={data.range}
               onChange={(e) => setQuery({ range: Number(e.target.value) })}
-              className="h-9 rounded-lg border border-border bg-card px-3 pr-8 text-sm font-semibold text-foreground outline-none cursor-pointer appearance-none bg-[length:12px] bg-[right_8px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+              className="h-10 rounded-lg border-2 border-input bg-muted/60 dark:bg-input/40 px-3.5 pr-9 text-sm font-semibold text-foreground shadow-sm outline-none cursor-pointer appearance-none hover:border-border focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30 transition-colors bg-[length:14px] bg-[right_10px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222.5%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
             >
               <option value="7">7 Tage</option>
               <option value="30">30 Tage</option>
