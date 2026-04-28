@@ -173,7 +173,7 @@ function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
                   <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug truncate">
                     {order.locationName || city || order.locationAddress}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">{order.locationAddress}</p>
+                  {city && <p className="text-xs text-muted-foreground truncate">{order.locationAddress.match(/\d{5}\s+.+$/)?.[0] ?? city}</p>}
                 </div>
               </div>
               <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-primary/12 text-primary px-1.5 py-1 shrink-0 leading-none whitespace-nowrap">

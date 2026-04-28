@@ -126,7 +126,7 @@ export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
                         <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug truncate group-hover:text-emerald-500 transition-colors">
                           {o.locationName || city || o.locationAddress}
                         </p>
-                        <p className="text-xs text-muted-foreground truncate">{o.locationAddress}</p>
+                        {city && <p className="text-xs text-muted-foreground truncate">{o.locationAddress.match(/\d{5}\s+.+$/)?.[0] ?? city}</p>}
                       </div>
                     </div>
                     <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/12 text-emerald-500 px-1.5 py-1 shrink-0 leading-none whitespace-nowrap">
