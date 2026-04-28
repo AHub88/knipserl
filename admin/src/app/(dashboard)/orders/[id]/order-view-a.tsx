@@ -265,12 +265,24 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, onEdit }: Props)
           <div className="flex-1 min-w-0 p-4 sm:p-6">
             {/* Topline: back + meta */}
             <div className="flex items-center gap-2 mb-5 text-xs">
-              <Link
-                href="/orders"
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window === "undefined") return;
+                  const sameOriginReferrer =
+                    document.referrer &&
+                    document.referrer.startsWith(window.location.origin);
+                  if (sameOriginReferrer && window.history.length > 1) {
+                    router.back();
+                  } else {
+                    router.push("/orders");
+                  }
+                }}
+                aria-label="Zurück"
                 className="flex items-center justify-center size-8 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
               >
                 <IconArrowLeft className="size-4" />
-              </Link>
+              </button>
               <div className="flex items-center gap-2 text-muted-foreground flex-wrap min-w-0">
                 <span className="font-mono">#{order.orderNumber}</span>
                 <span className="size-1 rounded-full bg-muted-foreground/40 shrink-0" />

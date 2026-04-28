@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.29.2] — 2026-04-28
+
+### Fixed
+- **Zurück-Pfeil auf der Auftragsdetail-Seite springt jetzt zur tatsächlichen Herkunftsliste.** Vorher war der Pfeil hartverdrahtet auf `/orders` (Alle Aufträge) — wer also aus „Freie Aufträge" oder „Meine Aufträge" auf einen Auftrag geklickt hat, landete auf „Zurück" in der falschen Ansicht und musste sich neu orientieren. Jetzt nutzt der Button `router.back()`, prüft per `document.referrer` und `history.length` ob der Vorgänger zur App gehört, und fällt nur bei Direct-Link/externem Referrer auf `/orders` zurück.
+
 ## [1.29.1] — 2026-04-28
 
 ### Changed
