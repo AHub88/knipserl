@@ -147,71 +147,73 @@ function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
       : order.locationName
     : order.locationAddress;
   const hasDelivery = !!order.setupDate || !!order.teardownDate;
+  const eventDate = new Date(order.eventDate);
+  const dayNum = eventDate.getDate();
+  const weekday = eventDate.toLocaleDateString("de-DE", { weekday: "short" });
+  const monthShort = eventDate.toLocaleDateString("de-DE", { month: "short" });
 
   return (
-    <div className="rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors">
-      <div className="flex items-baseline justify-between gap-2 mb-2">
-        <p className="font-semibold text-foreground truncate">{order.customerName}</p>
-        <span className="text-[10px] font-semibold uppercase tracking-wider rounded-md bg-primary/10 text-primary px-1.5 py-0.5 shrink-0">
-          {daysUntil(order.eventDate, now)}
-        </span>
-      </div>
+    <div className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors overflow-hidden">
+      <div className="flex">
+        {/* Date block — left side accent */}
+        <div className="flex flex-col items-center justify-center w-16 sm:w-20 shrink-0 bg-primary/8 border-r border-border px-2 py-3">
+          <span className="text-[10px] font-semibold uppercase text-primary">{weekday}</span>
+          <span className="text-2xl sm:text-3xl font-extrabold text-foreground leading-none">{dayNum}</span>
+          <span className="text-[11px] font-medium text-muted-foreground">{monthShort}</span>
+          <span className="mt-1.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-primary/15 text-primary px-1.5 py-0.5 whitespace-nowrap">
+            {daysUntil(order.eventDate, now)}
+          </span>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-1 gap-x-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1.5 truncate">
-          <IconCalendar className="size-3.5 shrink-0" />
-          {formatDateLong(order.eventDate)}
-        </span>
-        <span className="flex items-center gap-1.5 truncate">
-          <IconTag className="size-3.5 shrink-0" />
-          {order.eventType}
-        </span>
-        <span className="flex items-center gap-1.5 truncate min-w-0">
-          <IconMapPin className="size-3.5 shrink-0" />
-          <span className="truncate">{locationLabel}</span>
-        </span>
-      </div>
+        {/* Content — right side */}
+        <div className="flex-1 min-w-0 p-3 sm:p-4">
+          {/* Location — most prominent */}
+          <div className="flex items-start gap-2 mb-1.5">
+            <IconMapPin className="size-4 text-primary shrink-0 mt-0.5" />
+            <div className="min-w-0">
+              <p className="text-sm sm:text-base font-semibold text-foreground truncate">{locationLabel}</p>
+              {city && order.locationName && city !== order.locationName && (
+                <p className="text-xs text-muted-foreground truncate">{order.locationAddress}</p>
+              )}
+            </div>
+          </div>
 
-      {order.extras.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {order.extras.map((e) => (
-            <span
-              key={e}
-              className="px-2 py-0.5 rounded-md bg-muted text-[11px] font-medium text-muted-foreground"
+          {/* Customer + Event type */}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+            <span className="font-medium text-foreground/80">{order.customerName}</span>
+            <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold">{order.eventType}</span>
+            {order.compensation > 0 && (
+              <span className="text-emerald-500 font-semibold">{order.compensation} €</span>
+            )}
+          </div>
+
+          {/* Extras */}
+          {order.extras.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {order.extras.map((e) => (
+                <span key={e} className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-medium text-muted-foreground">{e}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Delivery boxes */}
+          {hasDelivery && (
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              <DeliveryBox label="Aufbau" iso={order.setupDate} time={order.setupTime} tone="emerald" icon={<IconBoxAlignBottomLeft className="size-3.5" />} />
+              <DeliveryBox label="Abbau" iso={order.teardownDate} time={order.teardownTime} tone="rose" icon={<IconBoxAlignTopRight className="size-3.5" />} />
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <Link
+              href={`/orders/${order.id}`}
+              className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
             >
-              {e}
-            </span>
-          ))}
+              Details
+              <IconChevronRight className="size-3.5" />
+            </Link>
+          </div>
         </div>
-      )}
-
-      {hasDelivery && (
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <DeliveryBox
-            label="Aufbau"
-            iso={order.setupDate}
-            time={order.setupTime}
-            tone="emerald"
-            icon={<IconBoxAlignBottomLeft className="size-3.5" />}
-          />
-          <DeliveryBox
-            label="Abbau"
-            iso={order.teardownDate}
-            time={order.teardownTime}
-            tone="rose"
-            icon={<IconBoxAlignTopRight className="size-3.5" />}
-          />
-        </div>
-      )}
-
-      <div className="mt-3 flex justify-end">
-        <Link
-          href={`/orders/${order.id}`}
-          className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
-        >
-          Details ansehen
-          <IconChevronRight className="size-4" />
-        </Link>
       </div>
     </div>
   );
@@ -224,27 +226,33 @@ function PastCard({ order }: { order: OrderItem }) {
       ? `${order.locationName} · ${city}`
       : order.locationName
     : order.locationAddress;
+  const eventDate = new Date(order.eventDate);
+  const dayNum = eventDate.getDate();
+  const monthShort = eventDate.toLocaleDateString("de-DE", { month: "short" });
+  const yearShort = eventDate.toLocaleDateString("de-DE", { year: "2-digit" });
+
   return (
     <Link
       href={`/orders/${order.id}`}
-      className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors"
+      className="flex items-center rounded-xl border border-border bg-card hover:border-primary/30 transition-colors overflow-hidden"
     >
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline justify-between gap-2 mb-1">
-          <p className="font-semibold text-foreground truncate">{order.customerName}</p>
+      {/* Compact date block */}
+      <div className="flex flex-col items-center justify-center w-14 sm:w-16 shrink-0 bg-muted/50 border-r border-border py-2.5 px-2">
+        <span className="text-xl sm:text-2xl font-extrabold text-foreground/60 leading-none">{dayNum}</span>
+        <span className="text-[10px] text-muted-foreground">{monthShort} {yearShort}</span>
+      </div>
+      <div className="flex-1 min-w-0 px-3 py-2.5">
+        <div className="flex items-center gap-2">
+          <IconMapPin className="size-3.5 text-muted-foreground shrink-0" />
+          <span className="text-sm font-medium text-foreground truncate">{locationLabel}</span>
         </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5 truncate">
-            <IconCalendar className="size-3.5 shrink-0" />
-            {formatDateShort(order.eventDate)}
-          </span>
-          <span className="flex items-center gap-1.5 truncate min-w-0">
-            <IconMapPin className="size-3.5 shrink-0" />
-            <span className="truncate">{locationLabel}</span>
-          </span>
+        <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
+          <span className="truncate">{order.customerName}</span>
+          <span>·</span>
+          <span>{order.eventType}</span>
         </div>
       </div>
-      <IconChevronRight className="size-4 text-muted-foreground shrink-0" />
+      <IconChevronRight className="size-4 text-muted-foreground shrink-0 mr-3" />
     </Link>
   );
 }

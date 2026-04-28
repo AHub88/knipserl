@@ -97,57 +97,55 @@ export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
             ? `${o.locationName} · ${city}`
             : o.locationName
           : o.locationAddress;
+        const eventDate = new Date(o.eventDate);
+        const dayNum = eventDate.getDate();
+        const weekday = eventDate.toLocaleDateString("de-DE", { weekday: "short" });
+        const monthShort = eventDate.toLocaleDateString("de-DE", { month: "short" });
+
         return (
           <div
             key={o.id}
-            className="rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-emerald-500/30 transition-colors"
+            className="rounded-xl border border-border bg-card hover:border-emerald-500/30 transition-colors overflow-hidden"
           >
-            <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-5">
-              <Link
-                href={`/orders/${o.id}`}
-                className="flex-1 min-w-0 group"
-              >
-                <div className="flex items-baseline justify-between gap-2 mb-1.5 lg:mb-2">
-                  <p className="font-semibold text-foreground truncate group-hover:text-emerald-500 transition-colors">
-                    {o.customerName}
-                  </p>
-                  <span className="lg:hidden text-[10px] font-semibold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 shrink-0">
-                    {daysUntil(o.eventDate)}
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-center gap-y-1 gap-x-4 lg:gap-x-5 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1.5 truncate">
-                    <IconCalendar className="size-3.5 shrink-0" />
-                    {formatDate(o.eventDate)}
-                  </span>
-                  <span className="flex items-center gap-1.5 truncate">
-                    <IconTag className="size-3.5 shrink-0" />
-                    {o.eventType}
-                  </span>
-                  <span className="flex items-center gap-1.5 truncate min-w-0">
-                    <IconMapPin className="size-3.5 shrink-0" />
-                    <span className="truncate">{locationLabel}</span>
-                  </span>
-                  {o.distanceKm != null && (
-                    <span className="flex items-center gap-1.5 truncate">
-                      <IconRoute className="size-3.5 shrink-0" />
-                      {Math.round(o.distanceKm)} km
-                    </span>
-                  )}
-                </div>
-              </Link>
-              <div className="flex items-center justify-end gap-2 lg:gap-3 shrink-0">
-                <span className="hidden lg:inline-flex text-[10px] font-semibold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5">
+            <div className="flex">
+              {/* Date block — left accent */}
+              <div className="flex flex-col items-center justify-center w-16 sm:w-20 shrink-0 bg-emerald-500/5 border-r border-border px-2 py-3">
+                <span className="text-[10px] font-semibold uppercase text-emerald-500">{weekday}</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-foreground leading-none">{dayNum}</span>
+                <span className="text-[11px] font-medium text-muted-foreground">{monthShort}</span>
+                <span className="mt-1.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-emerald-500/15 text-emerald-500 px-1.5 py-0.5 whitespace-nowrap">
                   {daysUntil(o.eventDate)}
                 </span>
-                <ClaimButton orderId={o.id} />
-                <Link
-                  href={`/orders/${o.id}`}
-                  aria-label="Details öffnen"
-                  className="hidden sm:flex items-center justify-center size-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
-                >
-                  <IconChevronRight className="size-4" />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0 p-3 sm:p-4">
+                <Link href={`/orders/${o.id}`} className="group">
+                  {/* Location — most prominent */}
+                  <div className="flex items-start gap-2 mb-1">
+                    <IconMapPin className="size-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <p className="text-sm sm:text-base font-semibold text-foreground truncate group-hover:text-emerald-500 transition-colors">
+                      {locationLabel}
+                    </p>
+                  </div>
+
+                  {/* Customer + type + distance */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground/80">{o.customerName}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold">{o.eventType}</span>
+                    {o.distanceKm != null && (
+                      <span className="flex items-center gap-1 font-semibold text-foreground/70">
+                        <IconRoute className="size-3.5 shrink-0" />
+                        {Math.round(o.distanceKm)} km
+                      </span>
+                    )}
+                  </div>
                 </Link>
+
+                {/* Action */}
+                <div className="flex justify-end mt-2">
+                  <ClaimButton orderId={o.id} />
+                </div>
               </div>
             </div>
           </div>
