@@ -19,6 +19,7 @@ import {
   IconTruck,
   IconInbox,
   IconMapPin,
+  IconClipboardCheck,
   IconClipboardList,
   IconBeach,
   IconTemplate,
@@ -137,10 +138,11 @@ const adminNav: NavGroup[] = [
 ];
 
 // ── Driver navigation ──
-// Fahrer haben nur vier Punkte — flach als Top-Level-Links statt Akkordeon.
+// Fahrer haben nur fünf Punkte — flach als Top-Level-Links statt Akkordeon.
 const driverNavGroups: NavGroup[] = [
+  { title: "Alle Aufträge", icon: IconFileText, href: "/orders" },
+  { title: "Freie Aufträge", icon: IconClipboardCheck, href: "/free-orders" },
   { title: "Meine Aufträge", icon: IconClipboardList, href: "/my-orders" },
-  { title: "Aufträge", icon: IconFileText, href: "/orders" },
   { title: "Kalender", icon: IconCalendar, href: "/calendar" },
   { title: "Abwesenheit", icon: IconBeach, href: "/my-vacation" },
 ];

@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.28.0] — 2026-04-28
+
+### Added
+- **Neuer Bereich „Freie Aufträge" (`/free-orders`)** — listet alle offenen Aufträge ohne zugewiesenen Fahrer (status = OPEN, weder primary noch secondary Driver, ab heute). Nutzt die bestehende Orders-Tabelle, leerer Zustand mit eigenem Hinweis.
+
+### Changed
+- **Fahrer-Sidebar in fünf Punkten in Wunsch-Reihenfolge**: Alle Aufträge → Freie Aufträge → Meine Aufträge → Kalender → Abwesenheit. „Aufträge" wurde umbenannt zu „Alle Aufträge" für Klarheit gegenüber den anderen Listen.
+
 ## [1.27.1] — 2026-04-28
 
 ### Changed
