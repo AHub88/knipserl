@@ -1,28 +1,18 @@
-import { prisma } from "@/lib/db";
 import { DRIVER_BONUS_DEFAULTS, normalizeExtraKey } from "@/lib/extras-pricing";
+
+/**
+ * Pure Berechnungs-Helper für Fahrer-Vergütung. KEINE Server-Abhängigkeiten —
+ * dieses File wird auch von Client-Komponenten importiert (Vergütungsbox auf
+ * der Auftragsdetail-Seite, Driver-Report-View). Der DB-Loader für die
+ * aktuellen Bonus-Sätze liegt deshalb separat in `driver-bonus-loader.ts`.
+ */
 
 export type DriverBonusBreakdown = Record<string, number>;
 
 /**
- * Lädt die aktuell konfigurierten Bonus-Sätze pro Extra aus AppSetting,
- * gemerged mit den Defaults. Schlüssel: `driver_bonus_<KEY>`.
- */
-export async function loadDriverBonusPrices(): Promise<Record<string, number>> {
-  const settings = await prisma.appSetting.findMany({
-    where: { key: { startsWith: "driver_bonus_" } },
-  });
-  const fromDb: Record<string, number> = {};
-  for (const s of settings) {
-    const n = Number(s.value);
-    if (Number.isFinite(n)) fromDb[s.key.replace("driver_bonus_", "")] = n;
-  }
-  return { ...DRIVER_BONUS_DEFAULTS, ...fromDb };
-}
-
-/**
- * Berechnet aus einer Liste aktiver Extras und einer Bonus-Tabelle
- * das Breakdown {Telefon: 10, HG: 20, ...}. Nur Extras mit Bonus > 0
- * landen im Snapshot; das hält den JSON kompakt.
+ * Aus einer Liste aktiver Extras + Bonus-Tabelle das Breakdown
+ * {Telefon: 10, HG: 20, ...}. Nur Extras mit Bonus > 0 landen drin —
+ * hält den Snapshot kompakt.
  */
 export function computeDriverBonusBreakdown(
   extras: string[],

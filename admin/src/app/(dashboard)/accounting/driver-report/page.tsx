@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { DriverReportView } from "./driver-report-view";
-import { loadDriverBonusPrices } from "@/lib/driver-compensation";
+import { loadDriverBonusPrices } from "@/lib/driver-bonus-loader";
 
 export const dynamic = "force-dynamic";
 

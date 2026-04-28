@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { OrderDetail } from "./order-detail";
 import { shouldHideCashOrders } from "@/lib/view-mode";
-import { loadDriverBonusPrices } from "@/lib/driver-compensation";
+import { loadDriverBonusPrices } from "@/lib/driver-bonus-loader";
 
 export default async function OrderDetailPage({
   params,

@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { shouldHideCashOrders } from "@/lib/view-mode";
-import {
-  loadDriverBonusPrices,
-  computeDriverBonusBreakdown,
-} from "@/lib/driver-compensation";
+import { loadDriverBonusPrices } from "@/lib/driver-bonus-loader";
+import { computeDriverBonusBreakdown } from "@/lib/driver-compensation";
 
 export async function GET(
   _request: NextRequest,

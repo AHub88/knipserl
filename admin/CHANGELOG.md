@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.30.1] — 2026-04-28
+
+### Fixed
+- **Build-Failure auf CI nach 1.30.0**: `lib/driver-compensation.ts` enthielt sowohl pure Berechnungs-Helper als auch den DB-Loader (`prisma`-Import). Da Client-Components (Vergütungs-Box, Driver-Report-View) die pure Helper importierten, zog Turbopack den ganzen File inkl. `pg`/`prisma`-Stack in den Browser-Bundle und scheiterte an `dns`/`fs`/`net`/`tls`. Loader nach `lib/driver-bonus-loader.ts` ausgelagert; pure Helper bleiben in `driver-compensation.ts`.
+
 ## [1.30.0] — 2026-04-28
 
 ### Added
