@@ -157,10 +157,13 @@ export function StatisticsView({
             setQuery({ tab: next });
           }}
         >
-          {/* Tab-Leiste: horizontaler Scroll auf Mobile, damit Tabs nicht umbrechen */}
-          <div className="-mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto scrollbar-thin">
+          {/* Tab-Leiste: horizontaler Scroll ohne sichtbaren Scrollbar */}
+          <div
+            className="-mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: "none" }}
+          >
             <TabsList className="h-auto inline-flex w-max">
-              <TabsTrigger value="live" className="px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="live" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
                 <span className="relative flex items-center gap-1.5">
                   {live.activeCount > 0 ? (
                     <span className="relative flex size-2">
@@ -172,62 +175,40 @@ export function StatisticsView({
                   )}
                   <span>Live</span>
                 </span>
-                <span
-                  className={
-                    "ml-1.5 inline-flex items-center justify-center rounded-md px-1.5 text-[11px] font-semibold tabular-nums " +
-                    (live.activeCount > 0
-                      ? "bg-emerald-500/10 text-emerald-500"
-                      : "bg-muted text-muted-foreground")
-                  }
-                >
-                  {live.activeCount}
-                </span>
+                {live.activeCount > 0 && (
+                  <span className="ml-1 inline-flex items-center justify-center rounded-md px-1 text-[10px] font-semibold tabular-nums bg-emerald-500/10 text-emerald-500">
+                    {live.activeCount}
+                  </span>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="pageviews" className="px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="pageviews" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
                 <span className="hidden sm:inline">Seitenaufrufe</span>
                 <span className="sm:hidden">Aufrufe</span>
-                <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-primary/10 px-1.5 text-[11px] font-semibold text-primary tabular-nums">
+                <span className="ml-1 inline-flex items-center justify-center rounded-md bg-primary/10 px-1 text-[10px] font-semibold text-primary tabular-nums">
                   {data.total30d.toLocaleString("de-DE")}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="visitors" className="px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="visitors" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
                 Besucher
               </TabsTrigger>
-              <TabsTrigger value="events" className="px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="events" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
                 Ereignisse
-                <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-blue-500/10 px-1.5 text-[11px] font-semibold text-blue-500 tabular-nums">
-                  {data.eventsRange.toLocaleString("de-DE")}
-                </span>
+                {data.eventsRange > 0 && (
+                  <span className="ml-1 inline-flex items-center justify-center rounded-md bg-blue-500/10 px-1 text-[10px] font-semibold text-blue-500 tabular-nums">
+                    {data.eventsRange.toLocaleString("de-DE")}
+                  </span>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="funnel" className="px-2.5 py-1.5 whitespace-nowrap">
+              <TabsTrigger value="funnel" className="px-2 sm:px-2.5 py-1.5 whitespace-nowrap">
                 <span className="hidden sm:inline">Anfrage-Funnel</span>
                 <span className="sm:hidden">Funnel</span>
               </TabsTrigger>
             </TabsList>
           </div>
 
-          <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2">
-            {/* Domain filter — horizontaler Scroll auf Mobile */}
-            <div className="-mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto">
-              <div className="flex items-center gap-1 w-max sm:w-auto sm:flex-wrap">
-                <FilterPill
-                  active={!data.domain}
-                  label="Alle Domains"
-                  onClick={() => setQuery({ domain: null })}
-                />
-                {data.domains.slice(0, 6).map((d) => (
-                  <FilterPill
-                    key={d}
-                    active={data.domain === d}
-                    label={d}
-                    onClick={() => setQuery({ domain: d })}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="hidden sm:block flex-1" />
-            {/* Range picker */}
-            <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5 self-start sm:self-auto">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {/* Range picker — immer sichtbar */}
+            <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5">
               {[7, 30, 90].map((r) => (
                 <button
                   key={r}
@@ -239,10 +220,24 @@ export function StatisticsView({
                       : "text-muted-foreground hover:text-foreground/80")
                   }
                 >
-                  {r} Tage
+                  {r} T.
                 </button>
               ))}
             </div>
+
+            {/* Domain filter — nur sichtbar wenn mehr als eine Domain getrackt wurde */}
+            {data.domains.length > 1 && (
+              <select
+                value={data.domain ?? ""}
+                onChange={(e) => setQuery({ domain: e.target.value || null })}
+                className="h-7 rounded-lg border border-border bg-card px-2 pr-6 text-[11px] font-semibold text-foreground outline-none cursor-pointer appearance-none bg-[length:10px] bg-[right_6px_center] bg-no-repeat bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]"
+              >
+                <option value="">Alle Domains</option>
+                {data.domains.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div className="mt-5">
@@ -265,24 +260,6 @@ export function StatisticsView({
         </Tabs>
       </div>
     </div>
-  );
-}
-
-// ── Filter-Pill ────────────────────────────────────────────────────────────
-
-function FilterPill({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={
-        "h-7 rounded-md px-2.5 text-[12px] font-medium transition-colors border " +
-        (active
-          ? "bg-primary text-primary-foreground border-primary"
-          : "bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground")
-      }
-    >
-      {label}
-    </button>
   );
 }
 
