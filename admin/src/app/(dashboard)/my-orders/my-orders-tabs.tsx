@@ -149,65 +149,68 @@ function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
   const hasDelivery = !!order.setupDate || !!order.teardownDate;
   const eventDate = new Date(order.eventDate);
   const dayNum = eventDate.getDate();
-  const weekday = eventDate.toLocaleDateString("de-DE", { weekday: "short" });
+  const weekday = eventDate.toLocaleDateString("de-DE", { weekday: "short" }).toUpperCase();
   const monthShort = eventDate.toLocaleDateString("de-DE", { month: "short" });
 
   return (
     <div className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors overflow-hidden">
       <div className="flex">
-        {/* Date block — left side accent */}
-        <div className="flex flex-col items-center justify-center w-16 sm:w-20 shrink-0 bg-primary/8 border-r border-border px-2 py-3">
-          <span className="text-[10px] font-semibold uppercase text-primary">{weekday}</span>
-          <span className="text-2xl sm:text-3xl font-extrabold text-foreground leading-none">{dayNum}</span>
-          <span className="text-[11px] font-medium text-muted-foreground">{monthShort}</span>
-          <span className="mt-1.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-primary/15 text-primary px-1.5 py-0.5 whitespace-nowrap">
-            {daysUntil(order.eventDate, now)}
-          </span>
+        {/* Date block — fixed width, vertically centered */}
+        <div className="flex flex-col items-center justify-center w-[72px] sm:w-[88px] shrink-0 bg-primary/[0.06] border-r border-border py-4 gap-0.5">
+          <span className="text-[10px] font-bold tracking-wide text-primary leading-none">{weekday}</span>
+          <span className="text-[28px] sm:text-[34px] font-extrabold text-foreground leading-none">{dayNum}</span>
+          <span className="text-[11px] font-medium text-muted-foreground leading-none">{monthShort}</span>
         </div>
 
-        {/* Content — right side */}
-        <div className="flex-1 min-w-0 p-3 sm:p-4">
-          {/* Location — most prominent */}
-          <div className="flex items-start gap-2 mb-1.5">
-            <IconMapPin className="size-4 text-primary shrink-0 mt-0.5" />
-            <div className="min-w-0">
-              <p className="text-sm sm:text-base font-semibold text-foreground truncate">{locationLabel}</p>
-              {city && order.locationName && city !== order.locationName && (
-                <p className="text-xs text-muted-foreground truncate">{order.locationAddress}</p>
-              )}
+        {/* Content */}
+        <div className="flex-1 min-w-0 p-3 sm:p-4 flex flex-col gap-2.5">
+          {/* Row 1: Location (primary) + countdown badge */}
+          <div>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-2 min-w-0">
+                <IconMapPin className="size-4 text-primary shrink-0 mt-0.5" />
+                <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug line-clamp-2">{locationLabel}</p>
+              </div>
+              <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-primary/12 text-primary px-1.5 py-1 shrink-0 leading-none whitespace-nowrap">
+                {daysUntil(order.eventDate, now)}
+              </span>
             </div>
-          </div>
-
-          {/* Customer + Event type */}
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-            <span className="font-medium text-foreground/80">{order.customerName}</span>
-            <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold">{order.eventType}</span>
-            {order.compensation > 0 && (
-              <span className="text-emerald-500 font-semibold">{order.compensation} €</span>
+            {order.locationAddress && order.locationName && (
+              <p className="text-[11px] text-muted-foreground mt-0.5 ml-6 truncate">{order.locationAddress}</p>
             )}
           </div>
 
-          {/* Extras */}
+          {/* Row 2: Customer · Event type · Compensation */}
+          <div className="flex items-center flex-wrap gap-x-2 gap-y-1 ml-6">
+            <span className="text-sm text-foreground/80 font-medium">{order.customerName}</span>
+            <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold text-muted-foreground">{order.eventType}</span>
+            {order.compensation > 0 && (
+              <span className="text-sm font-bold text-emerald-500 ml-auto">{order.compensation} €</span>
+            )}
+          </div>
+
+          {/* Row 3: Extras (optional) */}
           {order.extras.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-2">
+            <div className="flex flex-wrap gap-1.5 ml-6">
               {order.extras.map((e) => (
-                <span key={e} className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-medium text-muted-foreground">{e}</span>
+                <span key={e} className="px-2 py-0.5 rounded-md border border-border bg-muted/50 text-[11px] font-medium text-muted-foreground">{e}</span>
               ))}
             </div>
           )}
 
-          {/* Delivery boxes */}
+          {/* Row 4: Delivery boxes (optional) */}
           {hasDelivery && (
-            <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className="grid grid-cols-2 gap-2 ml-6">
               <DeliveryBox label="Aufbau" iso={order.setupDate} time={order.setupTime} tone="emerald" icon={<IconBoxAlignBottomLeft className="size-3.5" />} />
               <DeliveryBox label="Abbau" iso={order.teardownDate} time={order.teardownTime} tone="rose" icon={<IconBoxAlignTopRight className="size-3.5" />} />
             </div>
           )}
 
-          <div className="flex justify-end">
+          {/* Row 5: Action */}
+          <div className="flex justify-end ml-6">
             <Link
               href={`/orders/${order.id}`}
-              className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 h-8 px-4 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
             >
               Details
               <IconChevronRight className="size-3.5" />

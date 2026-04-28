@@ -99,7 +99,7 @@ export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
           : o.locationAddress;
         const eventDate = new Date(o.eventDate);
         const dayNum = eventDate.getDate();
-        const weekday = eventDate.toLocaleDateString("de-DE", { weekday: "short" });
+        const weekday = eventDate.toLocaleDateString("de-DE", { weekday: "short" }).toUpperCase();
         const monthShort = eventDate.toLocaleDateString("de-DE", { month: "short" });
 
         return (
@@ -108,42 +108,44 @@ export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
             className="rounded-xl border border-border bg-card hover:border-emerald-500/30 transition-colors overflow-hidden"
           >
             <div className="flex">
-              {/* Date block — left accent */}
-              <div className="flex flex-col items-center justify-center w-16 sm:w-20 shrink-0 bg-emerald-500/5 border-r border-border px-2 py-3">
-                <span className="text-[10px] font-semibold uppercase text-emerald-500">{weekday}</span>
-                <span className="text-2xl sm:text-3xl font-extrabold text-foreground leading-none">{dayNum}</span>
-                <span className="text-[11px] font-medium text-muted-foreground">{monthShort}</span>
-                <span className="mt-1.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-emerald-500/15 text-emerald-500 px-1.5 py-0.5 whitespace-nowrap">
-                  {daysUntil(o.eventDate)}
-                </span>
+              {/* Date block */}
+              <div className="flex flex-col items-center justify-center w-[72px] sm:w-[88px] shrink-0 bg-emerald-500/[0.06] border-r border-border py-4 gap-0.5">
+                <span className="text-[10px] font-bold tracking-wide text-emerald-500 leading-none">{weekday}</span>
+                <span className="text-[28px] sm:text-[34px] font-extrabold text-foreground leading-none">{dayNum}</span>
+                <span className="text-[11px] font-medium text-muted-foreground leading-none">{monthShort}</span>
               </div>
 
               {/* Content */}
-              <div className="flex-1 min-w-0 p-3 sm:p-4">
-                <Link href={`/orders/${o.id}`} className="group">
-                  {/* Location — most prominent */}
-                  <div className="flex items-start gap-2 mb-1">
-                    <IconMapPin className="size-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <p className="text-sm sm:text-base font-semibold text-foreground truncate group-hover:text-emerald-500 transition-colors">
-                      {locationLabel}
-                    </p>
+              <div className="flex-1 min-w-0 p-3 sm:p-4 flex flex-col gap-2">
+                <Link href={`/orders/${o.id}`} className="group flex flex-col gap-2">
+                  {/* Row 1: Location + countdown */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2 min-w-0">
+                      <IconMapPin className="size-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug group-hover:text-emerald-500 transition-colors line-clamp-2">
+                        {locationLabel}
+                      </p>
+                    </div>
+                    <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/12 text-emerald-500 px-1.5 py-1 shrink-0 leading-none whitespace-nowrap">
+                      {daysUntil(o.eventDate)}
+                    </span>
                   </div>
 
-                  {/* Customer + type + distance */}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground/80">{o.customerName}</span>
-                    <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold">{o.eventType}</span>
+                  {/* Row 2: Customer · Event · Distance */}
+                  <div className="flex items-center flex-wrap gap-x-2 gap-y-1 ml-6">
+                    <span className="text-sm text-foreground/80 font-medium">{o.customerName}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold text-muted-foreground">{o.eventType}</span>
                     {o.distanceKm != null && (
-                      <span className="flex items-center gap-1 font-semibold text-foreground/70">
-                        <IconRoute className="size-3.5 shrink-0" />
+                      <span className="flex items-center gap-1 text-sm font-bold text-foreground/70 ml-auto">
+                        <IconRoute className="size-3.5 shrink-0 text-muted-foreground" />
                         {Math.round(o.distanceKm)} km
                       </span>
                     )}
                   </div>
                 </Link>
 
-                {/* Action */}
-                <div className="flex justify-end mt-2">
+                {/* Row 3: Action */}
+                <div className="flex justify-end ml-6">
                   <ClaimButton orderId={o.id} />
                 </div>
               </div>
