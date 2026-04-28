@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.27.1] — 2026-04-28
+
+### Changed
+- **Fahrer-Sidebar flach statt im Akkordeon.** Bisher war der gesamte Driver-Nav (Meine Aufträge, Aufträge, Kalender, Abwesenheit) unter einem ausklappbaren Punkt „Übersicht" versteckt — bei nur vier Einträgen unnötiger Klick. Jetzt liegen alle vier Punkte direkt als Top-Level-Links mit eigenem Icon in der Sidebar. Reihenfolge: Meine Aufträge → Aufträge → Kalender → Abwesenheit.
+
 ## [1.27.0] — 2026-04-28
 
 ### Added

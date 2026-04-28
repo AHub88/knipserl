@@ -137,17 +137,12 @@ const adminNav: NavGroup[] = [
 ];
 
 // ── Driver navigation ──
+// Fahrer haben nur vier Punkte — flach als Top-Level-Links statt Akkordeon.
 const driverNavGroups: NavGroup[] = [
-  {
-    title: "Übersicht",
-    icon: IconClipboardList,
-    children: [
-      { title: "Meine Aufträge", href: "/my-orders", icon: IconClipboardList },
-      { title: "Aufträge", href: "/orders", icon: IconFileText },
-      { title: "Abwesenheit", href: "/my-vacation", icon: IconBeach },
-      { title: "Kalender", href: "/calendar", icon: IconCalendar },
-    ],
-  },
+  { title: "Meine Aufträge", icon: IconClipboardList, href: "/my-orders" },
+  { title: "Aufträge", icon: IconFileText, href: "/orders" },
+  { title: "Kalender", icon: IconCalendar, href: "/calendar" },
+  { title: "Abwesenheit", icon: IconBeach, href: "/my-vacation" },
 ];
 
 // ── Accounting navigation ──
