@@ -4,6 +4,18 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.31.1] — 2026-04-28
+
+### Changed
+- **Kalender-Steuerung mobil entrümpelt.** Auf Phone-Breakpoints (`< sm`) belegte die Werkzeugleiste über dem Kalender bisher fast die Hälfte des sichtbaren Bereichs, weil sowohl Status-Legende als auch Fahrer-Toggle-Pillen auf zwei Zeilen umbrachen und die Touch-Targets (Chevrons, Monat/Liste-Toggle) am unteren Rand des HIG-Standards lagen. Folgendes wurde verdichtet:
+  - **Page-Header** ohne Untertitel auf Mobile (war: „Aufträge und Fahrer-Urlaube im Überblick"), Titel `text-xl` statt `text-2xl`, Icon eine Spur kleiner — spart ~30 px.
+  - **Monatsnavigation**: Chevrons jetzt 40 × 40 px (vorher 36 px), Daumen-tauglich; Monat/Liste-Toggle 36 px hoch (vorher 28 px) und auf Mobile **icon-only** mit `aria-label` für Screenreader — passt nebeneinander, ohne dass die Monatszeile umbricht.
+  - **Status-Legende** in einer Zeile durch gekürzte Labels: Zugewiesen → „Zug.", Abgeschlossen → „Erled.", Abwesend → „Abw.", Bedingt → „Bed.". Schriftgröße auf `text-[11px]`, `gap-x-3` enger gepackt. Volltext auf Desktop unverändert.
+  - **Fahrer-Toggle-Pillen** auf Mobile **nur Initialen** (Vollnamen ab `sm:` wieder eingeblendet), Mindesthöhe/-breite 36 × 36 px für sauberen Tap. Bei ausgeblendetem Fahrer wird das Initialen-Badge durch das deutlich erkennbare Auge-zu-Symbol ersetzt. „Kein Fahrer"-Pille und „Alle einblenden (n)"-Link bekommen ebenfalls 36 px Touch-Target.
+  - **Vertikale Abstände** zwischen den Steuerungs-Reihen von `space-y-4` auf `space-y-3` reduziert.
+
+  Effekt: Die Steuerung über dem Kalender schrumpft auf einer iPhone-13-Höhe (390 × 844) von ~340 px auf ~190 px, der Kalender-Grid rutscht entsprechend nach oben. Desktop-Layout bleibt unverändert.
+
 ## [1.31.0] — 2026-04-28
 
 ### Added

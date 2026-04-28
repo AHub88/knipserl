@@ -239,86 +239,99 @@ export function CalendarView() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           <button
             onClick={prevMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Vorheriger Monat"
+            className="flex items-center justify-center size-10 sm:size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <IconChevronLeft className="size-4" />
           </button>
           <button
             onClick={nextMonth}
-            className="flex items-center justify-center size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Nächster Monat"
+            className="flex items-center justify-center size-10 sm:size-9 rounded-lg border border-border bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <IconChevronRight className="size-4" />
           </button>
-          <h2 className="text-lg font-semibold text-foreground ml-2">
+          <h2 className="text-base sm:text-lg font-semibold text-foreground ml-1 sm:ml-2 truncate">
             {MONTH_NAMES[month - 1]} {year}
           </h2>
           {!isCurrentMonth && (
             <button
               onClick={goToday}
-              className="ml-2 text-xs text-primary hover:underline"
+              className="ml-1 sm:ml-2 text-xs text-primary hover:underline shrink-0"
             >
               Heute
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-0.5">
+        <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-0.5 shrink-0">
           <button
             onClick={() => setView("month")}
+            aria-label="Monatsansicht"
             className={
-              "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
+              "flex items-center gap-1.5 h-9 sm:h-7 px-2.5 sm:px-3 rounded-md text-xs font-medium transition-colors " +
               (view === "month"
                 ? "bg-primary/15 text-primary"
                 : "text-muted-foreground hover:text-foreground/80")
             }
           >
-            <IconCalendarMonth className="size-3.5" />
-            Monat
+            <IconCalendarMonth className="size-4 sm:size-3.5" />
+            <span className="hidden sm:inline">Monat</span>
           </button>
           <button
             onClick={() => setView("list")}
+            aria-label="Listenansicht"
             className={
-              "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors " +
+              "flex items-center gap-1.5 h-9 sm:h-7 px-2.5 sm:px-3 rounded-md text-xs font-medium transition-colors " +
               (view === "list"
                 ? "bg-primary/15 text-primary"
                 : "text-muted-foreground hover:text-foreground/80")
             }
           >
-            <IconList className="size-3.5" />
-            Liste
+            <IconList className="size-4 sm:size-3.5" />
+            <span className="hidden sm:inline">Liste</span>
           </button>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+      {/* Status legend — abbreviated labels on mobile to keep one row */}
+      <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1.5 text-[11px] sm:text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div className="size-2 rounded-full bg-amber-400" /> Offen
+          <div className="size-2 rounded-full bg-amber-400" />
+          <span>Offen</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="size-2 rounded-full bg-blue-400" /> Zugewiesen
+          <div className="size-2 rounded-full bg-blue-400" />
+          <span className="sm:hidden">Zug.</span>
+          <span className="hidden sm:inline">Zugewiesen</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="size-2 rounded-full bg-emerald-400" /> Abgeschlossen
+          <div className="size-2 rounded-full bg-emerald-400" />
+          <span className="sm:hidden">Erled.</span>
+          <span className="hidden sm:inline">Abgeschlossen</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="size-2.5 w-4 rounded bg-orange-500/20 border border-orange-500/30" /> Abwesend
+          <div className="size-2.5 w-4 rounded bg-orange-500/20 border border-orange-500/30" />
+          <span className="sm:hidden">Abw.</span>
+          <span className="hidden sm:inline">Abwesend</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="size-2.5 w-4 rounded bg-yellow-500/20 border border-yellow-500/30" /> Bedingt
+          <div className="size-2.5 w-4 rounded bg-yellow-500/20 border border-yellow-500/30" />
+          <span className="sm:hidden">Bed.</span>
+          <span className="hidden sm:inline">Bedingt</span>
         </div>
       </div>
 
-      {/* Driver color legend / toggles (Outlook-style) */}
+      {/* Driver color legend / toggles (Outlook-style) — initials-only pills on mobile */}
       {(driversInMonth.length > 0 || hasOrdersWithoutDriver) && (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs">
-          <span className="text-muted-foreground mr-1">Fahrer:</span>
+        <div className="flex flex-wrap items-center gap-x-1.5 sm:gap-x-2 gap-y-1.5 sm:gap-y-2 text-xs">
+          <span className="text-muted-foreground mr-0.5 sm:mr-1">Fahrer:</span>
           {driversInMonth.map((d) => {
             const dc = getDriverColor(d.id);
             const initials = getDriverInitials(d) ?? "";
@@ -329,9 +342,11 @@ export function CalendarView() {
                 type="button"
                 onClick={() => toggleDriverVisibility(d.id)}
                 aria-pressed={!isHidden}
+                aria-label={isHidden ? `${d.name} einblenden` : `${d.name} ausblenden`}
                 title={isHidden ? `${d.name} einblenden` : `${d.name} ausblenden`}
                 className={
-                  "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 transition-opacity hover:opacity-100 " +
+                  "inline-flex items-center justify-center gap-1.5 rounded-md transition-opacity hover:opacity-100 " +
+                  "h-9 min-w-9 px-2 sm:h-auto sm:min-w-0 sm:py-0.5 " +
                   (isHidden ? "opacity-40" : "")
                 }
                 style={{
@@ -341,13 +356,13 @@ export function CalendarView() {
                 }}
               >
                 {isHidden ? (
-                  <IconEyeOff className="size-3 shrink-0" />
+                  <IconEyeOff className="size-4 sm:size-3 shrink-0" />
                 ) : (
                   <span className="font-bold">{initials}</span>
                 )}
                 <span
                   className={
-                    "text-foreground/80 " + (isHidden ? "line-through" : "")
+                    "hidden sm:inline text-foreground/80 " + (isHidden ? "line-through" : "")
                   }
                 >
                   {d.name}
@@ -362,19 +377,23 @@ export function CalendarView() {
                 type="button"
                 onClick={() => toggleDriverVisibility(NO_DRIVER_KEY)}
                 aria-pressed={!isHidden}
+                aria-label={isHidden ? "Aufträge ohne Fahrer einblenden" : "Aufträge ohne Fahrer ausblenden"}
                 title={isHidden ? "Aufträge ohne Fahrer einblenden" : "Aufträge ohne Fahrer ausblenden"}
                 className={
-                  "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-100 " +
+                  "inline-flex items-center justify-center gap-1.5 rounded-md border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-100 " +
+                  "h-9 px-2.5 sm:h-auto sm:py-0.5 sm:px-2 " +
                   (isHidden ? "opacity-40" : "")
                 }
               >
                 {isHidden ? (
-                  <IconEyeOff className="size-3 shrink-0" />
+                  <IconEyeOff className="size-4 sm:size-3 shrink-0" />
                 ) : (
-                  <IconEye className="size-3 shrink-0" />
+                  <IconEye className="size-4 sm:size-3 shrink-0" />
                 )}
                 <span
-                  className={isHidden ? "line-through" : ""}
+                  className={
+                    "text-[11px] sm:text-xs " + (isHidden ? "line-through" : "")
+                  }
                 >
                   Kein Fahrer
                 </span>
@@ -385,7 +404,7 @@ export function CalendarView() {
             <button
               type="button"
               onClick={() => setHiddenDriverIds(new Set())}
-              className="ml-1 text-primary hover:underline"
+              className="ml-0.5 sm:ml-1 px-1.5 h-9 sm:h-auto text-xs text-primary hover:underline"
             >
               Alle einblenden ({hiddenCount})
             </button>
