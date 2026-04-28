@@ -45,13 +45,25 @@ export default async function MyOrdersPage() {
       teardownTime: o.teardownTime ?? null,
     }));
 
+  const upcomingCount = upcomingOrders.length;
+  const pastCount = pastOrders.length;
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-blue-500/10">
-          <IconPackage className="size-4.5 text-blue-400" />
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary shrink-0">
+            <IconPackage className="size-5" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Meine Aufträge
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {upcomingCount} anstehend · {pastCount} erledigt
+            </p>
+          </div>
         </div>
-        <h1 className="text-lg font-bold text-zinc-100">Meine Aufträge</h1>
       </div>
 
       <MyOrdersTabs

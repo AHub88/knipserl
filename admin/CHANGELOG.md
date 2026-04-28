@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.29.1] — 2026-04-28
+
+### Changed
+- **„Freie Aufträge" und „Meine Aufträge" optisch und strukturell angeglichen.** Beide Seiten teilen sich jetzt dieselbe Card-Sprache (gleiche Header-Box mit Icon + Titel + Untertitel, gleiches Card-Layout mit Name oben, Info-Grid darunter, Status-Badge rechts oben, Action-Button rechts). Beim Wechsel zwischen den beiden Seiten muss man sich nicht mehr neu orientieren.
+- **„Freie Aufträge" zeigt jetzt zusätzlich den Ort.** Statt nur des Locationnamens steht in der Karte z.B. „Gasthaus Bartl · Halfing" — die Stadt wird aus der Adresse extrahiert. Hilft beim Einschätzen, ob ein Auftrag geografisch passt, ohne erst die Detailseite öffnen zu müssen.
+- **„Freie Aufträge" Desktop-Layout aufgeräumt.** Statt der hohen, halbleeren Karten mit Übernehmen-Button isoliert unten rechts liegen Status-Badge und Übernehmen-Button auf Desktop jetzt in derselben Reihe wie die Info-Items — kompakter und scannbarer.
+- **„Meine Aufträge" deutlich lesbarer.** Vorher war die Seite sehr blass (zinc-500/600 Texte, white/[0.02] Hintergründe) und die Schrift teils auf 9–11px gequetscht. Jetzt nutzen alle Karten die regulären Theme-Farben (`text-foreground`, `text-muted-foreground`, `bg-card`), Schriftgrößen entsprechen denen von „Freie Aufträge". Die Tabs „Anstehend"/„Erledigt" sind im aktiven Zustand jetzt voll in Primary-Orange statt nur leicht aufgehellt.
+
 ## [1.29.0] — 2026-04-28
 
 ### Added
