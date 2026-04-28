@@ -358,11 +358,11 @@ export async function loadAnalytics(params: {
     ),
   ]);
 
-  const uniqueVisitors30d = Number(uniqueVisitors30dRows[0]?.visitors ?? 0n);
+  const uniqueVisitors30d = Number(uniqueVisitors30dRows[0]?.visitors ?? 0);
   const avgDurationMs = Math.round(avgAggToday30._avg.durationMs ?? 0);
   const avgScrollPct = Math.round(avgAggToday30._avg.scrollPct ?? 0);
-  const bounceTotal = Number(bounceRaw[0]?.total ?? 0n);
-  const bounceBounced = Number(bounceRaw[0]?.bounced ?? 0n);
+  const bounceTotal = Number(bounceRaw[0]?.total ?? 0);
+  const bounceBounced = Number(bounceRaw[0]?.bounced ?? 0);
   const bounceRatePct = bounceTotal > 0 ? Math.round((bounceBounced / bounceTotal) * 1000) / 10 : 0;
 
   return {
@@ -427,14 +427,14 @@ export async function loadAnalytics(params: {
     recentEvents: recentEventsRows,
 
     funnelAnfrage: {
-      opened: Number(funnelOpenedAnfrageRaw[0]?.count ?? 0n),
-      started: Number(funnelStartedAnfrageRaw[0]?.count ?? 0n),
-      submitted: Number(funnelSubmittedAnfrageRaw[0]?.count ?? 0n),
+      opened: Number(funnelOpenedAnfrageRaw[0]?.count ?? 0),
+      started: Number(funnelStartedAnfrageRaw[0]?.count ?? 0),
+      submitted: Number(funnelSubmittedAnfrageRaw[0]?.count ?? 0),
     },
     funnelKontakt: {
-      opened: Number(funnelOpenedKontaktRaw[0]?.count ?? 0n),
-      started: Number(funnelStartedKontaktRaw[0]?.count ?? 0n),
-      submitted: Number(funnelSubmittedKontaktRaw[0]?.count ?? 0n),
+      opened: Number(funnelOpenedKontaktRaw[0]?.count ?? 0),
+      started: Number(funnelStartedKontaktRaw[0]?.count ?? 0),
+      submitted: Number(funnelSubmittedKontaktRaw[0]?.count ?? 0),
     },
   };
 }
