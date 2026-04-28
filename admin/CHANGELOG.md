@@ -4,6 +4,22 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.26.0] — 2026-04-28
+
+### Added
+- **Live-Tab in der Besucherstatistik (`/statistics`)** — zeigt Besucher, die gerade jetzt auf der Webseite sind.
+  - Neuer 5. Tab „Live" mit pulsierendem grünen Indicator + aktueller Anzahl direkt im Tab-Badge (auch sichtbar von anderen Tabs aus).
+  - Aktiv-Definition: Session mit Pageview in den letzten 5 Minuten.
+  - Großer Live-Headliner mit Anzahl + Window-Hinweis + „aktualisiert vor X Sek".
+  - Aufschlüsselungen: aktuelle Seiten (Balkenliste mit Prozent), Geräte (Chips mit Icon), Referrer (jetzt aktive externe Quellen).
+  - Detailtabelle „Wer ist gerade da" mit Zeile pro Session: Gerät+Browser+OS+Sprache, aktuelle Seite, Quelle/Referrer, Anzahl Aufrufe in der Session, „Auf Seite seit …", „Letzte Aktivität vor …".
+  - Polling: 10 s wenn Live-Tab aktiv, 30 s im Hintergrund (für Badge-Update). Pausiert komplett, wenn der Browser-Tab nicht sichtbar ist (`visibilitychange`).
+  - Sekunden tickern client-seitig zwischen Pollings, damit „vor X Sek." nicht stehen bleibt.
+- **API-Endpunkt `GET /api/statistics/live`** — Auth-geschützt (nur ADMIN), ungecached. Liefert `activeCount`, `visitors[]` (max. 25 mit gekürztem Session-Hash), `byPath`, `byDevice`, `byReferrer`. Domain-Filter via `?domain=…`.
+
+### Fixed
+- **`analytics_daily_salts`-Tabelle wurde nicht angelegt** — der generische `sync-schema`-Loop erkennt nur Spalten namens `id`/`key` als Primary Key und übersprang daher die Salt-Tabelle (PK ist `date`). Folge: jeder Salt-Aufruf crashte mit `P2021 TableDoesNotExist`, der Webseite-Tracker bekam `{"ok":true,"skipped":"no_salt"}` und verwarf alle Pageviews. Manuelles `CREATE TABLE` für `analytics_daily_salts` vor dem Loop ergänzt.
+
 ## [1.25.0] — 2026-04-28
 
 ### Added

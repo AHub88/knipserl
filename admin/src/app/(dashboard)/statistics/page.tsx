@@ -19,7 +19,7 @@ export default async function StatisticsPage({
   const rangeRaw = Number(sp.range);
   const range: AnalyticsRange = rangeRaw === 7 || rangeRaw === 90 ? rangeRaw : 30;
   const domain = sp.domain && sp.domain !== "all" ? sp.domain : null;
-  const initialTab = sp.tab && ["pageviews", "visitors", "events", "funnel"].includes(sp.tab) ? sp.tab : "pageviews";
+  const initialTab = sp.tab && ["live", "pageviews", "visitors", "events", "funnel"].includes(sp.tab) ? sp.tab : "pageviews";
 
   const data = await loadAnalytics({ range, domain });
 
@@ -38,7 +38,7 @@ export default async function StatisticsPage({
         </p>
       </div>
 
-      <StatisticsView data={data} initialTab={initialTab as "pageviews" | "visitors" | "events" | "funnel"} />
+      <StatisticsView data={data} initialTab={initialTab as "live" | "pageviews" | "visitors" | "events" | "funnel"} />
     </div>
   );
 }

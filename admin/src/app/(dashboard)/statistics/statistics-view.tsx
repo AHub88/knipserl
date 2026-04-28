@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AreaChart,
@@ -20,6 +20,9 @@ import {
 import {
   IconCheck,
   IconClipboardList,
+  IconDeviceDesktop,
+  IconDeviceMobile,
+  IconDeviceTablet,
   IconForms,
   IconLayoutGrid,
   IconMail,
@@ -28,7 +31,32 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AnalyticsBundle } from "./_queries";
 
-type TabKey = "pageviews" | "visitors" | "events" | "funnel";
+type TabKey = "live" | "pageviews" | "visitors" | "events" | "funnel";
+
+type LiveVisitor = {
+  sessionShort: string;
+  currentDomain: string;
+  currentPath: string;
+  device: string | null;
+  browser: string | null;
+  os: string | null;
+  language: string | null;
+  referrerHost: string | null;
+  startedAt: string;
+  lastSeenAt: string;
+  pageviewCount: number;
+  inSessionSeconds: number;
+};
+
+type LiveData = {
+  activeCount: number;
+  windowSeconds: number;
+  visitors: LiveVisitor[];
+  byPath: { domain: string; path: string; count: number }[];
+  byDevice: { device: string; count: number }[];
+  byReferrer: { referrer: string; count: number }[];
+  generatedAt: string;
+};
 
 const PIE_COLORS = ["#F6A11C", "#3b82f6", "#22c55e", "#a855f7", "#ec4899", "#14b8a6", "#f97316"];
 
@@ -114,6 +142,9 @@ export function StatisticsView({
   const filledPv = useMemo(() => fillByDay(data.pageviewsByDay, data.range), [data]);
   const filledEv = useMemo(() => fillByDay(data.eventsByDay, data.range), [data]);
 
+  // Live-Polling: 10s wenn Live-Tab aktiv, sonst 30s (für Badge-Zähler)
+  const live = useLivePolling(data.domain, tab === "live");
+
   return (
     <div className="space-y-6">
       {/* Tabs + Filters */}
@@ -127,6 +158,29 @@ export function StatisticsView({
           }}
         >
           <TabsList className="h-auto flex-wrap">
+            <TabsTrigger value="live" className="px-3 py-1.5">
+              <span className="relative flex items-center gap-2">
+                {live.activeCount > 0 ? (
+                  <span className="relative flex size-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full size-2 bg-emerald-500" />
+                  </span>
+                ) : (
+                  <span className="size-2 rounded-full bg-muted-foreground/40" />
+                )}
+                <span>Live</span>
+              </span>
+              <span
+                className={
+                  "ml-1.5 inline-flex items-center justify-center rounded-md px-1.5 text-[11px] font-semibold tabular-nums " +
+                  (live.activeCount > 0
+                    ? "bg-emerald-500/10 text-emerald-500"
+                    : "bg-muted text-muted-foreground")
+                }
+              >
+                {live.activeCount}
+              </span>
+            </TabsTrigger>
             <TabsTrigger value="pageviews" className="px-3 py-1.5">
               Seitenaufrufe
               <span className="ml-1.5 inline-flex items-center justify-center rounded-md bg-primary/10 px-1.5 text-[11px] font-semibold text-primary tabular-nums">
@@ -185,6 +239,9 @@ export function StatisticsView({
           </div>
 
           <div className="mt-5">
+            <TabsContent value="live">
+              <LiveTab live={live} />
+            </TabsContent>
             <TabsContent value="pageviews">
               <PageviewsTab data={data} byDay={filledPv} />
             </TabsContent>
@@ -908,5 +965,276 @@ function Empty({ hint }: { hint?: string }) {
       {hint ?? "Noch keine Daten im gewählten Zeitraum."}
     </p>
   );
+}
+
+// ── Live: Polling-Hook + Tab ──────────────────────────────────────────────
+//
+// Pollt /api/statistics/live in 10s wenn Live-Tab aktiv, sonst 30s (für die
+// Badge-Zahl). Pausiert komplett, wenn der Browser-Tab gar nicht sichtbar
+// ist (visibilitychange) — keine Polling-Last bei zugeschalteter Admin-Seite.
+
+const EMPTY_LIVE: LiveData = {
+  activeCount: 0,
+  windowSeconds: 300,
+  visitors: [],
+  byPath: [],
+  byDevice: [],
+  byReferrer: [],
+  generatedAt: new Date(0).toISOString(),
+};
+
+function useLivePolling(domain: string | null, fast: boolean): LiveData {
+  const [data, setData] = useState<LiveData>(EMPTY_LIVE);
+  const fastRef = useRef(fast);
+  fastRef.current = fast;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const fetchOnce = async () => {
+      try {
+        const url = "/api/statistics/live" + (domain ? `?domain=${encodeURIComponent(domain)}` : "");
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) return;
+        const json = (await res.json()) as LiveData;
+        if (!cancelled) setData(json);
+      } catch {
+        /* silent */
+      }
+    };
+
+    const tick = async () => {
+      if (cancelled) return;
+      // Pausieren wenn Browser-Tab nicht sichtbar
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+        timer = setTimeout(tick, 5000);
+        return;
+      }
+      await fetchOnce();
+      const delay = fastRef.current ? 10000 : 30000;
+      timer = setTimeout(tick, delay);
+    };
+
+    tick();
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        // Sofort neu fetchen wenn Tab wieder sichtbar
+        if (timer) clearTimeout(timer);
+        tick();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [domain]);
+
+  return data;
+}
+
+function LiveTab({ live }: { live: LiveData }) {
+  const [now, setNow] = useState(() => Date.now());
+  // Anzeige-Sekunden tickern, damit "vor X Sek" zwischen Pollings nicht steht
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const generated = new Date(live.generatedAt).getTime();
+  const stale = generated > 0 && now - generated > live.windowSeconds * 1000 + 30000;
+
+  return (
+    <div className="space-y-5">
+      {/* Big "X live" headline */}
+      <div className="rounded-xl border border-border bg-card p-5 flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-3">
+          {live.activeCount > 0 ? (
+            <span className="relative flex size-3.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full size-3.5 bg-emerald-500" />
+            </span>
+          ) : (
+            <span className="size-3.5 rounded-full bg-muted-foreground/40" />
+          )}
+          <div>
+            <p className="text-3xl font-bold tabular-nums text-foreground leading-none">
+              {live.activeCount}
+            </p>
+            <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-1">
+              {live.activeCount === 1 ? "aktiver Besucher" : "aktive Besucher"} · letzte {Math.round(live.windowSeconds / 60)} Min
+            </p>
+          </div>
+        </div>
+        <div className="flex-1" />
+        <p className="text-[11px] text-muted-foreground">
+          {generated > 0 ? (
+            <>
+              Aktualisiert {timeAgo(now - generated)}
+              {stale && <span className="ml-2 text-amber-500">· stale</span>}
+            </>
+          ) : (
+            "Lade …"
+          )}
+        </p>
+      </div>
+
+      {live.activeCount === 0 ? (
+        <div className="rounded-xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
+          Gerade ist niemand auf der Seite. Sobald jemand eine Seite aufruft, taucht er hier auf.
+        </div>
+      ) : (
+        <>
+          <div className="grid lg:grid-cols-2 gap-5">
+            <Panel title="Aktuelle Seiten">
+              {live.byPath.length === 0 ? (
+                <Empty />
+              ) : (
+                <div className="space-y-2">
+                  {live.byPath.map((p) => {
+                    const pct = live.activeCount > 0 ? (p.count / live.activeCount) * 100 : 0;
+                    return (
+                      <div key={`${p.domain}|${p.path}`}>
+                        <div className="flex items-center justify-between text-sm mb-1 gap-3">
+                          <span className="min-w-0 truncate">
+                            <span className="text-muted-foreground text-xs">{p.domain}</span>{" "}
+                            <span className="font-mono text-foreground">{p.path}</span>
+                          </span>
+                          <span className="tabular-nums shrink-0">
+                            <strong className="text-foreground">{p.count}</strong>{" "}
+                            <span className="text-muted-foreground text-xs">({pct.toFixed(0)}%)</span>
+                          </span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </Panel>
+
+            <Panel title="Geräte / Referrer">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Geräte</p>
+                  {live.byDevice.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">—</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {live.byDevice.map((d) => (
+                        <div key={d.device} className="flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-2 py-1 text-xs">
+                          <DeviceIcon device={d.device} className="size-3.5 text-muted-foreground" />
+                          <span className="capitalize text-foreground">{d.device}</span>
+                          <span className="font-semibold tabular-nums text-foreground">{d.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                    Referrer (jetzt aktiv)
+                  </p>
+                  {live.byReferrer.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">— direkt /  kein externer Verweis</p>
+                  ) : (
+                    <div className="space-y-1 text-sm">
+                      {live.byReferrer.map((r) => (
+                        <div key={r.referrer} className="flex items-center justify-between gap-3">
+                          <span className="text-foreground truncate">{r.referrer}</span>
+                          <span className="tabular-nums font-semibold text-foreground shrink-0">{r.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Panel>
+          </div>
+
+          <Panel title={`Wer ist gerade da (${live.visitors.length})`}>
+            <div className="overflow-x-auto -mx-4">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <th className="px-4 pb-2 text-left font-semibold">Gerät</th>
+                    <th className="px-4 pb-2 text-left font-semibold">Aktuelle Seite</th>
+                    <th className="px-4 pb-2 text-left font-semibold">Quelle</th>
+                    <th className="px-4 pb-2 text-right font-semibold">Aufrufe</th>
+                    <th className="px-4 pb-2 text-right font-semibold">Auf Seite seit</th>
+                    <th className="px-4 pb-2 text-right font-semibold">Letzte Aktivität</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {live.visitors.map((v) => (
+                    <tr key={v.sessionShort} className="border-t border-border/60">
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <DeviceIcon device={v.device} className="size-4 shrink-0 text-muted-foreground" />
+                          <div className="min-w-0">
+                            <p className="text-xs text-foreground truncate">{v.browser ?? "—"}</p>
+                            <p className="text-[10px] text-muted-foreground truncate">{v.os ?? ""} {v.language ? `· ${v.language}` : ""}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 min-w-0">
+                        <div className="min-w-0">
+                          <p className="font-mono text-xs text-foreground truncate max-w-[280px]">{v.currentPath}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{v.currentDomain}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 text-xs text-muted-foreground truncate max-w-[180px]">
+                        {v.referrerHost ?? "(direkt)"}
+                      </td>
+                      <td className="px-4 py-2 text-right tabular-nums font-semibold text-foreground">
+                        {v.pageviewCount}
+                      </td>
+                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">
+                        {formatSessionDuration(v.inSessionSeconds)}
+                      </td>
+                      <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">
+                        {timeAgo(now - new Date(v.lastSeenAt).getTime())}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Panel>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DeviceIcon({ device, className }: { device: string | null; className?: string }) {
+  if (device === "mobile") return <IconDeviceMobile className={className} />;
+  if (device === "tablet") return <IconDeviceTablet className={className} />;
+  return <IconDeviceDesktop className={className} />;
+}
+
+function timeAgo(ms: number): string {
+  if (ms < 0) ms = 0;
+  const sec = Math.floor(ms / 1000);
+  if (sec < 5) return "gerade eben";
+  if (sec < 60) return `vor ${sec} Sek.`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `vor ${min} Min.`;
+  const h = Math.floor(min / 60);
+  return `vor ${h} Std.`;
+}
+
+function formatSessionDuration(sec: number): string {
+  if (sec < 60) return `${sec}s`;
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, "0")} Min`;
 }
 
