@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.30.2] — 2026-04-28
+
+### Fixed
+- **„Aufbau"-Position in der Intern-Box war zu niedrig.** Sie zeigte nur die Aufbau-Pauschale (`setupCost`) und ignorierte die Boni — dadurch wurde der „Gewinn" um die Bonus-Summe zu hoch ausgewiesen. Beispiel-Auftrag mit 80 € Pauschale + Hintergrund (20) + TV (30) + Telefon (10): vorher Aufbau 80 € / Gewinn +60 € zu hoch; jetzt Aufbau 140 € / Gewinn korrekt. Bei Zweitfahrer bleibt der Aufbau-Betrag unverändert (volle Personalkosten = was insgesamt rausgeht, 50/50-Aufteilung passiert nur in der Vergütungsbox).
+
 ## [1.30.1] — 2026-04-28
 
 ### Fixed

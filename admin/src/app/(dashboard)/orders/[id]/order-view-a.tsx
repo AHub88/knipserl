@@ -236,7 +236,6 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, driverBonusPrice
     ? order.discountType === "PERCENT" ? (customerSubtotal * order.discount) / 100 : order.discount
     : 0;
   const customerTotal = customerSubtotal - discountAmount;
-  const internalProfit = customerTotal - Math.abs(order.setupCost ?? 0) - Math.abs(order.materialCost ?? 0);
   const isDriverView = viewMode === "driver";
   // Interne Box (Preiskalkulation + Interner Kommentar) sichtbar außer in der Buchhaltungs-Ansicht.
   // Fahrer dürfen intern sehen (und den Kommentar bearbeiten).
@@ -253,6 +252,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, driverBonusPrice
     livePrices: driverBonusPrices,
   });
   const compensationSecondName = order.secondDriverName;
+
+  // Gewinn = Kundenpreis − Personalkosten (volle Vergütung inkl. Bonus) − Material.
+  // Bei Zweitfahrer ändert sich nichts: total ist der Gesamtbetrag, der rausgeht
+  // (50/50 zwischen den Fahrern aufgeteilt), nicht doppelt.
+  const internalProfit = customerTotal - compensation.total - Math.abs(order.materialCost ?? 0);
 
   const statusFlags = [
     { label: "Bestätigt", icon: IconCircleCheck, done: statusState.confirmed },
@@ -1507,11 +1511,11 @@ export function OrderViewA({ order, drivers, isAdmin, viewMode, driverBonusPrice
               <div className="p-5">
               <div className="space-y-1">
                 <PriceRow label="Kundenpreis" value={customerTotal} />
-                {order.setupCost != null && (
+                {compensation.total > 0 && (
                   <div className="flex items-center justify-between py-0.5">
                     <span className="text-sm text-muted-foreground">Aufbau</span>
                     <span className="text-sm font-mono tabular-nums text-red-400">
-                      {Math.abs(order.setupCost).toFixed(2)}&euro;
+                      {compensation.total.toFixed(2)}&euro;
                     </span>
                   </div>
                 )}
