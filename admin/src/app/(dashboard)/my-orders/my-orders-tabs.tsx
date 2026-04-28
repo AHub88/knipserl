@@ -69,8 +69,8 @@ export function MyOrdersTabs({
             <span className={
               "ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold " +
               (tab === t.key
-                ? t.key === "assigned" ? "bg-white/[0.08] text-zinc-300"
-                  : t.key === "open" ? "bg-amber-500/20 text-amber-400"
+                ? t.key === "assigned"
+                  ? "bg-white/[0.08] text-zinc-300"
                   : "bg-emerald-500/20 text-emerald-400"
                 : "bg-white/[0.06] text-zinc-500")
             }>
