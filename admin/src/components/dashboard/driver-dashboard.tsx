@@ -9,8 +9,14 @@ import {
   IconCalendarEvent,
   IconRoute,
   IconBeach,
+  IconBoxAlignBottomLeft,
+  IconBoxAlignTopRight,
 } from "@tabler/icons-react";
-import { AssignedCard, type OrderItem } from "@/app/(dashboard)/my-orders/my-orders-tabs";
+import {
+  AssignedCard,
+  DeliveryBox,
+  type OrderItem,
+} from "@/app/(dashboard)/my-orders/my-orders-tabs";
 
 function formatDateLong(date: Date) {
   return date.toLocaleDateString("de-DE", {
@@ -20,18 +26,24 @@ function formatDateLong(date: Date) {
   });
 }
 
-function daysUntil(date: Date, now: Date) {
+function daysUntilNumber(date: Date, now: Date) {
   const a = new Date(date);
   a.setHours(0, 0, 0, 0);
   const b = new Date(now);
   b.setHours(0, 0, 0, 0);
-  const diff = Math.ceil((a.getTime() - b.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.ceil((a.getTime() - b.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function daysUntil(date: Date, now: Date) {
+  const diff = daysUntilNumber(date, now);
   if (diff <= 0) return "Heute";
   if (diff === 1) return "Morgen";
   if (diff < 7) return `in ${diff} Tagen`;
   if (diff < 14) return "in 1 Woche";
   return `in ${Math.floor(diff / 7)} Wochen`;
 }
+
+const HERO_THRESHOLD_DAYS = 14;
 
 function extractCity(address: string): string {
   return address.match(/\d{5}\s+(.+)$/)?.[1]?.trim() ?? "";
@@ -126,17 +138,24 @@ export async function DriverDashboard({
 
   const firstName = (driverName ?? "").split(" ")[0] || "Hallo";
 
+  const daysToNext = nextOrder ? daysUntilNumber(new Date(nextOrder.eventDate), now) : null;
+  const showHero = daysToNext !== null && daysToNext <= HERO_THRESHOLD_DAYS;
+
   const mapsUrl = nextOrder
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nextOrder.locationAddress)}`
     : null;
 
-  const hero = nextOrder ? (
+  const heroCompensation = nextOrder ? Math.abs(nextOrder.setupCost ?? 0) : 0;
+  const heroExtras = nextOrder?.extras ?? [];
+  const heroHasDelivery = !!(nextOrder?.setupDate || nextOrder?.teardownDate);
+
+  const hero = showHero && nextOrder ? (
     <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent overflow-hidden">
       <Link
         href={`/orders/${nextOrder.id}`}
-        className="block p-5 sm:p-6 lg:p-7 hover:bg-primary/[0.03] transition-colors"
+        className="block p-5 sm:p-6 lg:p-7 hover:bg-primary/[0.03] transition-colors space-y-3"
       >
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2">
           <IconCalendarEvent className="size-4 text-primary" />
           <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
             Nächste Fahrt
@@ -145,25 +164,64 @@ export async function DriverDashboard({
             {daysUntil(new Date(nextOrder.eventDate), now)}
           </span>
         </div>
-        <p className="text-sm text-muted-foreground">
-          {formatDateLong(new Date(nextOrder.eventDate))}
-        </p>
-        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mt-1 leading-snug">
-          {nextOrder.locationName ||
-            extractCity(nextOrder.locationAddress) ||
-            nextOrder.locationAddress}
-        </p>
-        <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
-          <IconMapPin className="size-3.5 shrink-0" />
-          <span className="truncate">{nextOrder.locationAddress}</span>
+        <div>
+          <p className="text-sm text-muted-foreground">
+            {formatDateLong(new Date(nextOrder.eventDate))}
+          </p>
+          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mt-1 leading-snug">
+            {nextOrder.locationName ||
+              extractCity(nextOrder.locationAddress) ||
+              nextOrder.locationAddress}
+          </p>
+          <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
+            <IconMapPin className="size-3.5 shrink-0" />
+            <span className="truncate">{nextOrder.locationAddress}</span>
+          </div>
         </div>
-        <p className="text-sm text-foreground/80 mt-2">
-          <span className="font-medium">{nextOrder.customerName}</span>
-          <span className="text-muted-foreground"> · {nextOrder.eventType}</span>
-        </p>
+        <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
+          <span className="text-sm font-medium text-foreground/90">{nextOrder.customerName}</span>
+          <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold text-muted-foreground">
+            {nextOrder.eventType}
+          </span>
+          {heroCompensation > 0 && (
+            <span className="ml-auto text-sm font-bold text-emerald-500">
+              {heroCompensation} €
+            </span>
+          )}
+        </div>
+        {heroExtras.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {heroExtras.map((e) => (
+              <span
+                key={e}
+                className="px-2 py-0.5 rounded-md border border-primary/20 bg-primary/8 text-[11px] font-semibold text-primary"
+              >
+                {e}
+              </span>
+            ))}
+          </div>
+        )}
+        {heroHasDelivery && (
+          <div className="grid grid-cols-2 gap-2">
+            <DeliveryBox
+              label="Aufbau"
+              iso={nextOrder.setupDate?.toISOString() ?? null}
+              time={nextOrder.setupTime ?? null}
+              tone="emerald"
+              icon={<IconBoxAlignBottomLeft className="size-3.5" />}
+            />
+            <DeliveryBox
+              label="Abbau"
+              iso={nextOrder.teardownDate?.toISOString() ?? null}
+              time={nextOrder.teardownTime ?? null}
+              tone="rose"
+              icon={<IconBoxAlignTopRight className="size-3.5" />}
+            />
+          </div>
+        )}
       </Link>
       {mapsUrl && (
-        <div className="px-5 pb-5 sm:px-6 sm:pb-6 lg:px-7 lg:pb-7 -mt-1">
+        <div className="px-5 pb-5 sm:px-6 sm:pb-6 lg:px-7 lg:pb-7">
           <a
             href={mapsUrl}
             target="_blank"
@@ -176,7 +234,9 @@ export async function DriverDashboard({
         </div>
       )}
     </div>
-  ) : (
+  ) : null;
+
+  const emptyState = !nextOrder ? (
     <div className="rounded-2xl border border-border bg-card p-8 lg:p-12 text-center">
       <IconCalendarEvent className="size-8 lg:size-10 text-muted-foreground/40 mx-auto mb-2" />
       <p className="text-sm font-medium text-foreground">
@@ -186,7 +246,7 @@ export async function DriverDashboard({
         Schau bei den freien Aufträgen vorbei.
       </p>
     </div>
-  );
+  ) : null;
 
   const quickActions = (
     <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -223,10 +283,13 @@ export async function DriverDashboard({
     </div>
   );
 
-  // Hero zeigt bereits den nächsten Auftrag — Liste enthält alles ab #2,
-  // damit es keine Doppelung zwischen Hero und Listen-Topentry gibt.
-  const restOrders = upcomingOrders.filter((o) => o.id !== nextOrder?.id);
-  const restItems: OrderItem[] = restOrders.map((o) => ({
+  // Wenn der Hero sichtbar ist, ist der nächste Auftrag dort schon abgebildet —
+  // Liste lassen wir ohne ihn. Wenn der Hero ausgeblendet ist (weil > 14 Tage weg),
+  // gehört die nächste Fahrt in die Liste rein.
+  const listOrders = showHero
+    ? upcomingOrders.filter((o) => o.id !== nextOrder?.id)
+    : upcomingOrders;
+  const listItems: OrderItem[] = listOrders.map((o) => ({
     id: o.id,
     customerName: o.customerName,
     eventDate: o.eventDate.toISOString(),
@@ -244,14 +307,16 @@ export async function DriverDashboard({
   }));
 
   const upcomingList =
-    restItems.length > 0 ? (
+    listItems.length > 0 ? (
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <IconRoute className="size-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Weitere Aufträge</h2>
+          <h2 className="text-sm font-semibold text-foreground">
+            {showHero ? "Weitere Aufträge" : "Anstehende Aufträge"}
+          </h2>
         </div>
         <div className="space-y-2">
-          {restItems.map((order) => (
+          {listItems.map((order) => (
             <AssignedCard key={order.id} order={order} now={now} />
           ))}
         </div>
@@ -296,16 +361,26 @@ export async function DriverDashboard({
         </p>
       </div>
 
-      {/* Hero + Schnellaktionen — auf Desktop nebeneinander, Hero dominant */}
-      <div className="grid gap-5 sm:gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">{hero}</div>
-        <div className="lg:col-span-1">{quickActions}</div>
-      </div>
+      {/* Adaptives Top-Layout:
+          - Hero sichtbar (≤14 Tage zur nächsten Fahrt) → Hero links, Stats rechts daneben
+          - Hero unsichtbar → Stats füllen die ganze Breite, Liste ist die Hauptbühne
+          - Kein Auftrag → freundlicher Empty-State + Stats */}
+      {showHero ? (
+        <div className="grid gap-5 sm:gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">{hero}</div>
+          <div className="lg:col-span-1">{quickActions}</div>
+        </div>
+      ) : (
+        <div className="space-y-5 sm:space-y-6">
+          {emptyState}
+          {quickActions}
+        </div>
+      )}
 
       {/* Vacation oben drüber (auffälliger Hinweis), wenn vorhanden */}
       {vacationCard}
 
-      {/* Anstehende Aufträge — Boxen wie freie Aufträge */}
+      {/* Aufträge — adaptiver Titel je nach Hero-Sichtbarkeit */}
       {upcomingList}
     </div>
   );

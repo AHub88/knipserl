@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.33.3] — 2026-04-29
+
+### Changed
+- **Adaptiver „Nächste Fahrt"-Hero im Fahrer-Dashboard.** Der orange Hero erscheint nur noch, wenn die nächste Fahrt **innerhalb von 14 Tagen** ist — dann mit allem, was relevant ist: Aufbau- und Abbau-Boxen (grün/rot, Datum + Zeitfenster), Extras-Tags, Vergütung in grün, Maps-Button. Bei weiter entfernten Fahrten verschwindet der Hero komplett — die Statistik-Kacheln (Frei/Meine/Kalender) füllen die volle Breite und die Auftragsliste rückt direkt in den Fokus, mit dem Titel „Anstehende Aufträge" (statt „Weitere Aufträge").
+- **Hero zeigt jetzt dieselben Infos wie die Listen-Karten.** Vorher fehlten im Hero gerade die für Fahrer relevantesten Felder (Aufbau/Abbau-Termine, Vergütung) — die Karte unten war reicher als der Hero oben. Jetzt ist der Hero die mit Abstand vollständigste Auftragsdarstellung auf dem Dashboard.
+
 ## [1.33.2] — 2026-04-29
 
 ### Changed

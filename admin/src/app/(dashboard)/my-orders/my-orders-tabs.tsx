@@ -262,7 +262,7 @@ function PastCard({ order }: { order: OrderItem }) {
   );
 }
 
-function DeliveryBox({
+export function DeliveryBox({
   label,
   iso,
   time,
