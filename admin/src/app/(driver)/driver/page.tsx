@@ -50,51 +50,92 @@ export default async function DriverHomePage() {
   const endOfWeek = new Date(startOfToday);
   endOfWeek.setDate(endOfWeek.getDate() + 7);
 
+  // Eine fehlerhafte Query darf die ganze Seite nicht killen — wir fangen einzeln
+  // und loggen, damit man im Server-Log sieht welcher Block kaputt ist.
+  async function safe<T>(label: string, fn: () => Promise<T>, fallback: T): Promise<T> {
+    try {
+      return await fn();
+    } catch (e) {
+      console.error(`[driver-home] ${label} query failed`, e);
+      return fallback;
+    }
+  }
+
   const [nextOrder, freeOrdersCount, myOrdersCount, weekOrders, activeVacation, driver] =
     await Promise.all([
-      prisma.order.findFirst({
-        where: {
-          driverId,
-          status: { not: "CANCELLED" },
-          eventDate: { gte: startOfToday },
-        },
-        orderBy: { eventDate: "asc" },
-      }),
-      prisma.order.count({
-        where: {
-          status: "OPEN",
-          driverId: null,
-          secondDriverId: null,
-          eventDate: { gte: startOfToday },
-        },
-      }),
-      prisma.order.count({
-        where: {
-          driverId,
-          status: { not: "CANCELLED" },
-          eventDate: { gte: startOfToday },
-        },
-      }),
-      prisma.order.findMany({
-        where: {
-          driverId,
-          status: { not: "CANCELLED" },
-          eventDate: { gte: startOfToday, lt: endOfWeek },
-        },
-        orderBy: { eventDate: "asc" },
-        take: 5,
-      }),
-      prisma.vacation.findFirst({
-        where: {
-          driverId,
-          endDate: { gte: startOfToday },
-        },
-        orderBy: { startDate: "asc" },
-      }),
-      prisma.user.findUnique({
-        where: { id: driverId },
-        select: { email: true, reminderEmailEnabled: true, reminderLeadDays: true },
-      }),
+      safe(
+        "nextOrder",
+        () =>
+          prisma.order.findFirst({
+            where: {
+              driverId,
+              status: { not: "CANCELLED" },
+              eventDate: { gte: startOfToday },
+            },
+            orderBy: { eventDate: "asc" },
+          }),
+        null,
+      ),
+      safe(
+        "freeOrdersCount",
+        () =>
+          prisma.order.count({
+            where: {
+              status: "OPEN",
+              driverId: null,
+              secondDriverId: null,
+              eventDate: { gte: startOfToday },
+            },
+          }),
+        0,
+      ),
+      safe(
+        "myOrdersCount",
+        () =>
+          prisma.order.count({
+            where: {
+              driverId,
+              status: { not: "CANCELLED" },
+              eventDate: { gte: startOfToday },
+            },
+          }),
+        0,
+      ),
+      safe(
+        "weekOrders",
+        () =>
+          prisma.order.findMany({
+            where: {
+              driverId,
+              status: { not: "CANCELLED" },
+              eventDate: { gte: startOfToday, lt: endOfWeek },
+            },
+            orderBy: { eventDate: "asc" },
+            take: 5,
+          }),
+        [] as Awaited<ReturnType<typeof prisma.order.findMany>>,
+      ),
+      safe(
+        "activeVacation",
+        () =>
+          prisma.vacation.findFirst({
+            where: {
+              driverId,
+              endDate: { gte: startOfToday },
+            },
+            orderBy: { startDate: "asc" },
+          }),
+        null,
+      ),
+      safe(
+        "driver",
+        () =>
+          prisma.user.findUnique({
+            where: { id: driverId },
+            select: { email: true, reminderEmailEnabled: true, reminderLeadDays: true },
+          }),
+        null,
+      ),
     ]);
 
   const firstName = (session!.user.name ?? "").split(" ")[0] || "Hallo";
