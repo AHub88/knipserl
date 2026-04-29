@@ -19,7 +19,7 @@ export async function POST() {
     const result = await sendPushToUser(session.user.id, {
       title: "Knipserl — Test",
       body: "Push funktioniert. Ab jetzt bekommst du hier Erinnerungen.",
-      url: "/driver/dashboard",
+      url: "/driver",
       tag: "test",
     });
     return NextResponse.json(result);

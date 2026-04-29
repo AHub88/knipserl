@@ -15,6 +15,9 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
+  // Fahrer haben keinen Zugriff auf das Admin-Dashboard.
+  if (session.user.role === "DRIVER") redirect("/driver");
+
   const viewMode = await getEffectiveViewMode(session.user.role ?? "");
 
   // Read impersonateDriverId from cookie

@@ -1,0 +1,301 @@
+import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { ReminderSettings } from "@/components/driver/reminder-settings";
+import {
+  IconClipboardCheck,
+  IconClipboardList,
+  IconCalendar,
+  IconMapPin,
+  IconExternalLink,
+  IconCalendarEvent,
+  IconRoute,
+  IconBeach,
+} from "@tabler/icons-react";
+
+export const dynamic = "force-dynamic";
+
+function formatDateLong(date: Date) {
+  return date.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+  });
+}
+
+function daysUntil(date: Date, now: Date) {
+  const a = new Date(date);
+  a.setHours(0, 0, 0, 0);
+  const b = new Date(now);
+  b.setHours(0, 0, 0, 0);
+  const diff = Math.ceil((a.getTime() - b.getTime()) / (1000 * 60 * 60 * 24));
+  if (diff <= 0) return "Heute";
+  if (diff === 1) return "Morgen";
+  if (diff < 7) return `in ${diff} Tagen`;
+  if (diff < 14) return "in 1 Woche";
+  return `in ${Math.floor(diff / 7)} Wochen`;
+}
+
+function extractCity(address: string): string {
+  return address.match(/\d{5}\s+(.+)$/)?.[1]?.trim() ?? "";
+}
+
+export default async function DriverHomePage() {
+  const session = await auth();
+  const driverId = session!.user.id;
+
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const endOfWeek = new Date(startOfToday);
+  endOfWeek.setDate(endOfWeek.getDate() + 7);
+
+  const [nextOrder, freeOrdersCount, myOrdersCount, weekOrders, activeVacation, driver] =
+    await Promise.all([
+      prisma.order.findFirst({
+        where: {
+          driverId,
+          status: { not: "CANCELLED" },
+          eventDate: { gte: startOfToday },
+        },
+        orderBy: { eventDate: "asc" },
+      }),
+      prisma.order.count({
+        where: {
+          status: "OPEN",
+          driverId: null,
+          secondDriverId: null,
+          eventDate: { gte: startOfToday },
+        },
+      }),
+      prisma.order.count({
+        where: {
+          driverId,
+          status: { not: "CANCELLED" },
+          eventDate: { gte: startOfToday },
+        },
+      }),
+      prisma.order.findMany({
+        where: {
+          driverId,
+          status: { not: "CANCELLED" },
+          eventDate: { gte: startOfToday, lt: endOfWeek },
+        },
+        orderBy: { eventDate: "asc" },
+        take: 5,
+      }),
+      prisma.vacation.findFirst({
+        where: {
+          driverId,
+          endDate: { gte: startOfToday },
+        },
+        orderBy: { startDate: "asc" },
+      }),
+      prisma.user.findUnique({
+        where: { id: driverId },
+        select: { email: true, reminderEmailEnabled: true, reminderLeadDays: true },
+      }),
+    ]);
+
+  const firstName = (session!.user.name ?? "").split(" ")[0] || "Hallo";
+
+  const mapsUrl = nextOrder
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nextOrder.locationAddress)}`
+    : null;
+
+  return (
+    <div className="space-y-5">
+      {/* Greeting */}
+      <div>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">
+          Hallo, {firstName} 👋
+        </h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          {nextOrder
+            ? `Deine nächste Fahrt: ${daysUntil(new Date(nextOrder.eventDate), now)}`
+            : "Aktuell kein Auftrag geplant"}
+        </p>
+      </div>
+
+      {/* Hero: Nächste Fahrt */}
+      {nextOrder ? (
+        <Link
+          href={`/driver/orders/${nextOrder.id}`}
+          className="block rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent p-5 hover:border-primary/40 transition-colors"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <IconCalendarEvent className="size-4 text-primary" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+              Nächste Fahrt
+            </span>
+            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider rounded-md bg-primary/15 text-primary px-2 py-0.5">
+              {daysUntil(new Date(nextOrder.eventDate), now)}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {formatDateLong(new Date(nextOrder.eventDate))}
+          </p>
+          <p className="text-lg font-bold text-foreground mt-1 leading-snug">
+            {nextOrder.locationName ||
+              extractCity(nextOrder.locationAddress) ||
+              nextOrder.locationAddress}
+          </p>
+          <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
+            <IconMapPin className="size-3.5" />
+            <span className="truncate">{nextOrder.locationAddress}</span>
+          </div>
+          <p className="text-sm text-foreground/80 mt-2">
+            <span className="font-medium">{nextOrder.customerName}</span>
+            <span className="text-muted-foreground"> · {nextOrder.eventType}</span>
+          </p>
+          {mapsUrl && (
+            <div className="mt-4">
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <IconExternalLink className="size-4" />
+                Route in Google Maps
+              </a>
+            </div>
+          )}
+        </Link>
+      ) : (
+        <div className="rounded-2xl border border-border bg-card p-8 text-center">
+          <IconCalendarEvent className="size-8 text-muted-foreground/40 mx-auto mb-2" />
+          <p className="text-sm font-medium text-foreground">
+            Aktuell kein Auftrag geplant
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Schau bei den freien Aufträgen vorbei.
+          </p>
+        </div>
+      )}
+
+      {/* Schnellaktionen */}
+      <div className="grid grid-cols-3 gap-2">
+        <Link
+          href="/driver/free-orders"
+          className="rounded-xl border border-border bg-card hover:border-emerald-500/30 transition-colors p-3 flex flex-col items-center gap-1.5"
+        >
+          <IconClipboardCheck className="size-5 text-emerald-500" />
+          <span className="text-[18px] font-extrabold text-foreground tabular-nums leading-none">
+            {freeOrdersCount}
+          </span>
+          <span className="text-[11px] font-medium text-muted-foreground">Frei</span>
+        </Link>
+        <Link
+          href="/driver/my-orders"
+          className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-3 flex flex-col items-center gap-1.5"
+        >
+          <IconClipboardList className="size-5 text-primary" />
+          <span className="text-[18px] font-extrabold text-foreground tabular-nums leading-none">
+            {myOrdersCount}
+          </span>
+          <span className="text-[11px] font-medium text-muted-foreground">Meine</span>
+        </Link>
+        <Link
+          href="/driver/calendar"
+          className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-3 flex flex-col items-center gap-1.5"
+        >
+          <IconCalendar className="size-5 text-primary" />
+          <span className="text-[18px] font-extrabold text-foreground tabular-nums leading-none">
+            &middot;
+          </span>
+          <span className="text-[11px] font-medium text-muted-foreground">Kalender</span>
+        </Link>
+      </div>
+
+      {/* Diese Woche */}
+      {weekOrders.length > 0 && (
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+            <IconRoute className="size-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">Diese Woche</h2>
+            <span className="ml-auto text-[11px] text-muted-foreground">
+              {weekOrders.length} {weekOrders.length === 1 ? "Auftrag" : "Aufträge"}
+            </span>
+          </div>
+          <div className="divide-y divide-border">
+            {weekOrders.map((order) => {
+              const eventDate = new Date(order.eventDate);
+              const dayNum = eventDate.getDate();
+              const weekday = eventDate
+                .toLocaleDateString("de-DE", { weekday: "short" })
+                .toUpperCase();
+              const isFirst = order.id === nextOrder?.id;
+              return (
+                <Link
+                  key={order.id}
+                  href={`/driver/orders/${order.id}`}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors"
+                >
+                  <div className="flex flex-col items-center justify-center w-10 shrink-0">
+                    <span className="text-[9px] font-bold tracking-wide text-primary leading-none">
+                      {weekday}
+                    </span>
+                    <span className="text-lg font-extrabold text-foreground leading-none mt-0.5">
+                      {dayNum}
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {order.locationName ||
+                        extractCity(order.locationAddress) ||
+                        order.locationAddress}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {order.customerName} · {order.eventType}
+                    </p>
+                  </div>
+                  {isFirst && (
+                    <span className="text-[9px] font-bold uppercase tracking-wider rounded bg-primary/15 text-primary px-1.5 py-0.5 shrink-0">
+                      Nächste
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Aktiver / nächster Urlaub */}
+      {activeVacation && (
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-4 flex items-start gap-3">
+          <div className="flex items-center justify-center size-9 rounded-lg bg-amber-500/15 shrink-0">
+            <IconBeach className="size-4 text-amber-500" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-foreground">
+              {activeVacation.type === "ABSENT" ? "Abwesenheit" : "Eingeschränkt"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {new Date(activeVacation.startDate).toLocaleDateString("de-DE")} –{" "}
+              {new Date(activeVacation.endDate).toLocaleDateString("de-DE")}
+              {activeVacation.note && ` · ${activeVacation.note}`}
+            </p>
+          </div>
+          <Link
+            href="/driver/vacation"
+            className="text-[11px] font-semibold text-amber-500 hover:text-amber-400 transition-colors shrink-0"
+          >
+            Bearbeiten →
+          </Link>
+        </div>
+      )}
+
+      {/* Reminder-Einstellungen */}
+      {driver && (
+        <ReminderSettings
+          initialEnabled={driver.reminderEmailEnabled}
+          initialLeadDays={driver.reminderLeadDays}
+          driverEmail={driver.email}
+        />
+      )}
+    </div>
+  );
+}

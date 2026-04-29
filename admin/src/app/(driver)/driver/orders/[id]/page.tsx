@@ -29,7 +29,12 @@ export default async function DriverOrderDetailPage({
   });
 
   if (!order) notFound();
-  if (order.driverId !== session!.user.id) notFound();
+
+  const userId = session!.user.id;
+  const isOwn = order.driverId === userId || order.secondDriverId === userId;
+  const isFree =
+    order.status === "OPEN" && order.driverId === null && order.secondDriverId === null;
+  if (!isOwn && !isFree) notFound();
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.locationAddress)}`;
 

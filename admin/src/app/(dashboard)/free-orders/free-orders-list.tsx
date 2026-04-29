@@ -87,7 +87,13 @@ function ClaimButton({ orderId }: { orderId: string }) {
   );
 }
 
-export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
+export function FreeOrdersList({
+  orders,
+  linkBase = "/orders",
+}: {
+  orders: FreeOrder[];
+  linkBase?: string;
+}) {
   return (
     <div className="space-y-2">
       {orders.map((o) => {
@@ -117,7 +123,7 @@ export function FreeOrdersList({ orders }: { orders: FreeOrder[] }) {
 
               {/* Content */}
               <div className="flex-1 min-w-0 p-3 sm:p-4 flex flex-col gap-2">
-                <Link href={`/orders/${o.id}`} className="group flex flex-col gap-2">
+                <Link href={`${linkBase}/${o.id}`} className="group flex flex-col gap-2">
                   {/* Row 1: Location (two lines) + countdown */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2 min-w-0">
