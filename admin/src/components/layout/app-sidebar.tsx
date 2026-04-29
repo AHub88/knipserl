@@ -36,6 +36,7 @@ import {
   IconHistory,
   IconSun,
   IconMoon,
+  IconMail,
 } from "@tabler/icons-react";
 import {
   Sidebar,
@@ -146,6 +147,7 @@ const driverNavGroups: NavGroup[] = [
   { title: "Meine Aufträge", icon: IconClipboardList, href: "/my-orders" },
   { title: "Kalender", icon: IconCalendar, href: "/calendar" },
   { title: "Abwesenheit", icon: IconBeach, href: "/my-vacation" },
+  { title: "Erinnerungen", icon: IconMail, href: "/reminder-settings" },
 ];
 
 // ── Accounting navigation ──

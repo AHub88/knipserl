@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.33.1] — 2026-04-29
+
+### Added
+- **„Erinnerungen" als eigener Sidebar-Punkt für Fahrer.** Die Auftrags-Erinnerungs-Einstellungen (E-Mail an/aus, Vorlauf in Tagen) liegen jetzt unter `/reminder-settings` mit Briefumschlag-Icon, ganz unten in der Fahrer-Sidebar.
+
+### Changed
+- **Anstehende Aufträge im Dashboard als Boxen-Layout.** Statt der schmalen Tag-Gruppierungs-Liste rendert das Dashboard jetzt jede Fahrt als eigene Karte mit Datum-Block links (Wochentag + Tag-Nummer + Monat in Primary-Akzent) und Inhalt rechts (Location, Adresse, Kunde, Eventtyp, Countdown, „Nächste"-Badge). Dasselbe Format wie auf der „Freie Aufträge"-Seite, nur in Markenfarbe statt Emerald.
+- **Reminder-Settings aus dem Dashboard raus.** Damit die Startseite nicht mit Konfiguration zugemüllt ist — gehört in die eigene Einstellungs-Seite.
+
 ## [1.33.0] — 2026-04-29
 
 ### Added
