@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.33.2] — 2026-04-29
+
+### Changed
+- **Fahrer-Dashboard: keine Auftrags-Doppelung mehr zwischen Hero und Liste.** Der Auftrag, der im „Nächste Fahrt"-Hero steht, taucht nicht mehr als erster Eintrag in der Liste darunter auf. Liste heißt jetzt „Weitere Aufträge" und enthält nur, was nach dem Hero kommt — bei nur einem Auftrag insgesamt entfällt die Liste komplett.
+- **Reichere Auftrags-Karten im Fahrer-Dashboard.** Die Listen-Cards zeigen jetzt zusätzlich die Aufbau- und Abbau-Boxen (grün/rot, mit Datum + Zeitfenster), Extras-Tags (Drucker, Props, Stick, …), Vergütung und einen expliziten „Details"-Button. Visuell identisch zur Karte unter „Meine Aufträge" — beide nutzen jetzt dieselbe Komponente, damit künftige Änderungen an einer Stelle landen.
+
 ## [1.33.1] — 2026-04-29
 
 ### Added

@@ -10,6 +10,7 @@ import {
   IconRoute,
   IconBeach,
 } from "@tabler/icons-react";
+import { AssignedCard, type OrderItem } from "@/app/(dashboard)/my-orders/my-orders-tabs";
 
 function formatDateLong(date: Date) {
   return date.toLocaleDateString("de-DE", {
@@ -222,93 +223,37 @@ export async function DriverDashboard({
     </div>
   );
 
-  function daysUntilLabel(iso: string | Date) {
-    return daysUntil(new Date(iso), now);
-  }
+  // Hero zeigt bereits den nächsten Auftrag — Liste enthält alles ab #2,
+  // damit es keine Doppelung zwischen Hero und Listen-Topentry gibt.
+  const restOrders = upcomingOrders.filter((o) => o.id !== nextOrder?.id);
+  const restItems: OrderItem[] = restOrders.map((o) => ({
+    id: o.id,
+    customerName: o.customerName,
+    eventDate: o.eventDate.toISOString(),
+    eventType: o.eventType,
+    locationName: o.locationName,
+    locationAddress: o.locationAddress,
+    extras: o.extras,
+    notes: o.notes,
+    status: o.status,
+    compensation: Math.abs(o.setupCost ?? 0),
+    setupDate: o.setupDate?.toISOString() ?? null,
+    setupTime: o.setupTime ?? null,
+    teardownDate: o.teardownDate?.toISOString() ?? null,
+    teardownTime: o.teardownTime ?? null,
+  }));
 
   const upcomingList =
-    upcomingOrders.length > 0 ? (
+    restItems.length > 0 ? (
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <IconRoute className="size-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Anstehende Aufträge</h2>
-          <span className="ml-auto text-[11px] text-muted-foreground">
-            {upcomingOrders.length} {upcomingOrders.length === 1 ? "Auftrag" : "Aufträge"}
-          </span>
+          <h2 className="text-sm font-semibold text-foreground">Weitere Aufträge</h2>
         </div>
         <div className="space-y-2">
-          {upcomingOrders.map((order) => {
-            const eventDate = new Date(order.eventDate);
-            const dayNum = eventDate.getDate();
-            const weekday = eventDate
-              .toLocaleDateString("de-DE", { weekday: "short" })
-              .toUpperCase();
-            const monthShort = eventDate.toLocaleDateString("de-DE", { month: "short" });
-            const city = extractCity(order.locationAddress);
-            const isNext = order.id === nextOrder?.id;
-            return (
-              <Link
-                key={order.id}
-                href={`/orders/${order.id}`}
-                className="group block rounded-xl border border-border bg-card hover:border-primary/30 transition-colors overflow-hidden"
-              >
-                <div className="flex">
-                  {/* Date block */}
-                  <div className="flex flex-col items-center justify-center w-[72px] sm:w-[88px] shrink-0 bg-primary/[0.06] border-r border-border py-4 gap-0.5">
-                    <span className="text-[10px] font-bold tracking-wide text-primary leading-none">
-                      {weekday}
-                    </span>
-                    <span className="text-[28px] sm:text-[34px] font-extrabold text-foreground leading-none">
-                      {dayNum}
-                    </span>
-                    <span className="text-[11px] font-medium text-muted-foreground leading-none">
-                      {monthShort}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0 p-3 sm:p-4 flex flex-col gap-2">
-                    {/* Row 1: Location + countdown */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-2 min-w-0">
-                        <IconMapPin className="size-4 text-primary shrink-0 mt-0.5" />
-                        <div className="min-w-0">
-                          <p className="text-[15px] sm:text-base font-semibold text-foreground leading-snug truncate group-hover:text-primary transition-colors">
-                            {order.locationName || city || order.locationAddress}
-                          </p>
-                          {city && (
-                            <p className="text-xs text-muted-foreground truncate">
-                              {order.locationAddress.match(/\d{5}\s+.+$/)?.[0] ?? city}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end gap-1 shrink-0">
-                        {isNext && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-primary text-primary-foreground px-1.5 py-1 leading-none whitespace-nowrap">
-                            Nächste
-                          </span>
-                        )}
-                        <span className="text-[9px] font-bold uppercase tracking-wider rounded-md bg-primary/12 text-primary px-1.5 py-1 leading-none whitespace-nowrap">
-                          {daysUntilLabel(order.eventDate)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Row 2: Customer · Event type */}
-                    <div className="flex items-center flex-wrap gap-x-2 gap-y-1 ml-6">
-                      <span className="text-sm text-foreground/80 font-medium">
-                        {order.customerName}
-                      </span>
-                      <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-semibold text-muted-foreground">
-                        {order.eventType}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          {restItems.map((order) => (
+            <AssignedCard key={order.id} order={order} now={now} />
+          ))}
         </div>
       </div>
     ) : null;

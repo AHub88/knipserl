@@ -11,7 +11,7 @@ import {
   IconBoxAlignTopRight,
 } from "@tabler/icons-react";
 
-interface OrderItem {
+export interface OrderItem {
   id: string;
   customerName: string;
   eventDate: string;
@@ -139,7 +139,7 @@ export function MyOrdersTabs({
   );
 }
 
-function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
+export function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
   const city = extractCity(order.locationAddress);
   const locationLabel = order.locationName
     ? city && city !== order.locationName
