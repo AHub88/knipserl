@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -20,8 +20,23 @@ import {
   IconUser,
   IconChevronDown,
   IconEye,
+  IconMenu2,
 } from "@tabler/icons-react";
 import { useViewMode } from "@/lib/view-mode-context";
+
+function MenuButton() {
+  const { toggleSidebar } = useSidebar();
+  return (
+    <button
+      onClick={toggleSidebar}
+      aria-label="Menü öffnen"
+      className="inline-flex items-center gap-2 rounded-lg h-9 px-2.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+    >
+      <IconMenu2 className="size-5 shrink-0" />
+      <span className="text-[11px] font-bold uppercase tracking-wider">Menü</span>
+    </button>
+  );
+}
 
 const roleLabels: Record<string, { label: string; className: string }> = {
   ADMIN: {
@@ -68,7 +83,7 @@ export function Header({ drivers }: { drivers?: { id: string; name: string; init
 
   return (
     <header className="flex h-14 items-center gap-3 border-b border-border bg-card/80 backdrop-blur-sm px-4 shadow-sm shadow-black/5 dark:shadow-black/20">
-      <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
+      <MenuButton />
       <Separator
         orientation="vertical"
         className="h-5 bg-border hidden sm:block"

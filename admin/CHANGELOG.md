@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.33.5] — 2026-04-29
+
+### Changed
+- **Header-Menübutton: Hamburger-Icon mit „MENÜ"-Label.** Statt des kleinen, kontrastarmen Panel-Toggle-Icons (das mobil fast unsichtbar war) zeigt der Header jetzt links ein klassisches Hamburger-Icon (drei Striche) plus den Schriftzug „MENÜ" in Versalien. Klar erkennbar als Trigger fürs Slide-Out-Menü, gilt für Mobile und Desktop einheitlich.
+
 ## [1.33.4] — 2026-04-29
 
 ### Added
