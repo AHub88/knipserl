@@ -56,10 +56,8 @@ export async function DriverDashboard({
   const now = new Date();
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
-  const endOfWeek = new Date(startOfToday);
-  endOfWeek.setDate(endOfWeek.getDate() + 7);
 
-  const [nextOrder, freeOrdersCount, myOrdersCount, weekOrders, activeVacation, driver] =
+  const [nextOrder, freeOrdersCount, myOrdersCount, upcomingOrders, activeVacation, driver] =
     await Promise.all([
       safe(
         "nextOrder",
@@ -100,16 +98,15 @@ export async function DriverDashboard({
         0,
       ),
       safe(
-        "weekOrders",
+        "upcomingOrders",
         () =>
           prisma.order.findMany({
             where: {
               driverId,
               status: { not: "CANCELLED" },
-              eventDate: { gte: startOfToday, lt: endOfWeek },
+              eventDate: { gte: startOfToday },
             },
             orderBy: { eventDate: "asc" },
-            take: 5,
           }),
         [] as Awaited<ReturnType<typeof prisma.order.findMany>>,
       ),
@@ -235,56 +232,97 @@ export async function DriverDashboard({
     </div>
   );
 
-  const thisWeek =
-    weekOrders.length > 0 ? (
+  // Tag-Gruppierung: Aufträge desselben Tages werden unter einem gemeinsamen
+  // Datums-Header gebündelt, statt jede Karte mit eigener Datum-Box zu rendern.
+  type DayGroup = {
+    key: string;
+    date: Date;
+    orders: typeof upcomingOrders;
+  };
+  const dayGroups: DayGroup[] = [];
+  for (const order of upcomingOrders) {
+    const d = new Date(order.eventDate);
+    d.setHours(0, 0, 0, 0);
+    const key = d.toISOString();
+    const last = dayGroups[dayGroups.length - 1];
+    if (last && last.key === key) {
+      last.orders.push(order);
+    } else {
+      dayGroups.push({ key, date: d, orders: [order] });
+    }
+  }
+
+  function formatDayHeader(date: Date) {
+    const tomorrow = new Date(startOfToday);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.getTime() === startOfToday.getTime()) return "Heute";
+    if (date.getTime() === tomorrow.getTime()) return "Morgen";
+    return date.toLocaleDateString("de-DE", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  const upcomingList =
+    upcomingOrders.length > 0 ? (
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3 sm:px-5">
           <IconRoute className="size-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Diese Woche</h2>
+          <h2 className="text-sm font-semibold text-foreground">Anstehende Aufträge</h2>
           <span className="ml-auto text-[11px] text-muted-foreground">
-            {weekOrders.length} {weekOrders.length === 1 ? "Auftrag" : "Aufträge"}
+            {upcomingOrders.length} {upcomingOrders.length === 1 ? "Auftrag" : "Aufträge"}
           </span>
         </div>
-        <div className="divide-y divide-border">
-          {weekOrders.map((order) => {
-            const eventDate = new Date(order.eventDate);
-            const dayNum = eventDate.getDate();
-            const weekday = eventDate
-              .toLocaleDateString("de-DE", { weekday: "short" })
-              .toUpperCase();
-            const isFirst = order.id === nextOrder?.id;
-            return (
-              <Link
-                key={order.id}
-                href={`/orders/${order.id}`}
-                className="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-muted/40 transition-colors"
-              >
-                <div className="flex flex-col items-center justify-center w-10 shrink-0">
-                  <span className="text-[9px] font-bold tracking-wide text-primary leading-none">
-                    {weekday}
-                  </span>
-                  <span className="text-lg font-extrabold text-foreground leading-none mt-0.5">
-                    {dayNum}
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-foreground truncate">
-                    {order.locationName ||
-                      extractCity(order.locationAddress) ||
-                      order.locationAddress}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {order.customerName} · {order.eventType}
-                  </p>
-                </div>
-                {isFirst && (
-                  <span className="text-[9px] font-bold uppercase tracking-wider rounded bg-primary/15 text-primary px-1.5 py-0.5 shrink-0">
-                    Nächste
+        <div>
+          {dayGroups.map((group, gi) => (
+            <div key={group.key} className={gi > 0 ? "border-t border-border" : ""}>
+              {/* Tag-Header */}
+              <div className="flex items-center gap-2 px-4 sm:px-5 py-2 bg-muted/40">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-foreground/80">
+                  {formatDayHeader(group.date)}
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  · {daysUntil(group.date, now)}
+                </span>
+                {group.orders.length > 1 && (
+                  <span className="ml-auto text-[10px] font-semibold rounded bg-primary/15 text-primary px-1.5 py-0.5">
+                    {group.orders.length} Aufträge
                   </span>
                 )}
-              </Link>
-            );
-          })}
+              </div>
+              {/* Aufträge des Tages */}
+              <div className="divide-y divide-border">
+                {group.orders.map((order) => {
+                  const isFirst = order.id === nextOrder?.id;
+                  return (
+                    <Link
+                      key={order.id}
+                      href={`/orders/${order.id}`}
+                      className="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-muted/40 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-foreground truncate">
+                          {order.locationName ||
+                            extractCity(order.locationAddress) ||
+                            order.locationAddress}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {order.customerName} · {order.eventType}
+                        </p>
+                      </div>
+                      {isFirst && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider rounded bg-primary/15 text-primary px-1.5 py-0.5 shrink-0">
+                          Nächste
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     ) : null;
@@ -341,10 +379,10 @@ export async function DriverDashboard({
         <div className="lg:col-span-1">{quickActions}</div>
       </div>
 
-      {/* Diese Woche + Right rail (Vacation + Reminder) */}
-      {thisWeek ? (
+      {/* Anstehende Aufträge + Right rail (Vacation + Reminder) */}
+      {upcomingList ? (
         <div className="grid gap-5 sm:gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">{thisWeek}</div>
+          <div className="lg:col-span-2">{upcomingList}</div>
           <div className="space-y-5 sm:space-y-6 lg:col-span-1">
             {vacationCard}
             {reminderCard}

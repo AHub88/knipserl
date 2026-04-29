@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.33.0] — 2026-04-29
+
+### Added
+- **Fahrer-Dashboard zeigt alle anstehenden Aufträge.** Statt nur die nächsten 7 Tage / max. 5 Aufträge listet das Dashboard jetzt sämtliche eigenen, nicht abgesagten Aufträge ab heute. Die Section heißt entsprechend „Anstehende Aufträge".
+- **Tag-Gruppierung in der Liste.** Aufträge mit demselben Datum werden unter einem gemeinsamen Tag-Header gebündelt (z.B. „Heute · in 0 Tagen", „Morgen · Morgen", „Samstag, 27. Juni 2026 · in 8 Wochen") — bei zwei Aufträgen am gleichen Tag erscheint ein „2 Aufträge"-Badge rechts. Dadurch entsteht keine wiederholte Datum-Box mehr, wenn der Fahrer mehrere Termine an einem Tag hat.
+
+### Changed
+- **Auftragsdetail-Header bekommt den Fahrer-Hero-Verlauf (Test).** Der „Hero"-Block der Auftragsdetail-Seite (Datum, Name, Location) liegt jetzt in derselben Karten-Optik wie das Fahrer-Dashboard: weicher Orange-Verlauf von oben links nach unten rechts (`from-primary/[0.08]` über `via-primary/[0.04]` zu `transparent`), mit dünner orange Border und 24px Abrundung.
+
 ## [1.32.2] — 2026-04-29
 
 ### Changed

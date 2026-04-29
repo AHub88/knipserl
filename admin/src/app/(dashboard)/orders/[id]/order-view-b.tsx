@@ -161,7 +161,7 @@ export function OrderViewB({ order, drivers, isAdmin, viewMode, onEdit }: Props)
       </div>
 
       {/* ── Hero ── */}
-      <div className="space-y-2">
+      <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent p-5 sm:p-6 space-y-2">
         <div className="flex items-center gap-2 text-sm">
           <IconCalendar className="size-4 text-primary" />
           <span className="text-primary font-medium">{weekday}, {dateStr}</span>
