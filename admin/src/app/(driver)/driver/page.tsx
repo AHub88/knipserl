@@ -160,42 +160,43 @@ export default async function DriverHomePage() {
 
       {/* Hero: Nächste Fahrt */}
       {nextOrder ? (
-        <Link
-          href={`/driver/orders/${nextOrder.id}`}
-          className="block rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent p-5 hover:border-primary/40 transition-colors"
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <IconCalendarEvent className="size-4 text-primary" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
-              Nächste Fahrt
-            </span>
-            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider rounded-md bg-primary/15 text-primary px-2 py-0.5">
-              {daysUntil(new Date(nextOrder.eventDate), now)}
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {formatDateLong(new Date(nextOrder.eventDate))}
-          </p>
-          <p className="text-lg font-bold text-foreground mt-1 leading-snug">
-            {nextOrder.locationName ||
-              extractCity(nextOrder.locationAddress) ||
-              nextOrder.locationAddress}
-          </p>
-          <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
-            <IconMapPin className="size-3.5" />
-            <span className="truncate">{nextOrder.locationAddress}</span>
-          </div>
-          <p className="text-sm text-foreground/80 mt-2">
-            <span className="font-medium">{nextOrder.customerName}</span>
-            <span className="text-muted-foreground"> · {nextOrder.eventType}</span>
-          </p>
+        <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent overflow-hidden">
+          <Link
+            href={`/driver/orders/${nextOrder.id}`}
+            className="block p-5 hover:bg-primary/[0.03] transition-colors"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <IconCalendarEvent className="size-4 text-primary" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                Nächste Fahrt
+              </span>
+              <span className="ml-auto text-[10px] font-bold uppercase tracking-wider rounded-md bg-primary/15 text-primary px-2 py-0.5">
+                {daysUntil(new Date(nextOrder.eventDate), now)}
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {formatDateLong(new Date(nextOrder.eventDate))}
+            </p>
+            <p className="text-lg font-bold text-foreground mt-1 leading-snug">
+              {nextOrder.locationName ||
+                extractCity(nextOrder.locationAddress) ||
+                nextOrder.locationAddress}
+            </p>
+            <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
+              <IconMapPin className="size-3.5" />
+              <span className="truncate">{nextOrder.locationAddress}</span>
+            </div>
+            <p className="text-sm text-foreground/80 mt-2">
+              <span className="font-medium">{nextOrder.customerName}</span>
+              <span className="text-muted-foreground"> · {nextOrder.eventType}</span>
+            </p>
+          </Link>
           {mapsUrl && (
-            <div className="mt-4">
+            <div className="px-5 pb-5 -mt-1">
               <a
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <IconExternalLink className="size-4" />
@@ -203,7 +204,7 @@ export default async function DriverHomePage() {
               </a>
             </div>
           )}
-        </Link>
+        </div>
       ) : (
         <div className="rounded-2xl border border-border bg-card p-8 text-center">
           <IconCalendarEvent className="size-8 text-muted-foreground/40 mx-auto mb-2" />
