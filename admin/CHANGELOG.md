@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.33.4] — 2026-04-29
+
+### Added
+- **Anzahl-Badges in der Fahrer-Sidebar.** „Freie Aufträge" und „Meine Aufträge" zeigen rechts in der Sidebar einen kleinen Badge mit der Anzahl: emerald-Ton für freie Aufträge (Opportunity), Primary für eigene. Wenn die Zahl 0 ist, erscheint kein Badge — ruhige Sidebar bei leerer Liste. Counts werden serverseitig im Layout geholt, sodass kein Flackern oder Loading-State entsteht.
+
+### Removed
+- **Light Mode komplett entfernt.** Der „Light Mode"/„Dark Mode"-Toggle in der Sidebar ist weg, der globale ThemeProvider läuft jetzt mit `forcedTheme="dark"`. Damit sind alle Light-Klassen-Pfade deaktiviert, das Dashboard ist überall durchgehend dark.
+
 ## [1.33.3] — 2026-04-29
 
 ### Changed

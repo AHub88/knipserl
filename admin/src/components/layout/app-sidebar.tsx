@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { useViewMode } from "@/lib/view-mode-context";
 import { SETTINGS_SECTIONS } from "@/lib/settings-nav";
 import {
@@ -34,10 +33,10 @@ import {
   IconBrush,
   IconBrandGoogle,
   IconHistory,
-  IconSun,
-  IconMoon,
   IconMail,
 } from "@tabler/icons-react";
+
+export type DriverCounts = { free: number; my: number };
 import {
   Sidebar,
   SidebarContent,
@@ -57,6 +56,7 @@ type NavGroup = {
   icon: React.ComponentType<{ className?: string }>;
   href?: string; // Direct link (no children)
   children?: NavItem[];
+  countKey?: keyof DriverCounts;
 };
 
 // ── Admin navigation ──
@@ -143,8 +143,8 @@ const adminNav: NavGroup[] = [
 const driverNavGroups: NavGroup[] = [
   { title: "Dashboard", icon: IconDashboard, href: "/" },
   { title: "Alle Aufträge", icon: IconFileText, href: "/orders" },
-  { title: "Freie Aufträge", icon: IconClipboardCheck, href: "/free-orders" },
-  { title: "Meine Aufträge", icon: IconClipboardList, href: "/my-orders" },
+  { title: "Freie Aufträge", icon: IconClipboardCheck, href: "/free-orders", countKey: "free" },
+  { title: "Meine Aufträge", icon: IconClipboardList, href: "/my-orders", countKey: "my" },
   { title: "Kalender", icon: IconCalendar, href: "/calendar" },
   { title: "Abwesenheit", icon: IconBeach, href: "/my-vacation" },
   { title: "Erinnerungen", icon: IconMail, href: "/reminder-settings" },
@@ -194,15 +194,31 @@ function AccordionNavItem({
   pathname,
   openKey,
   onToggle,
+  badge,
 }: {
   group: NavGroup;
   pathname: string;
   openKey: string | null;
   onToggle: (key: string) => void;
+  badge?: number;
 }) {
   const { setOpenMobile } = useSidebar();
   const isOpen = openKey === group.title;
   const hasActiveChild = groupContainsPath(group, pathname);
+
+  const badgeNode =
+    badge !== undefined && badge > 0 ? (
+      <span
+        className={
+          "ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold leading-none " +
+          (group.countKey === "free"
+            ? "bg-emerald-500/15 text-emerald-500"
+            : "bg-primary/15 text-primary")
+        }
+      >
+        {badge}
+      </span>
+    ) : null;
 
   // Direct link (no children)
   if (group.href) {
@@ -220,6 +236,7 @@ function AccordionNavItem({
       >
         <group.icon className={"size-[18px] shrink-0 " + (active ? "text-primary" : "text-muted-foreground")} />
         <span>{group.title}</span>
+        {badgeNode}
       </Link>
     );
   }
@@ -366,31 +383,7 @@ function SettingsAccordionItem({
   );
 }
 
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) return null;
-
-  const isDark = theme === "dark";
-
-  return (
-    <button
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-    >
-      {isDark ? (
-        <IconSun className="size-[18px] shrink-0 text-muted-foreground" />
-      ) : (
-        <IconMoon className="size-[18px] shrink-0 text-muted-foreground" />
-      )}
-      <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
-    </button>
-  );
-}
-
-export function AppSidebar() {
+export function AppSidebar({ driverCounts }: { driverCounts?: DriverCounts | null }) {
   const pathname = usePathname();
   const { viewMode } = useViewMode();
 
@@ -447,14 +440,18 @@ export function AppSidebar() {
               pathname={pathname}
               openKey={openKey}
               onToggle={handleToggle}
+              badge={
+                group.countKey && driverCounts
+                  ? driverCounts[group.countKey]
+                  : undefined
+              }
             />
           )
         )}
       </SidebarContent>
 
-      {/* Theme Toggle + Footer */}
-      <SidebarFooter className="border-t border-sidebar-border px-3 py-3 space-y-2">
-        <ThemeToggle />
+      {/* Footer */}
+      <SidebarFooter className="border-t border-sidebar-border px-3 py-3">
         <div className="flex items-center justify-between px-2">
           <span className="text-[11px] text-muted-foreground">
             Knipserl Dashboard
