@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { cookies } from "next/headers";
-import { VacationForm } from "@/app/(driver)/driver/vacation/vacation-form";
-import { VacationList } from "@/app/(driver)/driver/vacation/vacation-list";
+import { VacationForm } from "@/components/vacation/vacation-form";
+import { VacationList } from "@/components/vacation/vacation-list";
 import { IconBeach, IconAlertTriangle } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";

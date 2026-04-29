@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ReminderSettings } from "@/components/driver/reminder-settings";
 import {
@@ -12,8 +11,6 @@ import {
   IconRoute,
   IconBeach,
 } from "@tabler/icons-react";
-
-export const dynamic = "force-dynamic";
 
 function formatDateLong(date: Date) {
   return date.toLocaleDateString("de-DE", {
@@ -40,26 +37,27 @@ function extractCity(address: string): string {
   return address.match(/\d{5}\s+(.+)$/)?.[1]?.trim() ?? "";
 }
 
-export default async function DriverHomePage() {
-  const session = await auth();
-  const driverId = session!.user.id;
+async function safe<T>(label: string, fn: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    console.error(`[driver-dashboard] ${label} query failed`, e);
+    return fallback;
+  }
+}
 
+export async function DriverDashboard({
+  driverId,
+  driverName,
+}: {
+  driverId: string;
+  driverName: string | null;
+}) {
   const now = new Date();
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
   const endOfWeek = new Date(startOfToday);
   endOfWeek.setDate(endOfWeek.getDate() + 7);
-
-  // Eine fehlerhafte Query darf die ganze Seite nicht killen — wir fangen einzeln
-  // und loggen, damit man im Server-Log sieht welcher Block kaputt ist.
-  async function safe<T>(label: string, fn: () => Promise<T>, fallback: T): Promise<T> {
-    try {
-      return await fn();
-    } catch (e) {
-      console.error(`[driver-home] ${label} query failed`, e);
-      return fallback;
-    }
-  }
 
   const [nextOrder, freeOrdersCount, myOrdersCount, weekOrders, activeVacation, driver] =
     await Promise.all([
@@ -138,17 +136,17 @@ export default async function DriverHomePage() {
       ),
     ]);
 
-  const firstName = (session!.user.name ?? "").split(" ")[0] || "Hallo";
+  const firstName = (driverName ?? "").split(" ")[0] || "Hallo";
 
   const mapsUrl = nextOrder
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nextOrder.locationAddress)}`
     : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 sm:space-y-6 max-w-3xl mx-auto">
       {/* Greeting */}
       <div>
-        <h1 className="text-xl font-bold tracking-tight text-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
           Hallo, {firstName} 👋
         </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
@@ -162,8 +160,8 @@ export default async function DriverHomePage() {
       {nextOrder ? (
         <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.04] to-transparent overflow-hidden">
           <Link
-            href={`/driver/orders/${nextOrder.id}`}
-            className="block p-5 hover:bg-primary/[0.03] transition-colors"
+            href={`/orders/${nextOrder.id}`}
+            className="block p-5 sm:p-6 hover:bg-primary/[0.03] transition-colors"
           >
             <div className="flex items-center gap-2 mb-3">
               <IconCalendarEvent className="size-4 text-primary" />
@@ -177,13 +175,13 @@ export default async function DriverHomePage() {
             <p className="text-sm text-muted-foreground">
               {formatDateLong(new Date(nextOrder.eventDate))}
             </p>
-            <p className="text-lg font-bold text-foreground mt-1 leading-snug">
+            <p className="text-lg sm:text-xl font-bold text-foreground mt-1 leading-snug">
               {nextOrder.locationName ||
                 extractCity(nextOrder.locationAddress) ||
                 nextOrder.locationAddress}
             </p>
             <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
-              <IconMapPin className="size-3.5" />
+              <IconMapPin className="size-3.5 shrink-0" />
               <span className="truncate">{nextOrder.locationAddress}</span>
             </div>
             <p className="text-sm text-foreground/80 mt-2">
@@ -192,7 +190,7 @@ export default async function DriverHomePage() {
             </p>
           </Link>
           {mapsUrl && (
-            <div className="px-5 pb-5 -mt-1">
+            <div className="px-5 pb-5 sm:px-6 sm:pb-6 -mt-1">
               <a
                 href={mapsUrl}
                 target="_blank"
@@ -218,43 +216,43 @@ export default async function DriverHomePage() {
       )}
 
       {/* Schnellaktionen */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Link
-          href="/driver/free-orders"
-          className="rounded-xl border border-border bg-card hover:border-emerald-500/30 transition-colors p-3 flex flex-col items-center gap-1.5"
+          href="/free-orders"
+          className="rounded-xl border border-border bg-card hover:border-emerald-500/30 transition-colors p-3 sm:p-4 flex flex-col items-center gap-1.5"
         >
-          <IconClipboardCheck className="size-5 text-emerald-500" />
-          <span className="text-[18px] font-extrabold text-foreground tabular-nums leading-none">
+          <IconClipboardCheck className="size-5 sm:size-6 text-emerald-500" />
+          <span className="text-lg sm:text-2xl font-extrabold text-foreground tabular-nums leading-none">
             {freeOrdersCount}
           </span>
-          <span className="text-[11px] font-medium text-muted-foreground">Frei</span>
+          <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Frei</span>
         </Link>
         <Link
-          href="/driver/my-orders"
-          className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-3 flex flex-col items-center gap-1.5"
+          href="/my-orders"
+          className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-3 sm:p-4 flex flex-col items-center gap-1.5"
         >
-          <IconClipboardList className="size-5 text-primary" />
-          <span className="text-[18px] font-extrabold text-foreground tabular-nums leading-none">
+          <IconClipboardList className="size-5 sm:size-6 text-primary" />
+          <span className="text-lg sm:text-2xl font-extrabold text-foreground tabular-nums leading-none">
             {myOrdersCount}
           </span>
-          <span className="text-[11px] font-medium text-muted-foreground">Meine</span>
+          <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Meine</span>
         </Link>
         <Link
-          href="/driver/calendar"
-          className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-3 flex flex-col items-center gap-1.5"
+          href="/calendar"
+          className="rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-3 sm:p-4 flex flex-col items-center gap-1.5"
         >
-          <IconCalendar className="size-5 text-primary" />
-          <span className="text-[18px] font-extrabold text-foreground tabular-nums leading-none">
-            &middot;
+          <IconCalendar className="size-5 sm:size-6 text-primary" />
+          <span className="text-lg sm:text-2xl font-extrabold text-muted-foreground/40 tabular-nums leading-none">
+            ·
           </span>
-          <span className="text-[11px] font-medium text-muted-foreground">Kalender</span>
+          <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Kalender</span>
         </Link>
       </div>
 
       {/* Diese Woche */}
       {weekOrders.length > 0 && (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+          <div className="flex items-center gap-2 border-b border-border px-4 py-3 sm:px-5">
             <IconRoute className="size-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground">Diese Woche</h2>
             <span className="ml-auto text-[11px] text-muted-foreground">
@@ -272,8 +270,8 @@ export default async function DriverHomePage() {
               return (
                 <Link
                   key={order.id}
-                  href={`/driver/orders/${order.id}`}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors"
+                  href={`/orders/${order.id}`}
+                  className="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-muted/40 transition-colors"
                 >
                   <div className="flex flex-col items-center justify-center w-10 shrink-0">
                     <span className="text-[9px] font-bold tracking-wide text-primary leading-none">
@@ -322,7 +320,7 @@ export default async function DriverHomePage() {
             </p>
           </div>
           <Link
-            href="/driver/vacation"
+            href="/my-vacation"
             className="text-[11px] font-semibold text-amber-500 hover:text-amber-400 transition-colors shrink-0"
           >
             Bearbeiten →

@@ -15,9 +15,21 @@ import {
   YtdTrendChart,
 } from "@/components/dashboard/charts";
 import { YearlyComparisonTabs } from "@/components/dashboard/yearly-tabs";
+import { DriverDashboard } from "@/components/dashboard/driver-dashboard";
 
 export default async function DashboardPage() {
   const session = await auth();
+
+  // Fahrer sehen ein eigenes Dashboard, kein Admin-Reporting.
+  if (session?.user?.role === "DRIVER") {
+    return (
+      <DriverDashboard
+        driverId={session.user.id}
+        driverName={session.user.name ?? null}
+      />
+    );
+  }
+
   const paymentFilter = await getPaymentFilter(session?.user?.role ?? "");
 
   const now = new Date();

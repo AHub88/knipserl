@@ -67,12 +67,10 @@ export function MyOrdersTabs({
   assignedOrders,
   pastOrders,
   nowIso,
-  linkBase = "/orders",
 }: {
   assignedOrders: OrderItem[];
   pastOrders: OrderItem[];
   nowIso: string;
-  linkBase?: string;
 }) {
   const [tab, setTab] = useState<Tab>("assigned");
   const now = new Date(nowIso);
@@ -120,7 +118,7 @@ export function MyOrdersTabs({
         ) : (
           <div className="space-y-2">
             {assignedOrders.map((order) => (
-              <AssignedCard key={order.id} order={order} now={now} linkBase={linkBase} />
+              <AssignedCard key={order.id} order={order} now={now} />
             ))}
           </div>
         )
@@ -132,7 +130,7 @@ export function MyOrdersTabs({
         ) : (
           <div className="space-y-2">
             {pastOrders.map((order) => (
-              <PastCard key={order.id} order={order} linkBase={linkBase} />
+              <PastCard key={order.id} order={order} />
             ))}
           </div>
         )
@@ -141,15 +139,7 @@ export function MyOrdersTabs({
   );
 }
 
-function AssignedCard({
-  order,
-  now,
-  linkBase,
-}: {
-  order: OrderItem;
-  now: Date;
-  linkBase: string;
-}) {
+function AssignedCard({ order, now }: { order: OrderItem; now: Date }) {
   const city = extractCity(order.locationAddress);
   const locationLabel = order.locationName
     ? city && city !== order.locationName
@@ -221,7 +211,7 @@ function AssignedCard({
           {/* Row 5: Action */}
           <div className="flex justify-end ml-6">
             <Link
-              href={`${linkBase}/${order.id}`}
+              href={`/orders/${order.id}`}
               className="inline-flex items-center justify-center gap-1.5 h-8 px-4 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
             >
               Details
@@ -234,7 +224,7 @@ function AssignedCard({
   );
 }
 
-function PastCard({ order, linkBase }: { order: OrderItem; linkBase: string }) {
+function PastCard({ order }: { order: OrderItem }) {
   const city = extractCity(order.locationAddress);
   const locationLabel = order.locationName
     ? city && city !== order.locationName
@@ -248,7 +238,7 @@ function PastCard({ order, linkBase }: { order: OrderItem; linkBase: string }) {
 
   return (
     <Link
-      href={`${linkBase}/${order.id}`}
+      href={`/orders/${order.id}`}
       className="flex items-center rounded-xl border border-border bg-card hover:border-primary/30 transition-colors overflow-hidden"
     >
       {/* Compact date block */}

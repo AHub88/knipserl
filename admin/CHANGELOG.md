@@ -7,18 +7,8 @@ Versionierung folgt [SemVer](https://semver.org/lang/de/).
 ## [1.32.0] — 2026-04-29
 
 ### Added
-- **Eigener Fahrer-Bereich unter `/driver`.** Fahrer haben jetzt eine separate, mobil-optimierte App-Welt mit eigenem Header (Logo, Name, Logout) und Bottom-Nav (Start · Frei · Meine · Kalender · Urlaub). Markenfarbe orange durchgängig, „Frei"-Tab in Emerald als Akzent (auch im Idle-State leicht eingefärbt). Logo führt nicht mehr ins Admin, sondern auf die Fahrer-Startseite.
-- **Neue Fahrer-Startseite (`/driver`).** Hero-Karte „Nächste Fahrt" mit Datum, Location, Kunde und prominentem „Route in Google Maps"-Button; drei Schnellaktions-Kacheln mit Live-Counter (Frei / Meine / Kalender); kompakte „Diese Woche"-Liste mit max. 5 nächsten eigenen Aufträgen; Hinweis-Box bei aktivem oder anstehendem Urlaub; Reminder-Einstellungen direkt am Ende.
-- **Auftragsdetail für freie Aufträge.** Fahrer können jetzt Detailseiten von freien (`OPEN`, ohne Fahrer) Aufträgen öffnen, vorher führte das auf 404. Eigene Aufträge bleiben weiter sichtbar, alle anderen Aufträge sind weiterhin nicht zugänglich.
-
-### Changed
-- **Fahrer-Listen mit konfigurierbarem Detail-Link.** Die Komponenten `FreeOrdersList`, `MyOrdersTabs` und `CalendarView` nehmen jetzt einen `linkBase`-Parameter. Im Fahrer-Bereich öffnen Klicks `/driver/orders/[id]`, im Admin-Bereich (inkl. Impersonation) weiterhin `/orders/[id]`.
-
-### Security
-- **Fahrer können das Admin-Dashboard nicht mehr betreten.** Das `(dashboard)`-Layout prüft jetzt zusätzlich die Rolle und leitet `DRIVER` hart auf `/driver` um. Vorher reichte ein Klick auf das Logo (oder ein gemerkter URL-Aufruf wie `/customers`), um das Admin-Backend zu sehen — sichtbar war Admin-Inhalt, der für die Rolle nicht vorgesehen ist.
-
-### Removed
-- **Alte Fahrer-Routen `/driver/dashboard` und `/driver/orders` entfernt.** Funktionalität ist in die neue `/driver`-Startseite und nach `/driver/free-orders` + `/driver/my-orders` aufgeteilt. Push-Test-Notification verlinkt jetzt auf `/driver`.
+- **Eigenes Fahrer-Dashboard auf der Startseite.** Loggt sich ein Fahrer ein oder klickt auf das Logo, sieht er nicht mehr das Admin-Reporting (KPI-Boxen, Jahresvergleich, Charts), sondern eine eigene fahrerspezifische Übersicht: Hero-Karte „Nächste Fahrt" mit Datum, Location, Kunde und „Route in Google Maps"-Button; drei Schnellaktions-Kacheln mit Live-Counter (Frei / Meine / Kalender); „Diese Woche"-Liste mit den nächsten max. 5 eigenen Aufträgen; Hinweis-Box bei aktivem oder kommendem Urlaub; Reminder-Einstellungen direkt unten. Listen, Auftragsdetail und Kalender bleiben unverändert die bekannten Seiten.
+- **Bottom-Navigation für Fahrer auf Mobile.** Auf kleinen Screens erscheint im Fahrer-View eine fixierte Leiste am unteren Rand mit fünf Tabs (Start · Frei · Meine · Kalender · Urlaub). „Frei" wird in Emerald als Akzent gehighlightet — auch idle leicht eingefärbt. Auf Desktop bleibt die normale Sidebar; die Bottom-Nav ist dort ausgeblendet.
 
 ## [1.31.0] — 2026-04-28
 

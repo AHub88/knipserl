@@ -93,7 +93,7 @@ type ViewMode = "month" | "list";
 const HIDDEN_DRIVERS_STORAGE_KEY = "calendar-hidden-drivers";
 const NO_DRIVER_KEY = "__none__";
 
-export function CalendarView({ orderLinkBase = "/orders" }: { orderLinkBase?: string } = {}) {
+export function CalendarView() {
   const router = useRouter();
   const [date, setDate] = useState(() => new Date());
   const [data, setData] = useState<CalendarData | null>(null);
@@ -527,7 +527,7 @@ export function CalendarView({ orderLinkBase = "/orders" }: { orderLinkBase?: st
                       return (
                         <button
                           key={o.id}
-                          onClick={() => router.push(`${orderLinkBase}/${o.id}`)}
+                          onClick={() => router.push(`/orders/${o.id}`)}
                           className="w-full flex items-center gap-1 rounded px-1 py-0.5 text-[10px] leading-tight transition-colors text-left group"
                           style={dc ? {
                             backgroundColor: dc.bg,
@@ -626,7 +626,7 @@ export function CalendarView({ orderLinkBase = "/orders" }: { orderLinkBase?: st
                       return (
                         <button
                           key={o.id}
-                          onClick={() => router.push(`${orderLinkBase}/${o.id}`)}
+                          onClick={() => router.push(`/orders/${o.id}`)}
                           className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors text-left"
                         >
                           <div
