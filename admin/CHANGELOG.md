@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.32.1] — 2026-04-29
+
+### Added
+- **„Alle Aufträge" in der Fahrer-Bottom-Nav.** Sechstes Tab zwischen „Start" und „Frei", führt zur kompletten Auftragsliste. Labels und Icons leicht verkleinert, damit alle 6 Items sauber auf Mobile passen.
+
+### Changed
+- **Fahrer-Dashboard auf Desktop deutlich besser.** Container ist jetzt `max-w-6xl` statt `3xl`, Inhalt wird auf `lg+` zweispaltig: oben Hero (2/3) + Schnellaktionen (1/3) nebeneinander, darunter „Diese Woche" (2/3) + Urlaub/Reminder (1/3) als rechte Sidebar. Hero und Headline werden auf großen Screens etwas größer (Headline `text-3xl`, Location `text-2xl`, mehr Padding). Auf Mobile bleibt alles einspaltig in der gewohnten Reihenfolge.
+
 ## [1.32.0] — 2026-04-29
 
 ### Added

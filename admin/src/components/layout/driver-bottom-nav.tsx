@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useViewMode } from "@/lib/view-mode-context";
 import {
   IconHome,
+  IconFileText,
   IconClipboardCheck,
   IconClipboardList,
   IconCalendar,
@@ -20,6 +21,7 @@ type Item = {
 
 const items: Item[] = [
   { href: "/", label: "Start", icon: IconHome, accent: "primary" },
+  { href: "/orders", label: "Alle", icon: IconFileText, accent: "primary" },
   { href: "/free-orders", label: "Frei", icon: IconClipboardCheck, accent: "emerald" },
   { href: "/my-orders", label: "Meine", icon: IconClipboardList, accent: "primary" },
   { href: "/calendar", label: "Kalender", icon: IconCalendar, accent: "primary" },
@@ -53,17 +55,17 @@ export function DriverBottomNav() {
               key={item.href}
               href={item.href}
               className={
-                "flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors " +
+                "flex flex-1 min-w-0 flex-col items-center gap-1 py-2.5 px-1 text-[10px] sm:text-[11px] font-medium tracking-tight transition-colors " +
                 (active ? `${accentActive} font-semibold` : "text-muted-foreground")
               }
             >
               <Icon
                 className={
-                  "h-5 w-5 transition-colors " +
+                  "h-[18px] w-[18px] sm:h-5 sm:w-5 shrink-0 transition-colors " +
                   (active ? accentActive : accentIdle)
                 }
               />
-              {item.label}
+              <span className="truncate max-w-full">{item.label}</span>
             </Link>
           );
         })}
