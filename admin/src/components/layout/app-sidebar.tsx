@@ -138,8 +138,9 @@ const adminNav: NavGroup[] = [
 ];
 
 // ── Driver navigation ──
-// Fahrer haben nur fünf Punkte — flach als Top-Level-Links statt Akkordeon.
+// Fahrer sehen flache Top-Level-Links statt Akkordeon.
 const driverNavGroups: NavGroup[] = [
+  { title: "Dashboard", icon: IconDashboard, href: "/" },
   { title: "Alle Aufträge", icon: IconFileText, href: "/orders" },
   { title: "Freie Aufträge", icon: IconClipboardCheck, href: "/free-orders" },
   { title: "Meine Aufträge", icon: IconClipboardList, href: "/my-orders" },

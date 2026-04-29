@@ -322,7 +322,7 @@ export async function DriverDashboard({
   ) : null;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-5 sm:space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Greeting */}
       <div>
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">

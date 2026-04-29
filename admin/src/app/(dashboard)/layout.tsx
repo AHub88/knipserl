@@ -4,7 +4,6 @@ import { prisma } from "@/lib/db";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Header } from "@/components/layout/header";
-import { DriverBottomNav } from "@/components/layout/driver-bottom-nav";
 import { ViewModeProvider, type ViewMode } from "@/lib/view-mode-context";
 import { getEffectiveViewMode } from "@/lib/view-mode";
 
@@ -38,16 +37,8 @@ export default async function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <Header drivers={drivers} />
-          <main
-            className={
-              "flex-1 p-3 sm:p-6 lg:px-12 xl:px-16 " +
-              (viewMode === "driver" ? "pb-24 md:pb-6" : "")
-            }
-          >
-            {children}
-          </main>
+          <main className="flex-1 p-3 sm:p-6 lg:px-12 xl:px-16">{children}</main>
         </SidebarInset>
-        <DriverBottomNav />
       </SidebarProvider>
     </ViewModeProvider>
   );

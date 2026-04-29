@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.32.2] — 2026-04-29
+
+### Changed
+- **Fahrer-Navigation: Slide-Out-Menü statt Bottom-Nav.** Die mobile Bottom-Leiste ist wieder weg, Fahrer nutzen auf Mobile (wie Admin) den vorhandenen Sidebar-Trigger oben links. „Dashboard" ist jetzt der erste Eintrag in der Fahrer-Sidebar (über „Alle Aufträge"), mit dem klassischen Dashboard-Icon — vorher musste man dafür aufs Logo klicken.
+- **Fahrer-Dashboard nutzt jetzt die volle Inhaltsbreite.** Die `max-w-6xl`-Begrenzung war auf Desktop schmaler als alle anderen Seiten (Aufträge, Kalender, etc.) und hat dort gegen die Sidebar geschlagen. Inhalt füllt jetzt die normale Spalten-Breite, das zweispaltige Layout (Hero + Schnellaktionen oben, Diese Woche + Sidebar unten) bleibt.
+
 ## [1.32.1] — 2026-04-29
 
 ### Added
