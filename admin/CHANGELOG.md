@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.34.0] — 2026-04-30
+
+### Added
+- **Live-HTML-Vorschau für E-Mail-Templates.** Neben jedem Editor (Betreff + Nachricht) rendert jetzt eine Iframe-Preview die E-Mail genau so, wie sie beim Versand beim Kunden ankommt — inkl. dem grauen Mail-Client-Hintergrund, dem weißen 600px-Inhalts-Container und der korrekten Schrift-/Zeilenhöhe. Platzhalter wie `{{customerName}}` werden mit Beispielwerten (Maria Müller, Hochzeit, Veranstaltungssaal Fendlhof, …) gefüllt, damit man direkt sieht, wie das Endergebnis aussieht. Der Wrapper spiegelt 1:1 den Code in `api/inquiries/[id]/route.ts` — beim Versand und in der Vorschau identisch.
+- **Betreff-Vorschau über dem Iframe.** Zeigt den Betreff mit aufgelösten Platzhaltern, sodass auch der Subject-Line-Test sichtbar ist.
+
+### Changed
+- **Editor-Layout: zwei Spalten auf Desktop.** Editor links, Preview rechts (`lg:grid-cols-2`), darunter gestapelt auf Mobile. Die Textarea ist auf 420px Höhe gewachsen, damit sie an die Iframe-Höhe angeglichen ist.
+
 ## [1.33.5] — 2026-04-29
 
 ### Changed

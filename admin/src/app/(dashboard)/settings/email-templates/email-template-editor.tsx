@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { IconDeviceFloppy, IconCheck, IconX, IconCode } from "@tabler/icons-react";
+import { IconDeviceFloppy, IconCheck, IconCode, IconEye } from "@tabler/icons-react";
 
 const TEMPLATE_CONFIG = [
   {
@@ -20,6 +20,82 @@ const TEMPLATE_CONFIG = [
 ];
 
 type Templates = Record<string, { subject: string; body: string }>;
+
+// Beispielwerte für die Live-Preview. Bilden ab, was der Send-Code in
+// api/inquiries/[id]/route.ts beim echten Versand einsetzt.
+const SAMPLE_VARS: Record<string, string> = {
+  customerName: "Maria Müller",
+  customerEmail: "maria.mueller@example.com",
+  eventType: "Hochzeit",
+  eventDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }),
+  locationName: "Veranstaltungssaal Fendlhof",
+  companyName: "Knipserl Fotobox",
+};
+
+function replaceVars(text: string, vars: Record<string, string>): string {
+  return Object.entries(vars).reduce(
+    (acc, [k, v]) => acc.replace(new RegExp(`{{\\s*${k}\\s*}}`, "g"), v),
+    text,
+  );
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// Spiegelt 1:1 den Wrapper aus sendInquiryEmail() in api/inquiries/[id]/route.ts.
+// Wenn sich der Versand-Wrapper ändert, hier mit anpassen.
+function buildPreviewHtml(body: string): string {
+  const rendered = replaceVars(body, SAMPLE_VARS);
+  const safeBody = escapeHtml(rendered);
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <style>html,body{margin:0;padding:0;background:#f5f5f5;}</style>
+</head>
+<body>
+  <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:600px;margin:16px auto;background:#fff;padding:30px;">
+    <p style="white-space:pre-line;color:#333;font-size:15px;line-height:1.6;margin:0;">${safeBody}</p>
+  </div>
+</body>
+</html>`;
+}
+
+function EmailPreview({ subject, body }: { subject: string; body: string }) {
+  const renderedSubject = replaceVars(subject, SAMPLE_VARS);
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden flex flex-col">
+      <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+        <IconEye className="size-4 text-primary" />
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Vorschau</h3>
+        <span className="ml-auto text-[10px] text-muted-foreground/70">Beispiel-Werte</span>
+      </div>
+      <div className="px-4 py-2.5 border-b border-border bg-muted/30">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+          Betreff
+        </div>
+        <div className="text-sm text-foreground font-medium break-words">
+          {renderedSubject || <span className="text-muted-foreground italic">(leer)</span>}
+        </div>
+      </div>
+      <iframe
+        srcDoc={buildPreviewHtml(body)}
+        title="E-Mail Vorschau"
+        sandbox=""
+        className="w-full h-[420px] bg-[#f5f5f5] border-0"
+      />
+    </div>
+  );
+}
 
 export function EmailTemplateEditor({
   templates: initial,
@@ -114,26 +190,34 @@ export function EmailTemplateEditor({
 
             <p className="text-xs text-muted-foreground">{config.description}</p>
 
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                Betreff
-              </label>
-              <input
-                className={inputClass}
-                value={t.subject}
-                onChange={(e) => updateTemplate(config.key, "subject", e.target.value)}
-              />
-            </div>
+            <div className="grid lg:grid-cols-2 gap-4">
+              {/* Editor */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                    Betreff
+                  </label>
+                  <input
+                    className={inputClass}
+                    value={t.subject}
+                    onChange={(e) => updateTemplate(config.key, "subject", e.target.value)}
+                  />
+                </div>
 
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                Nachricht
-              </label>
-              <textarea
-                className={inputClass + " h-48 py-2 resize-y font-mono text-xs leading-relaxed"}
-                value={t.body}
-                onChange={(e) => updateTemplate(config.key, "body", e.target.value)}
-              />
+                <div>
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                    Nachricht
+                  </label>
+                  <textarea
+                    className={inputClass + " h-[420px] py-2 resize-y font-mono text-xs leading-relaxed"}
+                    value={t.body}
+                    onChange={(e) => updateTemplate(config.key, "body", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Live-Preview */}
+              <EmailPreview subject={t.subject} body={t.body} />
             </div>
           </div>
         );
