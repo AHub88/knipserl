@@ -9,6 +9,8 @@
  * Keep wrap + variable list in sync across all three by importing from here.
  */
 
+import { emailLayout } from "./email-layout";
+
 export const INQUIRY_EMAIL_VARIABLES = [
   "customerName",
   "customerEmail",
@@ -45,12 +47,25 @@ export function replaceInquiryVars(
   );
 }
 
-export function wrapInquiryEmailHtml(plainBody: string): string {
+/**
+ * Wraps the plain-text body of an inquiry response in the shared
+ * email-layout (Brand-Banner, weiße Content-Box, grauer Footer).
+ *
+ * Newlines in `plainBody` werden via `white-space:pre-line` als
+ * Zeilenumbrüche gerendert, HTML wird escaped (kein Format-Injection).
+ */
+export function wrapInquiryEmailHtml(
+  plainBody: string,
+  opts?: { companyName?: string },
+): string {
   const safe = plainBody
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
-  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;padding:30px;">
-  <p style="white-space:pre-line;color:#333;font-size:15px;line-height:1.6;">${safe}</p>
-</div>`;
+  const company = opts?.companyName?.trim() || "Knipserl Fotobox";
+  return emailLayout({
+    preheader: company,
+    bodyHtml: `<p style="margin:0;white-space:pre-line;color:#333;font-size:15px;line-height:1.65;">${safe}</p>`,
+    footerText: company,
+  });
 }

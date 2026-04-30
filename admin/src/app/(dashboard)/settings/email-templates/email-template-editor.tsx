@@ -38,15 +38,7 @@ const SAMPLE_VARS = getSampleInquiryVars();
 
 function buildPreviewHtml(body: string): string {
   const rendered = replaceInquiryVars(body, SAMPLE_VARS);
-  const inner = wrapInquiryEmailHtml(rendered);
-  return `<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <style>html,body{margin:0;padding:0;background:#f5f5f5;}</style>
-</head>
-<body>${inner}</body>
-</html>`;
+  return wrapInquiryEmailHtml(rendered, { companyName: SAMPLE_VARS.companyName });
 }
 
 function EmailPreview({ subject, body }: { subject: string; body: string }) {

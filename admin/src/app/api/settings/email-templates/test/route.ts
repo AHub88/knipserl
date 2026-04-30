@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   const vars = getSampleInquiryVars();
   const renderedSubject = replaceInquiryVars(subject, vars);
   const renderedBody = replaceInquiryVars(body, vars);
-  const html = wrapInquiryEmailHtml(renderedBody);
+  const html = wrapInquiryEmailHtml(renderedBody, { companyName: vars.companyName });
 
   try {
     await sendEmail({

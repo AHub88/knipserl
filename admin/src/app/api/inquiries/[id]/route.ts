@@ -35,7 +35,7 @@ async function sendInquiryEmail(
 
   const subject = replaceInquiryVars(template.subject, vars);
   const bodyText = replaceInquiryVars(template.body, vars);
-  const html = wrapInquiryEmailHtml(bodyText);
+  const html = wrapInquiryEmailHtml(bodyText, { companyName: vars.companyName });
 
   try {
     await sendEmail({ to: inquiry.customerEmail, subject, html });

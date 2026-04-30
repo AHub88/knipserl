@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.35.0] — 2026-04-30
+
+### Added
+- **Zentrales E-Mail-Layout in `lib/email-layout.ts`.** Eine wiederverwendbare `emailLayout()`-Funktion liefert das Grund-Template für alle ausgehenden Mails: 600px max-width zentriert (nicht full-width), oranger Brand-Banner mit Titel + optionaler Subline, weiße Content-Box mit weichem Schatten und 12px Border-Radius, grauer Footer. Inline-Styles für maximale Mail-Client-Kompatibilität (Outlook, Gmail, Apple Mail). Alle künftigen Mail-Typen ziehen diesen Wrapper, Layout-Änderungen passieren an einer Stelle.
+
+### Changed
+- **Anfrage-Mails (Zusage/Absage) sind jetzt gebrandet.** Vorher kam der Body nackt im weißen Container an — jetzt mit Knipserl-Banner oben, sauberer Content-Padding, Footer mit Firmenname. Test-Mail im Editor und echter Versand an den Kunden rendern identisch.
+- **`email-templates.ts` (Angebote, Rechnungen, Bestätigungen, Fahrer-Reminder) zieht das neue Layout.** Visuelles Ergebnis fast unverändert (war schon ähnlich), aber jetzt durch den shared Wrapper — DRY und konsistent. Border-Radius, weicher Schatten und Padding sind dabei minimal aufgeräumt.
+
 ## [1.34.2] — 2026-04-30
 
 ### Changed

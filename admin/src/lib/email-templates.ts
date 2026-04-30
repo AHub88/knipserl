@@ -1,29 +1,21 @@
 /**
  * HTML email templates for quotes, invoices, and order confirmations.
+ *
+ * Visuelles Grund-Layout (Brand-Banner, Content-Box, Footer) liegt zentral
+ * in `lib/email-layout.ts` — hier nur die spezifischen Inhalte pro Mail-Typ.
  */
 
-const BRAND_COLOR = "#F6A11C";
+import { emailLayout, EMAIL_BRAND_COLOR } from "./email-layout";
+
+const BRAND_COLOR = EMAIL_BRAND_COLOR;
 
 function layout(title: string, body: string, companyName: string): string {
-  return `
-<!DOCTYPE html>
-<html lang="de">
-<head><meta charset="UTF-8"/></head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#f5f5f5;">
-  <div style="max-width:600px;margin:0 auto;background:#ffffff;">
-    <div style="background:${BRAND_COLOR};padding:24px 30px;border-radius:0;">
-      <h1 style="margin:0;font-size:20px;font-weight:700;color:#000;">${title}</h1>
-      <p style="margin:4px 0 0;font-size:13px;color:rgba(0,0,0,0.6);">${companyName}</p>
-    </div>
-    <div style="padding:30px;">
-      ${body}
-    </div>
-    <div style="padding:20px 30px;background:#fafafa;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center;">
-      ${companyName} &middot; Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
-    </div>
-  </div>
-</body>
-</html>`;
+  return emailLayout({
+    preheader: title,
+    preheaderSub: companyName,
+    bodyHtml: body,
+    footerText: `${companyName} &middot; Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.`,
+  });
 }
 
 type LineItem = {
