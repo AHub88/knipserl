@@ -2,20 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { sendEmail, isEmailConfigured } from "@/lib/email";
+import {
+  replaceInquiryVars,
+  wrapInquiryEmailHtml,
+} from "@/lib/inquiry-email";
 
 async function getTemplate(key: string): Promise<{ subject: string; body: string } | null> {
   try {
     const setting = await prisma.appSetting.findUnique({ where: { key } });
     return setting ? JSON.parse(setting.value) : null;
   } catch { return null; }
-}
-
-function replaceVars(text: string, vars: Record<string, string>): string {
-  let result = text;
-  for (const [key, val] of Object.entries(vars)) {
-    result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, "g"), val);
-  }
-  return result;
 }
 
 async function sendInquiryEmail(
@@ -37,11 +33,9 @@ async function sendInquiryEmail(
     companyName,
   };
 
-  const subject = replaceVars(template.subject, vars);
-  const bodyText = replaceVars(template.body, vars);
-  const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;padding:30px;">
-    <p style="white-space:pre-line;color:#333;font-size:15px;line-height:1.6;">${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-  </div>`;
+  const subject = replaceInquiryVars(template.subject, vars);
+  const bodyText = replaceInquiryVars(template.body, vars);
+  const html = wrapInquiryEmailHtml(bodyText);
 
   try {
     await sendEmail({ to: inquiry.customerEmail, subject, html });

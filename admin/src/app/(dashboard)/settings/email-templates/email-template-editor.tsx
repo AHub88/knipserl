@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { IconDeviceFloppy, IconCheck, IconCode, IconEye } from "@tabler/icons-react";
+import {
+  IconDeviceFloppy,
+  IconCheck,
+  IconCode,
+  IconEye,
+  IconSend,
+} from "@tabler/icons-react";
+import {
+  getSampleInquiryVars,
+  replaceInquiryVars,
+  wrapInquiryEmailHtml,
+} from "@/lib/inquiry-email";
 
 const TEMPLATE_CONFIG = [
   {
@@ -21,57 +32,25 @@ const TEMPLATE_CONFIG = [
 
 type Templates = Record<string, { subject: string; body: string }>;
 
-// Beispielwerte für die Live-Preview. Bilden ab, was der Send-Code in
-// api/inquiries/[id]/route.ts beim echten Versand einsetzt.
-const SAMPLE_VARS: Record<string, string> = {
-  customerName: "Maria Müller",
-  customerEmail: "maria.mueller@example.com",
-  eventType: "Hochzeit",
-  eventDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("de-DE", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }),
-  locationName: "Veranstaltungssaal Fendlhof",
-  companyName: "Knipserl Fotobox",
-};
+// Sample-Werte einmal beim Modul-Laden eingefroren — ein Tag drift in 30 Tagen
+// reicht völlig, dafür rendert die Preview deterministisch.
+const SAMPLE_VARS = getSampleInquiryVars();
 
-function replaceVars(text: string, vars: Record<string, string>): string {
-  return Object.entries(vars).reduce(
-    (acc, [k, v]) => acc.replace(new RegExp(`{{\\s*${k}\\s*}}`, "g"), v),
-    text,
-  );
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-// Spiegelt 1:1 den Wrapper aus sendInquiryEmail() in api/inquiries/[id]/route.ts.
-// Wenn sich der Versand-Wrapper ändert, hier mit anpassen.
 function buildPreviewHtml(body: string): string {
-  const rendered = replaceVars(body, SAMPLE_VARS);
-  const safeBody = escapeHtml(rendered);
+  const rendered = replaceInquiryVars(body, SAMPLE_VARS);
+  const inner = wrapInquiryEmailHtml(rendered);
   return `<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
   <style>html,body{margin:0;padding:0;background:#f5f5f5;}</style>
 </head>
-<body>
-  <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:600px;margin:16px auto;background:#fff;padding:30px;">
-    <p style="white-space:pre-line;color:#333;font-size:15px;line-height:1.6;margin:0;">${safeBody}</p>
-  </div>
-</body>
+<body>${inner}</body>
 </html>`;
 }
 
 function EmailPreview({ subject, body }: { subject: string; body: string }) {
-  const renderedSubject = replaceVars(subject, SAMPLE_VARS);
+  const renderedSubject = replaceInquiryVars(subject, SAMPLE_VARS);
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden flex flex-col">
       <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
@@ -107,6 +86,7 @@ export function EmailTemplateEditor({
   const [templates, setTemplates] = useState<Templates>(initial);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [sendingTest, setSendingTest] = useState<string | null>(null);
 
   async function handleSave(key: string) {
     setSaving(key);
@@ -125,6 +105,25 @@ export function EmailTemplateEditor({
       toast.error("Fehler beim Speichern");
     } finally {
       setSaving(null);
+    }
+  }
+
+  async function handleSendTest(key: string) {
+    setSendingTest(key);
+    try {
+      const t = templates[key];
+      const res = await fetch("/api/settings/email-templates/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: t.subject, body: t.body }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? "Versand fehlgeschlagen");
+      toast.success(`Test an ${data.sentTo ?? "dich"} gesendet`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Versand fehlgeschlagen");
+    } finally {
+      setSendingTest(null);
     }
   }
 
@@ -173,19 +172,33 @@ export function EmailTemplateEditor({
                 <span className={`size-2 rounded-full ${dotColor}`} />
                 <h3 className="text-sm font-semibold text-foreground">{config.label}</h3>
               </div>
-              <button
-                onClick={() => handleSave(config.key)}
-                disabled={saving === config.key}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
-              >
-                {saved === config.key ? (
-                  <><IconCheck className="size-3.5" /> Gespeichert</>
-                ) : saving === config.key ? (
-                  "Speichern..."
-                ) : (
-                  <><IconDeviceFloppy className="size-3.5" /> Speichern</>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleSendTest(config.key)}
+                  disabled={sendingTest === config.key || saving === config.key}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-foreground/80 hover:text-foreground hover:bg-accent text-xs font-semibold disabled:opacity-50 transition-colors"
+                  title="Test-Mail an dein Konto senden"
+                >
+                  {sendingTest === config.key ? (
+                    "Sende..."
+                  ) : (
+                    <><IconSend className="size-3.5" /> Test senden</>
+                  )}
+                </button>
+                <button
+                  onClick={() => handleSave(config.key)}
+                  disabled={saving === config.key}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-black text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
+                >
+                  {saved === config.key ? (
+                    <><IconCheck className="size-3.5" /> Gespeichert</>
+                  ) : saving === config.key ? (
+                    "Speichern..."
+                  ) : (
+                    <><IconDeviceFloppy className="size-3.5" /> Speichern</>
+                  )}
+                </button>
+              </div>
             </div>
 
             <p className="text-xs text-muted-foreground">{config.description}</p>

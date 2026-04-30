@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.34.1] — 2026-04-30
+
+### Added
+- **„Test senden"-Button im E-Mail-Template-Editor.** Neben dem Speichern-Button steht jetzt ein zweiter Button, der eine echte Test-Mail mit den Sample-Werten an die E-Mail-Adresse des eingeloggten Admins (aus der Session) schickt. Subject wird mit `[TEST]` prefixiert, damit man's im Posteingang sofort erkennt. Versand läuft über denselben Microsoft-Graph-Pfad wie der echte Kundenversand — was beim Test ankommt, ist 1:1 was beim Kunden ankäme.
+
+### Changed
+- **Inquiry-Mail-Wrapper in eigenes Lib-Modul ausgelagert.** `wrapInquiryEmailHtml`, `replaceInquiryVars` und `getSampleInquiryVars` liegen jetzt in `src/lib/inquiry-email.ts` und werden von Send-Code (`api/inquiries/[id]/route.ts`), Live-Preview und Test-Send gleichermaßen genutzt — kein Drift mehr zwischen den drei Stellen.
+
 ## [1.34.0] — 2026-04-30
 
 ### Added
