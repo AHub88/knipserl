@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.34.2] — 2026-04-30
+
+### Changed
+- **Admin-E-Mail in Seed- und Import-Scripts auf `info@knipserl.de` umgestellt.** Vorher hieß der seed-Admin `admin@knipserl.de` — passte aber nicht zur tatsächlich genutzten Adresse (`info@knipserl.de`, identisch mit der Firmen-E-Mail). Betrifft: `prisma/seed.ts`, `prisma/full-import.ts`, `prisma/import-buchungen.ts`. Bestehende Live-DB-Records mit `admin@knipserl.de` müssen einmal manuell auf `info@knipserl.de` umgestellt werden.
+
 ## [1.34.1] — 2026-04-30
 
 ### Added

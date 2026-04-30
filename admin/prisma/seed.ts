@@ -46,11 +46,11 @@ async function main() {
   const passwordHash = await bcrypt.hash("admin123", 12);
 
   await prisma.user.upsert({
-    where: { email: "admin@knipserl.de" },
+    where: { email: "info@knipserl.de" },
     update: {},
     create: {
       name: "Andreas Huber",
-      email: "admin@knipserl.de",
+      email: "info@knipserl.de",
       passwordHash,
       role: "ADMIN",
       phone: "+49 123 456789",
@@ -167,7 +167,7 @@ async function main() {
 
   console.log("Seed completed successfully!");
   console.log("Login credentials:");
-  console.log("  Admin: admin@knipserl.de / admin123");
+  console.log("  Admin: info@knipserl.de / admin123");
   console.log("  Buchhaltung: buchhaltung@knipserl.de / admin123");
   console.log("  Fahrer: fahrer@knipserl.de / admin123");
 }

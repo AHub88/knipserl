@@ -26,7 +26,7 @@ const DRIVER_MAP: Record<string, string> = {
 const DRIVER_EMAILS: Record<string, string> = {
   "Michael Kaiser": "mk@knipserl.de",
   "Johann Darscht": "jd@knipserl.de",
-  "Andreas Huber": "admin@knipserl.de",
+  "Andreas Huber": "info@knipserl.de",
   "Helene Rincon": "hr@knipserl.de",
 };
 
@@ -50,7 +50,7 @@ async function ensureDrivers(): Promise<Record<string, string>> {
         name,
         email,
         passwordHash,
-        role: email === "admin@knipserl.de" ? "ADMIN" : "DRIVER",
+        role: email === "info@knipserl.de" ? "ADMIN" : "DRIVER",
         initials,
       },
     });
