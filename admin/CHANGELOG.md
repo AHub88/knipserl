@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.35.3] — 2026-04-30
+
+### Fixed
+- **E-Mail-Layout: Dark-Mode-Härtung gegen Outlook/Gmail.** Die ausgehenden Mails wurden in Mail-Clients mit aktivem Dark-Mode (Outlook 365, Outlook.com, Gmail web/mobile) komplett invertiert — weißer Hintergrund verschwand, dunkler Text wurde unleserlich, Logo (dunkle Variante) verschmolz mit dem dunklen Hintergrund. Mehrschicht-Fix:
+  - `<meta name="color-scheme" content="light only">` + `<meta name="supported-color-schemes" content="light">` zwingt Clients, die Light-Mode-Hints respektieren (Apple Mail, modernes Outlook web).
+  - Layout von `<div>` auf `<table>` mit `bgcolor`-HTML-Attributen umgestellt — Tables sind älter und werden von Dark-Mode-Override-Logiken seltener angefasst.
+  - `[data-ogsc]`-CSS-Selektoren mit `!important` setzen Hintergrund und Textfarben in Outlook 365 Dark-Mode zurück auf Light.
+  - `@media (prefers-color-scheme: dark)`-Block für Apple Mail / mobile Clients als zusätzliche Verteidigung.
+  - Klassen `force-light-bg`, `force-light-text`, `force-muted-text` markieren explizit, was light bleiben muss.
+
 ## [1.35.2] — 2026-04-30
 
 ### Fixed

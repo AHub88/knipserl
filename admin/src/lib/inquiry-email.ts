@@ -95,9 +95,11 @@ export function wrapInquiryEmailHtml(
   opts?: { companyName?: string },
 ): string {
   const company = opts?.companyName?.trim() || "Knipserl Fotobox";
-  const inner = `<div style="color:#3a3a3a;font-size:15px;line-height:1.65;">${nl2br(bodyHtml)}</div>`;
+  // Klasse "force-light-text" greift in Dark-Mode-Clients via !important-Override.
+  // Color hier nicht inline setzen — sonst überschreibt die inline-Spec die Class-Rule.
+  const inner = `<div class="force-light-text" style="font-size:15px;line-height:1.65;">${nl2br(bodyHtml)}</div>`;
   return emailLayout({
     bodyHtml: inner,
-    footerText: `${company} &middot; <a href="mailto:info@knipserl.de" style="color:#999;text-decoration:none;">info@knipserl.de</a> &middot; <a href="https://www.knipserl.de" style="color:#999;text-decoration:none;">knipserl.de</a>`,
+    footerText: `${company} &middot; <a href="mailto:info@knipserl.de" style="color:#999999;text-decoration:none;" class="force-muted-text">info@knipserl.de</a> &middot; <a href="https://www.knipserl.de" style="color:#999999;text-decoration:none;" class="force-muted-text">knipserl.de</a>`,
   });
 }
