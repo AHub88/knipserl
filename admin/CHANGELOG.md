@@ -4,6 +4,11 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.35.2] — 2026-04-30
+
+### Fixed
+- **Zeilenumbrüche in Inquiry-Mails kamen beim Empfänger zusammengeklebt an.** `white-space:pre-line` (CSS) wird von vielen Mail-Clients (Outlook desktop, Word-basierter Renderer u.a.) ignoriert — Browser-Vorschau zeigte korrekte Absätze, der Versand-Output mashed alles in eine einzige Zeile. Fix: nach Variablen-Substitution werden alle `\n` hart zu `<br>` konvertiert. `<br>` rendert in jedem Mail-Client gleich, Vorschau und gesendete Mail sehen jetzt identisch aus.
+
 ## [1.35.1] — 2026-04-30
 
 ### Added

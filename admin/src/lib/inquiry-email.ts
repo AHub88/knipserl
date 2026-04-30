@@ -76,16 +76,26 @@ export function replaceInquiryVarsHtml(
 }
 
 /**
+ * Konvertiert reine Zeilenumbrüche zu `<br>` — `white-space:pre-line` wird von
+ * vielen Mail-Clients (insb. Outlook desktop / Word-Renderer) ignoriert,
+ * `<br>` rendert aber wirklich überall. Die Preview im Browser sieht damit
+ * identisch aus zur tatsächlich versendeten Mail.
+ */
+function nl2br(html: string): string {
+  return html.replace(/\r?\n/g, "<br>\n");
+}
+
+/**
  * Wraps the (already variable-substituted, HTML-allowed) body in the shared
- * email-layout. `bodyHtml` darf HTML enthalten — `pre-line` sorgt dafür,
- * dass auch reine Plain-Text-Mails mit `\n` weiterhin Zeilenumbrüche kriegen.
+ * email-layout. `bodyHtml` darf HTML enthalten — Zeilenumbrüche werden zu
+ * `<br>` konvertiert für maximale Mail-Client-Kompatibilität.
  */
 export function wrapInquiryEmailHtml(
   bodyHtml: string,
   opts?: { companyName?: string },
 ): string {
   const company = opts?.companyName?.trim() || "Knipserl Fotobox";
-  const inner = `<div style="white-space:pre-line;color:#3a3a3a;font-size:15px;line-height:1.65;">${bodyHtml}</div>`;
+  const inner = `<div style="color:#3a3a3a;font-size:15px;line-height:1.65;">${nl2br(bodyHtml)}</div>`;
   return emailLayout({
     bodyHtml: inner,
     footerText: `${company} &middot; <a href="mailto:info@knipserl.de" style="color:#999;text-decoration:none;">info@knipserl.de</a> &middot; <a href="https://www.knipserl.de" style="color:#999;text-decoration:none;">knipserl.de</a>`,
