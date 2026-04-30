@@ -3,19 +3,11 @@ import { auth } from "@/lib/auth";
 import { IconMail } from "@tabler/icons-react";
 import { EmailTemplateEditor } from "./email-template-editor";
 import { isEmailConfigured } from "@/lib/email";
+import { DEFAULT_INQUIRY_TEMPLATES } from "@/lib/inquiry-email";
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_TEMPLATES: Record<string, { subject: string; body: string }> = {
-  email_template_inquiry_accepted: {
-    subject: "Ihre Anfrage wurde bestätigt – {{companyName}}",
-    body: "Hallo {{customerName}},\n\nvielen Dank für Ihre Anfrage. Wir freuen uns, Ihnen mitteilen zu können, dass wir Ihren Termin bestätigen können!\n\nEvent: {{eventType}}\nDatum: {{eventDate}}\nLocation: {{locationName}}\n\nWir melden uns zeitnah mit weiteren Details.\n\nFreundliche Grüße\n{{companyName}}",
-  },
-  email_template_inquiry_rejected: {
-    subject: "Ihre Anfrage – {{companyName}}",
-    body: "Hallo {{customerName}},\n\nvielen Dank für Ihre Anfrage. Leider müssen wir Ihnen mitteilen, dass wir den gewünschten Termin nicht wahrnehmen können.\n\nEvent: {{eventType}}\nDatum: {{eventDate}}\n\nWir würden uns freuen, wenn wir bei einem anderen Termin für Sie da sein dürfen.\n\nFreundliche Grüße\n{{companyName}}",
-  },
-};
+const DEFAULT_TEMPLATES = DEFAULT_INQUIRY_TEMPLATES;
 
 export default async function EmailTemplatesPage() {
   const session = await auth();

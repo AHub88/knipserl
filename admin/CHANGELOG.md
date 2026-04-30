@@ -4,6 +4,16 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.35.4] — 2026-04-30
+
+### Fixed
+- **Logo wurde verzerrt im E-Mail-Header.** `width="160"` HTML-Attr passte nicht zum tatsächlichen Aspect-Ratio des Logos (250×69 px → bei height=48 muss width=174 sein). Outlook und Co. ignorieren `width:auto` im CSS und benutzen das HTML-Attribut → Logo wurde gestaucht. Width auf 174 fixiert, sieht jetzt proportional korrekt aus.
+
+### Changed
+- **Default-Templates für Anfrage-Bestätigung/-Absage komplett neu formatiert.** Nutzen jetzt `<strong>` für Hervorhebungen, `<hr>` für Trennlinien zwischen Sektionen (Anrede / Fakten / Schluss), und einen orange `<a>`-Link zur Kontakt-Mail. Wirken nicht mehr wie Auto-Spam-Sermon, sondern wie eine kuratiert geschriebene Nachricht.
+- **`nl2br` ist schlauer rund um `<hr>`.** Wenn die Source-Vorlage einen `<hr>` mit Leerzeilen davor/dahinter hat, würde der naive `\n→<br>`-Convert doppelte Abstände erzeugen. Adjacente `<br>`s werden jetzt vor und nach `<hr>` weggeräumt — der `<hr>` bringt eh seinen eigenen Margin mit.
+- **`DEFAULT_INQUIRY_TEMPLATES` aus `lib/inquiry-email.ts` exportiert.** `page.tsx` und `api/settings/email-templates/route.ts` lesen den Default jetzt zentral — kein Drift mehr zwischen den Stellen, die den Fallback definieren.
+
 ## [1.35.3] — 2026-04-30
 
 ### Fixed

@@ -100,7 +100,7 @@ export function emailLayout({
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" class="force-light-bg" style="max-width:600px;background-color:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06),0 8px 24px rgba(0,0,0,0.04);">
           <tr>
             <td align="center" bgcolor="#ffffff" style="padding:32px 30px 20px;background-color:#ffffff;" class="force-light-bg">
-              <img src="${LOGO_URL}" alt="Knipserl Fotobox" height="48" width="160" style="display:inline-block;height:48px;width:auto;border:0;outline:none;text-decoration:none;" />
+              <img src="${LOGO_URL}" alt="Knipserl Fotobox" height="48" width="174" style="display:block;height:48px;width:174px;border:0;outline:none;text-decoration:none;margin:0 auto;" />
             </td>
           </tr>
           <tr>

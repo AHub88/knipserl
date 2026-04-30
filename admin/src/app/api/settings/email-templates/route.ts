@@ -1,43 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { DEFAULT_INQUIRY_TEMPLATES } from "@/lib/inquiry-email";
 
 const TEMPLATE_KEYS = [
   "email_template_inquiry_accepted",
   "email_template_inquiry_rejected",
 ] as const;
 
-const DEFAULT_TEMPLATES: Record<string, { subject: string; body: string }> = {
-  email_template_inquiry_accepted: {
-    subject: "Ihre Anfrage wurde bestätigt – {{companyName}}",
-    body: `Hallo {{customerName}},
-
-vielen Dank für Ihre Anfrage. Wir freuen uns, Ihnen mitteilen zu können, dass wir Ihren Termin bestätigen können!
-
-Event: {{eventType}}
-Datum: {{eventDate}}
-Location: {{locationName}}
-
-Wir melden uns zeitnah mit weiteren Details.
-
-Freundliche Grüße
-{{companyName}}`,
-  },
-  email_template_inquiry_rejected: {
-    subject: "Ihre Anfrage – {{companyName}}",
-    body: `Hallo {{customerName}},
-
-vielen Dank für Ihre Anfrage. Leider müssen wir Ihnen mitteilen, dass wir den gewünschten Termin nicht wahrnehmen können.
-
-Event: {{eventType}}
-Datum: {{eventDate}}
-
-Wir würden uns freuen, wenn wir bei einem anderen Termin für Sie da sein dürfen.
-
-Freundliche Grüße
-{{companyName}}`,
-  },
-};
+const DEFAULT_TEMPLATES = DEFAULT_INQUIRY_TEMPLATES;
 
 // GET /api/settings/email-templates
 export async function GET() {

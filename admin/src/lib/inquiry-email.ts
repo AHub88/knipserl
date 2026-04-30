@@ -80,10 +80,67 @@ export function replaceInquiryVarsHtml(
  * vielen Mail-Clients (insb. Outlook desktop / Word-Renderer) ignoriert,
  * `<br>` rendert aber wirklich überall. Die Preview im Browser sieht damit
  * identisch aus zur tatsächlich versendeten Mail.
+ *
+ * Bonus: räumt redundante `<br>`s rund um `<hr>` weg, damit ein im Source
+ * sauber mit Leerzeilen geschriebener Trenner nicht doppelte Abstände kriegt.
  */
 function nl2br(html: string): string {
-  return html.replace(/\r?\n/g, "<br>\n");
+  let out = html.replace(/\r?\n/g, "<br>\n");
+  // <hr> hat eigenen vertikalen Margin — angrenzende <br>s wegwerfen
+  out = out.replace(/(?:<br\s*\/?>\s*\n?\s*)+(<hr\b[^>]*>)/gi, "$1");
+  out = out.replace(/(<hr\b[^>]*>)(?:\s*\n?\s*<br\s*\/?>)+/gi, "$1\n");
+  return out;
 }
+
+/**
+ * Default-Template-Bodies mit HTML-Formatierung. Wird verwendet als Fallback
+ * wenn nichts in `app_settings` gespeichert ist, und als Quelle für die
+ * Default-Anzeige im Editor.
+ */
+export const DEFAULT_INQUIRY_TEMPLATES: Record<
+  string,
+  { subject: string; body: string }
+> = {
+  email_template_inquiry_accepted: {
+    subject: "Ihre Anfrage wurde bestätigt – {{companyName}}",
+    body: `Hallo {{customerName}},
+
+<strong>vielen Dank für Ihre Anfrage!</strong> Wir freuen uns, Ihnen Ihren Termin bestätigen zu können.
+
+<hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
+
+<strong>Event:</strong> {{eventType}}
+<strong>Datum:</strong> {{eventDate}}
+<strong>Location:</strong> {{locationName}}
+
+<hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
+
+Wir melden uns zeitnah mit allen weiteren Details bei Ihnen.
+
+Bei Rückfragen sind wir jederzeit unter <a href="mailto:info@knipserl.de" style="color:#F6A11C;text-decoration:none;">info@knipserl.de</a> erreichbar.
+
+Freundliche Grüße
+<strong>{{companyName}}</strong>`,
+  },
+  email_template_inquiry_rejected: {
+    subject: "Ihre Anfrage – {{companyName}}",
+    body: `Hallo {{customerName}},
+
+vielen Dank für Ihre Anfrage. <strong>Leider</strong> müssen wir Ihnen mitteilen, dass wir den gewünschten Termin nicht wahrnehmen können.
+
+<hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
+
+<strong>Event:</strong> {{eventType}}
+<strong>Datum:</strong> {{eventDate}}
+
+<hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
+
+Vielleicht klappt es bei einem anderen Termin — schreiben Sie uns gerne unter <a href="mailto:info@knipserl.de" style="color:#F6A11C;text-decoration:none;">info@knipserl.de</a>.
+
+Freundliche Grüße
+<strong>{{companyName}}</strong>`,
+  },
+};
 
 /**
  * Wraps the (already variable-substituted, HTML-allowed) body in the shared
