@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { sendEmail, isEmailConfigured } from "@/lib/email";
 import {
   replaceInquiryVars,
+  replaceInquiryVarsHtml,
   wrapInquiryEmailHtml,
 } from "@/lib/inquiry-email";
 
@@ -34,8 +35,8 @@ async function sendInquiryEmail(
   };
 
   const subject = replaceInquiryVars(template.subject, vars);
-  const bodyText = replaceInquiryVars(template.body, vars);
-  const html = wrapInquiryEmailHtml(bodyText, { companyName: vars.companyName });
+  const bodyHtml = replaceInquiryVarsHtml(template.body, vars);
+  const html = wrapInquiryEmailHtml(bodyHtml, { companyName: vars.companyName });
 
   try {
     await sendEmail({ to: inquiry.customerEmail, subject, html });

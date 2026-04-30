@@ -4,6 +4,18 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.35.1] — 2026-04-30
+
+### Added
+- **Logo im E-Mail-Header.** Das Knipserl-Logo (`/knipserl-logo.png`) wird oben in jeder Mail zentriert auf weißem Grund angezeigt, dadrunter eine dünne orange Akzentlinie als Brand-Trennung. Logo-URL ist konfigurierbar via `EMAIL_LOGO_URL` env, Default ist `${NEXT_PUBLIC_APP_URL}/knipserl-logo.png`.
+- **HTML-Formatierung im Mail-Body unterstützt.** Im Editor kann jetzt HTML eingegeben werden — `<strong>`, `<em>`, `<a>`, `<ul>`/`<li>`, `<br>` etc. rendern. Plain Text mit Zeilenumbrüchen funktioniert weiterhin parallel (via `white-space:pre-line`). Im Editor steht ein neuer „HTML-Formatierung"-Hinweisblock mit Code-Beispielen neben den Platzhalter-Variablen.
+- **Footer mit Kontakt-Links.** Im Footer der Inquiry-Mails stehen jetzt `info@knipserl.de` und `knipserl.de` als klickbare Links statt nur Firmenname.
+
+### Changed
+- **Sicheres HTML-Templating: nur Variablen-Werte werden escaped, nicht das Admin-getippte Template.** Neue Funktion `replaceInquiryVarsHtml()` (Lib `inquiry-email.ts`) ersetzt Platzhalter und HTML-escape die Werte gleichzeitig — z.B. ein Kundenname „Müller & Schulz" wird zu `Müller &amp; Schulz` im HTML eingesetzt. Templates können HTML enthalten, Kundendaten können XSS-Versuche nicht durchschmuggeln. Subject bleibt plain (Mail-Header-Field, Graph API behandelt Subject als Text).
+- **Sanftere Border-Radius (14px) und Schatten am Mail-Container.** Wirkt weniger steril.
+- **Untertext „Diese E-Mail wurde automatisch versendet."** unter dem Mail-Container — kleiner grauer Hinweis, signalisiert Empfängern dass es kein direktes 1:1-Antwort-Szenario ist.
+
 ## [1.35.0] — 2026-04-30
 
 ### Added

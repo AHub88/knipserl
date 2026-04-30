@@ -4,6 +4,7 @@ import { sendEmail, isEmailConfigured } from "@/lib/email";
 import {
   getSampleInquiryVars,
   replaceInquiryVars,
+  replaceInquiryVarsHtml,
   wrapInquiryEmailHtml,
 } from "@/lib/inquiry-email";
 
@@ -47,8 +48,8 @@ export async function POST(request: NextRequest) {
 
   const vars = getSampleInquiryVars();
   const renderedSubject = replaceInquiryVars(subject, vars);
-  const renderedBody = replaceInquiryVars(body, vars);
-  const html = wrapInquiryEmailHtml(renderedBody, { companyName: vars.companyName });
+  const renderedBodyHtml = replaceInquiryVarsHtml(body, vars);
+  const html = wrapInquiryEmailHtml(renderedBodyHtml, { companyName: vars.companyName });
 
   try {
     await sendEmail({

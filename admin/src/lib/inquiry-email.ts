@@ -37,6 +37,18 @@ export function getSampleInquiryVars(): Record<string, string> {
   };
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/**
+ * Plain substitution — keine Escape. Für Subject (Plain-Text-Feld in Graph API).
+ */
 export function replaceInquiryVars(
   text: string,
   vars: Record<string, string>,
@@ -48,24 +60,34 @@ export function replaceInquiryVars(
 }
 
 /**
- * Wraps the plain-text body of an inquiry response in the shared
- * email-layout (Brand-Banner, weiße Content-Box, grauer Footer).
- *
- * Newlines in `plainBody` werden via `white-space:pre-line` als
- * Zeilenumbrüche gerendert, HTML wird escaped (kein Format-Injection).
+ * Substitution mit HTML-Escape der Werte.
+ * Template-Body (admin-getippt, vertrauenswürdig) bleibt as-is — Tags wie
+ * `<strong>`, `<a>`, `<ul>` rendern. Eingesetzte Variablen-Werte (Kunde,
+ * Location, …) werden escaped — schützt vor `<` oder `&` im Kundennamen.
+ */
+export function replaceInquiryVarsHtml(
+  text: string,
+  vars: Record<string, string>,
+): string {
+  return Object.entries(vars).reduce(
+    (acc, [k, v]) => acc.replace(new RegExp(`{{\\s*${k}\\s*}}`, "g"), escapeHtml(v)),
+    text,
+  );
+}
+
+/**
+ * Wraps the (already variable-substituted, HTML-allowed) body in the shared
+ * email-layout. `bodyHtml` darf HTML enthalten — `pre-line` sorgt dafür,
+ * dass auch reine Plain-Text-Mails mit `\n` weiterhin Zeilenumbrüche kriegen.
  */
 export function wrapInquiryEmailHtml(
-  plainBody: string,
+  bodyHtml: string,
   opts?: { companyName?: string },
 ): string {
-  const safe = plainBody
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
   const company = opts?.companyName?.trim() || "Knipserl Fotobox";
+  const inner = `<div style="white-space:pre-line;color:#3a3a3a;font-size:15px;line-height:1.65;">${bodyHtml}</div>`;
   return emailLayout({
-    preheader: company,
-    bodyHtml: `<p style="margin:0;white-space:pre-line;color:#333;font-size:15px;line-height:1.65;">${safe}</p>`,
-    footerText: company,
+    bodyHtml: inner,
+    footerText: `${company} &middot; <a href="mailto:info@knipserl.de" style="color:#999;text-decoration:none;">info@knipserl.de</a> &middot; <a href="https://www.knipserl.de" style="color:#999;text-decoration:none;">knipserl.de</a>`,
   });
 }

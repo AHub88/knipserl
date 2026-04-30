@@ -12,6 +12,7 @@ import {
 import {
   getSampleInquiryVars,
   replaceInquiryVars,
+  replaceInquiryVarsHtml,
   wrapInquiryEmailHtml,
 } from "@/lib/inquiry-email";
 
@@ -37,8 +38,9 @@ type Templates = Record<string, { subject: string; body: string }>;
 const SAMPLE_VARS = getSampleInquiryVars();
 
 function buildPreviewHtml(body: string): string {
-  const rendered = replaceInquiryVars(body, SAMPLE_VARS);
-  return wrapInquiryEmailHtml(rendered, { companyName: SAMPLE_VARS.companyName });
+  // Body wird HTML-rendered → Werte escapen, Template-HTML durchlassen.
+  const renderedBodyHtml = replaceInquiryVarsHtml(body, SAMPLE_VARS);
+  return wrapInquiryEmailHtml(renderedBodyHtml, { companyName: SAMPLE_VARS.companyName });
 }
 
 function EmailPreview({ subject, body }: { subject: string; body: string }) {
@@ -131,20 +133,45 @@ export function EmailTemplateEditor({
 
   return (
     <div className="space-y-6">
-      {/* Variables hint */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
-          <IconCode className="size-4 text-primary" />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Verfügbare Platzhalter</h3>
+      {/* Hints: Platzhalter + HTML-Formatierung */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+            <IconCode className="size-4 text-primary" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Verfügbare Platzhalter</h3>
+          </div>
+          <div className="p-4 flex flex-wrap gap-1.5">
+            {variables.map((v) => (
+              <code key={v} className="text-xs bg-muted text-primary px-2 py-0.5 rounded font-mono">
+                {`{{${v}}}`}
+              </code>
+            ))}
+          </div>
         </div>
-        <div className="p-4">
-        <div className="flex flex-wrap gap-1.5">
-          {variables.map((v) => (
-            <code key={v} className="text-xs bg-muted text-primary px-2 py-0.5 rounded font-mono">
-              {`{{${v}}}`}
-            </code>
-          ))}
-        </div>
+
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+            <IconCode className="size-4 text-primary" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">HTML-Formatierung</h3>
+          </div>
+          <div className="p-4 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Du kannst HTML im Body verwenden — Zeilenumbrüche bleiben erhalten:
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                "<strong>fett</strong>",
+                "<em>kursiv</em>",
+                "<a href=\"…\">Link</a>",
+                "<ul><li>Liste</li></ul>",
+                "<br>",
+              ].map((html) => (
+                <code key={html} className="text-[11px] bg-muted text-foreground/70 px-2 py-0.5 rounded font-mono">
+                  {html}
+                </code>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
