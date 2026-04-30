@@ -6,6 +6,15 @@
  */
 
 import { emailLayout, EMAIL_BRAND_COLOR } from "./email-layout";
+import { prisma } from "./db";
+import {
+  DEFAULT_INQUIRY_TEMPLATES,
+  buildDriverReminderVars,
+  replaceInquiryVars,
+  replaceInquiryVarsHtml,
+  wrapInquiryEmailHtml,
+  type DriverReminderInput,
+} from "./inquiry-email";
 
 const BRAND_COLOR = EMAIL_BRAND_COLOR;
 
@@ -139,94 +148,36 @@ export function invoiceEmail(data: {
   };
 }
 
-export function driverReminderEmail(data: {
-  driverName: string;
-  leadDays: number;
-  companyName: string;
-  customerName: string;
-  eventType: string;
-  eventDate: Date;
-  locationName: string;
-  locationAddress: string;
-  setupDate?: Date | null;
-  setupTime?: string | null;
-  teardownDate?: Date | null;
-  teardownTime?: string | null;
-  onSiteContactName?: string | null;
-  onSiteContactPhone?: string | null;
-  onSiteContactNotes?: string | null;
-  notes?: string | null;
-  orderDetailUrl?: string | null;
-}): { subject: string; html: string } {
-  const dateStr = data.eventDate.toLocaleDateString("de-DE", {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+/**
+ * Fahrer-Erinnerung — liest Subject + Body aus `app_settings`
+ * (`email_template_driver_reminder`) mit Fallback auf den Default in
+ * `inquiry-email.ts`. Variablen werden aus den Order-Daten berechnet
+ * und HTML-sicher substituiert. Async wegen DB-Lookup.
+ */
+export async function driverReminderEmail(
+  data: DriverReminderInput,
+): Promise<{ subject: string; html: string }> {
+  const fallback = DEFAULT_INQUIRY_TEMPLATES.email_template_driver_reminder;
+  let subjectTpl = fallback.subject;
+  let bodyTpl = fallback.body;
+  try {
+    const setting = await prisma.appSetting.findUnique({
+      where: { key: "email_template_driver_reminder" },
+    });
+    if (setting?.value) {
+      const parsed = JSON.parse(setting.value);
+      if (typeof parsed.subject === "string") subjectTpl = parsed.subject;
+      if (typeof parsed.body === "string") bodyTpl = parsed.body;
+    }
+  } catch (e) {
+    console.error("[driverReminderEmail] template lookup failed, using default", e);
+  }
 
-  const leadText =
-    data.leadDays === 0
-      ? "heute"
-      : data.leadDays === 1
-      ? "morgen"
-      : `in ${data.leadDays} Tagen`;
-
-  const setupLine =
-    data.setupDate || data.setupTime
-      ? `<tr><td style="padding:6px 0;color:#888;width:130px;">Aufbau</td><td style="padding:6px 0;color:#333;">${
-          data.setupDate ? formatDate(data.setupDate) + " " : ""
-        }${data.setupTime ?? ""}</td></tr>`
-      : "";
-
-  const teardownLine =
-    data.teardownDate || data.teardownTime
-      ? `<tr><td style="padding:6px 0;color:#888;width:130px;">Abbau</td><td style="padding:6px 0;color:#333;">${
-          data.teardownDate ? formatDate(data.teardownDate) + " " : ""
-        }${data.teardownTime ?? ""}</td></tr>`
-      : "";
-
-  const contactBlock =
-    data.onSiteContactName || data.onSiteContactPhone
-      ? `<div style="background:#f9f9f9;padding:14px;border-radius:6px;margin:16px 0;font-size:13px;">
-          <strong>Ansprechpartner vor Ort</strong><br/>
-          ${data.onSiteContactName ?? ""}
-          ${data.onSiteContactPhone ? `<br/>Tel.: <a href="tel:${data.onSiteContactPhone}" style="color:${BRAND_COLOR};">${data.onSiteContactPhone}</a>` : ""}
-          ${data.onSiteContactNotes ? `<br/><span style="color:#666;">${data.onSiteContactNotes}</span>` : ""}
-        </div>`
-      : "";
-
-  const notesBlock = data.notes
-    ? `<div style="background:#fff8ec;padding:14px;border-radius:6px;margin:16px 0;font-size:13px;color:#555;border-left:3px solid ${BRAND_COLOR};">
-        <strong>Notiz</strong><br/>${data.notes}
-      </div>`
-    : "";
-
-  const linkBlock = data.orderDetailUrl
-    ? `<p style="margin:24px 0;"><a href="${data.orderDetailUrl}" style="display:inline-block;background:${BRAND_COLOR};color:#000;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;">Auftrag ansehen</a></p>`
-    : "";
-
-  const body = `
-    <p style="font-size:15px;color:#333;">Hallo ${data.driverName},</p>
-    <p style="color:#555;">kleiner Reminder: ${leadText} hast du folgenden Auftrag:</p>
-    <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
-      <tr><td style="padding:6px 0;color:#888;width:130px;">Kunde</td><td style="padding:6px 0;color:#333;font-weight:600;">${data.customerName}</td></tr>
-      <tr><td style="padding:6px 0;color:#888;">Art</td><td style="padding:6px 0;color:#333;">${data.eventType}</td></tr>
-      <tr><td style="padding:6px 0;color:#888;">Datum</td><td style="padding:6px 0;color:#333;">${dateStr}</td></tr>
-      ${setupLine}
-      ${teardownLine}
-      <tr><td style="padding:6px 0;color:#888;">Ort</td><td style="padding:6px 0;color:#333;">${data.locationName}<br/><span style="color:#888;font-size:13px;">${data.locationAddress}</span></td></tr>
-    </table>
-    ${contactBlock}
-    ${notesBlock}
-    ${linkBlock}
-    <p style="color:#888;font-size:12px;margin-top:32px;">Du bekommst diese Mail, weil Erinnerungen in deinem Fahrer-Profil aktiviert sind. Vorlauf und Opt-out findest du im Dashboard.</p>
-  `;
-
-  return {
-    subject: `Erinnerung: ${data.customerName} am ${formatDate(data.eventDate)}`,
-    html: layout(`Auftrag ${leadText}`, body, data.companyName),
-  };
+  const vars = buildDriverReminderVars(data);
+  const subject = replaceInquiryVars(subjectTpl, vars);
+  const bodyHtml = replaceInquiryVarsHtml(bodyTpl, vars);
+  const html = wrapInquiryEmailHtml(bodyHtml, { companyName: data.companyName });
+  return { subject, html };
 }
 
 export function confirmationEmail(data: {

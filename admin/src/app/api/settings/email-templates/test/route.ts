@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { sendEmail, isEmailConfigured } from "@/lib/email";
 import {
-  getSampleInquiryVars,
+  getSampleVarsFor,
   replaceInquiryVars,
   replaceInquiryVarsHtml,
   wrapInquiryEmailHtml,
@@ -31,14 +31,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let payload: { subject?: unknown; body?: unknown };
+  let payload: { subject?: unknown; body?: unknown; templateKey?: unknown };
   try {
     payload = await request.json();
   } catch {
     return NextResponse.json({ error: "Ungültiges JSON" }, { status: 400 });
   }
 
-  const { subject, body } = payload;
+  const { subject, body, templateKey } = payload;
   if (typeof subject !== "string" || typeof body !== "string") {
     return NextResponse.json(
       { error: "subject und body (jeweils string) erforderlich" },
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const vars = getSampleInquiryVars();
+  const vars = getSampleVarsFor(typeof templateKey === "string" ? templateKey : "");
   const renderedSubject = replaceInquiryVars(subject, vars);
   const renderedBodyHtml = replaceInquiryVarsHtml(body, vars);
   const html = wrapInquiryEmailHtml(renderedBodyHtml, { companyName: vars.companyName });

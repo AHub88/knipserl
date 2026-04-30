@@ -34,7 +34,7 @@ export default async function EmailTemplatesPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">E-Mail Templates</h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Automatische E-Mails bei Anfrage-Zusage und -Absage
+            Anfrage-Zusage, Anfrage-Absage und Fahrer-Erinnerung
           </p>
         </div>
       </div>
@@ -48,10 +48,7 @@ export default async function EmailTemplatesPage() {
         </div>
       )}
 
-      <EmailTemplateEditor
-        templates={templates}
-        variables={["customerName", "customerEmail", "eventType", "eventDate", "locationName", "companyName"]}
-      />
+      <EmailTemplateEditor templates={templates} />
     </div>
   );
 }

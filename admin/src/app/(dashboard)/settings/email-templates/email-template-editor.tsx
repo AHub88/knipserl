@@ -10,41 +10,71 @@ import {
   IconSend,
 } from "@tabler/icons-react";
 import {
-  getSampleInquiryVars,
+  INQUIRY_EMAIL_VARIABLES,
+  DRIVER_REMINDER_VARIABLES,
+  getSampleVarsFor,
   replaceInquiryVars,
   replaceInquiryVarsHtml,
   wrapInquiryEmailHtml,
 } from "@/lib/inquiry-email";
 
-const TEMPLATE_CONFIG = [
+type TemplateConfig = {
+  key: string;
+  label: string;
+  description: string;
+  color: "emerald" | "red" | "amber";
+  variables: readonly string[];
+};
+
+const TEMPLATE_CONFIG: TemplateConfig[] = [
   {
     key: "email_template_inquiry_accepted",
     label: "Anfrage zugesagt",
-    description: "Wird automatisch gesendet wenn eine Anfrage angenommen wird",
+    description: "Wird automatisch gesendet, wenn eine Anfrage angenommen wird",
     color: "emerald",
+    variables: INQUIRY_EMAIL_VARIABLES,
   },
   {
     key: "email_template_inquiry_rejected",
     label: "Anfrage abgesagt",
-    description: "Wird automatisch gesendet wenn eine Anfrage abgelehnt wird",
+    description: "Wird automatisch gesendet, wenn eine Anfrage abgelehnt wird",
     color: "red",
+    variables: INQUIRY_EMAIL_VARIABLES,
+  },
+  {
+    key: "email_template_driver_reminder",
+    label: "Fahrer-Erinnerung",
+    description: "Wird automatisch an Fahrer geschickt, wenn ein Auftrag bald ansteht (gemäß Vorlauf-Einstellung im Fahrer-Profil)",
+    color: "amber",
+    variables: DRIVER_REMINDER_VARIABLES,
   },
 ];
 
 type Templates = Record<string, { subject: string; body: string }>;
 
-// Sample-Werte einmal beim Modul-Laden eingefroren — ein Tag drift in 30 Tagen
-// reicht völlig, dafür rendert die Preview deterministisch.
-const SAMPLE_VARS = getSampleInquiryVars();
+// Sample-Werte je Template-Key einmal beim Modul-Laden gecached.
+const SAMPLE_VARS_BY_KEY: Record<string, Record<string, string>> = Object.fromEntries(
+  TEMPLATE_CONFIG.map((c) => [c.key, getSampleVarsFor(c.key)]),
+);
 
-function buildPreviewHtml(body: string): string {
+function buildPreviewHtml(templateKey: string, body: string): string {
+  const sampleVars = SAMPLE_VARS_BY_KEY[templateKey] ?? {};
   // Body wird HTML-rendered → Werte escapen, Template-HTML durchlassen.
-  const renderedBodyHtml = replaceInquiryVarsHtml(body, SAMPLE_VARS);
-  return wrapInquiryEmailHtml(renderedBodyHtml, { companyName: SAMPLE_VARS.companyName });
+  const renderedBodyHtml = replaceInquiryVarsHtml(body, sampleVars);
+  return wrapInquiryEmailHtml(renderedBodyHtml, { companyName: sampleVars.companyName });
 }
 
-function EmailPreview({ subject, body }: { subject: string; body: string }) {
-  const renderedSubject = replaceInquiryVars(subject, SAMPLE_VARS);
+function EmailPreview({
+  templateKey,
+  subject,
+  body,
+}: {
+  templateKey: string;
+  subject: string;
+  body: string;
+}) {
+  const sampleVars = SAMPLE_VARS_BY_KEY[templateKey] ?? {};
+  const renderedSubject = replaceInquiryVars(subject, sampleVars);
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden flex flex-col">
       <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
@@ -61,7 +91,7 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
         </div>
       </div>
       <iframe
-        srcDoc={buildPreviewHtml(body)}
+        srcDoc={buildPreviewHtml(templateKey, body)}
         title="E-Mail Vorschau"
         sandbox=""
         className="w-full h-[420px] bg-[#f5f5f5] border-0"
@@ -72,10 +102,8 @@ function EmailPreview({ subject, body }: { subject: string; body: string }) {
 
 export function EmailTemplateEditor({
   templates: initial,
-  variables,
 }: {
   templates: Templates;
-  variables: string[];
 }) {
   const [templates, setTemplates] = useState<Templates>(initial);
   const [saving, setSaving] = useState<string | null>(null);
@@ -109,7 +137,7 @@ export function EmailTemplateEditor({
       const res = await fetch("/api/settings/email-templates/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject: t.subject, body: t.body }),
+        body: JSON.stringify({ subject: t.subject, body: t.body, templateKey: key }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Versand fehlgeschlagen");
@@ -133,44 +161,29 @@ export function EmailTemplateEditor({
 
   return (
     <div className="space-y-6">
-      {/* Hints: Platzhalter + HTML-Formatierung */}
-      <div className="grid lg:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
-            <IconCode className="size-4 text-primary" />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Verfügbare Platzhalter</h3>
-          </div>
-          <div className="p-4 flex flex-wrap gap-1.5">
-            {variables.map((v) => (
-              <code key={v} className="text-xs bg-muted text-primary px-2 py-0.5 rounded font-mono">
-                {`{{${v}}}`}
+      {/* Globaler HTML-Formatierungs-Hinweis */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
+          <IconCode className="size-4 text-primary" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">HTML-Formatierung</h3>
+        </div>
+        <div className="p-4 space-y-2">
+          <p className="text-xs text-muted-foreground">
+            Du kannst HTML im Body verwenden — Zeilenumbrüche bleiben erhalten:
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              "<strong>fett</strong>",
+              "<em>kursiv</em>",
+              "<a href=\"…\">Link</a>",
+              "<ul><li>Liste</li></ul>",
+              "<hr>",
+              "<br>",
+            ].map((html) => (
+              <code key={html} className="text-[11px] bg-muted text-foreground/70 px-2 py-0.5 rounded font-mono">
+                {html}
               </code>
             ))}
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="border-b border-border px-4 py-2.5 flex items-center gap-2">
-            <IconCode className="size-4 text-primary" />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">HTML-Formatierung</h3>
-          </div>
-          <div className="p-4 space-y-2">
-            <p className="text-xs text-muted-foreground">
-              Du kannst HTML im Body verwenden — Zeilenumbrüche bleiben erhalten:
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                "<strong>fett</strong>",
-                "<em>kursiv</em>",
-                "<a href=\"…\">Link</a>",
-                "<ul><li>Liste</li></ul>",
-                "<br>",
-              ].map((html) => (
-                <code key={html} className="text-[11px] bg-muted text-foreground/70 px-2 py-0.5 rounded font-mono">
-                  {html}
-                </code>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -179,10 +192,18 @@ export function EmailTemplateEditor({
       {TEMPLATE_CONFIG.map((config) => {
         const t = templates[config.key];
         if (!t) return null;
-        const colorClasses = config.color === "emerald"
-          ? "border-emerald-500/20 bg-emerald-500/5"
-          : "border-red-500/20 bg-red-500/5";
-        const dotColor = config.color === "emerald" ? "bg-emerald-400" : "bg-red-400";
+        const colorClasses =
+          config.color === "emerald"
+            ? "border-emerald-500/20 bg-emerald-500/5"
+            : config.color === "amber"
+              ? "border-amber-500/20 bg-amber-500/5"
+              : "border-red-500/20 bg-red-500/5";
+        const dotColor =
+          config.color === "emerald"
+            ? "bg-emerald-400"
+            : config.color === "amber"
+              ? "bg-amber-400"
+              : "bg-red-400";
 
         return (
           <div key={config.key} className={`rounded-xl border ${colorClasses} p-4 sm:p-5 space-y-4`}>
@@ -222,6 +243,21 @@ export function EmailTemplateEditor({
 
             <p className="text-xs text-muted-foreground">{config.description}</p>
 
+            {/* Verfügbare Platzhalter dieses Templates */}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mr-1">
+                Platzhalter:
+              </span>
+              {config.variables.map((v) => (
+                <code
+                  key={v}
+                  className="text-[11px] bg-muted text-primary px-1.5 py-0.5 rounded font-mono"
+                >
+                  {`{{${v}}}`}
+                </code>
+              ))}
+            </div>
+
             <div className="grid lg:grid-cols-2 gap-4">
               {/* Editor */}
               <div className="space-y-4">
@@ -249,7 +285,7 @@ export function EmailTemplateEditor({
               </div>
 
               {/* Live-Preview */}
-              <EmailPreview subject={t.subject} body={t.body} />
+              <EmailPreview templateKey={config.key} subject={t.subject} body={t.body} />
             </div>
           </div>
         );

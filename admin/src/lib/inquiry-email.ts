@@ -1,12 +1,14 @@
 /**
- * Shared helpers for the inquiry-confirmation / -rejection email flow.
+ * Shared helpers für alle konfigurierbaren E-Mail-Templates (Anfrage-Bestätigung,
+ * Anfrage-Absage, Fahrer-Erinnerung).
  *
  * Used by:
  *  - api/inquiries/[id]/route.ts        (real send, customer values)
+ *  - lib/driver-reminders.ts            (real send, fahrer values)
  *  - api/settings/email-templates/test  (test send, sample values)
  *  - settings/email-templates editor    (live preview, sample values)
  *
- * Keep wrap + variable list in sync across all three by importing from here.
+ * Wrap + Variablen-Helper hier zentral, damit alle Stellen synchron bleiben.
  */
 
 import { emailLayout } from "./email-layout";
@@ -18,6 +20,23 @@ export const INQUIRY_EMAIL_VARIABLES = [
   "eventDate",
   "locationName",
   "companyName",
+] as const;
+
+export const DRIVER_REMINDER_VARIABLES = [
+  "driverName",
+  "leadText",
+  "companyName",
+  "customerName",
+  "customerPhone",
+  "eventType",
+  "eventDate",
+  "locationName",
+  "locationAddress",
+  "setupInfo",
+  "teardownInfo",
+  "onSiteContact",
+  "notes",
+  "orderUrl",
 ] as const;
 
 export function getSampleInquiryVars(): Record<string, string> {
@@ -35,6 +54,116 @@ export function getSampleInquiryVars(): Record<string, string> {
     locationName: "Veranstaltungssaal Fendlhof",
     companyName: "Knipserl Fotobox",
   };
+}
+
+function leadDaysToText(leadDays: number): string {
+  if (leadDays <= 0) return "heute";
+  if (leadDays === 1) return "morgen";
+  return `in ${leadDays} Tagen`;
+}
+
+function formatDateShortDe(d: Date): string {
+  return d.toLocaleDateString("de-DE", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+function formatDateLongDe(d: Date): string {
+  return d.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export interface DriverReminderInput {
+  driverName: string;
+  leadDays: number;
+  companyName: string;
+  customerName: string;
+  customerPhone?: string | null;
+  eventType: string;
+  eventDate: Date;
+  locationName: string;
+  locationAddress: string;
+  setupDate?: Date | null;
+  setupTime?: string | null;
+  teardownDate?: Date | null;
+  teardownTime?: string | null;
+  onSiteContactName?: string | null;
+  onSiteContactPhone?: string | null;
+  onSiteContactNotes?: string | null;
+  notes?: string | null;
+  orderDetailUrl?: string | null;
+}
+
+/** Baut die Variablen-Map für den Fahrer-Reminder aus rohen Order-Daten. */
+export function buildDriverReminderVars(d: DriverReminderInput): Record<string, string> {
+  const setupInfo = d.setupDate
+    ? `${formatDateShortDe(d.setupDate)}${d.setupTime ? ` · ${d.setupTime}` : ""}`
+    : d.setupTime ?? "—";
+  const teardownInfo = d.teardownDate
+    ? `${formatDateShortDe(d.teardownDate)}${d.teardownTime ? ` · ${d.teardownTime}` : ""}`
+    : d.teardownTime ?? "—";
+
+  const contactBits: string[] = [];
+  if (d.onSiteContactName) contactBits.push(d.onSiteContactName);
+  if (d.onSiteContactPhone) contactBits.push(`Tel.: ${d.onSiteContactPhone}`);
+  let onSiteContact = contactBits.join(" · ");
+  if (d.onSiteContactNotes) onSiteContact += (onSiteContact ? " — " : "") + d.onSiteContactNotes;
+
+  return {
+    driverName: d.driverName,
+    leadText: leadDaysToText(d.leadDays),
+    companyName: d.companyName,
+    customerName: d.customerName,
+    customerPhone: d.customerPhone ?? "",
+    eventType: d.eventType,
+    eventDate: formatDateLongDe(d.eventDate),
+    locationName: d.locationName,
+    locationAddress: d.locationAddress,
+    setupInfo,
+    teardownInfo,
+    onSiteContact,
+    notes: d.notes ?? "",
+    orderUrl: d.orderDetailUrl ?? "",
+  };
+}
+
+export function getSampleDriverReminderVars(): Record<string, string> {
+  const eventDate = new Date(Date.now() + 3 * 86400000);
+  return buildDriverReminderVars({
+    driverName: "Johann",
+    leadDays: 3,
+    companyName: "Knipserl Fotobox",
+    customerName: "Maria Müller",
+    customerPhone: "+49 89 12345678",
+    eventType: "Hochzeit",
+    eventDate,
+    locationName: "Veranstaltungssaal Fendlhof",
+    locationAddress: "Ob. Tiefenbachstraße 8a, 83734 Hausham",
+    setupDate: eventDate,
+    setupTime: "14:00 Uhr",
+    teardownDate: new Date(eventDate.getTime() + 86400000),
+    teardownTime: "01:00 Uhr",
+    onSiteContactName: "Tobias Maron",
+    onSiteContactPhone: "+49 89 87654321",
+    onSiteContactNotes: "Trauzeuge, vor Ort ab 13 Uhr",
+    notes: "Bitte vor 14 Uhr aufbauen — Fotobox in der Nähe vom Buffet.",
+    orderDetailUrl: "https://admin.knipserl.de/orders/sample-id",
+  });
+}
+
+/** Wählt das passende Sample-Variable-Set für einen Template-Key. */
+export function getSampleVarsFor(templateKey: string): Record<string, string> {
+  if (templateKey === "email_template_driver_reminder") {
+    return getSampleDriverReminderVars();
+  }
+  return getSampleInquiryVars();
 }
 
 function escapeHtml(s: string): string {
@@ -136,6 +265,36 @@ vielen Dank für deine Anfrage. <strong>Leider</strong> müssen wir dir mitteile
 <hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
 
 Vielleicht klappt es bei einem anderen Termin — schreib uns gerne unter <a href="mailto:info@knipserl.de" style="color:#F6A11C;text-decoration:none;">info@knipserl.de</a>.
+
+Liebe Grüße
+<strong>{{companyName}}</strong>`,
+  },
+  email_template_driver_reminder: {
+    subject: "Reminder: {{customerName}} {{leadText}} – {{companyName}}",
+    body: `Hallo {{driverName}},
+
+kleiner Reminder — <strong>{{leadText}}</strong> hast du folgenden Auftrag:
+
+<hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
+
+<strong>Kunde:</strong> {{customerName}}
+<strong>Tel.:</strong> {{customerPhone}}
+<strong>Art:</strong> {{eventType}}
+<strong>Datum:</strong> {{eventDate}}
+
+<strong>Aufbau:</strong> {{setupInfo}}
+<strong>Abbau:</strong> {{teardownInfo}}
+
+<strong>Ort:</strong> {{locationName}}
+{{locationAddress}}
+
+<strong>Vor Ort:</strong> {{onSiteContact}}
+
+<strong>Notiz:</strong> {{notes}}
+
+<hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
+
+<a href="{{orderUrl}}" style="display:inline-block;background:#F6A11C;color:#1a1a1a;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Auftrag ansehen</a>
 
 Liebe Grüße
 <strong>{{companyName}}</strong>`,

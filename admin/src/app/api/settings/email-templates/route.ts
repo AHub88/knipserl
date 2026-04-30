@@ -6,6 +6,7 @@ import { DEFAULT_INQUIRY_TEMPLATES } from "@/lib/inquiry-email";
 const TEMPLATE_KEYS = [
   "email_template_inquiry_accepted",
   "email_template_inquiry_rejected",
+  "email_template_driver_reminder",
 ] as const;
 
 const DEFAULT_TEMPLATES = DEFAULT_INQUIRY_TEMPLATES;

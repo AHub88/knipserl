@@ -4,6 +4,17 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.36.0] — 2026-04-30
+
+### Added
+- **Fahrer-Erinnerung als drittes editierbares E-Mail-Template.** Steht jetzt im E-Mail-Template-Editor neben „Anfrage zugesagt" und „Anfrage abgesagt". Subject und Body werden in `app_settings` (`email_template_driver_reminder`) gespeichert und beim echten Cron-Versand aus der DB gelesen — Fallback auf den Default-Template, falls noch nichts konfiguriert ist.
+- **Per-Template Platzhalter-Liste.** Statt einer globalen Variablen-Box oben zeigt jeder Template-Block jetzt seine eigenen verfügbaren `{{...}}`-Platzhalter — Inquiry-Mails haben 6 Variablen, Fahrer-Reminder 14 (driverName, leadText, customerPhone, setupInfo, teardownInfo, onSiteContact, notes, orderUrl, …).
+- **Test-Send unterstützt Driver-Reminder.** Beim Klick auf „Test senden" beim Fahrer-Template wird der Body mit Fahrer-Sample-Werten (Johann, Maria Müller als Hochzeitskundin in Hausham mit Aufbau/Abbau-Zeiten, Vor-Ort-Kontakt, Notiz, Auftrags-Link) gerendert und an die Admin-E-Mail geschickt.
+
+### Changed
+- **`driverReminderEmail()` async und template-getrieben.** Vorher war der Mail-Inhalt hartkodiert in `lib/email-templates.ts`. Jetzt wird Subject/Body aus `app_settings` geladen, mit Variablen-Substitution gerendert und mit dem zentralen `wrapInquiryEmailHtml`-Wrapper (Logo, Brand-Linie, Footer) versehen — gleicher Look wie alle anderen Mails. Caller in `lib/driver-reminders.ts` wartet jetzt async auf die Funktion.
+- **`<hr>`-Tag auch im HTML-Hint im Editor.** Da das jetzt aktiv in den Default-Templates verwendet wird.
+
 ## [1.35.5] — 2026-04-30
 
 ### Changed

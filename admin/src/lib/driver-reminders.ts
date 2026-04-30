@@ -79,11 +79,12 @@ export async function runDriverReminders(now: Date = new Date()): Promise<Remind
         continue;
       }
 
-      const { subject, html } = driverReminderEmail({
+      const { subject, html } = await driverReminderEmail({
         driverName: driver.name,
         leadDays: driver.reminderLeadDays,
         companyName: order.company.name,
         customerName: order.customerName,
+        customerPhone: order.customerPhone,
         eventType: order.eventType,
         eventDate: order.eventDate,
         locationName: order.locationName,
