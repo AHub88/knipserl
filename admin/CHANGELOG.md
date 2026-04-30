@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen am Admin-Dashboard.
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [SemVer](https://semver.org/lang/de/).
 
+## [1.35.5] — 2026-04-30
+
+### Changed
+- **Kunden-Anrede überall auf Du umgestellt.** Default-Templates für Anfrage-Zusage/-Absage, Angebots-Mail, Rechnungs-Mail, Auftragsbestätigungs-Mail, der Quote-Form-Default-Text und die Customer-Confirm-Page nutzen jetzt durchgehend du/dir/dein. „Freundliche Grüße" → „Liebe Grüße" passt zur lockereren Tonalität. Driver-Reminder war bereits in du.
+- **Nicht angefasst (bewusst):** Datenschutz-/Impressum-Default-Texte (Sie ist da rechtlich konventionell sicherer), Admin-UI-Toasts (Admin spricht mit sich selbst, keine Kundenkommunikation).
+
 ## [1.35.4] — 2026-04-30
 
 ### Fixed

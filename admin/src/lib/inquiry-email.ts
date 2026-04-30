@@ -102,10 +102,10 @@ export const DEFAULT_INQUIRY_TEMPLATES: Record<
   { subject: string; body: string }
 > = {
   email_template_inquiry_accepted: {
-    subject: "Ihre Anfrage wurde bestätigt – {{companyName}}",
+    subject: "Deine Anfrage ist bestätigt – {{companyName}}",
     body: `Hallo {{customerName}},
 
-<strong>vielen Dank für Ihre Anfrage!</strong> Wir freuen uns, Ihnen Ihren Termin bestätigen zu können.
+<strong>vielen Dank für deine Anfrage!</strong> Wir freuen uns, dir deinen Termin bestätigen zu können.
 
 <hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
 
@@ -115,18 +115,18 @@ export const DEFAULT_INQUIRY_TEMPLATES: Record<
 
 <hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
 
-Wir melden uns zeitnah mit allen weiteren Details bei Ihnen.
+Wir melden uns zeitnah mit allen weiteren Details bei dir.
 
 Bei Rückfragen sind wir jederzeit unter <a href="mailto:info@knipserl.de" style="color:#F6A11C;text-decoration:none;">info@knipserl.de</a> erreichbar.
 
-Freundliche Grüße
+Liebe Grüße
 <strong>{{companyName}}</strong>`,
   },
   email_template_inquiry_rejected: {
-    subject: "Ihre Anfrage – {{companyName}}",
+    subject: "Deine Anfrage – {{companyName}}",
     body: `Hallo {{customerName}},
 
-vielen Dank für Ihre Anfrage. <strong>Leider</strong> müssen wir Ihnen mitteilen, dass wir den gewünschten Termin nicht wahrnehmen können.
+vielen Dank für deine Anfrage. <strong>Leider</strong> müssen wir dir mitteilen, dass wir den gewünschten Termin nicht wahrnehmen können.
 
 <hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
 
@@ -135,9 +135,9 @@ vielen Dank für Ihre Anfrage. <strong>Leider</strong> müssen wir Ihnen mitteil
 
 <hr style="border:none;border-top:1px solid #eaeaea;margin:20px 0;">
 
-Vielleicht klappt es bei einem anderen Termin — schreiben Sie uns gerne unter <a href="mailto:info@knipserl.de" style="color:#F6A11C;text-decoration:none;">info@knipserl.de</a>.
+Vielleicht klappt es bei einem anderen Termin — schreib uns gerne unter <a href="mailto:info@knipserl.de" style="color:#F6A11C;text-decoration:none;">info@knipserl.de</a>.
 
-Freundliche Grüße
+Liebe Grüße
 <strong>{{companyName}}</strong>`,
   },
 };

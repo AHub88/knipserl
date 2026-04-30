@@ -78,7 +78,7 @@ export function quoteEmail(data: {
 }): { subject: string; html: string } {
   const body = `
     <p style="font-size:15px;color:#333;">Hallo ${data.recipientName},</p>
-    <p style="color:#555;">vielen Dank für Ihre Anfrage. Anbei erhalten Sie unser Angebot <strong>${data.quoteNumber}</strong>.</p>
+    <p style="color:#555;">vielen Dank für deine Anfrage. Anbei dein Angebot <strong>${data.quoteNumber}</strong>.</p>
     ${itemsTable(data.items)}
     <div style="text-align:right;margin:8px 0 20px;">
       <span style="font-size:18px;font-weight:700;color:${BRAND_COLOR};">${formatAmount(data.totalAmount)}</span>
@@ -86,8 +86,8 @@ export function quoteEmail(data: {
     <p style="font-size:13px;color:#888;">Gültig bis: ${formatDate(data.validUntil)}</p>
     ${data.deliveryDate ? `<p style="font-size:13px;color:#888;">Lieferdatum: ${formatDate(data.deliveryDate)}</p>` : ""}
     ${data.notes ? `<p style="font-size:13px;color:#666;background:#f9f9f9;padding:12px;border-radius:6px;">${data.notes}</p>` : ""}
-    <p style="color:#555;margin-top:24px;">Bei Fragen stehen wir Ihnen jederzeit gerne zur Verfügung.</p>
-    <p style="color:#555;">Freundliche Grüße<br/><strong>${data.companyName}</strong></p>
+    <p style="color:#555;margin-top:24px;">Bei Fragen melde dich gerne jederzeit.</p>
+    <p style="color:#555;">Liebe Grüße<br/><strong>${data.companyName}</strong></p>
   `;
 
   return {
@@ -120,7 +120,7 @@ export function invoiceEmail(data: {
 
   const body = `
     <p style="font-size:15px;color:#333;">Hallo ${data.recipientName},</p>
-    <p style="color:#555;">anbei erhalten Sie die Rechnung <strong>${data.invoiceNumber}</strong>.</p>
+    <p style="color:#555;">anbei deine Rechnung <strong>${data.invoiceNumber}</strong>.</p>
     ${itemsTable(data.items)}
     <div style="text-align:right;margin:8px 0 20px;">
       <span style="font-size:18px;font-weight:700;color:${BRAND_COLOR};">${formatAmount(data.totalAmount)}</span>
@@ -129,8 +129,8 @@ export function invoiceEmail(data: {
     ${data.deliveryDate ? `<p style="font-size:13px;color:#888;">Lieferdatum: ${formatDate(data.deliveryDate)}</p>` : ""}
     ${bankInfo}
     ${data.notes ? `<p style="font-size:13px;color:#666;background:#f9f9f9;padding:12px;border-radius:6px;">${data.notes}</p>` : ""}
-    <p style="color:#555;margin-top:24px;">Vielen Dank für Ihr Vertrauen.</p>
-    <p style="color:#555;">Freundliche Grüße<br/><strong>${data.companyName}</strong></p>
+    <p style="color:#555;margin-top:24px;">Vielen Dank für dein Vertrauen.</p>
+    <p style="color:#555;">Liebe Grüße<br/><strong>${data.companyName}</strong></p>
   `;
 
   return {
@@ -240,15 +240,15 @@ export function confirmationEmail(data: {
 }): { subject: string; html: string } {
   const body = `
     <p style="font-size:15px;color:#333;">Hallo ${data.recipientName},</p>
-    <p style="color:#555;">hiermit bestätigen wir Ihren Auftrag <strong>${data.confirmationNumber}</strong>.</p>
+    <p style="color:#555;">hiermit bestätigen wir deinen Auftrag <strong>${data.confirmationNumber}</strong>.</p>
     ${itemsTable(data.items)}
     <div style="text-align:right;margin:8px 0 20px;">
       <span style="font-size:18px;font-weight:700;color:${BRAND_COLOR};">${formatAmount(data.totalAmount)}</span>
     </div>
     ${data.deliveryDate ? `<p style="font-size:13px;color:#888;">Lieferdatum: ${formatDate(data.deliveryDate)}</p>` : ""}
     ${data.notes ? `<p style="font-size:13px;color:#666;background:#f9f9f9;padding:12px;border-radius:6px;">${data.notes}</p>` : ""}
-    <p style="color:#555;margin-top:24px;">Wir freuen uns auf Ihr Event!</p>
-    <p style="color:#555;">Freundliche Grüße<br/><strong>${data.companyName}</strong></p>
+    <p style="color:#555;margin-top:24px;">Wir freuen uns auf dein Event!</p>
+    <p style="color:#555;">Liebe Grüße<br/><strong>${data.companyName}</strong></p>
   `;
 
   return {

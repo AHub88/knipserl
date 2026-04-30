@@ -102,7 +102,7 @@ export default function ConfirmPage() {
         setOrder((prev) => prev ? { ...prev, confirmedByCustomerAt: new Date().toISOString(), confirmed: true } : prev);
       }
     } catch {
-      setError("Bestätigung fehlgeschlagen. Bitte versuchen Sie es erneut.");
+      setError("Bestätigung fehlgeschlagen. Bitte versuch es erneut.");
     } finally {
       setConfirming(false);
     }
@@ -150,14 +150,14 @@ export default function ConfirmPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <img src="/logo.png" alt="Knipserl Fotobox" className="h-10 sm:h-14 mx-auto mb-3" />
-          <p className="text-muted-foreground text-sm">Bitte prüfen Sie Ihre Event-Details</p>
+          <p className="text-muted-foreground text-sm">Bitte prüf deine Event-Details</p>
         </div>
 
         {/* Card */}
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl shadow-black/5 dark:shadow-black/25">
           {/* Event Header */}
           <div className="p-6 sm:p-8 border-b border-border">
-            <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Ihr Event</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Dein Event</div>
             <h1 className="text-xl sm:text-3xl font-bold text-primary mb-1">{formatDate(order.eventDate)}</h1>
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <span className="text-base sm:text-lg font-semibold text-foreground">{order.customerName}</span>
@@ -289,7 +289,7 @@ export default function ConfirmPage() {
                   </p>
                 )}
                 {justConfirmed && (
-                  <p className="text-muted-foreground text-sm mt-3">Vielen Dank! Wir kümmern uns um den Rest und freuen uns auf Ihr Event.</p>
+                  <p className="text-muted-foreground text-sm mt-3">Vielen Dank! Wir kümmern uns um den Rest und freuen uns auf dein Event.</p>
                 )}
               </div>
             ) : (
@@ -302,12 +302,12 @@ export default function ConfirmPage() {
                   <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Haben Sie Wünsche oder Anmerkungen zu Ihrem Event?"
+                    placeholder="Hast du Wünsche oder Anmerkungen zu deinem Event?"
                     rows={3}
                     className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-none"
                   />
                 </div>
-                <p className="text-muted-foreground text-sm mb-4 text-center">Stimmt alles? Dann bestätigen Sie bitte, damit wir Ihr Event perfekt vorbereiten können.</p>
+                <p className="text-muted-foreground text-sm mb-4 text-center">Stimmt alles? Dann bestätige bitte, damit wir dein Event perfekt vorbereiten können.</p>
                 <button
                   onClick={handleConfirm}
                   disabled={confirming}

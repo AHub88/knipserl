@@ -119,11 +119,11 @@ export function QuoteForm({ companies, orders }: Props) {
   // Title & texts
   const [title, setTitle] = useState("");
   const [introduction, setIntroduction] = useState(
-    "Vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:"
+    "Vielen Dank für deine Anfrage. Gerne unterbreiten wir dir folgendes Angebot:"
   );
   const [paymentTerms, setPaymentTerms] = useState("");
   const [closingText, setClosingText] = useState(
-    "Wir freuen uns auf Ihre Rückmeldung!"
+    "Wir freuen uns auf deine Rückmeldung!"
   );
 
   // Line items
